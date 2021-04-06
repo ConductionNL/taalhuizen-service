@@ -1,0 +1,122 @@
+# Default values for api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+settings:
+  registryBase: docker.io/conduction
+  projectName: ce
+  name: ce
+  version: V1.0
+  description: 'Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.'
+  repro: https://github.com/ConductionNL/commonground-example
+  demo: ce.zaakonline.nl
+  domain: conduction.nl
+  subdomain: ce
+  subpath: ce
+  subpathRouting: true
+  env: dev
+  web: false
+  debug: 1
+  cache: false
+  replicaCount: 1
+  corsAllowOrigin: ['*']
+  trustedHosts: '^.+$'
+  pullPolicy: Always
+  # You will need these proxies on kubernetes
+  trustedProxies:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+  # If you are running a single component on a kubernetes cluster you can just easily enable the load balancer, if not you need to set up a multi component load balancer
+  loadbalancerEnabled: false
+  # If you are running a single component on a kubernetes cluster you can just easily enable the load balancer, if not you need to set up a multi component load balancer
+  notificationEnabled: false
+  audittrailEnabled: false
+  authorisationEnabled: false
+  healthEnabled: false
+  archiveEnabled: false
+
+security:
+  applicationKey: "45c1a4b6-59d3-4a6e-86bf-88a872f35845"
+
+
+php:
+  repository: docker.io/conduction/protocomponent-php
+  tag: latest
+  mercure:
+    jwtSecret: ""
+  env: prod
+  secret: ""
+  replicaCount: 2
+
+nginx:
+  repository: docker.io/conduction/protocomponent-nginx
+  tag: latest
+  pullPolicy: Always
+  replicaCount: 2
+
+varnish:
+  enabled: true
+  #url: https://example.com
+  repository: docker.io/conduction/protocomponent-varnish
+  tag: latest
+  pullPolicy: Always
+  replicaCount: 1
+
+postgresql:
+  enabled: true
+  imageTag: 10-alpine
+  # If bringing your own PostgreSQL, the full uri to use
+  #url: pgsql://api-platform:!ChangeMe!@example.com/api?serverVersion=10.1
+  postgresqlUsername: "example"
+  postgresqlPassword: "!ChangeMe!"
+  postgresqlDatabase: "api"
+  # Persistent Volume Storage configuration.
+  # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
+  persistence:
+    enabled: false
+  pullPolicy: IfNotPresent
+#  image:
+#    repository: postgres
+#    tag: alpine
+
+mercure:
+  enabled: true
+  publishUrl: http://mercure/hub
+  subscribeUrl: https://mercure.example.com/hub
+  allowAnonymous: "1"
+  corsAllowedOrigins: "^https?://.*?\\.example\\.com$"
+  acmeHosts: "" # TODO: Fix the Mercure chart
+  service:
+    type: NodePort
+    port: 80
+
+ingress:
+  annotations:
+    # kubernetes.io/ingress.global-static-ip-name: chart-ip
+    # kubernetes.io/ingress.class: gce
+    # kubernetes.io/tls-acme: "true"
+  tls:
+    # Secrets must be manually created in the namespace, you can also use cert-manager.
+    # - hosts:
+      # - example.com
+      # - mercure.example.com
+  hosts:
+    api:
+      host: example.com
+      serviceName: varnish
+    mercure:
+      host: mercure.example.com
+      serviceName: mercure
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
