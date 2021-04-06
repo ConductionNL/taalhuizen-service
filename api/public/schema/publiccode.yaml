@@ -1,13 +1,13 @@
 publiccodeYmlVersion: "0.2"
 
-name: ce
+name: taalhuizen-service
 applicationSuite: commonground
-url: "https://github.com/ConductionNL/commonground-example"
-landingURL: "ce.zaakonline.nl"
+url: "https://github.com/ConductionNL/taalhuizen-service"
+landingURL: "taal.zaakonline.nl"
 isBasedOn: "https://github.com/ConductionNL/Proto-component-commonground.git"
 softwareVersion: "V1.0"
-releaseDate: "2021-17-02"
-logo: ce.zaakonline.nl
+releaseDate: "2021-06-04"
+logo: https://conductionnl.github.io/images/conduction_avatar_blue_on_transparant.svg
 monochromeLogo: img/logo-mono.svg
 
 inputTypes:
@@ -40,7 +40,7 @@ usedBy:
     - Gemeente Hoorn
 
 
-roadmap: "https://github.com/ConductionNL/commonground-example/blob/master/ROADMAP.md"
+roadmap: "https://github.com/ConductionNL/taalhuizen-service/blob/master/ROADMAP.md"
 
 developmentStatus: development
 
@@ -69,8 +69,8 @@ description:
         #          on multiple rows. You should note what the software
         #          is and why one should need it.
 
-        documentation: "https://github.com/ConductionNL/commonground-example/blob/master/README.md"
-        apiDocumentation: "ce.zaakonline.nl"
+        documentation: "https://github.com/ConductionNL/taalhuizen-service/blob/master/README.md"
+        apiDocumentation: "taal.zaakonline.nl"
 #
 #    features:
 #       - Very important feature
@@ -119,5 +119,5 @@ dependsOn:
 
 installations:
     - type: helm
-      url: "https://raw.githubusercontent.com/ConductionNL/commonground-example/master/api/helm/"
+      url: "https://raw.githubusercontent.com/ConductionNL/taalhuizen-service/master/api/helm/"
 
