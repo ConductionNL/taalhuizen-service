@@ -76,15 +76,15 @@ jobs:
             - name: Run Postman Tests
               if: contains( github.ref, 'master' ) == false && contains( github.base_ref, 'master' ) == false
               run: newman run api/public/schema/*.postman_collection.json
-#            - name: Add docker tags
-#              if: github.ref == 'refs/heads/master'
-#              run: |
-#                  images=$(docker-compose images -q | xargs docker inspect --format='{{ index .RepoTags 0}}' | cut -d':' -f1 | grep $APP_NAME)
-#                  for image in $images
-#                  do
-#                    docker tag "${image}":latest "${image}":"${APP_BUILD}"
-#                  done
-#                  echo 'IMAGES=$images' >> $GITHUB_ENV
+            - name: Add docker tags
+              if: github.ref == 'refs/heads/master'
+              run: |
+                  images=$(docker-compose images -q | xargs docker inspect --format='{{ index .RepoTags 0}}' | cut -d':' -f1 | grep $APP_NAME)
+                  for image in $images
+                  do
+                    docker tag "${image}":latest "${image}":"${APP_BUILD}"
+                  done
+                  echo 'IMAGES=$images' >> $GITHUB_ENV
             - name: Show all images
               run: docker images
             - name: Login to DockerHub Registry
