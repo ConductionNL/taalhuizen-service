@@ -2,20 +2,12 @@
 
 namespace App\Service;
 
-use App\Entity\Attribute;
 use App\Entity\Example;
-use App\Entity\ObjectEntity;
-use App\Entity\Value;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use Doctrine\Common\Collections\Collection;
 
-class ObjectEntityService
+class ExampleService
 {
     private $em;
     private $commonGroundService;
