@@ -3,21 +3,24 @@
 # Declare variables to be passed into your templates.
 
 settings:
-  registryBase: docker.io/conduction
-  projectName: taal
-  name: taal
+  registryBase: ghcr.io/conductionnl
+  projectName: taalhuizen-service
+  name: taalhuizen-service
   version: V1.0
-  description: 'Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.'
-  repro: https://github.com/ConductionNL/commonground-example
+  majorVersion: v1
+  description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&amp;#039;'
+  repro: https://github.com/ConductionNL/taalhuizen-service
   demo: taal.zaakonline.nl
-  domain: conduction.nl
-  subdomain: taal
+  domain: taalhuizen-bisc.commonground.nu
+  subdomain: taalhuizen-service
   subpath: taal
   subpathRouting: true
   env: dev
   web: false
   debug: 1
   cache: false
+  type: component
+  id: 
   replicaCount: 1
   corsAllowOrigin: ['*']
   trustedHosts: '^.+$'
@@ -37,7 +40,7 @@ settings:
   archiveEnabled: false
 
 security:
-  applicationKey: "45c1a4b6-59d3-4a6e-86bf-88a872f35845"
+  applicationKey: "b820b925-b4c3-4d48-8035-248ccc628ea7"
 
 
 php:
@@ -48,6 +51,18 @@ php:
   env: prod
   secret: ""
   replicaCount: 2
+
+redis:
+  cluster:
+    enabled: false
+  redisPort: 6379
+  usePassword: false
+  enabled: false
+commonground:
+  eherkenning:
+    location: https://taalhuizen-bisc.commonground.nu/eherkenning
+  digispoof:
+    location: https://taalhuizen-bisc.commonground.nu/digispoof
 
 nginx:
   repository: docker.io/conduction/protocomponent-nginx

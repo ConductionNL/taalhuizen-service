@@ -1,18 +1,18 @@
 openapi: 3.0.2
 info:
-  title: 'Commonground Example'
+  title: ''
   version: V1.0
   description: |
     API Details
-    - Component: Commonground Example
-    - Reference: ce
+    - Component: 
+    - Reference: taalhuizen-service
     - Enviroment: dev
     - Version: V1.0
-    - Repository: [online](https://github.com/ConductionNL/commonground-example) / [zip](https://github.com/ConductionNL/commonground-example/archive/master.zip)
-    - Docker Image: [online](https://hub.docker.com/repository/docker/conduction/ce-php) 
-    - Datamodel: [postman](schema/ce.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
+    - Repository: [online](https://github.com/ConductionNL/taalhuizen-service) / [zip](https://github.com/ConductionNL/taalhuizen-service/archive/master.zip)
+    - Docker Image: [online]() 
+    - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
     
-    Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.         
+    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;         
     
 paths:
   /audit_trails:
@@ -3131,12 +3131,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-02-17 19:20:54'
+        example: '2021-04-06 09:42:45'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-02-17 19:20:54'
+        example: '2021-04-06 09:42:45'
     required: []
   ChangeLog-write:
     properties:
@@ -3250,12 +3250,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-02-17 19:20:54'
+        example: '2021-04-06 09:42:45'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-02-17 19:20:54'
+        example: '2021-04-06 09:42:45'
     required: []
   AuditTrail-write:
     properties:
@@ -3302,8 +3302,8 @@ securityDefinitions:
 host: irc.zaakonline.nl
 servers:
   -
-    name: conduction.nl
-    url: ce.dev.conduction.nl
+    name: taalhuizen-bisc.commonground.nu
+    url: taalhuizen-service.dev.taalhuizen-bisc.commonground.nu
 externalDocs:
   -
     description: 'OAS Documentatie'
