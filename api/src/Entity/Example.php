@@ -3,41 +3,49 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ExampleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
- * @ApiResource()
- * @ORM\Entity(repositoryClass=ExampleRepository::class)
+ * @ApiResource(
+ *      collectionOperations={
+ *            "get",
+ *            "post",
+ *      }
+ * )
  */
 class Example
 {
     /**
+     * @var UuidInterface The UUID identifier of this resource
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=225)
+     * @ORM\Column(type="json", length=255)
      */
-    private $name;
+    private ?array $data;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function setData(?array $data): self
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+        $this->data = $data;
 
         return $this;
+    }
+    public function getData(): ?array
+    {
+        return $this->data;
     }
 }
