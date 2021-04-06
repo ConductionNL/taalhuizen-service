@@ -3,7 +3,7 @@ entries:
   ce:
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-04-06T08:51:20.1050262Z"
+    created: "2021-04-06T08:56:01.6894669Z"
     description: Naast deze JSON rest API is er ook een [graphql](/graphql) interface
       beschikbaar.
     digest: 92dc5ca112251e2a60e73a86be65b6a931fd918876eeb42d2a21d5260130cb01
@@ -29,7 +29,7 @@ entries:
   pc:
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-04-06T08:51:20.1232714Z"
+    created: "2021-04-06T08:56:01.7013779Z"
     description: Naast deze JSON rest API is er ook een [graphql](/graphql) interface
       beschikbaar.
     digest: c7147901327e4770036ade713906209f66fcc6c971f97db6ea945d8398123077
@@ -44,7 +44,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-04-06T08:51:20.1592147Z"
+    created: "2021-04-06T08:56:01.7491282Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -76,10 +76,10 @@ entries:
   taal:
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-04-06T08:51:20.1463382Z"
+    created: "2021-04-06T08:56:01.7397942Z"
     description: Naast deze JSON rest API is er ook een [graphql](/graphql) interface
       beschikbaar.
-    digest: dcc8455e8aee5b0d6111a97f238e47d2e10de2c974e0c268ea5c452865ba473a
+    digest: 07f43c7be0bfc8b665c3bcb5d0d63fec029450ec1fe837e09b94c08603af2487
     home: taal.zaakonline.nl
     icon: taal.zaakonline.nl
     keywords:
@@ -99,4 +99,4 @@ entries:
     urls:
     - taal-0.1.0.tgz
     version: 0.1.0
-generated: "2021-04-06T08:51:20.0870907Z"
+generated: "2021-04-06T08:56:01.6758866Z"
