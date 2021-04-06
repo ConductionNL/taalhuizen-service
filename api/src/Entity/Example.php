@@ -8,9 +8,9 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ApiResource(
- *      collectionOperations={
- *            "get",
- *            "post",
+ *     collectionOperations={
+ *          "get",
+ *          "post",
  *      }
  * )
  */
