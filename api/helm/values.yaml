@@ -4,15 +4,15 @@
 
 settings:
   registryBase: docker.io/conduction
-  projectName: ce
-  name: ce
+  projectName: taal
+  name: taal
   version: V1.0
   description: 'Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.'
   repro: https://github.com/ConductionNL/commonground-example
-  demo: ce.zaakonline.nl
+  demo: taal.zaakonline.nl
   domain: conduction.nl
-  subdomain: ce
-  subpath: ce
+  subdomain: taal
+  subpath: taal
   subpathRouting: true
   env: dev
   web: false
