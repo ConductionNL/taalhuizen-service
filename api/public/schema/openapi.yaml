@@ -10044,26 +10044,39 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        description:
+        learningNeedDescription:
           type: string
-        motivation:
+        learningNeedMotivation:
           type: string
-        learningNeedVerb:
+        desiredOutComesGoal:
           type: string
-        learningNeedSubject:
+        desiredOutComesTopic:
           type: string
-        learningNeedApplication:
+        desiredOutComesTopicOther:
           type: string
-        learningNeedLevel:
+        desiredOutComesApplication:
           type: string
-        desiredOffer:
+        desiredOutComesApplicationOther:
           type: string
-        advisedOffer:
+        desiredOutComesLevel:
           type: string
-        differenceDesireAdvice:
+        desiredOutComesLevelOther:
           type: string
-        agreementsNote:
+        offerDesiredOffer:
           type: string
+        offerAdvisedOffer:
+          type: string
+        offerDifference:
+          type: string
+        offerDifferenceOther:
+          type: string
+        offerEngagements:
+          type: string
+          nullable: true
+        participations:
+          type: array
+          items:
+            type: string
           nullable: true
     'LearningNeed:jsonld':
       type: object
@@ -10083,26 +10096,39 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        description:
+        learningNeedDescription:
           type: string
-        motivation:
+        learningNeedMotivation:
           type: string
-        learningNeedVerb:
+        desiredOutComesGoal:
           type: string
-        learningNeedSubject:
+        desiredOutComesTopic:
           type: string
-        learningNeedApplication:
+        desiredOutComesTopicOther:
           type: string
-        learningNeedLevel:
+        desiredOutComesApplication:
           type: string
-        desiredOffer:
+        desiredOutComesApplicationOther:
           type: string
-        advisedOffer:
+        desiredOutComesLevel:
           type: string
-        differenceDesireAdvice:
+        desiredOutComesLevelOther:
           type: string
-        agreementsNote:
+        offerDesiredOffer:
           type: string
+        offerAdvisedOffer:
+          type: string
+        offerDifference:
+          type: string
+        offerDifferenceOther:
+          type: string
+        offerEngagements:
+          type: string
+          nullable: true
+        participations:
+          type: array
+          items:
+            type: string
           nullable: true
     Participation:
       type: object
@@ -11007,12 +11033,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 12:01:18'
+        example: '2021-04-08 14:06:15'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 12:01:18'
+        example: '2021-04-08 14:06:15'
     required: []
   ChangeLog-write:
     properties:
@@ -11126,12 +11152,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 12:01:18'
+        example: '2021-04-08 14:06:15'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 12:01:18'
+        example: '2021-04-08 14:06:15'
     required: []
   AuditTrail-write:
     properties:
