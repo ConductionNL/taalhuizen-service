@@ -28,12 +28,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Employee
 {
     /**
-     * @var UuidInterface The UUID identifier of this Employee.
+     * @var UuidInterface The UUID identifier of this resource
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Assert\Uuid
-     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -447,7 +445,7 @@ class Employee
      */
     private $employeeType;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

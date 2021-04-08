@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\DocumentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -39,7 +40,7 @@ class Document
      */
     private $resource;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
