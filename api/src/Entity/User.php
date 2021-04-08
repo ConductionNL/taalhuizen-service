@@ -5,6 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -13,12 +17,10 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
-     *@var UuidInterface The UUID identifier of this User.
+     * @var UuidInterface The UUID identifier of this resource
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Assert\Uuid
-     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -32,7 +34,6 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -45,14 +46,13 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $password;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
