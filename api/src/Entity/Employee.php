@@ -2,13 +2,28 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\EmployeeRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
+ * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
  */
 class Employee
 {
@@ -33,6 +48,7 @@ class Employee
      *     max = 255
      * )
      * @Gedmo\Versioned
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -57,6 +73,7 @@ class Employee
      *     max = 255
      * )
      * @Gedmo\Versioned
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -93,6 +110,7 @@ class Employee
      *     max = 2550
      * )
      * @Gedmo\Versioned
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -109,6 +127,8 @@ class Employee
 
     /**
      * @var array The Availability of this Employee.
+     *
+     * @example An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening
      *
      * @Gedmo\Versioned
      * @Groups({"read","write"})
@@ -420,6 +440,21 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $relevantAdditions;
+
+    /**
+     * @var string The Employee Type of this employee. **Taalhuis**, **Aanbieder**
+     *
+     * @example Taalhuis
+     *
+     * @Assert\Choice(
+     *      {"Taalhuis","Aanbieder"}
+     * )
+     * @Gedmo\Versioned
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $employeeType;
 
     public function getId(): ?int
     {
@@ -830,6 +865,18 @@ class Employee
     public function setRelevantAdditions(?string $relevantAdditions): self
     {
         $this->relevantAdditions = $relevantAdditions;
+
+        return $this;
+    }
+
+    public function getEmployeeType(): ?string
+    {
+        return $this->employeeType;
+    }
+
+    public function setEmployeeType(?string $employeeType): self
+    {
+        $this->employeeType = $employeeType;
 
         return $this;
     }
