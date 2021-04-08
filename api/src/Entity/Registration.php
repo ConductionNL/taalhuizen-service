@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RegistrationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -105,7 +106,7 @@ class Registration
      */
     private $note;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

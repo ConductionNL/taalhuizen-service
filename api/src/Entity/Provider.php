@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProviderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -65,7 +66,7 @@ class Provider
      */
     private $email;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

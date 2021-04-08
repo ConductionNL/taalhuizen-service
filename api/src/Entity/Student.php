@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -119,7 +120,7 @@ class Student
      */
     private $contactPreference;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
