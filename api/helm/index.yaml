@@ -5,7 +5,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-04-08T11:59:53.7213187Z"
+    created: "2021-04-08T11:59:14.4112142Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -37,10 +37,10 @@ entries:
   taalhuizen-service:
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-04-08T11:59:53.708343Z"
+    created: "2021-04-08T11:59:14.3864585Z"
     description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql)
       interface beschikbaar.&amp;#039;'
-    digest: 87912a9d2b31d5436322c0694ed26fd479f27820389bd06fca9cd63472d2d44a
+    digest: 1e1cd927d1425499d18154c77a3d9616f2784cae2345c07960da22e9f3aad42f
     home: https://www.conduction.nl
     icon: https://conductionnl.github.io/images/conduction_avatar_blue_on_transparant.svg
     keywords:
@@ -60,4 +60,4 @@ entries:
     urls:
     - taalhuizen-service-0.1.0.tgz
     version: 0.1.0
-generated: "2021-04-08T11:59:53.649476Z"
+generated: "2021-04-08T11:59:14.2955798Z"
