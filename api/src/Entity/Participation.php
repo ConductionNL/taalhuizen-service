@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -36,6 +37,7 @@ class Participation
     private $offerName;
 
     /**
+     * @Assert\Choice({"Taal", "Rekenen", "Digitale vaardigheden", "Overige"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $courseType;
@@ -66,6 +68,7 @@ class Participation
     private $formality;
 
     /**
+     * @Assert\Choice({"Individueel", "In een groep"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $groupFormation;

@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LearningNeedRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -13,9 +15,14 @@ use Doctrine\ORM\Mapping as ORM;
 class LearningNeed
 {
     /**
+     * @var UuidInterface The UUID identifier of this resource
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
 
@@ -60,6 +67,7 @@ class LearningNeed
     private $advisedOffer;
 
     /**
+     * @Assert\Choice({"Nee, er is geen verschil", "Ja, want: niet aangeboden binnen bereisbare afstand", "Ja, want: wachtlijst", "Ja, want:anders"})
      * @ORM\Column(type="string", length=255)
      */
     private $differenceDesireAdvice;

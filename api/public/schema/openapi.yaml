@@ -7989,12 +7989,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 09:52:49'
+        example: '2021-04-08 11:21:37'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 09:52:49'
+        example: '2021-04-08 11:21:37'
     required: []
   ChangeLog-write:
     properties:
@@ -8108,12 +8108,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 09:52:49'
+        example: '2021-04-08 11:21:37'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 09:52:49'
+        example: '2021-04-08 11:21:37'
     required: []
   AuditTrail-write:
     properties:
@@ -8156,6 +8156,12 @@ tags:
       
   -
     name: Taalhuis
+    description: |
+      
+      
+      
+  -
+    name: Student
     description: |
       
       
