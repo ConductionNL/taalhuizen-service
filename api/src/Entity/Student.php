@@ -74,6 +74,51 @@ class Student
      */
     private $birthday;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $street;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $houseNumber;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $houseNumberSuffix;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $postalCode;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $locality;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $telephone;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contactTelephone;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contactPreference;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -171,6 +216,114 @@ class Student
     public function setBirthday(?\DateTimeInterface $birthday): self
     {
         $this->birthday = $birthday;
+
+        return $this;
+    }
+
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function setStreet(?string $street): self
+    {
+        $this->street = $street;
+
+        return $this;
+    }
+
+    public function getHouseNumber(): ?string
+    {
+        return $this->houseNumber;
+    }
+
+    public function setHouseNumber(?string $houseNumber): self
+    {
+        $this->houseNumber = $houseNumber;
+
+        return $this;
+    }
+
+    public function getHouseNumberSuffix(): ?string
+    {
+        return $this->houseNumberSuffix;
+    }
+
+    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
+    {
+        $this->houseNumberSuffix = $houseNumberSuffix;
+
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function setPostalCode(?string $postalCode): self
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    public function getLocality(): ?string
+    {
+        return $this->locality;
+    }
+
+    public function setLocality(?string $locality): self
+    {
+        $this->locality = $locality;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getContactTelephone(): ?string
+    {
+        return $this->contactTelephone;
+    }
+
+    public function setContactTelephone(?string $contactTelephone): self
+    {
+        $this->contactTelephone = $contactTelephone;
+
+        return $this;
+    }
+
+    public function getContactPreference(): ?string
+    {
+        return $this->contactPreference;
+    }
+
+    public function setContactPreference(?string $contactPreference): self
+    {
+        $this->contactPreference = $contactPreference;
 
         return $this;
     }
