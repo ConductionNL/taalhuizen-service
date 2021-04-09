@@ -10139,47 +10139,66 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        provider:
+        status:
           type: string
+          nullable: true
+        aanbiederId:
+          type: string
+          nullable: true
+        aanbiederName:
+          type: string
+          nullable: true
+        aanbiederNote:
+          type: string
+          nullable: true
         offerName:
           type: string
           nullable: true
-        courseType:
+        offerCourse:
           type: string
           nullable: true
-        learningNeedVerb:
+        outComesGoal:
           type: string
           nullable: true
-        learningNeedSubject:
+        outComesTopic:
           type: string
           nullable: true
-        learningNeedApplication:
+        outComesTopicOther:
           type: string
           nullable: true
-        learningNeedLevel:
+        outComesApplication:
           type: string
           nullable: true
-        formality:
+        outComesApplicationOther:
+          type: string
+          nullable: true
+        outComesLevel:
+          type: string
+          nullable: true
+        outComesLevelOther:
+          type: string
+          nullable: true
+        detailsIsFormal:
           type: boolean
           nullable: true
-        groupFormation:
+        detailsGroupFormation:
           type: string
           nullable: true
-        hoursPerParticipation:
-          type: integer
+        detailsTotalClassHours:
+          type: number
           nullable: true
-        certificate:
+        detailsCertificateWillBeAwarded:
           type: boolean
           nullable: true
-        startDate:
+        detailsStartDate:
           type: string
           format: date-time
           nullable: true
-        endDate:
+        detailsEndDate:
           type: string
           format: date-time
           nullable: true
-        agreementsNote:
+        detailsEngagements:
           type: string
           nullable: true
     'Participation:jsonld':
@@ -10200,47 +10219,66 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        provider:
+        status:
           type: string
+          nullable: true
+        aanbiederId:
+          type: string
+          nullable: true
+        aanbiederName:
+          type: string
+          nullable: true
+        aanbiederNote:
+          type: string
+          nullable: true
         offerName:
           type: string
           nullable: true
-        courseType:
+        offerCourse:
           type: string
           nullable: true
-        learningNeedVerb:
+        outComesGoal:
           type: string
           nullable: true
-        learningNeedSubject:
+        outComesTopic:
           type: string
           nullable: true
-        learningNeedApplication:
+        outComesTopicOther:
           type: string
           nullable: true
-        learningNeedLevel:
+        outComesApplication:
           type: string
           nullable: true
-        formality:
+        outComesApplicationOther:
+          type: string
+          nullable: true
+        outComesLevel:
+          type: string
+          nullable: true
+        outComesLevelOther:
+          type: string
+          nullable: true
+        detailsIsFormal:
           type: boolean
           nullable: true
-        groupFormation:
+        detailsGroupFormation:
           type: string
           nullable: true
-        hoursPerParticipation:
-          type: integer
+        detailsTotalClassHours:
+          type: number
           nullable: true
-        certificate:
+        detailsCertificateWillBeAwarded:
           type: boolean
           nullable: true
-        startDate:
+        detailsStartDate:
           type: string
           format: date-time
           nullable: true
-        endDate:
+        detailsEndDate:
           type: string
           format: date-time
           nullable: true
-        agreementsNote:
+        detailsEngagements:
           type: string
           nullable: true
     Provider:
@@ -10441,12 +10479,12 @@ components:
           description: '(CIR) "Nee, omdat", "Ja" or "Volgt momenteel inburgering"'
           type: string
           nullable: true
-        lastName:
+        familyName:
           type: string
-        prefixName:
+        additionalName:
           type: string
           nullable: true
-        firstName:
+        givenName:
           type: string
         gender:
           type: string
@@ -10480,6 +10518,30 @@ components:
           type: string
           nullable: true
         contactPreference:
+          type: string
+          nullable: true
+        countryOfOrigin:
+          type: string
+          nullable: true
+        nativeLanguage:
+          type: string
+          nullable: true
+        otherLanguages:
+          type: string
+          nullable: true
+        familyComposition:
+          type: string
+          nullable: true
+        numberOfChildren:
+          type: string
+          nullable: true
+        dateOfBirthChildren:
+          type: string
+          nullable: true
+        referredBy:
+          type: string
+          nullable: true
+        referredByEmail:
           type: string
           nullable: true
     'Student:jsonld':
@@ -10511,12 +10573,12 @@ components:
           description: '(CIR) "Nee, omdat", "Ja" or "Volgt momenteel inburgering"'
           type: string
           nullable: true
-        lastName:
+        familyName:
           type: string
-        prefixName:
+        additionalName:
           type: string
           nullable: true
-        firstName:
+        givenName:
           type: string
         gender:
           type: string
@@ -10550,6 +10612,30 @@ components:
           type: string
           nullable: true
         contactPreference:
+          type: string
+          nullable: true
+        countryOfOrigin:
+          type: string
+          nullable: true
+        nativeLanguage:
+          type: string
+          nullable: true
+        otherLanguages:
+          type: string
+          nullable: true
+        familyComposition:
+          type: string
+          nullable: true
+        numberOfChildren:
+          type: string
+          nullable: true
+        dateOfBirthChildren:
+          type: string
+          nullable: true
+        referredBy:
+          type: string
+          nullable: true
+        referredByEmail:
           type: string
           nullable: true
     Taalhuis:
@@ -11033,12 +11119,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 14:06:15'
+        example: '2021-04-09 07:42:11'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 14:06:15'
+        example: '2021-04-09 07:42:11'
     required: []
   ChangeLog-write:
     properties:
@@ -11152,12 +11238,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 14:06:15'
+        example: '2021-04-09 07:42:11'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 14:06:15'
+        example: '2021-04-09 07:42:11'
     required: []
   AuditTrail-write:
     properties:
