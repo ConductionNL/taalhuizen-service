@@ -45,6 +45,7 @@ class Student
 
     /**
      * @var Datetime (CIR = civicIntegrationRequirement)
+     *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $CIRCompletionDate;
@@ -52,17 +53,17 @@ class Student
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $lastName;
+    private $familyName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $prefixName;
+    private $additionalName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $firstName;
+    private $givenName;
 
     /**
      * @Assert\Choice({"Man", "Vrouw", "X"})
@@ -120,6 +121,47 @@ class Student
      */
     private $contactPreference;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $countryOfOrigin;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $nativeLanguage;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $otherLanguages;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $familyComposition;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $numberOfChildren;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $dateOfBirthChildren;
+
+    /**
+     * @Assert\Choice({"UWV", "Sociale dienst", "Bibliotheek", "Welzijnswerk", "Buurt/dorpsteam", "Vrijwilligersorganisatie", "Taalaanbieder", "Anders nl:"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $referredBy;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $referredByEmail;
+
     public function getId(): Uuid
     {
         return $this->id;
@@ -161,38 +203,38 @@ class Student
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getFamilyName(): ?string
     {
-        return $this->lastName;
+        return $this->familyName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setFamilyName(string $familyName): self
     {
-        $this->lastName = $lastName;
+        $this->familyName = $familyName;
 
         return $this;
     }
 
-    public function getPrefixName(): ?string
+    public function getAdditionalName(): ?string
     {
-        return $this->prefixName;
+        return $this->additionalName;
     }
 
-    public function setPrefixName(?string $prefixName): self
+    public function setAdditionalName(?string $additionalName): self
     {
-        $this->prefixName = $prefixName;
+        $this->additionalName = $additionalName;
 
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getGivenName(): ?string
     {
-        return $this->firstName;
+        return $this->givenName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setGivenName(string $givenName): self
     {
-        $this->firstName = $firstName;
+        $this->givenName = $givenName;
 
         return $this;
     }
@@ -325,6 +367,102 @@ class Student
     public function setContactPreference(?string $contactPreference): self
     {
         $this->contactPreference = $contactPreference;
+
+        return $this;
+    }
+
+    public function getCountryOfOrigin(): ?string
+    {
+        return $this->countryOfOrigin;
+    }
+
+    public function setCountryOfOrigin(?string $countryOfOrigin): self
+    {
+        $this->countryOfOrigin = $countryOfOrigin;
+
+        return $this;
+    }
+
+    public function getNativeLanguage(): ?string
+    {
+        return $this->nativeLanguage;
+    }
+
+    public function setNativeLanguage(?string $nativeLanguage): self
+    {
+        $this->nativeLanguage = $nativeLanguage;
+
+        return $this;
+    }
+
+    public function getOtherLanguages(): ?string
+    {
+        return $this->otherLanguages;
+    }
+
+    public function setOtherLanguages(?string $otherLanguages): self
+    {
+        $this->otherLanguages = $otherLanguages;
+
+        return $this;
+    }
+
+    public function getFamilyComposition(): ?string
+    {
+        return $this->familyComposition;
+    }
+
+    public function setFamilyComposition(?string $familyComposition): self
+    {
+        $this->familyComposition = $familyComposition;
+
+        return $this;
+    }
+
+    public function getNumberOfChildren(): ?string
+    {
+        return $this->numberOfChildren;
+    }
+
+    public function setNumberOfChildren(?string $numberOfChildren): self
+    {
+        $this->numberOfChildren = $numberOfChildren;
+
+        return $this;
+    }
+
+    public function getDateOfBirthChildren(): ?string
+    {
+        return $this->dateOfBirthChildren;
+    }
+
+    public function setDateOfBirthChildren(?string $dateOfBirthChildren): self
+    {
+        $this->dateOfBirthChildren = $dateOfBirthChildren;
+
+        return $this;
+    }
+
+    public function getReferredBy(): ?string
+    {
+        return $this->referredBy;
+    }
+
+    public function setReferredBy(?string $referredBy): self
+    {
+        $this->referredBy = $referredBy;
+
+        return $this;
+    }
+
+    public function getReferredByEmail(): ?string
+    {
+        return $this->referredByEmail;
+    }
+
+    public function setReferredByEmail(?string $referredByEmail): self
+    {
+        $this->referredByEmail = $referredByEmail;
 
         return $this;
     }
