@@ -30,7 +30,7 @@ class EAVService
         return $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
     }
 
-    public function getObject($entityName, $componentCode = 'eav', $self = null, $eavId = null) {
+    public function getObject($entityName, $self = null, $componentCode = 'eav', $eavId = null) {
         $body['doGet'] = true;
         $body['componentCode'] = $componentCode;
         $body['entityName'] = $entityName;
@@ -39,7 +39,7 @@ class EAVService
         } elseif (isset($eavId)) {
             $body['objectEntityId'] = $eavId;
         } else {
-            return 'a get to the eav component needs a @self or an eavId!';
+            return '[EAVService] a get to the eav component needs a @self or an eavId!';
         }
         return $this->commonGroundService->createResource($body,['component' => 'eav', 'type' => 'object_communications']);
     }

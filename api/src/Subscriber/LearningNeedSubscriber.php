@@ -51,13 +51,13 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         // Handle a post collection
         if($route == 'api_learning_needs_post_collection' and $resource instanceof LearningNeed){
             if ($resource->getDesiredOutComesTopic() == 'OTHER' && !$resource->getDesiredOutComesTopicOther()) {
-                $result['error'] = 'desiredOutComesTopicOther is not set!';
+                $result['error'] = 'Invalid request, desiredOutComesTopicOther is not set!';
             } elseif($resource->getDesiredOutComesApplication() == 'OTHER' && !$resource->getDesiredOutComesApplicationOther()) {
-                $result['error'] = 'desiredOutComesApplicationOther is not set!';
+                $result['error'] = 'Invalid request, desiredOutComesApplicationOther is not set!';
             } elseif ($resource->getDesiredOutComesLevel() == 'OTHER' && !$resource->getDesiredOutComesLevelOther()) {
-                $result['error'] = 'desiredOutComesLevelOther is not set!';
+                $result['error'] = 'Invalid request, desiredOutComesLevelOther is not set!';
             } elseif ($resource->getOfferDifference() == 'YES_OTHER' && !$resource->getOfferDifferenceOther()) {
-                $result['error'] = 'offerDifferenceOther is not set!';
+                $result['error'] = 'Invalid request, offerDifferenceOther is not set!';
             } else {
                 $learningNeed['description'] = $resource->getLearningNeedDescription();
                 $learningNeed['motivation'] = $resource->getLearningNeedMotivation();
@@ -83,11 +83,22 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 if ($resource->getOfferEngagements()) {
                     $learningNeed['offerEngagements'] = $resource->getOfferEngagements();
                 }
+                // Save the learningNeed in EAV
                 $result['result'] = $this->eavService->saveObject($learningNeed, 'learning_needs');
+
+                // Save the participant in EAV with the learningNeed connected to it todo:
             }
         } else {
             // Handle a get collection
-            $result['result'] = 'This is a get, this is not handled yet in the subscriber';
+            if ($event->getRequest()->query->get('@eav')) {
+                // Get the learningNeed from EAV
+                $result['result'] = $this->eavService->getObject('learning_needs', $event->getRequest()->query->get('@eav'));
+            } elseif ($event->getRequest()->query->get('eavId')) {
+                // Get the learningNeed from EAV
+                $result['result'] = $this->eavService->getObject('learning_needs', null, 'eav', $event->getRequest()->query->get('eavId'));
+            } else {
+                $result['error'] = 'Please give a @eav or eavId query param!';
+            }
         }
 
         if(isset($result['error'])) {
