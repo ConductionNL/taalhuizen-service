@@ -27,7 +27,9 @@ class EAVService
         } elseif (isset($eavId)) {
             $body['objectEntityId'] = $eavId;
         }
-        return $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
+        $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
+        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
+        return $result;
     }
 
     public function getObject($entityName, $self = null, $componentCode = 'eav', $eavId = null) {
@@ -41,6 +43,8 @@ class EAVService
         } else {
             return '[EAVService] a get to the eav component needs a @self or an eavId!';
         }
-        return $this->commonGroundService->createResource($body,['component' => 'eav', 'type' => 'object_communications']);
+        $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
+        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
+        return $result;
     }
 }
