@@ -7,6 +7,7 @@ use App\Repository\LearningNeedRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,83 +29,105 @@ class LearningNeed
     private $id;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $learningNeedDescription;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $learningNeedMotivation;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $desiredOutComesGoal;
 
     /**
+     * @Groups({"write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $desiredOutComesTopic;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesTopicOther;
 
     /**
+     * @Groups({"write"})
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $desiredOutComesApplication;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesApplicationOther;
 
     /**
+     * @Groups({"write"})
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $desiredOutComesLevel;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesLevelOther;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $offerDesiredOffer;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $offerAdvisedOffer;
 
     /**
-     * @Assert\Choice({"Nee, er is geen verschil", "Ja, want: niet aangeboden binnen bereisbare afstand", "Ja, want: wachtlijst", "Ja, want:anders"})
+     * @Groups({"write"})
+     * @Assert\Choice({"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $offerDifference;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $offerDifferenceOther;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $offerEngagements;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="array", nullable=true)
      */
     private $participations = [];
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Url
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $participant;
 
     public function getId(): Uuid
     {
@@ -287,6 +310,18 @@ class LearningNeed
     public function setParticipations(?array $participations): self
     {
         $this->participations = $participations;
+
+        return $this;
+    }
+
+    public function getParticipant(): ?string
+    {
+        return $this->participant;
+    }
+
+    public function setParticipant(?string $participant): self
+    {
+        $this->participant = $participant;
 
         return $this;
     }
