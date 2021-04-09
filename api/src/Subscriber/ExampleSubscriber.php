@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\Response;
 
+// TODO:delete this subscriber
 class ExampleSubscriber implements EventSubscriberInterface
 {
     private $em;

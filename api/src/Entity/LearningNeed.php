@@ -49,7 +49,7 @@ class LearningNeed
     private $desiredOutComesTopic;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesTopicOther;
 
@@ -60,7 +60,7 @@ class LearningNeed
     private $desiredOutComesApplication;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesApplicationOther;
 
@@ -71,7 +71,7 @@ class LearningNeed
     private $desiredOutComesLevel;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $desiredOutComesLevelOther;
 
@@ -86,13 +86,13 @@ class LearningNeed
     private $offerAdvisedOffer;
 
     /**
-     * @Assert\Choice({"Nee, er is geen verschil", "Ja, want: niet aangeboden binnen bereisbare afstand", "Ja, want: wachtlijst", "Ja, want:anders"})
+     * @Assert\Choice({"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $offerDifference;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $offerDifferenceOther;
 
