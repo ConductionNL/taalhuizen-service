@@ -11606,6 +11606,17 @@ components:
           items:
             type: string
           nullable: true
+        topic:
+          type: string
+        application:
+          type: string
+        iscedEducationLevelCode:
+          type: string
+        availability:
+          type: array
+          items:
+            type: string
+          nullable: true
     'Group:jsonld':
       type: object
       description: ''
@@ -11661,6 +11672,17 @@ components:
           items:
             type: string
           nullable: true
+        topic:
+          type: string
+        application:
+          type: string
+        iscedEducationLevelCode:
+          type: string
+        availability:
+          type: array
+          items:
+            type: string
+          nullable: true
     LearningNeed:
       type: object
       description: ''
@@ -11680,14 +11702,17 @@ components:
           type: string
         desiredOutComesTopicOther:
           type: string
+          nullable: true
         desiredOutComesApplication:
           type: string
         desiredOutComesApplicationOther:
           type: string
+          nullable: true
         desiredOutComesLevel:
           type: string
         desiredOutComesLevelOther:
           type: string
+          nullable: true
         offerDesiredOffer:
           type: string
         offerAdvisedOffer:
@@ -11696,6 +11721,7 @@ components:
           type: string
         offerDifferenceOther:
           type: string
+          nullable: true
         offerEngagements:
           type: string
           nullable: true
@@ -11703,6 +11729,11 @@ components:
           type: array
           items:
             type: string
+          nullable: true
+        participant:
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
           nullable: true
     'LearningNeed:jsonld':
       type: object
@@ -11732,14 +11763,17 @@ components:
           type: string
         desiredOutComesTopicOther:
           type: string
+          nullable: true
         desiredOutComesApplication:
           type: string
         desiredOutComesApplicationOther:
           type: string
+          nullable: true
         desiredOutComesLevel:
           type: string
         desiredOutComesLevelOther:
           type: string
+          nullable: true
         offerDesiredOffer:
           type: string
         offerAdvisedOffer:
@@ -11748,6 +11782,7 @@ components:
           type: string
         offerDifferenceOther:
           type: string
+          nullable: true
         offerEngagements:
           type: string
           nullable: true
@@ -11755,6 +11790,11 @@ components:
           type: array
           items:
             type: string
+          nullable: true
+        participant:
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
           nullable: true
     Participation:
       type: object
@@ -12721,6 +12761,27 @@ definitions:
       - lastName
       - email
       - employeeType
+  LearningNeed-write:
+    properties:
+      learningNeedDescription: []
+      learningNeedMotivation: []
+      desiredOutComesGoal: []
+      desiredOutComesTopic: []
+      desiredOutComesTopicOther: []
+      desiredOutComesApplication: []
+      desiredOutComesApplicationOther: []
+      desiredOutComesLevel: []
+      desiredOutComesLevelOther: []
+      offerDesiredOffer: []
+      offerAdvisedOffer: []
+      offerDifference: []
+      offerDifferenceOther: []
+      offerEngagements: []
+      participations: []
+      participant:
+        type: string
+        format: url
+    required: []
   User-read:
     properties:
       email:
@@ -12785,12 +12846,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 14:45:17'
+        example: '2021-04-09 13:15:11'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 14:45:17'
+        example: '2021-04-09 13:15:11'
     required: []
   ChangeLog-write:
     properties:
@@ -12904,12 +12965,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-08 14:45:17'
+        example: '2021-04-09 13:15:11'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-08 14:45:17'
+        example: '2021-04-09 13:15:11'
     required: []
   AuditTrail-write:
     properties:

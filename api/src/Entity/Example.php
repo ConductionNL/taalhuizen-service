@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
+// TODO:delete this entity
 /**
  * @ApiResource(
  *     collectionOperations={
