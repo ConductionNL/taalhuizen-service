@@ -118,7 +118,7 @@ class Student
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity=Address::class, inversedBy="students")
+     * @ORM\ManyToMany(targetEntity=Address::class)
      */
     private $address;
 
