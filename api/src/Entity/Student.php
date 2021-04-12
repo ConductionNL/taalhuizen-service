@@ -122,7 +122,7 @@ class Student
      */
     private $address;
 
-    
+
     /**
      * @var string Telephone of this Student.
      *

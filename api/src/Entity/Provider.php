@@ -2,11 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProviderRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -27,45 +39,52 @@ class Provider
     private $id;
 
     /**
+     * @var string The Name of this Provider.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
      * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var Address The address of this Provider.
+     *
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\ManyToMany(targetEntity=address::class)
      */
-    private $street;
+    private $address;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumber;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumberSuffix;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $postalCode;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $locality;
-
-    /**
+     * @var string The Telephone of this Provider.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $phoneNumber;
 
     /**
+     * @var string The Email of this Provider.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
+
+    public function __construct()
+    {
+        $this->address = new ArrayCollection();
+    }
 
     public function getId(): Uuid
     {
@@ -164,6 +183,30 @@ class Provider
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|address[]
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(address $address): self
+    {
+        if (!$this->address->contains($address)) {
+            $this->address[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(address $address): self
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }

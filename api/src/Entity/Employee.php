@@ -49,7 +49,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $givenName;
 
     /**
      * @var string The PrefixName of this Employee.
@@ -60,7 +60,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $prefixName;
+    private $additionalName;
 
     /**
      * @var string The LastName of this Employee.
@@ -72,7 +72,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $lastName;
+    private $familyName;
 
     /**
      * @var string The Telephone of this Employee.
@@ -95,6 +95,15 @@ class Employee
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $availabilityNote;
+
+    /**
+     * @var Address The address of this Employee.
+     *
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\ManyToMany(targetEntity=Address::class)
+     */
+    private $address;
 
     /**
      * @var string The Email of this Employee.
@@ -148,68 +157,6 @@ class Employee
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $birthday;
-
-    /**
-     * @var string The Street of this Employee.
-     *
-     * @example appelstreet
-     *
-     *  @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $street;
-
-    /**
-     * @var string House number of this Employee.
-     *
-     * @example 8
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumber;
-
-    /**
-     * @var string House number suffix of this Employee.
-     *
-     * @example b
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumberSuffix;
-
-    /**
-     * @var string Postalcode of this Employee.
-     *
-     * @example 1234AB
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=15, nullable=true)
-     */
-    private $postalCode;
-
-    /**
-     * @var string Locality of this Employee.
-     *
-     * @example Oud-Zuid
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $locality;
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -413,43 +360,48 @@ class Employee
      */
     private $employeeType;
 
+    public function __construct()
+    {
+        $this->address = new ArrayCollection();
+    }
+
     public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getGivenName(): ?string
     {
-        return $this->name;
+        return $this->givenName;
     }
 
-    public function setName(string $name): self
+    public function setName(string $givenName): self
     {
-        $this->name = $name;
+        $this->givenName = $givenName;
 
         return $this;
     }
 
-    public function getPrefixName(): ?string
+    public function getAdditionalName(): ?string
     {
-        return $this->prefixName;
+        return $this->additionalName;
     }
 
-    public function setPrefixName(?string $prefixName): self
+    public function setAdditionalName(?string $additionalName): self
     {
-        $this->prefixName = $prefixName;
+        $this->additionalName = $additionalName;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getFamilyName(): ?string
     {
-        return $this->lastName;
+        return $this->familyName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setFamilyName(string $familyName): self
     {
-        $this->lastName = $lastName;
+        $this->familyName = $familyName;
 
         return $this;
     }
@@ -822,6 +774,30 @@ class Employee
     public function setEmployeeType(?string $employeeType): self
     {
         $this->employeeType = $employeeType;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Address[]
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->address->contains($address)) {
+            $this->address[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }
