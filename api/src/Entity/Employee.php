@@ -45,7 +45,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -58,7 +57,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -70,7 +68,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -83,7 +80,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -95,7 +91,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
@@ -107,7 +102,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -117,7 +111,6 @@ class Employee
     /**
      * @var array The Role of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="array")
      */
@@ -128,21 +121,19 @@ class Employee
      *
      * @example An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
      */
     private $availability = [];
 
     /**
-     * @var string The Gender of this Employee. **Male**, **Female**
-     * @Gedmo\Versioned
+     * @var string The Gender of this Employee. **Male**, **Female**, **X**
+     *
      * @example Male
      *
      * @Assert\Choice(
-     *      {"Male","Female"}
+     *      {"Male","Female","X"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -153,7 +144,6 @@ class Employee
      *
      * @example 15-03-2000
      *
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -167,7 +157,6 @@ class Employee
      *  @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -181,7 +170,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -195,7 +183,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -206,7 +193,6 @@ class Employee
      *
      * @example 1234AB
      *
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=15, nullable=true)
      */
@@ -220,7 +206,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -256,7 +241,6 @@ class Employee
      * @Assert\Choice(
      *      {"NT1","NT2"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -268,7 +252,6 @@ class Employee
      *  @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -280,7 +263,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
@@ -292,7 +274,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -301,7 +282,6 @@ class Employee
     /**
      * @var Datetime StartDate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -313,7 +293,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -322,7 +301,6 @@ class Employee
     /**
      * @var boolean Certificate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -331,7 +309,6 @@ class Employee
     /**
      * @var Datetime EndDate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -342,7 +319,6 @@ class Employee
      *
      * @example HBO
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -351,7 +327,6 @@ class Employee
     /**
      * @var boolean Certificate Course of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -363,7 +338,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -375,7 +349,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -389,7 +362,6 @@ class Employee
      * @Assert\Choice(
      *      {"Professional","Volunteer","Both"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -403,7 +375,6 @@ class Employee
      * @Assert\Choice(
      *      {"Professional","Volunteer","Both"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -412,7 +383,6 @@ class Employee
     /**
      * @var boolean Certificate Course of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -424,7 +394,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -438,7 +407,6 @@ class Employee
      * @Assert\Choice(
      *      {"Taalhuis","Aanbieder"}
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
