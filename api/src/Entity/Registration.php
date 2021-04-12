@@ -29,52 +29,62 @@ class Registration
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $applicantOrganization;
+    private $registrarOrganization;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $applicantName;
+    private $registrarName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $applicantEmail;
+    private $registarAdditionalName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $applicantTelephone;
+    private $registrarFamilyName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $taalhuis;
+    private $registrarEmail;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $lastName;
+    private $registrarTelephone;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $taalhuisId;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $studentGivenName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $prefixName;
+    private $studentAdditionalName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $firstName;
+    private $studentFamilyname;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $telephone;
+    private $studentTelephone;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    private $studentEmail;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -104,129 +114,153 @@ class Registration
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
-    private $note;
+    private $memo;
 
     public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getApplicantOrganization(): ?string
+    public function getRegistrarOrganization(): ?string
     {
-        return $this->applicantOrganization;
+        return $this->registrarOrganization;
     }
 
-    public function setApplicantOrganization(string $applicantOrganization): self
+    public function setRegistrarOrganization(string $applicantOrganization): self
     {
-        $this->applicantOrganization = $applicantOrganization;
+        $this->registrarOrganization = $applicantOrganization;
 
         return $this;
     }
 
-    public function getApplicantName(): ?string
+    public function getRegistrarName(): ?string
     {
-        return $this->applicantName;
+        return $this->registrarName;
     }
 
-    public function setApplicantName(string $applicantName): self
+    public function setRegistrarName(string $registrarName): self
     {
-        $this->applicantName = $applicantName;
+        $this->registrarName = $registrarName;
 
         return $this;
     }
 
-    public function getApplicantEmail(): ?string
+    public function getRegistarAdditionalName(): ?string
     {
-        return $this->applicantEmail;
+        return $this->registarAdditionalName;
     }
 
-    public function setApplicantEmail(string $applicantEmail): self
+    public function setRegistarAdditionalName($registarAdditionalName): self
     {
-        $this->applicantEmail = $applicantEmail;
+        $this->registarAdditionalName = $registarAdditionalName;
 
         return $this;
     }
 
-    public function getApplicantTelephone(): ?string
+    public function getRegistrarFamilyName(): ?string
     {
-        return $this->applicantTelephone;
+        return $this->registrarFamilyName;
     }
 
-    public function setApplicantTelephone(string $applicantTelephone): self
+    public function setRegistrarFamilyName($registrarFamilyName): self
     {
-        $this->applicantTelephone = $applicantTelephone;
+        $this->registrarFamilyName = $registrarFamilyName;
 
         return $this;
     }
 
-    public function getTaalhuis(): ?string
+    public function getRegistrarEmail(): ?string
     {
-        return $this->taalhuis;
+        return $this->registrarEmail;
     }
 
-    public function setTaalhuis(string $taalhuis): self
+    public function setRegistrarEmail(string $registrarEmail): self
     {
-        $this->taalhuis = $taalhuis;
+        $this->registrarEmail = $registrarEmail;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getRegistrarTelephone(): ?string
     {
-        return $this->lastName;
+        return $this->registrarTelephone;
     }
 
-    public function setLastName(string $lastName): self
+    public function setRegistrarTelephone(string $registrarTelephone): self
     {
-        $this->lastName = $lastName;
+        $this->registrarTelephone = $registrarTelephone;
 
         return $this;
     }
 
-    public function getPrefixName(): ?string
+    public function getTaalhuisId(): ?string
     {
-        return $this->prefixName;
+        return $this->taalhuisId;
     }
 
-    public function setPrefixName(?string $prefixName): self
+    public function setTaalhuisId(string $taalhuisId): self
     {
-        $this->prefixName = $prefixName;
+        $this->taalhuisId = $taalhuisId;
 
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getStudentGivenName(): ?string
     {
-        return $this->firstName;
+        return $this->studentGivenName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setStudentGivenName(string $studentGivenName): self
     {
-        $this->firstName = $firstName;
+        $this->studentGivenName = $studentGivenName;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getStudentAdditionalName(): ?string
     {
-        return $this->telephone;
+        return $this->studentAdditionalName;
     }
 
-    public function setTelephone(string $telephone): self
+    public function setStudentAdditionalName(?string $studentAdditionalName): self
     {
-        $this->telephone = $telephone;
+        $this->studentAdditionalName = $studentAdditionalName;
 
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getStudentFamilyname(): ?string
     {
-        return $this->email;
+        return $this->studentFamilyname;
     }
 
-    public function setEmail(string $email): self
+    public function setStudentFamilyname(string $studentFamilyname): self
     {
-        $this->email = $email;
+        $this->studentFamilyname = $studentFamilyname;
+
+        return $this;
+    }
+
+    public function getStudentTelephone(): ?string
+    {
+        return $this->studentTelephone;
+    }
+
+    public function setStudentTelephone(string $studentTelephone): self
+    {
+        $this->studentTelephone = $studentTelephone;
+
+        return $this;
+    }
+
+    public function getStudentEmail(): ?string
+    {
+        return $this->studentEmail;
+    }
+
+    public function setStudentEmail(string $studentEmail): self
+    {
+        $this->studentEmail = $studentEmail;
 
         return $this;
     }
@@ -291,14 +325,14 @@ class Registration
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getMemo(): ?string
     {
-        return $this->note;
+        return $this->memo;
     }
 
-    public function setNote(?string $note): self
+    public function setMemo(?string $memo): self
     {
-        $this->note = $note;
+        $this->memo = $memo;
 
         return $this;
     }
