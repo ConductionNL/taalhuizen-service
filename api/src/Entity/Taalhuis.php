@@ -59,7 +59,7 @@ class Taalhuis
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $telephone;
+    private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -143,14 +143,14 @@ class Taalhuis
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->telephone;
+        return $this->phoneNumber;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setPhoneNumber(?string $phoneNumber): self
     {
-        $this->telephone = $telephone;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }

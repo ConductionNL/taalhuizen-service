@@ -27,6 +27,7 @@ class Provider
     private $id;
 
     /**
+     * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -59,7 +60,7 @@ class Provider
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $telephone;
+    private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -143,14 +144,14 @@ class Provider
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->telephone;
+        return $this->phoneNumber;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setPhoneNumber(?string $phoneNumber): self
     {
-        $this->telephone = $telephone;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
