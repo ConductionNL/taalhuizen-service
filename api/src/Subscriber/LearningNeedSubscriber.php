@@ -77,7 +77,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 $result['errorMessage'] = 'Invalid request, offerDifferenceOther is not set!';
             } elseif ($resource->getStudentId() and !$this->commonGroundService->isResource($studentUrl)) {
                 $result['errorMessage'] = 'Invalid request, studentId is not an existing edu/participant!';
-            } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and $this->eavService->hasEavObject($learningNeedId)) {
+            } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and !$this->eavService->hasEavObject($learningNeedId)) {
                 $result['errorMessage'] = 'Invalid request, learningNeedId and/or learningNeedUrl is not an existing eav/objectEntity!';
             } else {
                 // No errors so lets continue... to: get all DTO info and save this in the correct places
