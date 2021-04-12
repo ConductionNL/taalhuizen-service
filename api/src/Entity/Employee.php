@@ -45,12 +45,11 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $givenName;
 
     /**
      * @var string The PrefixName of this Employee.
@@ -58,11 +57,10 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $prefixName;
+    private $additionalName;
 
     /**
      * @var string The LastName of this Employee.
@@ -70,12 +68,11 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $lastName;
+    private $familyName;
 
     /**
      * @var string The Telephone of this Employee.
@@ -83,7 +80,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -95,11 +91,19 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $availabilityNote;
+
+    /**
+     * @var Address The address of this Employee.
+     *
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\ManyToMany(targetEntity=Address::class)
+     */
+    private $address;
 
     /**
      * @var string The Email of this Employee.
@@ -107,7 +111,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -117,7 +120,6 @@ class Employee
     /**
      * @var array The Role of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="array")
      */
@@ -128,21 +130,19 @@ class Employee
      *
      * @example An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
      */
     private $availability = [];
 
     /**
-     * @var string The Gender of this Employee. **Male**, **Female**
-     * @Gedmo\Versioned
+     * @var string The Gender of this Employee. **Male**, **Female**, **X**
+     *
      * @example Male
      *
      * @Assert\Choice(
-     *      {"Male","Female"}
+     *      {"Male","Female","X"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -153,78 +153,10 @@ class Employee
      *
      * @example 15-03-2000
      *
-     * @Gedmo\Versioned
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $birthday;
-
-    /**
-     * @var string The Street of this Employee.
-     *
-     * @example appelstreet
-     *
-     *  @Assert\Length(
-     *     max = 255
-     * )
-     * @Gedmo\Versioned
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $street;
-
-    /**
-     * @var string House number of this Employee.
-     *
-     * @example 8
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Gedmo\Versioned
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumber;
-
-    /**
-     * @var string House number suffix of this Employee.
-     *
-     * @example b
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Gedmo\Versioned
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumberSuffix;
-
-    /**
-     * @var string Postalcode of this Employee.
-     *
-     * @example 1234AB
-     *
-     * @Gedmo\Versioned
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=15, nullable=true)
-     */
-    private $postalCode;
-
-    /**
-     * @var string Locality of this Employee.
-     *
-     * @example Oud-Zuid
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Gedmo\Versioned
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $locality;
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -256,7 +188,6 @@ class Employee
      * @Assert\Choice(
      *      {"NT1","NT2"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -268,7 +199,6 @@ class Employee
      *  @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -280,7 +210,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
@@ -292,7 +221,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -301,7 +229,6 @@ class Employee
     /**
      * @var Datetime StartDate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -313,7 +240,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      *)
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -322,7 +248,6 @@ class Employee
     /**
      * @var boolean Certificate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -331,7 +256,6 @@ class Employee
     /**
      * @var Datetime EndDate Education of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -342,7 +266,6 @@ class Employee
      *
      * @example HBO
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -351,7 +274,6 @@ class Employee
     /**
      * @var boolean Certificate Course of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -363,7 +285,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -375,7 +296,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -389,7 +309,6 @@ class Employee
      * @Assert\Choice(
      *      {"Professional","Volunteer","Both"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -403,7 +322,6 @@ class Employee
      * @Assert\Choice(
      *      {"Professional","Volunteer","Both"}
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -412,7 +330,6 @@ class Employee
     /**
      * @var boolean Certificate Course of this Employee.
      *
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -424,7 +341,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Gedmo\Versioned
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -438,50 +354,54 @@ class Employee
      * @Assert\Choice(
      *      {"Taalhuis","Aanbieder"}
      * )
-     * @Gedmo\Versioned
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private $employeeType;
 
+    public function __construct()
+    {
+        $this->address = new ArrayCollection();
+    }
+
     public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getGivenName(): ?string
     {
-        return $this->name;
+        return $this->givenName;
     }
 
-    public function setName(string $name): self
+    public function setName(string $givenName): self
     {
-        $this->name = $name;
+        $this->givenName = $givenName;
 
         return $this;
     }
 
-    public function getPrefixName(): ?string
+    public function getAdditionalName(): ?string
     {
-        return $this->prefixName;
+        return $this->additionalName;
     }
 
-    public function setPrefixName(?string $prefixName): self
+    public function setAdditionalName(?string $additionalName): self
     {
-        $this->prefixName = $prefixName;
+        $this->additionalName = $additionalName;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getFamilyName(): ?string
     {
-        return $this->lastName;
+        return $this->familyName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setFamilyName(string $familyName): self
     {
-        $this->lastName = $lastName;
+        $this->familyName = $familyName;
 
         return $this;
     }
@@ -854,6 +774,30 @@ class Employee
     public function setEmployeeType(?string $employeeType): self
     {
         $this->employeeType = $employeeType;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Address[]
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->address->contains($address)) {
+            $this->address[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }
