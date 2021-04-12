@@ -67,6 +67,7 @@ class Student
     /**
      * @var string Family name of this student
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -83,6 +84,7 @@ class Student
     /**
      * @var string Given name of this student
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -112,67 +114,15 @@ class Student
     private $birthday;
 
     /**
-     * @var string The Street of this Student.
+     * @var Address The address of this Student.
      *
-     * @example appelstreet
-     *
-     *  @Assert\Length(
-     *     max = 255
-     * )
+     * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToMany(targetEntity=Address::class, inversedBy="students")
      */
-    private $street;
+    private $address;
 
-    /**
-     * @var string House number of this Student.
-     *
-     * @example 8
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumber;
-
-    /**
-     * @var string House number suffix of this Student.
-     *
-     * @example b
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $houseNumberSuffix;
-
-    /**
-     * @var string Postalcode of this Student.
-     *
-     * @example 1234AB
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $postalCode;
-
-    /**
-     * @var string Locality of this Student.
-     *
-     * @example Oud-Zuid
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $locality;
-
+    
     /**
      * @var string Telephone of this Student.
      *
@@ -711,6 +661,11 @@ class Student
      * @ORM\Column(type="boolean")
      */
     private $consentTest;
+
+    public function __construct()
+    {
+        $this->address = new ArrayCollection();
+    }
 
     public function getId(): Uuid
     {
@@ -1493,6 +1448,30 @@ class Student
     public function setConsentTest(bool $consentTest): self
     {
         $this->consentTest = $consentTest;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Address[]
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->address->contains($address)) {
+            $this->address[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }
