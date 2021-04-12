@@ -12509,12 +12509,13 @@ components:
         offerEngagements:
           type: string
           nullable: true
-        participations:
-          type: array
-          items:
-            type: string
+        studentId:
+          type: string
           nullable: true
-        participant:
+        learningNeedId:
+          type: string
+          nullable: true
+        learningNeedUrl:
           externalDocs:
             url: 'http://schema.org/url'
           type: string
@@ -12570,12 +12571,13 @@ components:
         offerEngagements:
           type: string
           nullable: true
-        participations:
-          type: array
-          items:
-            type: string
+        studentId:
+          type: string
           nullable: true
-        participant:
+        learningNeedId:
+          type: string
+          nullable: true
+        learningNeedUrl:
           externalDocs:
             url: 'http://schema.org/url'
           type: string
@@ -14013,8 +14015,9 @@ definitions:
       offerDifference: []
       offerDifferenceOther: []
       offerEngagements: []
-      participations: []
-      participant:
+      studentId: []
+      learningNeedId: []
+      learningNeedUrl:
         type: string
         format: url
     required: []
@@ -14590,12 +14593,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-12 11:45:19'
+        example: '2021-04-12 13:04:00'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-12 11:45:19'
+        example: '2021-04-12 13:04:00'
     required: []
   ChangeLog-write:
     properties:
@@ -14709,12 +14712,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-12 11:45:19'
+        example: '2021-04-12 13:04:00'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-12 11:45:19'
+        example: '2021-04-12 13:04:00'
     required: []
   AuditTrail-write:
     properties:
