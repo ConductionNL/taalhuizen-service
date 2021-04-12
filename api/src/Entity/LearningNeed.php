@@ -116,13 +116,6 @@ class LearningNeed
      */
     private $offerEngagements;
 
-    // TODO REMOVE THIS:
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $participations;
-
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -315,18 +308,6 @@ class LearningNeed
     public function setOfferEngagements(?string $offerEngagements): self
     {
         $this->offerEngagements = $offerEngagements;
-
-        return $this;
-    }
-
-    public function getParticipations(): ?array
-    {
-        return $this->participations;
-    }
-
-    public function setParticipations(?array $participations): self
-    {
-        $this->participations = $participations;
 
         return $this;
     }
