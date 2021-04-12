@@ -61,9 +61,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             if ($resource->getLearningNeedUrl()) {
                 $learningNeedUrl = $resource->getLearningNeedUrl();
                 $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeedUrl);
-                $learningNeedUrl = $this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_entities', 'id' => $learningNeedId]);
             } elseif ($resource->getLearningNeedId()) {
-                $learningNeedUrl = $this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_entities', 'id' => $resource->getLearningNeedId()]);
                 $learningNeedId = $resource->getLearningNeedId();
             }
 
@@ -79,7 +77,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 $result['errorMessage'] = 'Invalid request, offerDifferenceOther is not set!';
             } elseif ($resource->getStudentId() and !$this->commonGroundService->isResource($studentUrl)) {
                 $result['errorMessage'] = 'Invalid request, studentId is not an existing edu/participant!';
-            } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and $this->eavService->hasEavObject($learningNeedUrl)) {
+            } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and $this->eavService->hasEavObject($learningNeedId)) {
                 $result['errorMessage'] = 'Invalid request, learningNeedId and/or learningNeedUrl is not an existing eav/objectEntity!';
             } else {
                 // No errors so lets continue... to: get all DTO info and save this in the correct places
@@ -88,7 +86,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 // Save the learningNeed in EAV
                 if (isset($learningNeedId)) {
                     // Update
-                    // using learningNeedId instead of learningNeedUrl because of a bug in eav when updating a intern eav object with a @self
                     $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
                 } else {
                     // Create
