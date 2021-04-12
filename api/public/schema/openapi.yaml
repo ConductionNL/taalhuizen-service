@@ -15,6 +15,737 @@ info:
     &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;         
     
 paths:
+  /addresses:
+    get:
+      tags:
+        - Address
+      operationId: getAddressCollection
+      summary: 'Retrieves the collection of Address resources.'
+      responses:
+        200:
+          description: 'Address collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Address:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Address:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+        -
+          name: limit
+          in: query
+          required: false
+          description: 'The number of items per page'
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      produces:
+        - application/health+json
+    post:
+      tags:
+        - Address
+      operationId: postAddressCollection
+      summary: 'Creates a Address resource.'
+      responses:
+        201:
+          description: 'Address resource created'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address'
+          links:
+            GetAddressItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getAddressItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /addresses/{id}`.'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Address:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/Address:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Address'
+        description: 'The new Address resource'
+      parameters:
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+  '/addresses/{id}':
+    get:
+      tags:
+        - Address
+      operationId: getAddressItem
+      summary: 'Retrieves a Address resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      responses:
+        200:
+          description: 'Address resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address'
+        404:
+          description: 'Resource not found'
+      produces:
+        - application/health+json
+    delete:
+      tags:
+        - Address
+      operationId: deleteAddressItem
+      summary: 'Removes the Address resource.'
+      responses:
+        204:
+          description: 'Address resource deleted'
+        404:
+          description: 'Resource not found'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+    put:
+      tags:
+        - Address
+      operationId: putAddressItem
+      summary: 'Replaces the Address resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+      responses:
+        200:
+          description: 'Address resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Address:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/Address:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Address'
+        description: 'The updated Address resource'
+    patch:
+      tags:
+        - Address
+      operationId: patchAddressItem
+      summary: 'Updates the Address resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+      responses:
+        200:
+          description: 'Address resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Address:jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          applications/x-yaml:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/Address'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Address'
+        description: 'The updated Address resource'
   /audit_trails:
     get:
       tags:
@@ -10710,6 +11441,59 @@ paths:
         description: 'The updated User resource'
 components:
   schemas:
+    Address:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
+    'Address:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          type: integer
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
     AuditTrail-read:
       type: object
       description: 'An resource representing a log line.'
@@ -11244,7 +12028,7 @@ components:
             type: string
           nullable: true
         gender:
-          description: 'The Gender of this Employee. **Male**, **Female**'
+          description: 'The Gender of this Employee. **Male**, **Female**, **X**'
           type: string
           nullable: true
         birthday:
@@ -11409,7 +12193,7 @@ components:
             type: string
           nullable: true
         gender:
-          description: 'The Gender of this Employee. **Male**, **Female**'
+          description: 'The Gender of this Employee. **Male**, **Female**, **X**'
           type: string
           nullable: true
         birthday:
@@ -12148,16 +12932,21 @@ components:
           type: string
           nullable: true
         familyName:
+          description: 'Family name of this student'
           type: string
         additionalName:
+          description: 'Additional name of this student'
           type: string
           nullable: true
         givenName:
+          description: 'Given name of this student'
           type: string
         gender:
+          description: 'Gender of this student. **Male**, **Female**, **X**'
           type: string
           nullable: true
         birthday:
+          description: 'Date of birth of this Student.'
           type: string
           format: date-time
           nullable: true
@@ -12177,41 +12966,262 @@ components:
           type: string
           nullable: true
         telephone:
+          description: 'Telephone of this Student.'
           type: string
           nullable: true
         email:
+          description: 'Email of this Student.'
           type: string
           nullable: true
         contactTelephone:
+          description: 'Contact Telephone of this Student.'
           type: string
           nullable: true
         contactPreference:
+          description: 'Contact Preference of this Student.'
           type: string
           nullable: true
         countryOfOrigin:
+          description: 'Country of Origin of this Student.'
           type: string
           nullable: true
         nativeLanguage:
+          description: 'Native language of this Student.'
           type: string
           nullable: true
         otherLanguages:
+          description: 'Other speaking languages of this Student.'
           type: string
           nullable: true
         familyComposition:
+          description: 'The family composition of this Student.'
           type: string
           nullable: true
         numberOfChildren:
+          description: 'Number of children of this Student.'
           type: string
           nullable: true
         dateOfBirthChildren:
+          description: 'The children''s date of Birth of this Student.'
           type: string
           nullable: true
         referredBy:
+          description: 'This student is referred by. **UWV**, **Sociale dienst**, **Bibliotheek**, **Welzijnswerk**, **Buurt/dorpsteam**, **Vrijwilligersorganisatie**, **Taalaanbieder**, **Anders nl:**'
           type: string
           nullable: true
         referredByEmail:
+          description: 'Email of the referred by'
           type: string
           nullable: true
+        contactWith:
+          description: 'Contact network of the student'
+          type: string
+          nullable: true
+        participationLadder:
+          description: 'Participation ladder of the student'
+          type: string
+          nullable: true
+        languageLevel:
+          description: 'Language level of this Student. **NT1**, **NT2**'
+          type: string
+          nullable: true
+        inNetherlandSince:
+          description: 'This student is in the Netherlands since'
+          type: string
+          format: date-time
+          nullable: true
+        preferredLanguage:
+          description: 'preferred language of this Student.'
+          type: string
+          nullable: true
+        latinAlphabet:
+          description: 'latin Alphabet of this student.'
+          type: boolean
+          nullable: true
+        measuredLanguageLevel:
+          description: 'measured language level of this Student. **A0**, **A1**, **A2**, **B1**, **B2**, **C1**, **C2**, **Unknown**'
+          type: string
+          nullable: true
+        speakingLanguageLevel:
+          description: 'speaking language level of this Student. **beginner**, **reasonable**, **advanced**'
+          type: string
+          nullable: true
+        startEducation:
+          description: 'StartDate Education of this Student.'
+          type: string
+          format: date-time
+          nullable: true
+        degreeGrantedStatus:
+          description: 'degreeGrantedStatus of this Student.'
+          type: boolean
+          nullable: true
+        endEducation:
+          description: 'Enddate Education of this Student.'
+          type: string
+          format: date-time
+          nullable: true
+        iscedEducationLevelCode:
+          description: 'The Isced Education Level Code of this Student.'
+          type: string
+          nullable: true
+        lastEducationLevel:
+          description: 'last education level of this Student. **no education**, **several years po**, **po**, **vo**, **mbo**, **hbo**, **university**'
+          type: string
+          nullable: true
+        currentEducation:
+          description: 'current education of this Student. **yes**, **no**, **no, but followed**'
+          type: string
+          nullable: true
+        educationInstitutionName:
+          description: 'education institution name of this Student.'
+          type: string
+          nullable: true
+        diplomaOrCertificate:
+          description: 'diploma or certificate.'
+          type: boolean
+          nullable: true
+        currentCourse:
+          description: 'The current course of this Student.'
+          type: boolean
+          nullable: true
+        courseInstitutionName:
+          description: 'Course institution name of this Student.'
+          type: string
+          nullable: true
+        typeOfTeacher:
+          description: 'The type of teacher of this Student. **Professional**, **Volunteer**, **Both**'
+          type: string
+          nullable: true
+        typeOfCourse:
+          description: 'The type of teacher of this Student. **Individual**, **Group**'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'Amount of hours of this Student.'
+          type: integer
+          nullable: true
+        certificateCourse:
+          description: 'The course certificate of this Student.'
+          type: boolean
+          nullable: true
+        trainedForWork:
+          description: |
+            Trained for work of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        lastWorkPlace:
+          description: |
+            Last work place of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        daytimeActivities:
+          description: |
+            The daytime activities of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        wantToLearn:
+          description: 'The tings this Student wants to learn.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        doneThis:
+          description: 'This Student done this before.'
+          type: boolean
+          nullable: true
+        whyYesOrNo:
+          description: |
+            Why yes or no of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        whyThis:
+          description: |
+            Why this of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        whyNow:
+          description: |
+            Why now of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        howToLearn:
+          description: 'how this Student wants to learn.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        comment:
+          description: |
+            Comment of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        availability:
+          description: 'The Availability of this Student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        availabilityNote:
+          description: 'The Availability Note of this Student.'
+          type: string
+          nullable: true
+        readTestResult:
+          description: 'The reading test result of this Student.'
+          type: string
+          nullable: true
+        writingTestResult:
+          description: 'The writing test result of this Student.'
+          type: string
+          nullable: true
+        consentForm:
+          description: 'The consent form of this Student.'
+          type: boolean
+        consentData:
+          description: 'The consent data of this Student.'
+          type: boolean
+        consentBasicData:
+          description: 'The consent basic data of this Student.'
+          type: boolean
+        consentTest:
+          description: 'The consent test of this Student.'
+          type: boolean
+        address:
+          description: 'The address of this Student.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - familyName
+        - givenName
     'Student:jsonld':
       type: object
       description: ''
@@ -12242,16 +13252,21 @@ components:
           type: string
           nullable: true
         familyName:
+          description: 'Family name of this student'
           type: string
         additionalName:
+          description: 'Additional name of this student'
           type: string
           nullable: true
         givenName:
+          description: 'Given name of this student'
           type: string
         gender:
+          description: 'Gender of this student. **Male**, **Female**, **X**'
           type: string
           nullable: true
         birthday:
+          description: 'Date of birth of this Student.'
           type: string
           format: date-time
           nullable: true
@@ -12271,41 +13286,262 @@ components:
           type: string
           nullable: true
         telephone:
+          description: 'Telephone of this Student.'
           type: string
           nullable: true
         email:
+          description: 'Email of this Student.'
           type: string
           nullable: true
         contactTelephone:
+          description: 'Contact Telephone of this Student.'
           type: string
           nullable: true
         contactPreference:
+          description: 'Contact Preference of this Student.'
           type: string
           nullable: true
         countryOfOrigin:
+          description: 'Country of Origin of this Student.'
           type: string
           nullable: true
         nativeLanguage:
+          description: 'Native language of this Student.'
           type: string
           nullable: true
         otherLanguages:
+          description: 'Other speaking languages of this Student.'
           type: string
           nullable: true
         familyComposition:
+          description: 'The family composition of this Student.'
           type: string
           nullable: true
         numberOfChildren:
+          description: 'Number of children of this Student.'
           type: string
           nullable: true
         dateOfBirthChildren:
+          description: 'The children''s date of Birth of this Student.'
           type: string
           nullable: true
         referredBy:
+          description: 'This student is referred by. **UWV**, **Sociale dienst**, **Bibliotheek**, **Welzijnswerk**, **Buurt/dorpsteam**, **Vrijwilligersorganisatie**, **Taalaanbieder**, **Anders nl:**'
           type: string
           nullable: true
         referredByEmail:
+          description: 'Email of the referred by'
           type: string
           nullable: true
+        contactWith:
+          description: 'Contact network of the student'
+          type: string
+          nullable: true
+        participationLadder:
+          description: 'Participation ladder of the student'
+          type: string
+          nullable: true
+        languageLevel:
+          description: 'Language level of this Student. **NT1**, **NT2**'
+          type: string
+          nullable: true
+        inNetherlandSince:
+          description: 'This student is in the Netherlands since'
+          type: string
+          format: date-time
+          nullable: true
+        preferredLanguage:
+          description: 'preferred language of this Student.'
+          type: string
+          nullable: true
+        latinAlphabet:
+          description: 'latin Alphabet of this student.'
+          type: boolean
+          nullable: true
+        measuredLanguageLevel:
+          description: 'measured language level of this Student. **A0**, **A1**, **A2**, **B1**, **B2**, **C1**, **C2**, **Unknown**'
+          type: string
+          nullable: true
+        speakingLanguageLevel:
+          description: 'speaking language level of this Student. **beginner**, **reasonable**, **advanced**'
+          type: string
+          nullable: true
+        startEducation:
+          description: 'StartDate Education of this Student.'
+          type: string
+          format: date-time
+          nullable: true
+        degreeGrantedStatus:
+          description: 'degreeGrantedStatus of this Student.'
+          type: boolean
+          nullable: true
+        endEducation:
+          description: 'Enddate Education of this Student.'
+          type: string
+          format: date-time
+          nullable: true
+        iscedEducationLevelCode:
+          description: 'The Isced Education Level Code of this Student.'
+          type: string
+          nullable: true
+        lastEducationLevel:
+          description: 'last education level of this Student. **no education**, **several years po**, **po**, **vo**, **mbo**, **hbo**, **university**'
+          type: string
+          nullable: true
+        currentEducation:
+          description: 'current education of this Student. **yes**, **no**, **no, but followed**'
+          type: string
+          nullable: true
+        educationInstitutionName:
+          description: 'education institution name of this Student.'
+          type: string
+          nullable: true
+        diplomaOrCertificate:
+          description: 'diploma or certificate.'
+          type: boolean
+          nullable: true
+        currentCourse:
+          description: 'The current course of this Student.'
+          type: boolean
+          nullable: true
+        courseInstitutionName:
+          description: 'Course institution name of this Student.'
+          type: string
+          nullable: true
+        typeOfTeacher:
+          description: 'The type of teacher of this Student. **Professional**, **Volunteer**, **Both**'
+          type: string
+          nullable: true
+        typeOfCourse:
+          description: 'The type of teacher of this Student. **Individual**, **Group**'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'Amount of hours of this Student.'
+          type: integer
+          nullable: true
+        certificateCourse:
+          description: 'The course certificate of this Student.'
+          type: boolean
+          nullable: true
+        trainedForWork:
+          description: |
+            Trained for work of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        lastWorkPlace:
+          description: |
+            Last work place of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        daytimeActivities:
+          description: |
+            The daytime activities of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        wantToLearn:
+          description: 'The tings this Student wants to learn.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        doneThis:
+          description: 'This Student done this before.'
+          type: boolean
+          nullable: true
+        whyYesOrNo:
+          description: |
+            Why yes or no of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        whyThis:
+          description: |
+            Why this of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        whyNow:
+          description: |
+            Why now of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        howToLearn:
+          description: 'how this Student wants to learn.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        comment:
+          description: |
+            Comment of this Student.
+            
+             @Assert\Length(
+                max = 255
+            )
+          type: string
+          nullable: true
+        availability:
+          description: 'The Availability of this Student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        availabilityNote:
+          description: 'The Availability Note of this Student.'
+          type: string
+          nullable: true
+        readTestResult:
+          description: 'The reading test result of this Student.'
+          type: string
+          nullable: true
+        writingTestResult:
+          description: 'The writing test result of this Student.'
+          type: string
+          nullable: true
+        consentForm:
+          description: 'The consent form of this Student.'
+          type: boolean
+        consentData:
+          description: 'The consent data of this Student.'
+          type: boolean
+        consentBasicData:
+          description: 'The consent basic data of this Student.'
+          type: boolean
+        consentTest:
+          description: 'The consent test of this Student.'
+          type: boolean
+        address:
+          description: 'The address of this Student.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - familyName
+        - givenName
     Taalhuis:
       type: object
       description: ''
@@ -12499,7 +13735,7 @@ definitions:
         type: array
         example: 'An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening'
       gender:
-        description: 'The Gender of this Employee. **Male**, **Female**'
+        description: 'The Gender of this Employee. **Male**, **Female**, **X**'
         type: string
         example: Male
       birthday:
@@ -12648,7 +13884,7 @@ definitions:
         type: array
         example: 'An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening'
       gender:
-        description: 'The Gender of this Employee. **Male**, **Female**'
+        description: 'The Gender of this Employee. **Male**, **Female**, **X**'
         type: string
         example: Male
       birthday:
@@ -12785,6 +14021,514 @@ definitions:
         type: string
         format: url
     required: []
+  Student-read:
+    properties:
+      civicIntegrationRequirement:
+        description: '(CIR) "Nee, omdat", "Ja" or "Volgt momenteel inburgering"'
+        type: string
+      CIRNo:
+        description: '(CIR = civicIntegrationRequirement)'
+        type: string
+      CIRCompletionDate:
+        description: '(CIR = civicIntegrationRequirement)'
+        type: \Datetime
+      familyName:
+        description: 'Family name of this student'
+        type: string
+      additionalName:
+        description: 'Additional name of this student'
+        type: string
+      givenName:
+        description: 'Given name of this student'
+        type: string
+      gender:
+        description: 'Gender of this student. **Male**, **Female**, **X**'
+        type: string
+        example: Male
+      birthday:
+        description: 'Date of birth of this Student.'
+        type: string
+        example: 15-03-2000
+      telephone:
+        description: 'Telephone of this Student.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'Email of this Student.'
+        type: string
+        maxLength: 255
+      contactTelephone:
+        description: 'Contact Telephone of this Student.'
+        type: string
+        maxLength: 255
+      contactPreference:
+        description: 'Contact Preference of this Student.'
+        type: string
+        maxLength: 255
+      countryOfOrigin:
+        description: 'Country of Origin of this Student.'
+        type: string
+        maxLength: 255
+      nativeLanguage:
+        description: 'Native language of this Student.'
+        type: string
+        maxLength: 255
+      otherLanguages:
+        description: 'Other speaking languages of this Student.'
+        type: string
+        maxLength: 255
+      familyComposition:
+        description: 'The family composition of this Student.'
+        type: string
+        maxLength: 255
+      numberOfChildren:
+        description: 'Number of children of this Student.'
+        type: string
+        maxLength: 255
+      dateOfBirthChildren:
+        description: 'The children''s date of Birth of this Student.'
+        type: string
+        maxLength: 255
+      referredBy:
+        description: 'This student is referred by. **UWV**, **Sociale dienst**, **Bibliotheek**, **Welzijnswerk**, **Buurt/dorpsteam**, **Vrijwilligersorganisatie**, **Taalaanbieder**, **Anders nl:**'
+        type: string
+        example: UWV
+      referredByEmail:
+        description: 'Email of the referred by'
+        type: string
+        maxLength: 255
+      contactWith:
+        description: 'Contact network of the student'
+        type: string
+        maxLength: 255
+      participationLadder:
+        description: 'Participation ladder of the student'
+        type: string
+        maxLength: 255
+      languageLevel:
+        description: 'Language level of this Student. **NT1**, **NT2**'
+        type: string
+        example: NT1
+      inNetherlandSince:
+        description: 'This student is in the Netherlands since'
+        type: \DateTime
+      preferredLanguage:
+        description: 'preferred language of this Student.'
+        type: string
+        maxLength: 255
+      latinAlphabet:
+        description: 'latin Alphabet of this student.'
+        type: bool
+      measuredLanguageLevel:
+        description: 'measured language level of this Student. **A0**, **A1**, **A2**, **B1**, **B2**, **C1**, **C2**, **Unknown**'
+        type: string
+        example: A0
+      speakingLanguageLevel:
+        description: 'speaking language level of this Student. **beginner**, **reasonable**, **advanced**'
+        type: string
+        example: beginner
+      lastEducationLevel:
+        description: 'last education level of this Student. **no education**, **several years po**, **po**, **vo**, **mbo**, **hbo**, **university**'
+        type: string
+        example: mbo
+      degreeGrantedStatus:
+        description: 'degreeGrantedStatus of this Student.'
+        type: bool
+      currentEducation:
+        description: 'current education of this Student. **yes**, **no**, **no, but followed**'
+        type: string
+        example: 'yes'
+      startEducation:
+        description: 'StartDate Education of this Student.'
+        type: \Datetime
+      endEducation:
+        description: 'Enddate Education of this Student.'
+        type: \Datetime
+      educationInstitutionName:
+        description: 'education institution name of this Student.'
+        type: string
+        maxLength: 255
+      diplomaOrCertificate:
+        description: 'diploma or certificate.'
+        type: bool
+      iscedEducationLevelCode:
+        description: 'The Isced Education Level Code of this Student.'
+        type: string
+        example: HBO
+      currentCourse:
+        description: 'The current course of this Student.'
+        type: bool
+      courseInstitutionName:
+        description: 'Course institution name of this Student.'
+        type: string
+        maxLength: 255
+      typeOfTeacher:
+        description: 'The type of teacher of this Student. **Professional**, **Volunteer**, **Both**'
+        type: string
+        example: Professional
+      typeOfCourse:
+        description: 'The type of teacher of this Student. **Individual**, **Group**'
+        type: string
+        example: Individual
+      amountOfHours:
+        description: 'Amount of hours of this Student.'
+        type: int
+      certificateCourse:
+        description: 'The course certificate of this Student.'
+        type: bool
+      trainedForWork:
+        description: |
+          Trained for work of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      lastWorkPlace:
+        description: |
+          Last work place of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      daytimeActivities:
+        description: |
+          The daytime activities of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      wantToLearn:
+        description: 'The tings this Student wants to learn.'
+        type: array
+      doneThis:
+        description: 'This Student done this before.'
+        type: string
+      whyYesOrNo:
+        description: |
+          Why yes or no of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      whyThis:
+        description: |
+          Why this of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      whyNow:
+        description: |
+          Why now of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      howToLearn:
+        description: 'how this Student wants to learn.'
+        type: array
+      comment:
+        description: |
+          Comment of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      availability:
+        description: 'The Availability of this Student.'
+        type: array
+        example: 'An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening'
+      availabilityNote:
+        description: 'The Availability Note of this Student.'
+        type: string
+        maxLength: 2550
+      readTestResult:
+        description: 'The reading test result of this Student.'
+        type: string
+        maxLength: 255
+      writingTestResult:
+        description: 'The writing test result of this Student.'
+        type: string
+        maxLength: 255
+      consentForm:
+        description: 'The consent form of this Student.'
+        type: bool
+      consentData:
+        description: 'The consent data of this Student.'
+        type: bool
+      consentBasicData:
+        description: 'The consent basic data of this Student.'
+        type: bool
+      consentTest:
+        description: 'The consent test of this Student.'
+        type: bool
+      address:
+        description: 'The address of this Student.'
+        type: \Address
+    required:
+      - familyName
+      - givenName
+  Student-write:
+    properties:
+      civicIntegrationRequirement:
+        description: '(CIR) "Nee, omdat", "Ja" or "Volgt momenteel inburgering"'
+        type: string
+      CIRNo:
+        description: '(CIR = civicIntegrationRequirement)'
+        type: string
+      CIRCompletionDate:
+        description: '(CIR = civicIntegrationRequirement)'
+        type: \Datetime
+      familyName:
+        description: 'Family name of this student'
+        type: string
+      additionalName:
+        description: 'Additional name of this student'
+        type: string
+      givenName:
+        description: 'Given name of this student'
+        type: string
+      gender:
+        description: 'Gender of this student. **Male**, **Female**, **X**'
+        type: string
+        example: Male
+      birthday:
+        description: 'Date of birth of this Student.'
+        type: string
+        example: 15-03-2000
+      telephone:
+        description: 'Telephone of this Student.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'Email of this Student.'
+        type: string
+        maxLength: 255
+      contactTelephone:
+        description: 'Contact Telephone of this Student.'
+        type: string
+        maxLength: 255
+      contactPreference:
+        description: 'Contact Preference of this Student.'
+        type: string
+        maxLength: 255
+      countryOfOrigin:
+        description: 'Country of Origin of this Student.'
+        type: string
+        maxLength: 255
+      nativeLanguage:
+        description: 'Native language of this Student.'
+        type: string
+        maxLength: 255
+      otherLanguages:
+        description: 'Other speaking languages of this Student.'
+        type: string
+        maxLength: 255
+      familyComposition:
+        description: 'The family composition of this Student.'
+        type: string
+        maxLength: 255
+      numberOfChildren:
+        description: 'Number of children of this Student.'
+        type: string
+        maxLength: 255
+      dateOfBirthChildren:
+        description: 'The children''s date of Birth of this Student.'
+        type: string
+        maxLength: 255
+      referredBy:
+        description: 'This student is referred by. **UWV**, **Sociale dienst**, **Bibliotheek**, **Welzijnswerk**, **Buurt/dorpsteam**, **Vrijwilligersorganisatie**, **Taalaanbieder**, **Anders nl:**'
+        type: string
+        example: UWV
+      referredByEmail:
+        description: 'Email of the referred by'
+        type: string
+        maxLength: 255
+      contactWith:
+        description: 'Contact network of the student'
+        type: string
+        maxLength: 255
+      participationLadder:
+        description: 'Participation ladder of the student'
+        type: string
+        maxLength: 255
+      languageLevel:
+        description: 'Language level of this Student. **NT1**, **NT2**'
+        type: string
+        example: NT1
+      inNetherlandSince:
+        description: 'This student is in the Netherlands since'
+        type: \DateTime
+      preferredLanguage:
+        description: 'preferred language of this Student.'
+        type: string
+        maxLength: 255
+      latinAlphabet:
+        description: 'latin Alphabet of this student.'
+        type: bool
+      measuredLanguageLevel:
+        description: 'measured language level of this Student. **A0**, **A1**, **A2**, **B1**, **B2**, **C1**, **C2**, **Unknown**'
+        type: string
+        example: A0
+      speakingLanguageLevel:
+        description: 'speaking language level of this Student. **beginner**, **reasonable**, **advanced**'
+        type: string
+        example: beginner
+      lastEducationLevel:
+        description: 'last education level of this Student. **no education**, **several years po**, **po**, **vo**, **mbo**, **hbo**, **university**'
+        type: string
+        example: mbo
+      degreeGrantedStatus:
+        description: 'degreeGrantedStatus of this Student.'
+        type: bool
+      currentEducation:
+        description: 'current education of this Student. **yes**, **no**, **no, but followed**'
+        type: string
+        example: 'yes'
+      startEducation:
+        description: 'StartDate Education of this Student.'
+        type: \Datetime
+      endEducation:
+        description: 'Enddate Education of this Student.'
+        type: \Datetime
+      educationInstitutionName:
+        description: 'education institution name of this Student.'
+        type: string
+        maxLength: 255
+      diplomaOrCertificate:
+        description: 'diploma or certificate.'
+        type: bool
+      iscedEducationLevelCode:
+        description: 'The Isced Education Level Code of this Student.'
+        type: string
+        example: HBO
+      currentCourse:
+        description: 'The current course of this Student.'
+        type: bool
+      courseInstitutionName:
+        description: 'Course institution name of this Student.'
+        type: string
+        maxLength: 255
+      typeOfTeacher:
+        description: 'The type of teacher of this Student. **Professional**, **Volunteer**, **Both**'
+        type: string
+        example: Professional
+      typeOfCourse:
+        description: 'The type of teacher of this Student. **Individual**, **Group**'
+        type: string
+        example: Individual
+      amountOfHours:
+        description: 'Amount of hours of this Student.'
+        type: int
+      certificateCourse:
+        description: 'The course certificate of this Student.'
+        type: bool
+      trainedForWork:
+        description: |
+          Trained for work of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      lastWorkPlace:
+        description: |
+          Last work place of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      daytimeActivities:
+        description: |
+          The daytime activities of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      wantToLearn:
+        description: 'The tings this Student wants to learn.'
+        type: array
+      doneThis:
+        description: 'This Student done this before.'
+        type: string
+      whyYesOrNo:
+        description: |
+          Why yes or no of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      whyThis:
+        description: |
+          Why this of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      whyNow:
+        description: |
+          Why now of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      howToLearn:
+        description: 'how this Student wants to learn.'
+        type: array
+      comment:
+        description: |
+          Comment of this Student.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string
+      availability:
+        description: 'The Availability of this Student.'
+        type: array
+        example: 'An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening'
+      availabilityNote:
+        description: 'The Availability Note of this Student.'
+        type: string
+        maxLength: 2550
+      readTestResult:
+        description: 'The reading test result of this Student.'
+        type: string
+        maxLength: 255
+      writingTestResult:
+        description: 'The writing test result of this Student.'
+        type: string
+        maxLength: 255
+      consentForm:
+        description: 'The consent form of this Student.'
+        type: bool
+      consentData:
+        description: 'The consent data of this Student.'
+        type: bool
+      consentBasicData:
+        description: 'The consent basic data of this Student.'
+        type: bool
+      consentTest:
+        description: 'The consent test of this Student.'
+        type: bool
+      address:
+        description: 'The address of this Student.'
+        type: \Address
+    required:
+      - familyName
+      - givenName
   User-read:
     properties:
       email:
@@ -12984,6 +14728,12 @@ definitions:
         maxLength: 2555
     required: []
 tags:
+  -
+    name: Address
+    description: |
+      
+      
+      
   -
     name: Document
     description: |
