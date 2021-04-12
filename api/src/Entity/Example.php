@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
+// TODO:delete this entity
 /**
  * @ApiResource(
  *     collectionOperations={
@@ -33,7 +35,7 @@ class Example
      */
     private ?array $data;
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
