@@ -116,18 +116,35 @@ class LearningNeed
      */
     private $offerEngagements;
 
+    // TODO REMOVE THIS:
     /**
      * @Groups({"write"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $participations = [];
+    private $participations;
 
     /**
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
+
+    /**
+     * @var string The id of the objectEntity of an eav/learning_need.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $learningNeedId;
+
+    /**
+     * @var string The url of the objectEntity of an eav/learning_need '@eav'.
+     *
      * @Groups({"write"})
      * @Assert\Url
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $participant;
+    private $learningNeedUrl;
 
     public function getId(): Uuid
     {
@@ -314,14 +331,38 @@ class LearningNeed
         return $this;
     }
 
-    public function getParticipant(): ?string
+    public function getStudentId(): ?string
     {
-        return $this->participant;
+        return $this->studentId;
     }
 
-    public function setParticipant(?string $participant): self
+    public function setStudentId(?string $studentId): self
     {
-        $this->participant = $participant;
+        $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getLearningNeedId(): ?string
+    {
+        return $this->learningNeedId;
+    }
+
+    public function setLearningNeedId(?string $learningNeedId): self
+    {
+        $this->learningNeedId = $learningNeedId;
+
+        return $this;
+    }
+
+    public function getLearningNeedUrl(): ?string
+    {
+        return $this->learningNeedUrl;
+    }
+
+    public function setLearningNeedUrl(?string $learningNeedUrl): self
+    {
+        $this->learningNeedUrl = $learningNeedUrl;
 
         return $this;
     }
