@@ -41,6 +41,19 @@ class User
     private $email;
 
     /**
+     * @var string The Username of this User
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     */
+
+    private $username;
+
+    /**
      * @var string The Password of this User.
      *
      * @Assert\Length(
@@ -51,6 +64,18 @@ class User
      * @ORM\Column(type="string", length=255)
      */
     private $password;
+
+    /**
+     * @var string The Token for password reset
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $token;
 
     public function getId(): Uuid
     {
@@ -69,6 +94,18 @@ class User
         return $this;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -80,4 +117,10 @@ class User
 
         return $this;
     }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
 }
