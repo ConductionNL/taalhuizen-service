@@ -47,4 +47,12 @@ class EAVService
         $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
         return $result;
     }
+
+    public function hasEavObject($uri) {
+        $result = $this->commonGroundService->getResourceList(['component' => 'eav', 'type' => 'object_entities'], ['uri' => $uri])['hydra:member'];
+        if (count($result) == 1) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -11995,14 +11995,18 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        name:
+        givenName:
+          readOnly: true
           description: 'The Name of this Employee.'
           type: string
-        prefixName:
+        name:
+          writeOnly: true
+          type: string
+        additionalName:
           description: 'The PrefixName of this Employee.'
           type: string
           nullable: true
-        lastName:
+        familyName:
           description: 'The LastName of this Employee.'
           type: string
         telephone:
@@ -12037,23 +12041,18 @@ components:
           format: date-time
           nullable: true
         street:
-          description: 'The Street of this Employee.'
           type: string
           nullable: true
         houseNumber:
-          description: 'House number of this Employee.'
           type: string
           nullable: true
         houseNumberSuffix:
-          description: 'House number suffix of this Employee.'
           type: string
           nullable: true
         postalCode:
-          description: 'Postalcode of this Employee.'
           type: string
           nullable: true
         locality:
-          description: 'Locality of this Employee.'
           type: string
           nullable: true
         contactTelephone:
@@ -12137,9 +12136,14 @@ components:
         employeeType:
           description: 'The Employee Type of this employee. **Taalhuis**, **Aanbieder**'
           type: string
+        address:
+          description: 'The address of this Employee.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
       required:
-        - name
-        - lastName
+        - familyName
         - email
         - employeeType
     'Employee:jsonld':
@@ -12160,14 +12164,18 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        name:
+        givenName:
+          readOnly: true
           description: 'The Name of this Employee.'
           type: string
-        prefixName:
+        name:
+          writeOnly: true
+          type: string
+        additionalName:
           description: 'The PrefixName of this Employee.'
           type: string
           nullable: true
-        lastName:
+        familyName:
           description: 'The LastName of this Employee.'
           type: string
         telephone:
@@ -12202,23 +12210,18 @@ components:
           format: date-time
           nullable: true
         street:
-          description: 'The Street of this Employee.'
           type: string
           nullable: true
         houseNumber:
-          description: 'House number of this Employee.'
           type: string
           nullable: true
         houseNumberSuffix:
-          description: 'House number suffix of this Employee.'
           type: string
           nullable: true
         postalCode:
-          description: 'Postalcode of this Employee.'
           type: string
           nullable: true
         locality:
-          description: 'Locality of this Employee.'
           type: string
           nullable: true
         contactTelephone:
@@ -12302,9 +12305,14 @@ components:
         employeeType:
           description: 'The Employee Type of this employee. **Taalhuis**, **Aanbieder**'
           type: string
+        address:
+          description: 'The address of this Employee.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
       required:
-        - name
-        - lastName
+        - familyName
         - email
         - employeeType
     Example:
@@ -12509,12 +12517,15 @@ components:
         offerEngagements:
           type: string
           nullable: true
-        participations:
-          type: array
-          items:
-            type: string
+        studentId:
+          type: string
           nullable: true
-        participant:
+        learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
+          type: string
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
           externalDocs:
             url: 'http://schema.org/url'
           type: string
@@ -12570,12 +12581,15 @@ components:
         offerEngagements:
           type: string
           nullable: true
-        participations:
-          type: array
-          items:
-            type: string
+        studentId:
+          type: string
           nullable: true
-        participant:
+        learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
+          type: string
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
           externalDocs:
             url: 'http://schema.org/url'
           type: string
@@ -12741,6 +12755,7 @@ components:
           type: string
           format: uuid
         name:
+          description: 'The Name of this Provider.'
           type: string
         street:
           type: string
@@ -12758,11 +12773,21 @@ components:
           type: string
           nullable: true
         phoneNumber:
+          description: 'The Telephone of this Provider.'
           type: string
           nullable: true
         email:
+          description: 'The Email of this Provider.'
           type: string
           nullable: true
+        address:
+          description: 'The address of this Provider.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
     'Provider:jsonld':
       type: object
       description: ''
@@ -12782,6 +12807,7 @@ components:
           type: string
           format: uuid
         name:
+          description: 'The Name of this Provider.'
           type: string
         street:
           type: string
@@ -12799,11 +12825,21 @@ components:
           type: string
           nullable: true
         phoneNumber:
+          description: 'The Telephone of this Provider.'
           type: string
           nullable: true
         email:
+          description: 'The Email of this Provider.'
           type: string
           nullable: true
+        address:
+          description: 'The address of this Provider.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
     Registration:
       type: object
       description: ''
@@ -13106,6 +13142,7 @@ components:
           type: string
           format: uuid
         name:
+          description: 'The Name of this Taalhuis.'
           type: string
         street:
           type: string
@@ -13123,11 +13160,22 @@ components:
           type: string
           nullable: true
         phoneNumber:
+          description: 'The Telephone of this Taalhuis.'
           type: string
           nullable: true
         email:
+          description: 'The Email of this Taalhuis.'
           type: string
           nullable: true
+        address:
+          description: 'The address of this Taalhuis.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
+        - email
     'Taalhuis:jsonld':
       type: object
       description: ''
@@ -13147,6 +13195,7 @@ components:
           type: string
           format: uuid
         name:
+          description: 'The Name of this Taalhuis.'
           type: string
         street:
           type: string
@@ -13164,11 +13213,22 @@ components:
           type: string
           nullable: true
         phoneNumber:
+          description: 'The Telephone of this Taalhuis.'
           type: string
           nullable: true
         email:
+          description: 'The Email of this Taalhuis.'
           type: string
           nullable: true
+        address:
+          description: 'The address of this Taalhuis.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
+        - email
     User:
       type: object
       description: ''
@@ -13273,15 +13333,15 @@ definitions:
       - organizer
   Employee-read:
     properties:
-      name:
+      givenName:
         description: 'The Name of this Employee.'
         type: string
         maxLength: 255
-      prefixName:
+      additionalName:
         description: 'The PrefixName of this Employee.'
         type: string
         maxLength: 255
-      lastName:
+      familyName:
         description: 'The LastName of this Employee.'
         type: string
         maxLength: 255
@@ -13312,34 +13372,6 @@ definitions:
         description: 'Date of birth of this Employee.'
         type: string
         example: 15-03-2000
-      street:
-        description: 'The Street of this Employee.'
-        type: string
-        example: |
-          appelstreet
-          
-           @Assert\Length(
-              max = 255
-          )
-      houseNumber:
-        description: 'House number of this Employee.'
-        type: string
-        example: '8'
-        maxLength: 255
-      houseNumberSuffix:
-        description: 'House number suffix of this Employee.'
-        type: string
-        example: b
-        maxLength: 255
-      postalCode:
-        description: 'Postalcode of this Employee.'
-        type: string
-        example: 1234AB
-      locality:
-        description: 'Locality of this Employee.'
-        type: string
-        example: Oud-Zuid
-        maxLength: 255
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -13415,22 +13447,25 @@ definitions:
         description: 'The Employee Type of this employee. **Taalhuis**, **Aanbieder**'
         type: string
         example: Taalhuis
+      address:
+        description: 'The address of this Employee.'
+        type: \Address
     required:
-      - name
-      - lastName
+      - givenName
+      - familyName
       - email
       - employeeType
   Employee-write:
     properties:
-      name:
+      givenName:
         description: 'The Name of this Employee.'
         type: string
         maxLength: 255
-      prefixName:
+      additionalName:
         description: 'The PrefixName of this Employee.'
         type: string
         maxLength: 255
-      lastName:
+      familyName:
         description: 'The LastName of this Employee.'
         type: string
         maxLength: 255
@@ -13461,34 +13496,6 @@ definitions:
         description: 'Date of birth of this Employee.'
         type: string
         example: 15-03-2000
-      street:
-        description: 'The Street of this Employee.'
-        type: string
-        example: |
-          appelstreet
-          
-           @Assert\Length(
-              max = 255
-          )
-      houseNumber:
-        description: 'House number of this Employee.'
-        type: string
-        example: '8'
-        maxLength: 255
-      houseNumberSuffix:
-        description: 'House number suffix of this Employee.'
-        type: string
-        example: b
-        maxLength: 255
-      postalCode:
-        description: 'Postalcode of this Employee.'
-        type: string
-        example: 1234AB
-      locality:
-        description: 'Locality of this Employee.'
-        type: string
-        example: Oud-Zuid
-        maxLength: 255
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -13564,9 +13571,12 @@ definitions:
         description: 'The Employee Type of this employee. **Taalhuis**, **Aanbieder**'
         type: string
         example: Taalhuis
+      address:
+        description: 'The address of this Employee.'
+        type: \Address
     required:
-      - name
-      - lastName
+      - givenName
+      - familyName
       - email
       - employeeType
   LearningNeed-write:
@@ -13585,11 +13595,53 @@ definitions:
       offerDifference: []
       offerDifferenceOther: []
       offerEngagements: []
-      participations: []
-      participant:
+      studentId: []
+      learningNeedId:
+        description: 'The id of the objectEntity of an eav/learning_need.'
+        type: string
+      learningNeedUrl:
+        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
         type: string
         format: url
     required: []
+  Provider-read:
+    properties:
+      name:
+        description: 'The Name of this Provider.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Provider.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Provider.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Provider.'
+        type: \Address
+    required:
+      - name
+  Provider-write:
+    properties:
+      name:
+        description: 'The Name of this Provider.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Provider.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Provider.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Provider.'
+        type: \Address
+    required:
+      - name
   Student-read:
     properties:
       civicIntegrationRequirement:
@@ -14098,6 +14150,46 @@ definitions:
     required:
       - familyName
       - givenName
+  Taalhuis-read:
+    properties:
+      name:
+        description: 'The Name of this Taalhuis.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Taalhuis.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Taalhuis.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Taalhuis.'
+        type: \Address
+    required:
+      - name
+      - email
+  Taalhuis-write:
+    properties:
+      name:
+        description: 'The Name of this Taalhuis.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Taalhuis.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Taalhuis.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Taalhuis.'
+        type: \Address
+    required:
+      - name
+      - email
   User-read:
     properties:
       email:
@@ -14182,12 +14274,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-12 12:27:38'
+        example: '2021-04-12 16:12:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-12 12:27:38'
+        example: '2021-04-12 16:12:57'
     required: []
   ChangeLog-write:
     properties:
@@ -14301,12 +14393,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-12 12:27:38'
+        example: '2021-04-12 16:12:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-12 12:27:38'
+        example: '2021-04-12 16:12:57'
     required: []
   AuditTrail-write:
     properties:
