@@ -19,7 +19,7 @@ class CCService
         $this->params = $params;
     }
 
-    public function saveOrganization(array $body){
+    public function saveOrganization(array $body, $type = null, $sourceOrgurl = null){
         //save address
         if (isset($body['address'])){
             $body['adresses'][0] = $this->commonGroundService->saveResource($body['address'],['component' => 'cc', 'type' => 'addresses']);
@@ -35,6 +35,8 @@ class CCService
             $body['telephones'][0] = $this->commonGroundService->saveResource($body['phoneNumber'],['component' => 'cc', 'type' => 'telephones']);
             unset($body['phoneNumber']);
         }
+        if (isset($type))$body['type'] = $type;
+        if (isset($sourceOrgurl)) $body['sourceOrganization'] = $sourceOrgurl;
 
         $result = $this->commonGroundService->saveResource($body,['component' => 'cc', 'type' => 'organizations']);
 

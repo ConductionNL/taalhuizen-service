@@ -20,11 +20,11 @@ class WRCService
         $this->params = $params;
     }
 
-    public function saveOrganization(array $body){
+    public function saveOrganization(array $body, $contact = null){
         if (isset($body['address'])) unset($body['address']);
         if (isset($body['email'])) unset($body['email']);
         if (isset($body['phoneNumber'])) unset($body['phoneNumber']);
-
+        if (isset($contact)) $body['contact'] = $contact;
         $result = $this->commonGroundService->saveResource($body,['component' => 'wrc', 'type' => 'organizations']);
 
         return $result;

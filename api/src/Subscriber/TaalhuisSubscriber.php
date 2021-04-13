@@ -58,8 +58,14 @@ class TaalhuisSubscriber implements EventSubscriberInterface
 
             $taalhuis = $this->dtoToTaalhuis($resource);
 
-            //save wrc organization
+            //create cc organization
+            $ccOrganization = $this->ccService->saveOrganization($taalhuis, 'taalhuis');
+            //create wrc organization
             $wrcOrganization = $this->wrcService->saveOrganization($taalhuis);
+            //connect orgs
+            $ccOrganization =  $this->ccService->saveOrganization($ccOrganization,null,$wrcOrganization['@id']);
+            $wrcOrganization = $this->wrcService->saveOrganization($wrcOrganization, $ccOrganization['@id']);
+
 
 
         }
@@ -75,5 +81,14 @@ class TaalhuisSubscriber implements EventSubscriberInterface
         $taalhuis['email'] = $resource->getEmail();
         $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
         return $taalhuis;
+    }
+    private function handleResult($taalhuis) {
+        return [
+            'id' => $taalhuis['id'],
+            'name' => $taalhuis['name'],
+            'address' => $taalhuis['address'],
+            'email' => $taalhuis['email'],
+            'telephone' => $taalhuis['telephone']
+        ];
     }
 }
