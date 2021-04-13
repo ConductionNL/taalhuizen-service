@@ -11,7 +11,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *  collectionOperations={
+ *          "get",
+ *          "get_learning_need"={
+ *              "method"="GET",
+ *              "path"="/learning_needs/{id}",
+ *              "swagger_context" = {
+ *                  "summary"="Gets a specific learningNeed",
+ *                  "description"="Returns a learningNeed"
+ *              }
+ *          },
+ *          "delete_learning_need"={
+ *              "method"="GET",
+ *              "path"="/learning_needs/{id}/delete",
+ *              "swagger_context" = {
+ *                  "summary"="Deletes a specific learningNeed",
+ *                  "description"="Returns true if this learningNeed was deleted"
+ *              }
+ *          },
+ *          "post"
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
 class LearningNeed
