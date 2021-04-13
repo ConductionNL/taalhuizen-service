@@ -216,7 +216,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             Response::HTTP_OK,
             ['content-type' => 'application/json']
         );
-
         $event->setResponse($response);
     }
 
