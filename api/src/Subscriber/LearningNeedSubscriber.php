@@ -48,11 +48,11 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // this: is only here to make sure result is always shown first in the response body
+        $result['result'] = [];
+
         // Handle a post collection
         if($route == 'api_learning_needs_post_collection' and $resource instanceof LearningNeed){
-            // this: is only here to make sure result is always shown first in the response body
-            $result['result'] = [];
-
             // If studentId is set generate the url for it
             if ($resource->getStudentId()) {
                 $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $resource->getStudentId()]);
@@ -127,14 +127,21 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             }
         } else {
             // Handle a get collection
-            if ($event->getRequest()->query->get('@eav')) {
+            if ($event->getRequest()->query->get('learningNeedUrl')) {
                 // Get the learningNeed from EAV
-                $result['result'] = $this->eavService->getObject('learning_needs', $event->getRequest()->query->get('@eav'));
-            } elseif ($event->getRequest()->query->get('eavId')) {
+                $learningNeed = $this->eavService->getObject('learning_needs', $event->getRequest()->query->get('learningNeedUrl'));
+            } elseif ($event->getRequest()->query->get('learningNeedId')) {
                 // Get the learningNeed from EAV
-                $result['result'] = $this->eavService->getObject('learning_needs', null, 'eav', $event->getRequest()->query->get('eavId'));
+                $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $event->getRequest()->query->get('learningNeedId'));
             } else {
-                $result['errorMessage'] = 'Please give a @eav or eavId query param!';
+                $result['errorMessage'] = 'Please give a learningNeedUrl or learningNeedId query param!';
+            }
+
+            if (isset($learningNeed)) {
+                // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
+                $result['learningNeed'] = $learningNeed;
+                // Now put together the expected result in $result['result'] for Lifely:
+                $result['result'] = $this->handleResult($learningNeed);
             }
         }
 
