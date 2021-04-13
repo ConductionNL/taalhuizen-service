@@ -221,10 +221,10 @@ class LearningNeedSubscriber implements EventSubscriberInterface
 
             // Remove this learningNeed from all EAV/edu/participants
             foreach ($learningNeed['participants'] as $studentUrl) {
-                $student = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
-                if (isset($student['student'])) {
+                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+                if (isset($studentResult['participant'])) {
                     // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
-                    array_push($result['participants'], $studentUrl);
+                    array_push($result['participants'], $studentResult['participant']['@id']);
                 }
             }
 
@@ -245,7 +245,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
                 return $participantLearningNeed != $learningNeedUrl;
             });
-            $result['student'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
         }
         return $result;
     }
