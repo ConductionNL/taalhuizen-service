@@ -48,6 +48,17 @@ class EAVService
         return $result;
     }
 
+    public function deleteObject($eavId = null, $entityName = null, $self = null, $componentCode = 'eav') {
+        if (isset($eavId)) {
+            $object['eavId'] = $eavId;
+        } else {
+            $object = $this->getObject($entityName, $self, $componentCode);
+        }
+        $object = $this->commonGroundService->getResource(['component' => 'eav', 'type' => 'object_entities', 'id' => $object['eavId']]);
+        $this->commonGroundService->deleteResource($object);
+        return True;
+    }
+
     public function hasEavObject($uri) {
         $result = $this->commonGroundService->getResourceList(['component' => 'eav', 'type' => 'object_entities'], ['uri' => $uri])['hydra:member'];
         if (count($result) == 1) {
