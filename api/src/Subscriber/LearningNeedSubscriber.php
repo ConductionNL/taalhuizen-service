@@ -196,7 +196,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         $result = [];
         // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if (isset($id)) {
-            if ($this->eavService->hasEavObject($id)) {
+            if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
                 $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
                 $result['learningNeed'] = $learningNeed;
             } else {
@@ -214,7 +214,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
     }
 
     public function deleteLearningNeed($id) {
-        if ($this->eavService->hasEavObject($id)) {
+        if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             $result['participants'] = [];
             // Get the learningNeed from EAV
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
@@ -262,7 +262,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             $result['errorMessage'] = 'Invalid request, offerDifferenceOther is not set!';
         } elseif ($resource->getStudentId() and !$this->commonGroundService->isResource($studentUrl)) {
             $result['errorMessage'] = 'Invalid request, studentId is not an existing edu/participant!';
-        } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and !$this->eavService->hasEavObject($learningNeedId)) {
+        } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId and/or learningNeedUrl is not an existing eav/learning_need!';
         }
         return $result;
