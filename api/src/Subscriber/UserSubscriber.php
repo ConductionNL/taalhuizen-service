@@ -20,7 +20,7 @@ class UserSubscriber extends EventSubscriberInterface
     private $commonGroundService;
     private $ccService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService, WRCService $wrcService, EDUService $eduService)
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService)
     {
         $this->em = $em;
         $this->params = $params;
@@ -54,8 +54,6 @@ class UserSubscriber extends EventSubscriberInterface
 
             $person = $this->dtoToUser($resource);
             //make person
-            $person = $this->ccService->savePerson($person);
-            //make user
         }
     }
 
