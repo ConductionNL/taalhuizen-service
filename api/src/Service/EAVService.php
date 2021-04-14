@@ -44,6 +44,7 @@ class EAVService
             return '[EAVService] a get to the eav component needs a @self or an eavId!';
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
+        // Hotfix, createResource adds this to the front of an @id, but eav already returns @id with this in front:
         $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
         return $result;
     }
@@ -59,7 +60,19 @@ class EAVService
         return True;
     }
 
-    public function hasEavObject($uri) {
+    public function hasEavObject($uri, $entityName = null, $id = null, $componentCode = 'eav') {
+        if (!isset($uri)) {
+            // If you want to check with an $id instead of an $uri, you need to give at least the entityName as well
+            if (isset($id) && isset($entityName)) {
+                $uri = $componentCode.'/'.$entityName.'/'.$id;
+            } else {
+                return '[EAVService] needs an uri or an entityName + id to check if an eav Object exists!';
+            }
+        } elseif (!str_contains($uri, 'http')){
+            // Make sure the $uri contains a url^, else:
+            return '[EAVService] can not check if an eav Object exists with an uri that is not an url!';
+        }
+
         $result = $this->commonGroundService->getResourceList(['component' => 'eav', 'type' => 'object_entities'], ['uri' => $uri])['hydra:member'];
         if (count($result) == 1) {
             return true;

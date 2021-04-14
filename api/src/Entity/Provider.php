@@ -21,7 +21,28 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *          "get",
+ *          "get_provider"={
+ *              "method"="GET",
+ *              "path"="/providers/{id}",
+ *              "swagger_context" = {
+ *                  "summary"="Gets a specific providers",
+ *                  "description"="Returns a providers"
+ *              }
+ *          },
+ *          "delete_provider"={
+ *              "method"="GET",
+ *              "path"="/providers/{id}/delete",
+ *              "swagger_context" = {
+ *                  "summary"="Deletes a specific providers",
+ *                  "description"="Returns true if this providers was deleted"
+ *              }
+ *          },
+ *          "post"
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
 class Provider
@@ -55,7 +76,7 @@ class Provider
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity=address::class)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Address")
      */
     private $address;
 
@@ -99,66 +120,6 @@ class Provider
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(?string $street): self
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getHouseNumber(): ?string
-    {
-        return $this->houseNumber;
-    }
-
-    public function setHouseNumber(?string $houseNumber): self
-    {
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    public function getHouseNumberSuffix(): ?string
-    {
-        return $this->houseNumberSuffix;
-    }
-
-    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
-    {
-        $this->houseNumberSuffix = $houseNumberSuffix;
-
-        return $this;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getLocality(): ?string
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(?string $locality): self
-    {
-        $this->locality = $locality;
 
         return $this;
     }
