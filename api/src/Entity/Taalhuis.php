@@ -55,7 +55,7 @@ class Taalhuis
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity=address::class)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Address")
      */
     private $address;
 
