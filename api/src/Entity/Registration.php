@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RegistrationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -29,41 +31,6 @@ class Registration
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $registrarOrganization;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarName;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registarAdditionalName;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarFamilyName;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarEmail;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarTelephone;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $taalhuisId;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $studentGivenName;
 
     /**
@@ -77,6 +44,11 @@ class Registration
     private $studentFamilyname;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Address::class)
+     */
+    private $address;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $studentTelephone;
@@ -86,35 +58,36 @@ class Registration
      */
     private $studentEmail;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $street;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $houseNumber;
+    private $registrarOrganization;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $houseNumberSuffix;
+    private $registrarName;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $postalCode;
+    private $registrarEmail;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $locality;
+    private $registrarTelephone;
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $memo;
+
+    public function __construct()
+    {
+        $this->address = new ArrayCollection();
+    }
 
     public function getId(): Uuid
     {
@@ -150,25 +123,6 @@ class Registration
         return $this->registarAdditionalName;
     }
 
-    public function setRegistarAdditionalName($registarAdditionalName): self
-    {
-        $this->registarAdditionalName = $registarAdditionalName;
-
-        return $this;
-    }
-
-    public function getRegistrarFamilyName(): ?string
-    {
-        return $this->registrarFamilyName;
-    }
-
-    public function setRegistrarFamilyName($registrarFamilyName): self
-    {
-        $this->registrarFamilyName = $registrarFamilyName;
-
-        return $this;
-    }
-
     public function getRegistrarEmail(): ?string
     {
         return $this->registrarEmail;
@@ -189,18 +143,6 @@ class Registration
     public function setRegistrarTelephone(string $registrarTelephone): self
     {
         $this->registrarTelephone = $registrarTelephone;
-
-        return $this;
-    }
-
-    public function getTaalhuisId(): ?string
-    {
-        return $this->taalhuisId;
-    }
-
-    public function setTaalhuisId(string $taalhuisId): self
-    {
-        $this->taalhuisId = $taalhuisId;
 
         return $this;
     }
@@ -265,66 +207,6 @@ class Registration
         return $this;
     }
 
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(?string $street): self
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getHouseNumber(): ?string
-    {
-        return $this->houseNumber;
-    }
-
-    public function setHouseNumber(?string $houseNumber): self
-    {
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    public function getHouseNumberSuffix(): ?string
-    {
-        return $this->houseNumberSuffix;
-    }
-
-    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
-    {
-        $this->houseNumberSuffix = $houseNumberSuffix;
-
-        return $this;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getLocality(): ?string
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(?string $locality): self
-    {
-        $this->locality = $locality;
-
-        return $this;
-    }
-
     public function getMemo(): ?string
     {
         return $this->memo;
@@ -333,6 +215,30 @@ class Registration
     public function setMemo(?string $memo): self
     {
         $this->memo = $memo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Address[]
+     */
+    public function getAddress(): Collection
+    {
+        return $this->address;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->address->contains($address)) {
+            $this->address[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        $this->address->removeElement($address);
 
         return $this;
     }

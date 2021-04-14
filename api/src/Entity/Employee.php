@@ -360,6 +360,11 @@ class Employee
      */
     private $employeeType;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $userGroupIds = [];
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
@@ -798,6 +803,18 @@ class Employee
     public function removeAddress(Address $address): self
     {
         $this->address->removeElement($address);
+
+        return $this;
+    }
+
+    public function getUserGroupIds(): ?array
+    {
+        return $this->userGroupIds;
+    }
+
+    public function setUserGroupIds(?array $userGroupIds): self
+    {
+        $this->userGroupIds = $userGroupIds;
 
         return $this;
     }
