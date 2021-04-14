@@ -7,6 +7,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Taalhuis;
 use App\Service\CCService;
 use App\Service\WRCService;
+use App\Service\EDUService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,20 +23,22 @@ class TaalhuisSubscriber implements EventSubscriberInterface
     private $commonGroundService;
     private $ccService;
     private $wrcService;
+    private $eduService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService, WRCService $wrcService)
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService, WRCService $wrcService, EDUService $eduService)
     {
         $this->em = $em;
         $this->params = $params;
         $this->commonGroundService = $commonGroundService;
         $this->ccService = $ccService;
         $this->wrcService = $wrcService;
+        $this->eduService = $eduService;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['Taalhuis', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['taalhuis', EventPriorities::PRE_SERIALIZE],
         ];
     }
 
@@ -46,7 +49,10 @@ class TaalhuisSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        if($route != 'api_taalhuis_get_collection' && $route != 'api_taalhuis_post_collection'){
+        if ($route != 'api_taalhuis_get_collection'
+            && $route != 'api_taalhuis_get_taalhuis_collection'
+            && $route != 'api_taalhuis_delete_taalhuis_collection'
+            && $route != 'api_taalhuis_post_collection') {
             return;
         }
 
@@ -55,7 +61,6 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             // this: is only here to make sure result is always shown first in the response body
             $result['result'] = [];
 
-
             $taalhuis = $this->dtoToTaalhuis($resource);
 
             //create cc organization
@@ -63,9 +68,29 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             //create wrc organization
             $wrcOrganization = $this->wrcService->saveOrganization($taalhuis);
             //connect orgs
-            $ccOrganization =  $this->ccService->saveOrganization($ccOrganization,null,$wrcOrganization['@id']);
-            $wrcOrganization = $this->wrcService->saveOrganization($wrcOrganization, $ccOrganization['@id']);
+            $taalhuis =  $this->ccService->saveOrganization($ccOrganization,null,$wrcOrganization['@id']);
+            $wrcOrganization = $this->wrcService->saveOrganization($wrcOrganization, $taalhuis['@id']);
 
+            //make program so courses can be added later
+            if (!$this->eduService->hasProgram($wrcOrganization)) $this->eduService->saveProgram($wrcOrganization);
+            // Add $taalhuis to the $result['taalhuis'] because this is convenient when testing or debugging (mostly for us)
+            $result['taalhuis'] = $taalhuis;
+            // Now put together the expected result in $result['result'] for Lifely:
+            $result['result'] = $this->handleResult($taalhuis);
+
+            // If any error was catched set $result['result'] to null
+            if(isset($result['errorMessage'])) {
+                $result['result'] = null;
+            }
+
+            // Create the response
+            $response = new Response(
+                json_encode($result),
+                Response::HTTP_OK,
+                ['content-type' => 'application/json']
+            );
+
+            $event->setResponse($response);
 
 
         }
@@ -76,7 +101,6 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             $taalhuis['id'] = $resource->getId();
         }
         $taalhuis['name'] = $resource->getName();
-
         $taalhuis['address'] = $resource->getAddress();
         $taalhuis['email'] = $resource->getEmail();
         $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
@@ -88,7 +112,8 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             'name' => $taalhuis['name'],
             'address' => $taalhuis['address'],
             'email' => $taalhuis['email'],
-            'telephone' => $taalhuis['telephone']
+            'telephone' => $taalhuis['telephone'],
+            'type' => $taalhuis['type']
         ];
     }
 }

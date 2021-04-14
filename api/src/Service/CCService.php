@@ -47,4 +47,9 @@ class CCService
         return $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
     }
 
+    public function savePerson($person){
+
+        return $person;
+    }
+
 }
