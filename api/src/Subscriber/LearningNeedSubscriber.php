@@ -89,7 +89,9 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             $result = array_merge($result, $this->getLearningNeed($event->getRequest()->attributes->get("id")));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $result['result'] = $this->handleResult($result['learningNeed']);
+            if (isset($result['learningNeed'])) {
+                $result['result'] = $this->handleResult($result['learningNeed']);
+            }
         } elseif ($route == 'api_learning_needs_get_collection') {
             // Handle a get collection
             if ($event->getRequest()->query->get('learningNeedUrl')) {
@@ -108,6 +110,14 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             if (isset($result['learningNeed'])) {
                 // Now put together the expected result in $result['result'] for Lifely:
                 $result['result'] = $this->handleResult($result['learningNeed']);
+            } elseif (isset($result['learningNeeds'])) {
+                // Now put together the expected result in $result['result'] for Lifely:
+                foreach ($result['learningNeeds'] as &$learningNeed) {
+                    if (!isset($learningNeed['errorMessage'])) {
+                        array_push($result['result'], $this->handleResult($learningNeed));
+                        $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds
+                    }
+                }
             }
         } elseif ($route == 'api_learning_needs_delete_learning_need_collection') {
             // Handle a delete (get collection for a specific item): /learning_needs/{id}/delete
@@ -217,16 +227,21 @@ class LearningNeedSubscriber implements EventSubscriberInterface
     }
 
     public function getLearningNeeds($studentId) {
-        $result['learningNeeds'] = [];
         // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
-            $participant = $this->eavService->getObject('participants', null, 'edu', $studentId);
+            $result['learningNeeds'] = [];
+            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
+            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
             foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-
+                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
+                if (isset($learningNeed['learningNeed'])) {
+                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
+                } else {
+                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
+                }
             }
         } else {
-            // todo:instead of throwing an error, create a new eav/edu/participant with no learning_needs
-            $result['errorMessage'] = 'Invalid request, '. $studentId .' is not an existing eav/edu/participant!';
+            $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
         }
         return $result;
     }
