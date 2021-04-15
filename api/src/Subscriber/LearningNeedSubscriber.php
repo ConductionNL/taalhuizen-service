@@ -217,11 +217,13 @@ class LearningNeedSubscriber implements EventSubscriberInterface
     }
 
     public function getLearningNeeds($studentId) {
-        $result = [];
-        // Get the learningNeed from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
+        $result['learningNeeds'] = [];
+        // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $participant = $this->eavService->getObject('participants', null, 'edu', $studentId);
+            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
 
+            }
         } else {
             // todo:instead of throwing an error, create a new eav/edu/participant with no learning_needs
             $result['errorMessage'] = 'Invalid request, '. $studentId .' is not an existing eav/edu/participant!';

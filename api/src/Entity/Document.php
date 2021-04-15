@@ -47,7 +47,7 @@ class Document
      */
     private $resource;
 
-    public function getId(): UuidInterface
+    public function getId(): Uuid
     {
         return $this->id;
     }

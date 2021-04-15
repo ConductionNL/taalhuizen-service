@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserSubscriber extends EventSubscriberInterface
+class UserSubscriber implements EventSubscriberInterface
 {
     private $em;
     private $params;
