@@ -21,7 +21,28 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ *  * @ApiResource(
+ *  collectionOperations={
+ *          "get",
+ *          "get_taalhuis"={
+ *              "method"="GET",
+ *              "path"="/taalhuis/{id}",
+ *              "swagger_context" = {
+ *                  "summary"="Gets a specific Taalhuis",
+ *                  "description"="Returns a Taalhuis"
+ *              }
+ *          },
+ *          "delete_taalhuis"={
+ *              "method"="GET",
+ *              "path"="/taalhuis/{id}/delete",
+ *              "swagger_context" = {
+ *                  "summary"="Deletes a specific taalhuis",
+ *                  "description"="Returns true if this taalhuis was deleted"
+ *              }
+ *          },
+ *          "post"
+ *     },
+ * )
  * @ORM\Entity(repositoryClass=TaalhuisRepository::class)
  */
 class Taalhuis

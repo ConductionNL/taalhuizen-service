@@ -7,6 +7,8 @@ use App\Repository\AddressRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ApiResource()
@@ -15,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Address
 {
     /**
-    @var UuidInterface The UUID identifier of this resource
+     * @var UuidInterface The UUID identifier of this resource
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
@@ -56,7 +58,7 @@ class Address
         $this->students = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }

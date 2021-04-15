@@ -31,7 +31,14 @@ class Document
      *
      * @ORM\Column(type="text")
      */
-    private $base64;
+    private $base64data;
+
+    /**
+     * @var string the name of the file
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $filename;
 
     /**
      * @var string the resource this document is connected to (organization/contact)
@@ -45,16 +52,26 @@ class Document
         return $this->id;
     }
 
-    public function getBase64(): ?string
+    public function getBase64Data(): ?string
     {
-        return $this->base64;
+        return $this->base64data;
     }
 
-    public function setBase64(string $base64): self
+    public function setBase64Data(string $base64data): self
     {
-        $this->base64 = $base64;
+        $this->base64data = $base64data;
 
         return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(string $filename): self
+    {
+        $this->filename = $filename;
     }
 
     public function getResource(): ?string
