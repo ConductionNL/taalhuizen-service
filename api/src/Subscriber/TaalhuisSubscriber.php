@@ -56,11 +56,11 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // this: is only here to make sure result has a result and that this is always shown first in the response body
+        $result['result'] = [];
+
         //Handle post
         if ($route == 'api_taalhuis_post_collection' and $resource instanceof Taalhuis){
-            // this: is only here to make sure result is always shown first in the response body
-            $result['result'] = [];
-
             $taalhuis = $this->dtoToTaalhuis($resource);
 
             //create cc organization

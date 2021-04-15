@@ -50,7 +50,7 @@ class AanbiederSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // this: is only here to make sure result is always shown first in the response body
+        // this: is only here to make sure result has a result and that this is always shown first in the response body
         $result['result'] = [];
 
         // Handle a post collection
