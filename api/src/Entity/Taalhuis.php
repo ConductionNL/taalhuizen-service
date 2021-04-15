@@ -103,16 +103,6 @@ class Taalhuis
      */
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $taalhuisId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $userGroupId;
-
     public function __construct()
     {
         $this->address = new ArrayCollection();
@@ -131,66 +121,6 @@ class Taalhuis
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(?string $street): self
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getHouseNumber(): ?string
-    {
-        return $this->houseNumber;
-    }
-
-    public function setHouseNumber(?string $houseNumber): self
-    {
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    public function getHouseNumberSuffix(): ?string
-    {
-        return $this->houseNumberSuffix;
-    }
-
-    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
-    {
-        $this->houseNumberSuffix = $houseNumberSuffix;
-
-        return $this;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getLocality(): ?string
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(?string $locality): self
-    {
-        $this->locality = $locality;
 
         return $this;
     }
@@ -239,30 +169,6 @@ class Taalhuis
     public function removeAddress(address $address): self
     {
         $this->address->removeElement($address);
-
-        return $this;
-    }
-
-    public function getTaalhuisId(): ?string
-    {
-        return $this->taalhuisId;
-    }
-
-    public function setTaalhuisId(?string $taalhuisId): self
-    {
-        $this->taalhuisId = $taalhuisId;
-
-        return $this;
-    }
-
-    public function getUserGroupId(): ?string
-    {
-        return $this->userGroupId;
-    }
-
-    public function setUserGroupId(?string $userGroupId): self
-    {
-        $this->userGroupId = $userGroupId;
 
         return $this;
     }

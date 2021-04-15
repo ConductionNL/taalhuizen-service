@@ -44,6 +44,10 @@ class Student
     private $civicIntegrationDetails;
 
     /**
+     *
+     * @Assert\NotNull
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPerson::class, cascade={"persist", "remove"})
      */
     private $personDetails;
@@ -114,6 +118,9 @@ class Student
     private $writingTestResult;
 
     /**
+     * @Assert\NotNull
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
      */
     private $permissionDetails;

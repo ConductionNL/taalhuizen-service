@@ -127,6 +127,8 @@ class Participation
     private $detailsEngagements;
 
     /**
+     *
+     * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
     private $learningNeedId;

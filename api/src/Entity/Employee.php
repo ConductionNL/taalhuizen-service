@@ -162,11 +162,11 @@ class Employee
     private $contactTelephone;
 
     /**
-     * @var string Contact Preference of this Employee.
+     * @var string Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
      *
-     * @Assert\Length(
-     *     max = 255
-     *)
+     * @Assert\Choice(
+     *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -178,7 +178,7 @@ class Employee
     private $contactPreferenceOther;
 
     /**
-     * @var string Target Preference of this Employee. **NT1**, **NT2**
+     * @var array Target Preference of this Employee. **NT1**, **NT2**
      *
      * @example NT1
      *
@@ -186,9 +186,9 @@ class Employee
      *      {"NT1","NT2"}
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $targetGroupPreference;
+    private $targetGroupPreference = [];
 
     /**
      * @var string Voluntering Preference of this Employee.
@@ -223,11 +223,16 @@ class Employee
     private $currentEducation;
 
     /**
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=CurrentEducationYes::class, cascade={"persist", "remove"})
      */
     private $currentEducationYes;
 
     /**
+     *
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=CurrentEducationNoButDidFollow::class, cascade={"persist", "remove"})
      */
     private $currentEducationNoButDidFollow;
@@ -247,12 +252,20 @@ class Employee
      */
     private $currentlyFollowingCourseInstitute;
 
-    /**
+    /***
+     * @Assert\Choice(
+     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseTeacherProfessionalism;
 
     /**
+     * @Assert\Choice(
+     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseCourseProfessionalism;
@@ -417,12 +430,12 @@ class Employee
         return $this;
     }
 
-    public function getTargetGroupPreference(): ?string
+    public function getTargetGroupPreference(): ?array
     {
         return $this->targetGroupPreference;
     }
 
-    public function setTargetGroupPreference(?string $targetGroupPreference): self
+    public function setTargetGroupPreference(?array $targetGroupPreference): self
     {
         $this->targetGroupPreference = $targetGroupPreference;
 

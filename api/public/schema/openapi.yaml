@@ -27273,63 +27273,6 @@ components:
         '@type':
           readOnly: true
           type: string
-    Collection:
-      type: object
-      properties:
-        empty:
-          readOnly: true
-          description: 'Checks whether the collection is empty (contains no elements).'
-          type: boolean
-        element:
-          writeOnly: true
-          description: 'Removes the specified element from the collection, if it is found.'
-        keys:
-          readOnly: true
-          description: 'Gets all keys/indices of the collection.'
-          type: array
-          items:
-            type: integer
-        values:
-          readOnly: true
-          description: 'Gets all values of the collection.'
-          type: array
-          items:
-            type: string
-        iterator:
-          readOnly: true
-    'Collection:jsonld':
-      type: object
-      properties:
-        '@context':
-          readOnly: true
-          type: string
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        empty:
-          readOnly: true
-          description: 'Checks whether the collection is empty (contains no elements).'
-          type: boolean
-        element:
-          writeOnly: true
-          description: 'Removes the specified element from the collection, if it is found.'
-        keys:
-          readOnly: true
-          description: 'Gets all keys/indices of the collection.'
-          type: array
-          items:
-            type: integer
-        values:
-          readOnly: true
-          description: 'Gets all values of the collection.'
-          type: array
-          items:
-            type: string
-        iterator:
-          readOnly: true
     CurrentEducationNoButDidFollow:
       type: object
       description: ''
@@ -27439,8 +27382,15 @@ components:
           description: 'the name of the file'
           type: string
         resource:
-          description: 'the resource this document is connected to (organization/contact)'
           type: string
+        aanbiederEmployeeId:
+          type: string
+          nullable: true
+        studentId:
+          type: string
+          nullable: true
+      required:
+        - filename
     'Document:jsonld':
       type: object
       description: ''
@@ -27465,8 +27415,15 @@ components:
           description: 'the name of the file'
           type: string
         resource:
-          description: 'the resource this document is connected to (organization/contact)'
           type: string
+        aanbiederEmployeeId:
+          type: string
+          nullable: true
+        studentId:
+          type: string
+          nullable: true
+      required:
+        - filename
     Dossier:
       type: object
       description: ''
@@ -27486,14 +27443,14 @@ components:
         eventDescription:
           description: 'description of this student Dossier.'
           type: string
-        organizer:
-          description: 'organizer of this student Dossier.'
+        studentId:
+          description: 'studentId of this student Dossier.'
           type: string
       required:
         - event
         - eventDate
         - eventDescription
-        - organizer
+        - studentId
     'Dossier:jsonld':
       type: object
       description: ''
@@ -27522,14 +27479,14 @@ components:
         eventDescription:
           description: 'description of this student Dossier.'
           type: string
-        organizer:
-          description: 'organizer of this student Dossier.'
+        studentId:
+          description: 'studentId of this student Dossier.'
           type: string
       required:
         - event
         - eventDate
         - eventDescription
-        - organizer
+        - studentId
     Employee:
       type: object
       description: ''
@@ -27578,13 +27535,12 @@ components:
           type: string
           nullable: true
         contactPreference:
-          description: 'Contact Preference of this Employee.'
+          description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
           type: string
           nullable: true
         targetGroupPreference:
           description: 'Target Preference of this Employee. **NT1**, **NT2**'
           type: string
-          nullable: true
         volunteringPreference:
           description: |
             Voluntering Preference of this Employee.
@@ -27660,6 +27616,9 @@ components:
         currentEducationNoButDidFollow:
           type: string
           format: iri-reference
+          nullable: true
+        biscEmployeeId:
+          type: string
           nullable: true
       required:
         - familyName
@@ -27721,13 +27680,12 @@ components:
           type: string
           nullable: true
         contactPreference:
-          description: 'Contact Preference of this Employee.'
+          description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
           type: string
           nullable: true
         targetGroupPreference:
           description: 'Target Preference of this Employee. **NT1**, **NT2**'
           type: string
-          nullable: true
         volunteringPreference:
           description: |
             Voluntering Preference of this Employee.
@@ -27803,6 +27761,9 @@ components:
         currentEducationNoButDidFollow:
           type: string
           format: iri-reference
+          nullable: true
+        biscEmployeeId:
+          type: string
           nullable: true
       required:
         - familyName
@@ -27891,7 +27852,6 @@ components:
           type: array
           items:
             type: string
-          nullable: true
         outComesTopic:
           type: string
         outComesTopicOther:
@@ -27910,6 +27870,12 @@ components:
             type: string
           nullable: true
         outComesLevel:
+          type: string
+        availabilityy:
+          type: string
+          format: iri-reference
+          nullable: true
+        aanbiederId:
           type: string
     'Group:jsonld':
       type: object
@@ -27967,7 +27933,6 @@ components:
           type: array
           items:
             type: string
-          nullable: true
         outComesTopic:
           type: string
         outComesTopicOther:
@@ -27986,6 +27951,12 @@ components:
             type: string
           nullable: true
         outComesLevel:
+          type: string
+        availabilityy:
+          type: string
+          format: iri-reference
+          nullable: true
+        aanbiederId:
           type: string
     LearningNeed:
       type: object
@@ -28177,6 +28148,10 @@ components:
         detailsEngagements:
           type: string
           nullable: true
+        learningNeedId:
+          type: string
+      required:
+        - learningNeedId
     'Participation:jsonld':
       type: object
       description: ''
@@ -28257,6 +28232,10 @@ components:
         detailsEngagements:
           type: string
           nullable: true
+        learningNeedId:
+          type: string
+      required:
+        - learningNeedId
     Provider:
       type: object
       description: ''
@@ -28332,22 +28311,27 @@ components:
           type: string
           format: uuid
         address:
-          $ref: '#/components/schemas/Collection'
+          type: array
+          items:
+            type: string
+            format: iri-reference
         givenName:
           type: string
-          nullable: true
         additionalName:
           type: string
           nullable: true
         familyName:
           type: string
-          nullable: true
         email:
           type: string
-          nullable: true
         telephone:
           type: string
           nullable: true
+      required:
+        - givenName
+        - familyName
+        - email
+        - telephone
     'RegisterStudent:jsonld':
       type: object
       description: ''
@@ -28367,22 +28351,27 @@ components:
           type: string
           format: uuid
         address:
-          $ref: '#/components/schemas/Collection:jsonld'
+          type: array
+          items:
+            type: string
+            format: iri-reference
         givenName:
           type: string
-          nullable: true
         additionalName:
           type: string
           nullable: true
         familyName:
           type: string
-          nullable: true
         email:
           type: string
-          nullable: true
         telephone:
           type: string
           nullable: true
+      required:
+        - givenName
+        - familyName
+        - email
+        - telephone
     RegisterStudentRegistrar:
       type: object
       description: ''
@@ -28392,22 +28381,23 @@ components:
           type: integer
         organizationName:
           type: string
-          nullable: true
         givenName:
           type: string
-          nullable: true
         additionalName:
           type: string
           nullable: true
         familyName:
           type: string
-          nullable: true
         email:
           type: string
-          nullable: true
         telephone:
           type: string
-          nullable: true
+      required:
+        - organizationName
+        - givenName
+        - familyName
+        - email
+        - telephone
     'RegisterStudentRegistrar:jsonld':
       type: object
       description: ''
@@ -28426,22 +28416,23 @@ components:
           type: integer
         organizationName:
           type: string
-          nullable: true
         givenName:
           type: string
-          nullable: true
         additionalName:
           type: string
           nullable: true
         familyName:
           type: string
-          nullable: true
         email:
           type: string
-          nullable: true
         telephone:
           type: string
-          nullable: true
+      required:
+        - organizationName
+        - givenName
+        - familyName
+        - email
+        - telephone
     Report:
       type: object
       description: ''
@@ -28562,6 +28553,9 @@ components:
           nullable: true
         taalhuisId:
           type: string
+      required:
+        - personDetails
+        - permissionDetails
     'Student:jsonld':
       type: object
       description: ''
@@ -28638,6 +28632,9 @@ components:
           nullable: true
         taalhuisId:
           type: string
+      required:
+        - personDetails
+        - permissionDetails
     StudentAvailability:
       type: object
       description: ''
@@ -28806,7 +28803,8 @@ components:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
-          type: integer
+          type: string
+          format: uuid
         street:
           type: string
           nullable: true
@@ -28853,7 +28851,8 @@ components:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
-          type: integer
+          type: string
+          format: uuid
         street:
           type: string
           nullable: true
@@ -29479,21 +29478,6 @@ components:
         name:
           description: 'The Name of this Taalhuis.'
           type: string
-        street:
-          type: string
-          nullable: true
-        houseNumber:
-          type: string
-          nullable: true
-        houseNumberSuffix:
-          type: string
-          nullable: true
-        postalCode:
-          type: string
-          nullable: true
-        locality:
-          type: string
-          nullable: true
         phoneNumber:
           description: 'The Telephone of this Taalhuis.'
           type: string
@@ -29508,12 +29492,6 @@ components:
           items:
             type: string
             format: iri-reference
-        taalhuisId:
-          type: string
-          nullable: true
-        userGroupId:
-          type: string
-          nullable: true
       required:
         - name
         - email
@@ -29560,21 +29538,6 @@ components:
         name:
           description: 'The Name of this Taalhuis.'
           type: string
-        street:
-          type: string
-          nullable: true
-        houseNumber:
-          type: string
-          nullable: true
-        houseNumberSuffix:
-          type: string
-          nullable: true
-        postalCode:
-          type: string
-          nullable: true
-        locality:
-          type: string
-          nullable: true
         phoneNumber:
           description: 'The Telephone of this Taalhuis.'
           type: string
@@ -29589,12 +29552,6 @@ components:
           items:
             type: string
             format: iri-reference
-        taalhuisId:
-          type: string
-          nullable: true
-        userGroupId:
-          type: string
-          nullable: true
       required:
         - name
         - email
@@ -29607,36 +29564,32 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        verb:
-          description: 'The verb of this testResult.'
+        participationId:
           type: string
-        topic:
-          description: 'The topic of this testResult.'
+        outComesGoal:
           type: string
-        application:
-          description: 'The application of this testResult.'
+        outComesTopic:
           type: string
-        level:
-          description: 'The level of this testResult.'
+        outComesTopicOther:
           type: string
-        usedTest:
-          description: 'The used test of this testResult.'
+          nullable: true
+        outComesApplication:
           type: string
-        testDate:
-          description: 'The test date of this testResult.'
+        outComesApplicationOther:
           type: string
-          format: date-time
-        explanation:
-          description: 'The explanation of this testResult.'
+          nullable: true
+        outComesLevel:
           type: string
-      required:
-        - verb
-        - topic
-        - application
-        - level
-        - usedTest
-        - testDate
-        - explanation
+        outComesLevelOther:
+          type: string
+          nullable: true
+        examUsedExam:
+          type: string
+        examDate:
+          type: string
+        examMemo:
+          type: string
+          nullable: true
     'TestResult:jsonld':
       type: object
       description: ''
@@ -29655,36 +29608,32 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        verb:
-          description: 'The verb of this testResult.'
+        participationId:
           type: string
-        topic:
-          description: 'The topic of this testResult.'
+        outComesGoal:
           type: string
-        application:
-          description: 'The application of this testResult.'
+        outComesTopic:
           type: string
-        level:
-          description: 'The level of this testResult.'
+        outComesTopicOther:
           type: string
-        usedTest:
-          description: 'The used test of this testResult.'
+          nullable: true
+        outComesApplication:
           type: string
-        testDate:
-          description: 'The test date of this testResult.'
+        outComesApplicationOther:
           type: string
-          format: date-time
-        explanation:
-          description: 'The explanation of this testResult.'
+          nullable: true
+        outComesLevel:
           type: string
-      required:
-        - verb
-        - topic
-        - application
-        - level
-        - usedTest
-        - testDate
-        - explanation
+        outComesLevelOther:
+          type: string
+          nullable: true
+        examUsedExam:
+          type: string
+        examDate:
+          type: string
+        examMemo:
+          type: string
+          nullable: true
     User:
       type: object
       description: ''
@@ -29697,20 +29646,20 @@ components:
         email:
           description: 'The Email of this User.'
           type: string
+          nullable: true
         username:
           description: 'The Username of this User'
           type: string
+          nullable: true
         password:
           description: 'The Password of this User.'
           type: string
+          nullable: true
         token:
           readOnly: true
           description: 'The Token for password reset'
           type: string
-      required:
-        - email
-        - username
-        - password
+          nullable: true
     'User:jsonld':
       type: object
       description: ''
@@ -29732,61 +29681,59 @@ components:
         email:
           description: 'The Email of this User.'
           type: string
+          nullable: true
         username:
           description: 'The Username of this User'
           type: string
+          nullable: true
         password:
           description: 'The Password of this User.'
           type: string
+          nullable: true
         token:
           readOnly: true
           description: 'The Token for password reset'
           type: string
-      required:
-        - email
-        - username
-        - password
+          nullable: true
 definitions:
   Dossier-read:
     properties:
       event:
         description: 'The Event of this Student.'
         type: string
-        maxLength: 255
       eventDate:
         description: 'date of this student Dossier.'
         type: \Datetime
       eventDescription:
         description: 'description of this student Dossier.'
         type: string
-      organizer:
-        description: 'organizer of this student Dossier.'
+      studentId:
+        description: 'studentId of this student Dossier.'
         type: string
     required:
       - event
       - eventDate
       - eventDescription
-      - organizer
+      - studentId
   Dossier-write:
     properties:
       event:
         description: 'The Event of this Student.'
         type: string
-        maxLength: 255
       eventDate:
         description: 'date of this student Dossier.'
         type: \Datetime
       eventDescription:
         description: 'description of this student Dossier.'
         type: string
-      organizer:
-        description: 'organizer of this student Dossier.'
+      studentId:
+        description: 'studentId of this student Dossier.'
         type: string
     required:
       - event
       - eventDate
       - eventDescription
-      - organizer
+      - studentId
   Employee-read:
     properties:
       givenName:
@@ -29826,12 +29773,11 @@ definitions:
         type: string
         maxLength: 255
       contactPreference:
-        description: 'Contact Preference of this Employee.'
+        description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
         type: string
-        maxLength: 255
       targetGroupPreference:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: string
+        type: array
         example: NT1
       volunteringPreference:
         description: |
@@ -29841,9 +29787,12 @@ definitions:
               max = 255
           )
         type: string
+      currentlyFollowingCourseCourseProfessionalism: []
       address:
         description: 'The address of this Employee.'
         type: \Address
+      currentEducationYes: []
+      currentEducationNoButDidFollow: []
     required:
       - givenName
       - familyName
@@ -29887,12 +29836,11 @@ definitions:
         type: string
         maxLength: 255
       contactPreference:
-        description: 'Contact Preference of this Employee.'
+        description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
         type: string
-        maxLength: 255
       targetGroupPreference:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: string
+        type: array
         example: NT1
       volunteringPreference:
         description: |
@@ -29902,9 +29850,12 @@ definitions:
               max = 255
           )
         type: string
+      currentlyFollowingCourseCourseProfessionalism: []
       address:
         description: 'The address of this Employee.'
         type: \Address
+      currentEducationYes: []
+      currentEducationNoButDidFollow: []
     required:
       - givenName
       - familyName
@@ -29977,6 +29928,36 @@ definitions:
         type: \Address
     required:
       - name
+  RegisterStudent-read:
+    properties:
+      address: []
+    required:
+      - givenName
+      - familyName
+      - email
+      - telephone
+  RegisterStudent-write:
+    properties:
+      address: []
+    required:
+      - givenName
+      - familyName
+      - email
+      - telephone
+  Student-read:
+    properties:
+      personDetails: []
+      permissionDetails: []
+    required:
+      - personDetails
+      - permissionDetails
+  Student-write:
+    properties:
+      personDetails: []
+      permissionDetails: []
+    required:
+      - personDetails
+      - permissionDetails
   Taalhuis-read:
     properties:
       name:
@@ -30017,80 +29998,6 @@ definitions:
     required:
       - name
       - email
-  TestResult-read:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
-  TestResult-write:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
   User-read:
     properties:
       email:
@@ -30109,11 +30016,7 @@ definitions:
         description: 'The Token for password reset'
         type: string
         maxLength: 2550
-    required:
-      - email
-      - username
-      - password
-      - token
+    required: []
   User-write:
     properties:
       email:
@@ -30132,11 +30035,7 @@ definitions:
         description: 'The Token for password reset'
         type: string
         maxLength: 2550
-    required:
-      - email
-      - username
-      - password
-      - token
+    required: []
   ChangeLog-read:
     properties:
       id:
@@ -30175,12 +30074,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 14:53:37'
+        example: '2021-04-15 16:51:37'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 14:53:37'
+        example: '2021-04-15 16:51:37'
     required: []
   ChangeLog-write:
     properties:
@@ -30294,12 +30193,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 14:53:37'
+        example: '2021-04-15 16:51:37'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 14:53:37'
+        example: '2021-04-15 16:51:37'
     required: []
   AuditTrail-write:
     properties:
