@@ -47,11 +47,11 @@ class UserSubscriber extends EventSubscriberInterface
             return;
         }
 
+        // this: is only here to make sure result has a result and that this is always shown first in the response body
+        $result['result'] = [];
+
         //handle post
         if ($route == 'api_user_post_collection' and $resource instanceof User){
-            // this: is only here to make sure result is always shown first in the response body
-            $result['result'] = [];
-
             $person = $this->dtoToUser($resource);
             //make person
         }

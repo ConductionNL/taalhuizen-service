@@ -51,7 +51,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // this: is only here to make sure result is always shown first in the response body
+        // this: is only here to make sure result has a result and that this is always shown first in the response body
         $result['result'] = [];
 
         // Handle a post collection
@@ -98,15 +98,18 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             } elseif ($event->getRequest()->query->get('learningNeedId')) {
                 // Get the learningNeed from EAV
                 $result = array_merge($result, $this->getLearningNeed($event->getRequest()->query->get('learningNeedId')));
+            } elseif ($event->getRequest()->query->get('studentId')) {
+                // Get the learningNeeds of this student from EAV
+                $result = array_merge($result, $this->getLearningNeeds($event->getRequest()->query->get('studentId')));
             } else {
-                $result['errorMessage'] = 'Please give a learningNeedUrl or learningNeedId query param!';
+                $result['errorMessage'] = 'Please give a learningNeedUrl, learningNeedId or studentId query param!';
             }
 
             if (isset($result['learningNeed'])) {
                 // Now put together the expected result in $result['result'] for Lifely:
                 $result['result'] = $this->handleResult($result['learningNeed']);
             }
-        } elseif($route == 'api_learning_needs_delete_learning_need_collection') {
+        } elseif ($route == 'api_learning_needs_delete_learning_need_collection') {
             // Handle a delete (get collection for a specific item): /learning_needs/{id}/delete
             $result = array_merge($result, $this->deleteLearningNeed($event->getRequest()->attributes->get("id")));
 
@@ -118,7 +121,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         }
 
         // If any error was catched set $result['result'] to null
-        if(isset($result['errorMessage'])) {
+        if (isset($result['errorMessage'])) {
             $result['result'] = null;
         }
 
@@ -209,6 +212,19 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             } else {
                 $result['errorMessage'] = 'Invalid request, '. $url .' is not an existing eav/learning_need!';
             }
+        }
+        return $result;
+    }
+
+    public function getLearningNeeds($studentId) {
+        $result = [];
+        // Get the learningNeed from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
+        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
+            $participant = $this->eavService->getObject('participants', null, 'edu', $studentId);
+
+        } else {
+            // todo:instead of throwing an error, create a new eav/edu/participant with no learning_needs
+            $result['errorMessage'] = 'Invalid request, '. $studentId .' is not an existing eav/edu/participant!';
         }
         return $result;
     }
