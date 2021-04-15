@@ -11,198 +11,52 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @ApiResource()
- * @ORM\Entity(repositoryClass=RegistrationRepository::class)
+ * @ORM\Entity(repositoryClass=RegisterStudentRepository::class)
  */
 class Registration
 {
     /**
-     * @var UuidInterface The UUID identifier of this resource
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
      * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
-     * @ORM\GeneratedValue(strategy="CUSTOM")
-     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $studentGivenName;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentAdditionalName;
+    private $taalhuisId;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=RegisterStudent::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $studentFamilyname;
+    private $student;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Address::class)
+     * @ORM\ManyToOne(targetEntity=RegisterStudentRegistrar::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $address;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $studentTelephone;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $studentEmail;
-
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarOrganization;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarName;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarEmail;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $registrarTelephone;
+    private $registrar;
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $memo;
 
-    public function __construct()
-    {
-        $this->address = new ArrayCollection();
-    }
-
-    public function getId(): Uuid
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getRegistrarOrganization(): ?string
+    public function getTaalhuisId(): ?string
     {
-        return $this->registrarOrganization;
+        return $this->taalhuisId;
     }
 
-    public function setRegistrarOrganization(string $applicantOrganization): self
+    public function setTaalhuisId(?string $taalhuisId): self
     {
-        $this->registrarOrganization = $applicantOrganization;
-
-        return $this;
-    }
-
-    public function getRegistrarName(): ?string
-    {
-        return $this->registrarName;
-    }
-
-    public function setRegistrarName(string $registrarName): self
-    {
-        $this->registrarName = $registrarName;
-
-        return $this;
-    }
-
-    public function getRegistarAdditionalName(): ?string
-    {
-        return $this->registarAdditionalName;
-    }
-
-    public function getRegistrarEmail(): ?string
-    {
-        return $this->registrarEmail;
-    }
-
-    public function setRegistrarEmail(string $registrarEmail): self
-    {
-        $this->registrarEmail = $registrarEmail;
-
-        return $this;
-    }
-
-    public function getRegistrarTelephone(): ?string
-    {
-        return $this->registrarTelephone;
-    }
-
-    public function setRegistrarTelephone(string $registrarTelephone): self
-    {
-        $this->registrarTelephone = $registrarTelephone;
-
-        return $this;
-    }
-
-    public function getStudentGivenName(): ?string
-    {
-        return $this->studentGivenName;
-    }
-
-    public function setStudentGivenName(string $studentGivenName): self
-    {
-        $this->studentGivenName = $studentGivenName;
-
-        return $this;
-    }
-
-    public function getStudentAdditionalName(): ?string
-    {
-        return $this->studentAdditionalName;
-    }
-
-    public function setStudentAdditionalName(?string $studentAdditionalName): self
-    {
-        $this->studentAdditionalName = $studentAdditionalName;
-
-        return $this;
-    }
-
-    public function getStudentFamilyname(): ?string
-    {
-        return $this->studentFamilyname;
-    }
-
-    public function setStudentFamilyname(string $studentFamilyname): self
-    {
-        $this->studentFamilyname = $studentFamilyname;
-
-        return $this;
-    }
-
-    public function getStudentTelephone(): ?string
-    {
-        return $this->studentTelephone;
-    }
-
-    public function setStudentTelephone(string $studentTelephone): self
-    {
-        $this->studentTelephone = $studentTelephone;
-
-        return $this;
-    }
-
-    public function getStudentEmail(): ?string
-    {
-        return $this->studentEmail;
-    }
-
-    public function setStudentEmail(string $studentEmail): self
-    {
-        $this->studentEmail = $studentEmail;
+        $this->taalhuisId = $taalhuisId;
 
         return $this;
     }
@@ -219,26 +73,26 @@ class Registration
         return $this;
     }
 
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddress(): Collection
+    public function getStudent(): ?RegisterStudent
     {
-        return $this->address;
+        return $this->student;
     }
 
-    public function addAddress(Address $address): self
+    public function setStudent(?RegisterStudent $student): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-        }
+        $this->student = $student;
 
         return $this;
     }
 
-    public function removeAddress(Address $address): self
+    public function getRegistrar(): ?RegisterStudentRegistrar
     {
-        $this->address->removeElement($address);
+        return $this->registrar;
+    }
+
+    public function setRegistrar(?RegisterStudentRegistrar $registrar): self
+    {
+        $this->registrar = $registrar;
 
         return $this;
     }

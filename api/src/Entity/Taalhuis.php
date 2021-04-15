@@ -103,6 +103,16 @@ class Taalhuis
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $taalhuisId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userGroupId;
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
@@ -229,6 +239,30 @@ class Taalhuis
     public function removeAddress(address $address): self
     {
         $this->address->removeElement($address);
+
+        return $this;
+    }
+
+    public function getTaalhuisId(): ?string
+    {
+        return $this->taalhuisId;
+    }
+
+    public function setTaalhuisId(?string $taalhuisId): self
+    {
+        $this->taalhuisId = $taalhuisId;
+
+        return $this;
+    }
+
+    public function getUserGroupId(): ?string
+    {
+        return $this->userGroupId;
+    }
+
+    public function setUserGroupId(?string $userGroupId): self
+    {
+        $this->userGroupId = $userGroupId;
 
         return $this;
     }
