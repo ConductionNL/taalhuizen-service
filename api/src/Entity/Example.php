@@ -35,7 +35,7 @@ class Example
      */
     private ?array $data;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

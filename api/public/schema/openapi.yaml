@@ -7584,15 +7584,105 @@ paths:
     get:
       tags:
         - Participation
-      operationId: getParticipationItem
-      summary: 'Retrieves a Participation resource.'
+      operationId: get_participationParticipationCollection
+      summary: 'Retrieves the collection of Participation resources.'
+      responses:
+        200:
+          description: 'Participation collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
       parameters:
         -
-          name: id
-          in: path
-          required: true
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
           schema:
-            type: string
+            type: integer
+            default: 1
+        -
+          name: limit
+          in: query
+          required: false
+          description: 'The number of items per page'
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
         -
           name: Authorization
           description: 'The JWT of the entity performing the request'
@@ -7664,51 +7754,6 @@ paths:
             type: string
             format: date-time
           in: query
-      responses:
-        200:
-          description: 'Participation resource response'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Participation'
-        404:
-          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -8005,6 +8050,182 @@ paths:
             schema:
               $ref: '#/components/schemas/Participation'
         description: 'The updated Participation resource'
+  '/participations/{id}/delete':
+    get:
+      tags:
+        - Participation
+      operationId: delete_participationParticipationCollection
+      summary: 'Retrieves the collection of Participation resources.'
+      responses:
+        200:
+          description: 'Participation collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+        -
+          name: limit
+          in: query
+          required: false
+          description: 'The number of items per page'
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      produces:
+        - application/health+json
   /providers:
     get:
       tags:
@@ -10729,105 +10950,15 @@ paths:
     get:
       tags:
         - Taalhuis
-      operationId: get_taalhuisTaalhuisCollection
-      summary: 'Retrieves the collection of Taalhuis resources.'
-      responses:
-        200:
-          description: 'Taalhuis collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Taalhuis:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Taalhuis:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
+      operationId: getTaalhuisItem
+      summary: 'Retrieves a Taalhuis resource.'
       parameters:
         -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
+          name: id
+          in: path
+          required: true
           schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
+            type: string
         -
           name: Authorization
           description: 'The JWT of the entity performing the request'
@@ -10899,6 +11030,51 @@ paths:
             type: string
             format: date-time
           in: query
+      responses:
+        200:
+          description: 'Taalhuis resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Taalhuis:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Taalhuis:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Taalhuis'
+        404:
+          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -11195,182 +11371,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Taalhuis'
         description: 'The updated Taalhuis resource'
-  '/taalhuis/{id}/delete':
-    get:
-      tags:
-        - Taalhuis
-      operationId: delete_taalhuisTaalhuisCollection
-      summary: 'Retrieves the collection of Taalhuis resources.'
-      responses:
-        200:
-          description: 'Taalhuis collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Taalhuis:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Taalhuis:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Taalhuis'
-      parameters:
-        -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
-          schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      produces:
-        - application/health+json
   /test_results:
     get:
       tags:
@@ -14035,9 +14035,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
-          type: string
-          nullable: true
         aanbiederId:
           type: string
           nullable: true
@@ -14095,6 +14092,16 @@ components:
           format: date-time
           nullable: true
         detailsEngagements:
+          type: string
+          nullable: true
+        learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
+          type: string
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
           type: string
           nullable: true
     'Participation:jsonld':
@@ -14115,9 +14122,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
-          type: string
-          nullable: true
         aanbiederId:
           type: string
           nullable: true
@@ -14175,6 +14179,16 @@ components:
           format: date-time
           nullable: true
         detailsEngagements:
+          type: string
+          nullable: true
+        learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
+          type: string
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
           type: string
           nullable: true
     Provider:
@@ -14964,29 +14978,7 @@ components:
         - givenName
     Taalhuis:
       type: object
-      description: |
-        * @ApiResource(
-         collectionOperations={
-                 "get",
-                 "get_taalhuis"={
-                     "method"="GET",
-                     "path"="/taalhuis/{id}",
-                     "swagger_context" = {
-                         "summary"="Gets a specific Taalhuis",
-                         "description"="Returns a Taalhuis"
-                     }
-                 },
-                 "delete_taalhuis"={
-                     "method"="GET",
-                     "path"="/taalhuis/{id}/delete",
-                     "swagger_context" = {
-                         "summary"="Deletes a specific taalhuis",
-                         "description"="Returns true if this taalhuis was deleted"
-                     }
-                 },
-                 "post"
-            },
-        )
+      description: ''
       properties:
         id:
           readOnly: true
@@ -15030,29 +15022,7 @@ components:
         - email
     'Taalhuis:jsonld':
       type: object
-      description: |
-        * @ApiResource(
-         collectionOperations={
-                 "get",
-                 "get_taalhuis"={
-                     "method"="GET",
-                     "path"="/taalhuis/{id}",
-                     "swagger_context" = {
-                         "summary"="Gets a specific Taalhuis",
-                         "description"="Returns a Taalhuis"
-                     }
-                 },
-                 "delete_taalhuis"={
-                     "method"="GET",
-                     "path"="/taalhuis/{id}/delete",
-                     "swagger_context" = {
-                         "summary"="Deletes a specific taalhuis",
-                         "description"="Returns true if this taalhuis was deleted"
-                     }
-                 },
-                 "post"
-            },
-        )
+      description: ''
       properties:
         '@context':
           readOnly: true
@@ -15562,6 +15532,35 @@ definitions:
       offerDifferenceOther: []
       offerEngagements: []
       studentId: []
+      learningNeedId:
+        description: 'The id of the objectEntity of an eav/learning_need.'
+        type: string
+      learningNeedUrl:
+        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+        type: string
+        format: url
+    required: []
+  Participation-write:
+    properties:
+      aanbiederId: []
+      aanbiederName: []
+      aanbiederNote: []
+      offerName: []
+      offerCourse: []
+      outComesGoal: []
+      outComesTopic: []
+      outComesTopicOther: []
+      outComesApplication: []
+      outComesApplicationOther: []
+      outComesLevel: []
+      outComesLevelOther: []
+      detailsIsFormal: []
+      detailsGroupFormation: []
+      detailsTotalClassHours: []
+      detailsCertificateWillBeAwarded: []
+      detailsStartDate: []
+      detailsEndDate: []
+      detailsEngagements: []
       learningNeedId:
         description: 'The id of the objectEntity of an eav/learning_need.'
         type: string
@@ -16276,59 +16275,6 @@ definitions:
       - username
       - password
       - token
-  ChangeLog-read:
-    properties:
-      id:
-        description: 'The UUID identifier of this object'
-        type: string
-        example: e2984465-190a-4562-829e-a8cca81aa35d
-        format: uuid
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-      action:
-        description: ''
-        type: string
-      objectId:
-        description: ''
-        type: string
-      objectClass:
-        description: ''
-        type: string
-      version:
-        description: ''
-        type: int
-      data:
-        description: ''
-        type: array
-      username:
-        description: ''
-        type: string
-      session:
-        description: 'The moment this request was created'
-        type: string
-        maxLength: 255
-      dateCreated:
-        description: 'The moment this request was created'
-        type: string
-        format: date-time
-        example: '2021-04-15 09:22:10'
-      dateModified:
-        description: 'The moment this request last Modified'
-        type: string
-        format: date-time
-        example: '2021-04-15 09:22:10'
-    required: []
-  ChangeLog-write:
-    properties:
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-    required: []
   AuditTrail-read:
     properties:
       id:
@@ -16433,12 +16379,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 09:22:10'
+        example: '2021-04-15 13:36:25'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 09:22:10'
+        example: '2021-04-15 13:36:25'
     required: []
   AuditTrail-write:
     properties:
@@ -16446,6 +16392,59 @@ definitions:
         description: 'A note conserning this log lin'
         type: string
         example: 'This log line looks suspicius'
+        maxLength: 2555
+    required: []
+  ChangeLog-read:
+    properties:
+      id:
+        description: 'The UUID identifier of this object'
+        type: string
+        example: e2984465-190a-4562-829e-a8cca81aa35d
+        format: uuid
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
+        maxLength: 2555
+      action:
+        description: ''
+        type: string
+      objectId:
+        description: ''
+        type: string
+      objectClass:
+        description: ''
+        type: string
+      version:
+        description: ''
+        type: int
+      data:
+        description: ''
+        type: array
+      username:
+        description: ''
+        type: string
+      session:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      dateCreated:
+        description: 'The moment this request was created'
+        type: string
+        format: date-time
+        example: '2021-04-15 13:36:25'
+      dateModified:
+        description: 'The moment this request last Modified'
+        type: string
+        format: date-time
+        example: '2021-04-15 13:36:25'
+    required: []
+  ChangeLog-write:
+    properties:
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
         maxLength: 2555
     required: []
 tags:
@@ -16512,28 +16511,7 @@ tags:
   -
     name: Taalhuis
     description: |
-      * @ApiResource(
-       collectionOperations={
-               "get",
-               "get_taalhuis"={
-                   "method"="GET",
-                   "path"="/taalhuis/{id}",
-                   "swagger_context" = {
-                       "summary"="Gets a specific Taalhuis",
-                       "description"="Returns a Taalhuis"
-                   }
-               },
-               "delete_taalhuis"={
-                   "method"="GET",
-                   "path"="/taalhuis/{id}/delete",
-                   "swagger_context" = {
-                       "summary"="Deletes a specific taalhuis",
-                       "description"="Returns true if this taalhuis was deleted"
-                   }
-               },
-               "post"
-          },
-      )
+      
       
       
   -
@@ -16549,13 +16527,13 @@ tags:
       
       
   -
-    name: ChangeLog
+    name: AuditTrail
     description: |
       An resource representing a log line.
       
       This entity represents a product that can be ordered via the OrderRegistratieComponent.
   -
-    name: AuditTrail
+    name: ChangeLog
     description: |
       An resource representing a log line.
       
@@ -16566,15 +16544,15 @@ securityDefinitions:
     authorizationUrl: 'http://petstore.swagger.io/api/oauth/dialog'
     flow: implicit
     scopes:
-      read: 'read right to the AuditTrail resource'
-      write: 'write right to the AuditTrail resource'
+      read: 'read right to the ChangeLog resource'
+      write: 'write right to the ChangeLog resource'
   JWT-Token:
     type: apiKey
     in: header
     name: Authorization
     scopes:
-      read: 'read right to the AuditTrail resource'
-      write: 'write right to the AuditTrail resource'
+      read: 'read right to the ChangeLog resource'
+      write: 'write right to the ChangeLog resource'
 host: irc.zaakonline.nl
 servers:
   -

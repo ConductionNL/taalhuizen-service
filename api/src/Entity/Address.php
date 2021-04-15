@@ -58,7 +58,7 @@ class Address
         $this->students = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

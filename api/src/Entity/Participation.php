@@ -185,7 +185,7 @@ class Participation
      */
     private $learningNeedUrl;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
