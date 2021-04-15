@@ -282,6 +282,11 @@ class Employee
      */
     private $taalhuisId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $biscEmployeeId;
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
@@ -684,6 +689,18 @@ class Employee
     public function setCurrentEducationNoButDidFollow(?CurrentEducationNoButDidFollow $currentEducationNoButDidFollow): self
     {
         $this->currentEducationNoButDidFollow = $currentEducationNoButDidFollow;
+
+        return $this;
+    }
+
+    public function getBiscEmployeeId(): ?string
+    {
+        return $this->biscEmployeeId;
+    }
+
+    public function setBiscEmployeeId(?string $biscEmployeeId): self
+    {
+        $this->biscEmployeeId = $biscEmployeeId;
 
         return $this;
     }

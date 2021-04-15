@@ -28,12 +28,6 @@ class Participation
     private $id;
 
     /**
-     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $status;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $aanbiederId;
@@ -63,7 +57,6 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesGoal;
-
     /**
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -132,6 +125,11 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $detailsEngagements;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $learningNeedId;
 
     public function getId(): Uuid
     {
@@ -374,6 +372,18 @@ class Participation
     public function setDetailsEngagements(?string $detailsEngagements): self
     {
         $this->detailsEngagements = $detailsEngagements;
+
+        return $this;
+    }
+
+    public function getLearningNeedId(): ?string
+    {
+        return $this->learningNeedId;
+    }
+
+    public function setLearningNeedId(string $learningNeedId): self
+    {
+        $this->learningNeedId = $learningNeedId;
 
         return $this;
     }

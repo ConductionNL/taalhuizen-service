@@ -41,11 +41,14 @@ class Document
     private $filename;
 
     /**
-     * @var string the resource this document is connected to (organization/contact)
-     *
      * @ORM\Column(type="string", length=255)
      */
-    private $resource;
+    private $aanbiederEmployeeId;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $studentId;
 
     public function getId(): Uuid
     {
@@ -82,6 +85,30 @@ class Document
     public function setResource(string $resource): self
     {
         $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeId(): ?string
+    {
+        return $this->aanbiederEmployeeId;
+    }
+
+    public function setAanbiederEmployeeId(string $aanbiederEmployeeId): self
+    {
+        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(string $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }
