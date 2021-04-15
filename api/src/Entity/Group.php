@@ -43,77 +43,94 @@ class Group
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $typeOfCourse;
+    private $typeCourse;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $verb;
+    private $outComesGoal;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $formality;
+    private $detailsIsFormal;
 
     /**
      * @ORM\Column(type="integer", length=255)
      */
-    private $classHours;
+    private $detailsTotalClassHours;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $certificate;
+    private $detailsCertificateWillBeAwarded;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $startDate;
+    private $detailsStartDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $endDate;
+    private $detailsEndDate;
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
-    private $availabilityNote;
+    private $availabilityNotes;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $location;
+    private $generalLocation;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $minParticipants;
+    private $generalParticipantsMin;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $maxParticipants;
+    private $generalParticipantsMax;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $evaluation;
+    private $generalEvaluation;
 
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    private $mentors = [];
+    private $aanbiederEmployeeIds = [];
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $topic;
+    private $outComesTopic;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $application;
+    private $outComesTopicOther;
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesApplication;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesApplicationOther;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesLevelOther;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -121,9 +138,18 @@ class Group
     private $iscedEducationLevelCode;
 
     /**
+     * @Groups({"write"})
+     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesLevel;
+
+    /**
      * @ORM\Column(type="array", nullable=true)
      */
     private $availability = [];
+
+
 
     public function getId(): ?int
     {
@@ -142,182 +168,194 @@ class Group
         return $this;
     }
 
-    public function getTypeOfCourse(): ?string
+    public function getTypeCourse(): ?string
     {
-        return $this->typeOfCourse;
+        return $this->typeCourse;
     }
 
-    public function setTypeOfCourse(string $typeOfCourse): self
+    public function setTypeCourse(string $typeCourse): self
     {
-        $this->typeOfCourse = $typeOfCourse;
+        $this->typeCourse = $typeCourse;
 
         return $this;
     }
 
-    public function getVerb(): ?string
+    public function getOutComesGoal(): ?string
     {
-        return $this->verb;
+        return $this->outComesGoal;
     }
 
-    public function setVerb(string $verb): self
+    public function setOutComesGoal(string $outComesGoal): self
     {
-        $this->verb = $verb;
+        $this->outComesGoal = $outComesGoal;
 
         return $this;
     }
 
-    public function getFormality(): ?string
+    public function getDetailsIsFormal(): ?string
     {
-        return $this->formality;
+        return $this->detailsIsFormal;
     }
 
-    public function setFormality(string $formality): self
+    public function setDetailsIsFormal(string $detailsIsFormal): self
     {
-        $this->formality = $formality;
+        $this->detailsIsFormal = $detailsIsFormal;
 
         return $this;
     }
 
-    public function getClassHours(): ?int
+    public function getDetailsTotalClassHours(): ?int
     {
-        return $this->classHours;
+        return $this->detailsTotalClassHours;
     }
 
-    public function setClassHours(?int $classHours): self
+    public function setDetailsTotalClassHours(?int $detailsTotalClassHours): self
     {
-        $this->classHours = $classHours;
+        $this->detailsTotalClassHours = $detailsTotalClassHours;
 
         return $this;
     }
 
-    public function getCertificate(): ?bool
+    public function getDetailsCertificateWillBeAwarded(): ?bool
     {
-        return $this->certificate;
+        return $this->detailsCertificateWillBeAwarded;
     }
 
-    public function setCertificate(bool $certificate): self
+    public function setDetailsCertificateWillBeAwarded(bool $detailsCertificateWillBeAwarded): self
     {
-        $this->certificate = $certificate;
+        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
 
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getDetailsStartDate(): ?\DateTimeInterface
     {
-        return $this->startDate;
+        return $this->detailsStartDate;
     }
 
-    public function setStartDate(?\DateTimeInterface $startDate): self
+    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
     {
-        $this->startDate = $startDate;
+        $this->detailsStartDate = $detailsStartDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getDetailsEndDate(): ?\DateTimeInterface
     {
-        return $this->endDate;
+        return $this->detailsEndDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
     {
-        $this->endDate = $endDate;
+        $this->detailsEndDate = $detailsEndDate;
 
         return $this;
     }
 
-    public function getAvailabilityNote(): ?string
+    public function getAvailabilityNotes(): ?string
     {
-        return $this->availabilityNote;
+        return $this->availabilityNotes;
     }
 
-    public function setAvailabilityNote(?string $availabilityNote): self
+    public function setAvailabilityNotes(?string $availabilityNotes): self
     {
-        $this->availabilityNote = $availabilityNote;
+        $this->availabilityNotes = $availabilityNotes;
 
         return $this;
     }
 
-    public function getLocation(): ?string
+    public function getGeneralLocation(): ?string
     {
-        return $this->location;
+        return $this->generalLocation;
     }
 
-    public function setLocation(string $location): self
+    public function setGeneralLocation(string $generalLocation): self
     {
-        $this->location = $location;
+        $this->generalLocation = $generalLocation;
 
         return $this;
     }
 
-    public function getMinParticipants(): ?int
+    public function getGeneralParticipantsMin(): ?int
     {
-        return $this->minParticipants;
+        return $this->generalParticipantsMin;
     }
 
-    public function setMinParticipants(?int $minParticipants): self
+    public function setGeneralParticipantsMin(?int $generalParticipantsMin): self
     {
-        $this->minParticipants = $minParticipants;
+        $this->generalParticipantsMin = $generalParticipantsMin;
 
         return $this;
     }
 
-    public function getMaxParticipants(): ?int
+    public function getGeneralParticipantsMax(): ?int
     {
-        return $this->maxParticipants;
+        return $this->generalParticipantsMax;
     }
 
-    public function setMaxParticipants(?int $maxParticipants): self
+    public function setGeneralParticipantsMax(?int $generalParticipantsMax): self
     {
-        $this->maxParticipants = $maxParticipants;
+        $this->generalParticipantsMax = $generalParticipantsMax;
 
         return $this;
     }
 
-    public function getEvaluation(): ?string
+    public function getGeneralEvaluation(): ?string
     {
-        return $this->evaluation;
+        return $this->generalEvaluation;
     }
 
-    public function setEvaluation(?string $evaluation): self
+    public function setGeneralEvaluation(?string $generalEvaluation): self
     {
-        $this->evaluation = $evaluation;
+        $this->generalEvaluation = $generalEvaluation;
 
         return $this;
     }
 
-    public function getMentors(): ?array
+    public function getAanbiederEmployeeIds(): ?array
     {
-        return $this->mentors;
+        return $this->aanbiederEmployeeIds;
     }
 
-    public function setMentors(?array $mentors): self
+    public function setAanbiederEmployeeIds(?array $aanbiederEmployeeIds): self
     {
-        $this->mentors = $mentors;
+        $this->aanbiederEmployeeIds = $aanbiederEmployeeIds;
 
         return $this;
     }
 
-    public function getTopic(): ?string
+    public function getOutComesTopic(): ?string
     {
-        return $this->topic;
+        return $this->outComesTopic;
     }
 
-    public function setTopic(string $topic): self
+    public function setOutComesTopic(string $outComesTopic): self
     {
-        $this->topic = $topic;
+        $this->outComesTopic = $outComesTopic;
 
         return $this;
     }
 
-    public function getApplication(): ?string
+    public function getOutComesTopicOther(): ?string
     {
-        return $this->application;
+        return $this->outComesTopicOther;
     }
 
-    public function setApplication(string $application): self
+    public function setOutComesTopicOther(string $outComesTopicOther): self
     {
-        $this->application = $application;
+        $this->outComesTopicOther = $outComesTopicOther;
+
+        return $this;
+    }
+
+    public function getOutComesApplication(): ?string
+    {
+        return $this->outComesApplication;
+    }
+
+    public function setOutComesApplication(string $outComesApplication): self
+    {
+        $this->outComesApplication = $outComesApplication;
 
         return $this;
     }
@@ -334,6 +372,29 @@ class Group
         return $this;
     }
 
+
+    public function getOutComesApplicationOther(): ?string
+    {
+        return $this->outComesApplicationOther;
+    }
+
+    public function setOutComesApplicationOther(string $outComesApplicationOther): self
+    {
+        $this->outComesApplicationOther = $outComesApplicationOther;
+
+        return $this;
+    }
+
+    public function getOutComesLevelOther(): ?string
+    {
+        return $this->outComesLevelOther;
+    }
+
+    public function setOutComesLevelOther(string $outComesLevelOther): self
+    {
+        $this->outComesLevelOther = $outComesLevelOther;
+    }
+
     public function getAvailability(): ?array
     {
         return $this->availability;
@@ -342,6 +403,18 @@ class Group
     public function setAvailability(?array $availability): self
     {
         $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function getOutComesLevel(): ?string
+    {
+        return $this->outComesLevel;
+    }
+
+    public function setOutComesLevel(string $outComesLevel): self
+    {
+        $this->outComesLevel = $outComesLevel;
 
         return $this;
     }
