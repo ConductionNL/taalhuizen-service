@@ -1,0 +1,171 @@
+<?php
+
+namespace App\Entity;
+
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\StudentMotivationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+
+/**
+ * @ApiResource()
+ * @ORM\Entity(repositoryClass=StudentMotivationRepository::class)
+ */
+class StudentMotivation
+{
+    /**
+     * @var UuidInterface The UUID identifier of this resource
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $desiredSkills = [];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $desiredSkillsOther;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $hasTriedThisBefore;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $hasTriedThisBeforeExplanation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $whyWantTheseSkills;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $whyWantThisNow;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $desiredLearingMethod = [];
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $remarks;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getDesiredSkills(): ?array
+    {
+        return $this->desiredSkills;
+    }
+
+    public function setDesiredSkills(array $desiredSkills): self
+    {
+        $this->desiredSkills = $desiredSkills;
+
+        return $this;
+    }
+
+    public function getDesiredSkillsOther(): ?string
+    {
+        return $this->desiredSkillsOther;
+    }
+
+    public function setDesiredSkillsOther(?string $desiredSkillsOther): self
+    {
+        $this->desiredSkillsOther = $desiredSkillsOther;
+
+        return $this;
+    }
+
+    public function getHasTriedThisBefore(): ?bool
+    {
+        return $this->hasTriedThisBefore;
+    }
+
+    public function setHasTriedThisBefore(?bool $hasTriedThisBefore): self
+    {
+        $this->hasTriedThisBefore = $hasTriedThisBefore;
+
+        return $this;
+    }
+
+    public function getHasTriedThisBeforeExplanation(): ?string
+    {
+        return $this->hasTriedThisBeforeExplanation;
+    }
+
+    public function setHasTriedThisBeforeExplanation(?string $hasTriedThisBeforeExplanation): self
+    {
+        $this->hasTriedThisBeforeExplanation = $hasTriedThisBeforeExplanation;
+
+        return $this;
+    }
+
+    public function getWhyWantTheseSkills(): ?string
+    {
+        return $this->whyWantTheseSkills;
+    }
+
+    public function setWhyWantTheseSkills(?string $whyWantTheseSkills): self
+    {
+        $this->whyWantTheseSkills = $whyWantTheseSkills;
+
+        return $this;
+    }
+
+    public function getWhyWantThisNow(): ?string
+    {
+        return $this->whyWantThisNow;
+    }
+
+    public function setWhyWantThisNow(?string $whyWantThisNow): self
+    {
+        $this->whyWantThisNow = $whyWantThisNow;
+
+        return $this;
+    }
+
+    public function getDesiredLearingMethod(): ?array
+    {
+        return $this->desiredLearingMethod;
+    }
+
+    public function setDesiredLearingMethod(array $desiredLearingMethod): self
+    {
+        $this->desiredLearingMethod = $desiredLearingMethod;
+
+        return $this;
+    }
+
+    public function getRemarks(): ?string
+    {
+        return $this->remarks;
+    }
+
+    public function setRemarks(?string $remarks): self
+    {
+        $this->remarks = $remarks;
+
+        return $this;
+    }
+}
