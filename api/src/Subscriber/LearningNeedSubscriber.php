@@ -90,11 +90,11 @@ class LearningNeedSubscriber implements EventSubscriberInterface
 
             // Now put together the expected result in $result['result'] for Lifely:
             $result['result'] = $this->handleResult($result['learningNeed']);
-        } elseif($route == 'api_learning_needs_get_collection') {
+        } elseif ($route == 'api_learning_needs_get_collection') {
             // Handle a get collection
             if ($event->getRequest()->query->get('learningNeedUrl')) {
                 // Get the learningNeed from EAV
-                $result = array_merge($result, $this->getLearningNeed(null, $event->getRequest()->query->get('learningNeedId')));
+                $result = array_merge($result, $this->getLearningNeed(null, $event->getRequest()->query->get('learningNeedUrl')));
             } elseif ($event->getRequest()->query->get('learningNeedId')) {
                 // Get the learningNeed from EAV
                 $result = array_merge($result, $this->getLearningNeed($event->getRequest()->query->get('learningNeedId')));
