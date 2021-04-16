@@ -310,6 +310,12 @@ class Employee
         return $this->id;
     }
 
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
     public function getGivenName(): ?string
     {
         return $this->givenName;

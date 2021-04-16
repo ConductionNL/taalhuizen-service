@@ -53,9 +53,15 @@ class StudentReferrer
      */
     private $email;
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getReferringOrganization(): ?string

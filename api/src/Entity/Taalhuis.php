@@ -10,6 +10,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Resolver\TaalhuisMutationResolver;
+use App\Resolver\TaalhuisQueryCollectionResolver;
+use App\Resolver\TaalhuisQueryItemResolver;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,6 +26,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     graphql={
+ *          "item_query" = {
+ *              "item_query" = TaalhuisQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = TaalhuisQueryCollectionResolver::class,
+ *              "read" = false
+ *          },
  *          "create" = {
  *              "mutation" = TaalhuisMutationResolver::class,
  *              "write" = false
@@ -114,9 +124,9 @@ class Taalhuis
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(Uuid $id): self
     {
-        $this->id = $uuid;
+        $this->id = $id;
 
         return $this;
     }

@@ -68,6 +68,12 @@ class Document
         return $this->id;
     }
 
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
     public function getBase64Data(): ?string
     {
         return $this->base64data;

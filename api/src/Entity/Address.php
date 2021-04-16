@@ -61,6 +61,11 @@ class Address
     {
         return $this->id;
     }
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
 
     public function getStreet(): ?string
     {

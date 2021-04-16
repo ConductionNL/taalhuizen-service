@@ -130,6 +130,17 @@ class Student
      */
     private $taalhuisId;
 
+    public function getId(): UuidInterface
+    {
+        return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
     public function getCivicIntegrationDetails(): ?StudentCivicIntegration
     {
         return $this->civicIntegrationDetails;

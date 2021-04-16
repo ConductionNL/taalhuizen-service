@@ -78,6 +78,12 @@ class User
         return $this->id;
     }
 
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;

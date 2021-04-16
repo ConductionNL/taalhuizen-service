@@ -58,16 +58,16 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $resource->getStudentId()]);
         }
 
+        // get all DTO info...
+        $learningNeed = $this->dtoToLearningNeed($resource);
+
         // Do some checks and error handling
-        $result = array_merge($result, $this->checkDtoValues($resource, $studentUrl));
+        $result = array_merge($result, $this->checkLearningNeedValues($learningNeed, $studentUrl));
 
         if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to: get all DTO info...
-            $learningNeed = $this->dtoToLearningNeed($resource);
-
-            // ...and save this in the correct places
+            // No errors so lets continue... to:
             // Save LearningNeed and connect student/participant to it
-            $result = array_merge($result, $this->saveLearningNeed($learningNeed, $studentUrl));
+            $result = array_merge($result, $this->saveLearningNeed($result['learningNeed'], $studentUrl));
 
             // Now put together the expected result in $result['result'] for Lifely:
             $resourceResult = $this->handleResult($result['learningNeed']);
@@ -85,7 +85,6 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     public function updateLearningNeed(array $input): LearningNeed
     {
         $result['result'] = [];
-        $resource = new LearningNeed();
 
         // If learningNeedUrl or learningNeedId is set generate the url and id for it, needed for eav calls later
         $learningNeedId = null;
@@ -96,19 +95,16 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         }
 
         // Do some checks and error handling
-        // todo:this function doesn't work here because there is no LearningNeed object here!
-//        $result = array_merge($result, $this->checkDtoValues($resource, null, $learningNeedId));
+        $result = array_merge($result, $this->checkLearningNeedValues($input, null, $learningNeedId));
 
         if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to: get all DTO info...
-            $learningNeed = $this->dtoToLearningNeed($resource);
-
-            // ...and save this in the correct places
+            // No errors so lets continue... to:
             // Save LearningNeed and connect student/participant to it
-            $result = array_merge($result, $this->saveLearningNeed($learningNeed, null, $learningNeedId));
+            $result = array_merge($result, $this->saveLearningNeed($result['learningNeed'], null, $learningNeedId));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $resource = $this->handleResult($result['learningNeed']);
+            $resourceResult = $this->handleResult($result['learningNeed']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['learningNeed']['id']));
         }
 
         // If any error was catched throw it
@@ -116,8 +112,8 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             throw new HttpException($result['errorMessage'], 400);
         }
 
-        $this->entityManager->persist($resource);
-        return $resource;
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function deleteLearningNeed(array $learningNeed): ?LearningNeed
@@ -187,21 +183,25 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $result;
     }
 
-    private function checkDtoValues(LearningNeed $resource, $studentUrl, $learningNeedId = null) {
+    private function checkLearningNeedValues($learningNeed, $studentUrl, $learningNeedId = null) {
         $result = [];
-        if ($resource->getDesiredOutComesTopic() == 'OTHER' && !$resource->getDesiredOutComesTopicOther()) {
+        if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesTopicOther is not set!';
-        } elseif($resource->getDesiredOutComesApplication() == 'OTHER' && !$resource->getDesiredOutComesApplicationOther()) {
+        } elseif($learningNeed['application'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesApplicationOther is not set!';
-        } elseif ($resource->getDesiredOutComesLevel() == 'OTHER' && !$resource->getDesiredOutComesLevelOther()) {
+        } elseif ($learningNeed['level'] == 'OTHER' && !isset($learningNeed['levelOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesLevelOther is not set!';
-        } elseif ($resource->getOfferDifference() == 'YES_OTHER' && !$resource->getOfferDifferenceOther()) {
+        } elseif ($learningNeed['offerDifference'] == 'YES_OTHER' && !isset($learningNeed['offerDifferenceOther'])) {
             $result['errorMessage'] = 'Invalid request, offerDifferenceOther is not set!';
-        } elseif ($resource->getStudentId() and !$this->commonGroundService->isResource($studentUrl)) {
+        } elseif (isset($studentUrl) and !$this->commonGroundService->isResource($studentUrl)) {
             $result['errorMessage'] = 'Invalid request, studentId is not an existing edu/participant!';
-        } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
+        } elseif (isset($learningNeedId) and !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId and/or learningNeedUrl is not an existing eav/learning_need!';
         }
+        // Make sure not to keep these values in the input/learningNeed body when doing and update
+        unset($learningNeed['learningNeedId']); unset($learningNeed['learningNeedUrl']);
+        unset($learningNeed['studentId']); unset($learningNeed['participations']);
+        $result['learningNeed'] = $learningNeed;
         return $result;
     }
 

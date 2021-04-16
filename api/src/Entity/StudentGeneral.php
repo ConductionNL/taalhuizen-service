@@ -68,9 +68,15 @@ class StudentGeneral
      */
     private $childrenDatesOfBirth;
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getCountryOfOrigin(): ?string
