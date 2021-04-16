@@ -4,19 +4,16 @@ namespace App\Service;
 
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EAVService
 {
     private $em;
     private $commonGroundService;
-    private $params;
 
-    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService)
     {
         $this->em = $em;
         $this->commonGroundService = $commonGroundService;
-        $this->params = $params;
     }
 
     public function saveObject(array $body, $entityName, $componentCode = 'eav', $self = null, $eavId = null) {

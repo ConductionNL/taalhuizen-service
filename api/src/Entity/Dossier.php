@@ -41,10 +41,6 @@ class Dossier
     /**
      * @var string The Event of this Student.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -58,7 +54,7 @@ class Dossier
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime")
      */
-    private $date;
+    private $eventDate;
 
     /**
      * @var string description of this student Dossier.
@@ -67,20 +63,26 @@ class Dossier
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550)
      */
-    private $description;
+    private $eventDescription;
 
     /**
-     * @var string organizer of this student Dossier.
+     * @var string studentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $organizer;
+    private $studentId;
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getEvent(): ?string
@@ -95,38 +97,38 @@ class Dossier
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getEventDate(): ?\DateTimeInterface
     {
-        return $this->date;
+        return $this->eventDate;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setEventDate(\DateTimeInterface $eventDate): self
     {
-        $this->date = $date;
+        $this->eventDate = $eventDate;
 
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getEventDescription(): ?string
     {
-        return $this->description;
+        return $this->eventDescription;
     }
 
-    public function setDescription(string $description): self
+    public function setEventDescription(string $eventDescription): self
     {
-        $this->description = $description;
+        $this->eventDescription = $eventDescription;
 
         return $this;
     }
 
-    public function getOrganizer(): ?string
+    public function getStudentId(): ?string
     {
-        return $this->organizer;
+        return $this->studentId;
     }
 
-    public function setOrganizer(string $organizer): self
+    public function setStudentId(string $studentId): self
     {
-        $this->organizer = $organizer;
+        $this->studentId = $studentId;
 
         return $this;
     }

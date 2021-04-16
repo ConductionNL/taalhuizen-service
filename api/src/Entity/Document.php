@@ -2,12 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\DocumentRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
@@ -29,32 +40,60 @@ class Document
     /**
      * @var string the base64 of the document
      *
+     * @Assert\NotNull
      * @ORM\Column(type="text")
      */
-    private $base64;
+    private $base64data;
 
     /**
-     * @var string the resource this document is connected to (organization/contact)
+     * @var string the name of the file
      *
+     * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
-    private $resource;
+    private $filename;
 
-    public function getId(): Uuid
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
+
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function getBase64(): ?string
+    public function setId(?UuidInterface $uuid): self
     {
-        return $this->base64;
+        $this->id = $uuid;
+        return $this;
     }
 
-    public function setBase64(string $base64): self
+    public function getBase64Data(): ?string
     {
-        $this->base64 = $base64;
+        return $this->base64data;
+    }
+
+    public function setBase64Data(string $base64data): self
+    {
+        $this->base64data = $base64data;
 
         return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(string $filename): self
+    {
+        $this->filename = $filename;
     }
 
     public function getResource(): ?string
@@ -65,6 +104,30 @@ class Document
     public function setResource(string $resource): self
     {
         $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeId(): ?string
+    {
+        return $this->aanbiederEmployeeId;
+    }
+
+    public function setAanbiederEmployeeId(string $aanbiederEmployeeId): self
+    {
+        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(string $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }

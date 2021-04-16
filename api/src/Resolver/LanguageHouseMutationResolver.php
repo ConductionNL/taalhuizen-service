@@ -62,7 +62,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
     public function deleteTaalhuis(array $taalhuis): ?LanguageHouse
     {
-
+var_dump('test');
         return null;
     }
 }
