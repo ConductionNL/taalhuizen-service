@@ -29,9 +29,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Group
 {
     /**
+     * @var UuidInterface The UUID identifier of this resource
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
 
@@ -149,9 +154,7 @@ class Group
      */
     private $availability = [];
 
-
-
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -371,7 +374,6 @@ class Group
 
         return $this;
     }
-
 
     public function getOutComesApplicationOther(): ?string
     {
