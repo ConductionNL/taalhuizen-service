@@ -43,6 +43,11 @@ class Group
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private $aanbiederId;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $name;
 
     /**
@@ -54,6 +59,40 @@ class Group
      * @ORM\Column(type="string", length=255)
      */
     private $outComesGoal;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesTopic;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesTopicOther;
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesApplication;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesApplicationOther;
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesLevel;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $outComesLevelOther;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -81,6 +120,11 @@ class Group
     private $detailsEndDate;
 
     /**
+     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     */
+    private $availabilityy;
+
+    /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $availabilityNotes;
@@ -106,57 +150,19 @@ class Group
     private $generalEvaluation;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="array")
      */
     private $aanbiederEmployeeIds = [];
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesTopic;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesApplication;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $iscedEducationLevelCode;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesLevel;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $availability = [];
-
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getName(): ?string
@@ -417,6 +423,30 @@ class Group
     public function setOutComesLevel(string $outComesLevel): self
     {
         $this->outComesLevel = $outComesLevel;
+
+        return $this;
+    }
+
+    public function getAvailabilityy(): ?Availability
+    {
+        return $this->availabilityy;
+    }
+
+    public function setAvailabilityy(?Availability $availabilityy): self
+    {
+        $this->availabilityy = $availabilityy;
+
+        return $this;
+    }
+
+    public function getAanbiederId(): ?string
+    {
+        return $this->aanbiederId;
+    }
+
+    public function setAanbiederId(string $aanbiederId): self
+    {
+        $this->aanbiederId = $aanbiederId;
 
         return $this;
     }

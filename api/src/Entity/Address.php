@@ -7,7 +7,6 @@ use App\Repository\AddressRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -58,9 +57,14 @@ class Address
         $this->students = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getStreet(): ?string
