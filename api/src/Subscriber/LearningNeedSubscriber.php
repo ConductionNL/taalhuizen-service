@@ -38,8 +38,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
 
     public function learningNeed(ViewEvent $event)
     {
-        $method = $event->getRequest()->getMethod();
-        $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
@@ -283,7 +281,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         return $result;
     }
 
-    private function checkDtoValues($resource, $studentUrl, $learningNeedId) {
+    private function checkDtoValues(LearningNeed $resource, $studentUrl, $learningNeedId) {
         $result = [];
         if ($resource->getDesiredOutComesTopic() == 'OTHER' && !$resource->getDesiredOutComesTopicOther()) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesTopicOther is not set!';
@@ -301,7 +299,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         return $result;
     }
 
-    private function dtoToLearningNeed($resource) {
+    private function dtoToLearningNeed(LearningNeed $resource) {
         // Get all info from the dto for creating/updating a LearningNeed and return the body for this
         $learningNeed['description'] = $resource->getLearningNeedDescription();
         $learningNeed['motivation'] = $resource->getLearningNeedMotivation();

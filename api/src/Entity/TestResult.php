@@ -119,7 +119,7 @@ class TestResult
      */
     private $explanation;
 
-    public function getId(): ?UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

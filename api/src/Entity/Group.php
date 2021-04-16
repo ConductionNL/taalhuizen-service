@@ -154,7 +154,7 @@ class Group
      */
     private $availability = [];
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LearningNeedRepository;
+use App\Resolver\LearningNeedMutationResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -11,6 +12,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     graphql={
+ *          "create" = {
+ *              "mutation" = LearningNeedMutationResolver::class,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = LearningNeedMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = LearningNeedMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     },
  *  collectionOperations={
  *          "get",
  *          "get_learning_need"={
@@ -138,6 +159,12 @@ class LearningNeed
 
     /**
      * @Groups({"write"})
+     * @ORM\Column(type="array", length=255, nullable=true)
+     */
+    private $participations;
+
+    /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $studentId;
@@ -162,6 +189,13 @@ class LearningNeed
     public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+
+        return $this;
     }
 
     public function getLearningNeedDescription(): ?string
@@ -328,6 +362,18 @@ class LearningNeed
     public function setOfferEngagements(?string $offerEngagements): self
     {
         $this->offerEngagements = $offerEngagements;
+
+        return $this;
+    }
+
+    public function getParticipations(): ?array
+    {
+        return $this->participations;
+    }
+
+    public function setParticipations(?array $participations): self
+    {
+        $this->participations = $participations;
 
         return $this;
     }
