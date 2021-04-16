@@ -2,19 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\TaalhuisRepository;
+use App\Repository\LanguageHouseRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Resolver\TaalhuisMutationResolver;
-use App\Resolver\TaalhuisQueryCollectionResolver;
-use App\Resolver\TaalhuisQueryItemResolver;
+use App\Resolver\LanguageHouseMutationResolver;
+use App\Resolver\LanguageHouseQueryCollectionResolver;
+use App\Resolver\LanguageHouseQueryItemResolver;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Inflector\Inflector;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
@@ -27,26 +28,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     graphql={
  *          "item_query" = {
- *              "item_query" = TaalhuisQueryItemResolver::class,
+ *              "item_query" = LanguageHouseQueryItemResolver::class,
  *              "read" = false
  *          },
  *          "collection_query" = {
- *              "collection_query" = TaalhuisQueryCollectionResolver::class,
- *              "read" = false
+ *              "collection_query" = LanguageHouseQueryCollectionResolver::class
  *          },
  *          "create" = {
- *              "mutation" = TaalhuisMutationResolver::class,
+ *              "mutation" = LanguageHouseMutationResolver::class,
  *              "write" = false
  *          },
  *          "update" = {
- *              "mutation" = TaalhuisMutationResolver::class,
+ *              "mutation" = LanguageHouseMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          },
  *          "remove" = {
- *              "mutation" = TaalhuisMutationResolver::class,
+ *              "mutation" = LanguageHouseMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
@@ -54,9 +54,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     }
  * )
- * @ORM\Entity(repositoryClass=TaalhuisRepository::class)
+ * @ORM\Entity(repositoryClass=LanguageHouseRepository::class)
  */
-class Taalhuis
+class LanguageHouse
 {
     /**
      * @var UuidInterface The UUID identifier of this resource
@@ -117,6 +117,7 @@ class Taalhuis
     public function __construct()
     {
         $this->address = new ArrayCollection();
+
     }
 
     public function getId(): UuidInterface
