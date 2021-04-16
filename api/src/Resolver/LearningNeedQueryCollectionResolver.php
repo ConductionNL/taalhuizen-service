@@ -42,13 +42,13 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
 
         $collection = new ArrayCollection();
         if (isset($result['learningNeeds'])) {
-            // Now put together the expected result in $result['result'] for Lifely:
+            // Now put together the expected result for Lifely:
             foreach ($result['learningNeeds'] as &$learningNeed) {
                 if (!isset($learningNeed['errorMessage'])) {
                     $resourceResult = $this->learningNeedService->handleResult($learningNeed);
                     $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                     $collection->add($resourceResult);
-                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds
+                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }

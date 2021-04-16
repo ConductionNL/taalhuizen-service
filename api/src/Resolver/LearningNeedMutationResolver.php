@@ -122,20 +122,17 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
     public function removeLearningNeed(array $learningNeed): ?LearningNeed
     {
-        var_dump('test');
         $result['result'] = [];
 
         // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
         $learningNeedId = null;
-        if ($learningNeed['learningNeedUrl']) {
+        if (isset($learningNeed['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
-        } elseif ($learningNeed['learningNeedId']) {
-            $learningNeedId = explode('/',$learningNeed['learningNeedId']);
+        } else {
+            $learningNeedId = explode('/',$learningNeed['id']);
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
-        } else {
-            throw new HttpException('Invalid request, please give a learningNeedId or learningNeedUrl when doing an update!', 400);
         }
 
         $result = array_merge($result, $this->learningNeedService->deleteLearningNeed($learningNeedId));
