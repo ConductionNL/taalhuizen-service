@@ -10,19 +10,16 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\LearningNeedService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ramsey\Uuid\Uuid;
 use SensioLabs\Security\Exception\HttpException;
 
 class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private LearningNeedService $learningNeedService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService){
-        $this->entityManager = $entityManager;
+    public function __construct(CommongroundService $commonGroundService, LearningNeedService $learningNeedService){
         $this->commonGroundService = $commonGroundService;
         $this->learningNeedService = $learningNeedService;
     }
