@@ -9,9 +9,9 @@ use App\Entity\LearningNeed;
 use App\Service\LearningNeedService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
 
 class LearningNeedMutationResolver implements MutationResolverInterface
 {
@@ -27,6 +27,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
     /**
      * @inheritDoc
+     * @throws Exception;
      */
     public function __invoke($item, array $context)
     {
@@ -70,13 +71,13 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             $result = array_merge($result, $this->learningNeedService->saveLearningNeed($result['learningNeed'], $studentUrl));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->learningNeedService->handleResult($result['learningNeed']);
+            $resourceResult = $this->learningNeedService->handleResult($result['learningNeed'], $resource->getStudentId());
             $resourceResult->setId(Uuid::getFactory()->fromString($result['learningNeed']['id']));
         }
 
-        // If any error was catched throw it
+        // If any error was caught throw it
         if (isset($result['errorMessage'])) {
-            throw new HttpException($result['errorMessage'], 400);
+            throw new Exception($result['errorMessage']);
         }
         return $resourceResult;
     }
@@ -108,13 +109,13 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             $result = array_merge($result, $this->learningNeedService->saveLearningNeed($result['learningNeed'], null, $learningNeedId));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->learningNeedService->handleResult($result['learningNeed']);
+            $resourceResult = $this->learningNeedService->handleResult($result['learningNeed'], $input['studentId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['learningNeed']['id']));
         }
 
-        // If any error was catched throw it
+        // If any error was caught throw it
         if (isset($result['errorMessage'])) {
-            throw new HttpException($result['errorMessage'], 400);
+            throw new Exception($result['errorMessage']);
         }
         $this->entityManager->persist($resourceResult);
         return $resourceResult;
@@ -128,11 +129,13 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         $learningNeedId = null;
         if (isset($learningNeed['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
-        } else {
+        } elseif (isset($learningNeed['id'])) {
             $learningNeedId = explode('/',$learningNeed['id']);
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
+        } else {
+            throw new Exception('No learningNeedUrl or id was specified');
         }
 
         $result = array_merge($result, $this->learningNeedService->deleteLearningNeed($learningNeedId));
@@ -142,9 +145,9 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             $result['result'] = True;
         }
 
-        // If any error was catched throw it
+        // If any error was caught throw it
         if (isset($result['errorMessage'])) {
-            throw new HttpException($result['errorMessage'], 400);
+            throw new Exception($result['errorMessage']);
         }
         return null;
     }

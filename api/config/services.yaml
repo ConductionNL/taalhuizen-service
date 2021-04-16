@@ -50,3 +50,7 @@ services:
 #    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
 #        arguments:
 #            - '@Redis'
+
+    App\Resolver\TaalhuisQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }

@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\LearningNeedRepository;
 use App\Resolver\LearningNeedMutationResolver;
 use App\Resolver\LearningNeedQueryCollectionResolver;
@@ -63,6 +65,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"
  *     },
  * )
+ * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
 class LearningNeed
