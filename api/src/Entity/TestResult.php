@@ -39,172 +39,195 @@ class TestResult
     private $id;
 
     /**
-     * @var string The verb of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $verb;
+    private $participationId;
 
     /**
-     * @var string The topic of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $topic;
+    private $outComesGoal;
 
     /**
-     * @var string The application of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $application;
+    private $outComesTopic;
 
     /**
-     * @var string The level of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $outComesTopicOther;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $level;
+    private $outComesApplication;
 
     /**
-     * @var string The used test of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $outComesApplicationOther;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $usedTest;
+    private $outComesLevel;
 
     /**
-     * @var DateTime The test date of this testResult.
-     *
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $testDate;
+    private $outComesLevelOther;
 
     /**
-     * @var string The explanation of this testResult.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=2550)
+     * @ORM\Column(type="string", length=255)
      */
-    private $explanation;
+    private $examUsedExam;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $examDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $examMemo;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function getVerb(): ?string
+    public function getParticipationId(): ?string
     {
-        return $this->verb;
+        return $this->participationId;
     }
 
-    public function setVerb(string $verb): self
+    public function setParticipationId(string $participationId): self
     {
-        $this->verb = $verb;
+        $this->participationId = $participationId;
 
         return $this;
     }
 
-    public function getTopic(): ?string
+    public function getOutComesGoal(): ?string
     {
-        return $this->topic;
+        return $this->outComesGoal;
     }
 
-    public function setTopic(string $topic): self
+    public function setOutComesGoal(string $outComesGoal): self
     {
-        $this->topic = $topic;
+        $this->outComesGoal = $outComesGoal;
 
         return $this;
     }
 
-    public function getApplication(): ?string
+    public function getOutComesTopic(): ?string
     {
-        return $this->application;
+        return $this->outComesTopic;
     }
 
-    public function setApplication(string $application): self
+    public function setOutComesTopic(string $outComesTopic): self
     {
-        $this->application = $application;
+        $this->outComesTopic = $outComesTopic;
 
         return $this;
     }
 
-    public function getLevel(): ?string
+    public function getOutComesTopicOther(): ?string
     {
-        return $this->level;
+        return $this->outComesTopicOther;
     }
 
-    public function setLevel(string $level): self
+    public function setOutComesTopicOther(?string $outComesTopicOther): self
     {
-        $this->level = $level;
+        $this->outComesTopicOther = $outComesTopicOther;
 
         return $this;
     }
 
-    public function getUsedTest(): ?string
+    public function getOutComesApplication(): ?string
     {
-        return $this->usedTest;
+        return $this->outComesApplication;
     }
 
-    public function setUsedTest(string $usedTest): self
+    public function setOutComesApplication(string $outComesApplication): self
     {
-        $this->usedTest = $usedTest;
+        $this->outComesApplication = $outComesApplication;
 
         return $this;
     }
 
-    public function getTestDate(): \DateTimeInterface
+    public function getOutComesApplicationOther(): ?string
     {
-        return $this->testDate;
+        return $this->outComesApplicationOther;
     }
 
-    public function setTestDate(\DateTimeInterface $testDate): self
+    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
     {
-        $this->testDate = $testDate;
+        $this->outComesApplicationOther = $outComesApplicationOther;
 
         return $this;
     }
 
-    public function getExplanation(): ?string
+    public function getOutComesLevel(): ?string
     {
-        return $this->explanation;
+        return $this->outComesLevel;
     }
 
-    public function setExplanation(string $explanation): self
+    public function setOutComesLevel(string $outComesLevel): self
     {
-        $this->explanation = $explanation;
+        $this->outComesLevel = $outComesLevel;
 
         return $this;
     }
+
+    public function getOutComesLevelOther(): ?string
+    {
+        return $this->outComesLevelOther;
+    }
+
+    public function setOutComesLevelOther(?string $outComesLevelOther): self
+    {
+        $this->outComesLevelOther = $outComesLevelOther;
+
+        return $this;
+    }
+
+    public function getExamUsedExam(): ?string
+    {
+        return $this->examUsedExam;
+    }
+
+    public function setExamUsedExam(string $examUsedExam): self
+    {
+        $this->examUsedExam = $examUsedExam;
+
+        return $this;
+    }
+
+    public function getExamDate(): ?string
+    {
+        return $this->examDate;
+    }
+
+    public function setExamDate(string $examDate): self
+    {
+        $this->examDate = $examDate;
+
+        return $this;
+    }
+
+    public function getExamMemo(): ?string
+    {
+        return $this->examMemo;
+    }
+
+    public function setExamMemo(?string $examMemo): self
+    {
+        $this->examMemo = $examMemo;
+
+        return $this;
+    }
+
 }

@@ -133,66 +133,6 @@ class Taalhuis
         return $this;
     }
 
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(?string $street): self
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getHouseNumber(): ?string
-    {
-        return $this->houseNumber;
-    }
-
-    public function setHouseNumber(?string $houseNumber): self
-    {
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    public function getHouseNumberSuffix(): ?string
-    {
-        return $this->houseNumberSuffix;
-    }
-
-    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
-    {
-        $this->houseNumberSuffix = $houseNumberSuffix;
-
-        return $this;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getLocality(): ?string
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(?string $locality): self
-    {
-        $this->locality = $locality;
-
-        return $this;
-    }
-
     public function getPhoneNumber(): ?string
     {
         return $this->phoneNumber;

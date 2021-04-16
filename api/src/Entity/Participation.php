@@ -50,7 +50,6 @@ class Participation
     private $id;
 
     /**
-     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $aanbiederId;
@@ -85,7 +84,6 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesGoal;
-
     /**
      * @Groups({"write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
@@ -169,12 +167,16 @@ class Participation
     private $detailsEngagements;
 
     /**
-     * @var string The id of the objectEntity of an eav/learning_need.
      *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull
+     * @ORM\Column(type="string", length=255)
      */
     private $learningNeedId;
+
+    public function getId(): Uuid
+    {
+        return $this->id;
+    }
 
     /**
      * @var string The url of the objectEntity of an eav/learning_need '@eav'.
@@ -423,21 +425,9 @@ class Participation
         return $this->learningNeedId;
     }
 
-    public function setLearningNeedId(?string $learningNeedId): self
+    public function setLearningNeedId(string $learningNeedId): self
     {
         $this->learningNeedId = $learningNeedId;
-
-        return $this;
-    }
-
-    public function getLearningNeedUrl(): ?string
-    {
-        return $this->learningNeedUrl;
-    }
-
-    public function setLearningNeedUrl(?string $learningNeedUrl): self
-    {
-        $this->learningNeedUrl = $learningNeedUrl;
 
         return $this;
     }

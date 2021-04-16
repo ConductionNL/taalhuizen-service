@@ -86,6 +86,11 @@ class Employee
     private $telephone;
 
     /**
+     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     */
+    private $availability;
+
+    /**
      * @var string The Availability Note of this Employee.
      *
      * @Assert\Length(
@@ -94,16 +99,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
-    private $availabilityNote;
-
-    /**
-     * @var Address The address of this Employee.
-     *
-     * @MaxDepth(1)
-     * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity=Address::class)
-     */
-    private $address;
+    private $availabilityNotes;
 
     /**
      * @var string The Email of this Employee.
@@ -118,22 +114,9 @@ class Employee
     private $email;
 
     /**
-     * @var array The Role of this Employee.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="array")
-     */
-    private $role = [];
-
-    /**
-     * @var array The Availability of this Employee.
-     *
-     * @example An array of strings with the abbreviation of the day and a time slot, for example; mon morning, mon afternoon, mon evening
-     *
-     * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $availability = [];
+    private $userGroupIds = [];
 
     /**
      * @var string The Gender of this Employee. **Male**, **Female**, **X**
@@ -156,7 +139,16 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $birthday;
+    private $dateOfBirth;
+
+    /**
+     * @var Address The address of this Employee.
+     *
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\ManyToMany(targetEntity=Address::class)
+     */
+    private $address;
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -170,18 +162,23 @@ class Employee
     private $contactTelephone;
 
     /**
-     * @var string Contact Preference of this Employee.
+     * @var string Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
      *
-     * @Assert\Length(
-     *     max = 255
-     *)
+     * @Assert\Choice(
+     *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $contactPreference;
 
     /**
-     * @var string Target Audience of this Employee. **NT1**, **NT2**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contactPreferenceOther;
+
+    /**
+     * @var array Target Preference of this Employee. **NT1**, **NT2**
      *
      * @example NT1
      *
@@ -189,12 +186,12 @@ class Employee
      *      {"NT1","NT2"}
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $targetAudience;
+    private $targetGroupPreference = [];
 
     /**
-     * @var string Volunteer Preference of this Employee.
+     * @var string Voluntering Preference of this Employee.
      *
      *  @Assert\Length(
      *     max = 255
@@ -202,168 +199,106 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $volunteerPreference;
+    private $volunteringPreference;
+
 
     /**
-     * @var string Volunteer Note of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     *)
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=2550, nullable=true)
-     */
-    private $volunteerNote;
-
-    /**
-     * @var string Experience of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $experience;
+    private $gotHereVia;
 
     /**
-     * @var Datetime StartDate Education of this Employee.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $startEducation;
-
-    /**
-     * @var string Education Institution Name of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $educationInstitutionName;
-
-    /**
-     * @var boolean Certificate Education of this Employee.
-     *
-     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $certificateEducation;
+    private $hasExperienceWithTargetGroup;
 
     /**
-     * @var Datetime EndDate Education of this Employee.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $endEducation;
-
-    /**
-     * @var string The Isced Education Level Code of this Employee.
-     *
-     * @example HBO
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $iscedEducationLevelCode;
-
-    /**
-     * @var boolean Certificate Course of this Employee.
-     *
-     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $degreeGrantedStatus;
+    private $experienceWithTargetGroupYesReason;
 
     /**
-     * @var string Course Name of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $courseName;
+    private $currentEducation;
 
     /**
-     * @var string Course Institution Name of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=CurrentEducationYes::class, cascade={"persist", "remove"})
      */
-    private $courseInstitutionName;
+    private $currentEducationYes;
 
     /**
-     * @var string The Type of Teacher of this employee. **Professional**, **Volunteer**, **Both**
      *
-     * @example Professional
-     *
-     * @Assert\Choice(
-     *      {"Professional","Volunteer","Both"}
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @MaxDepth(1)
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=CurrentEducationNoButDidFollow::class, cascade={"persist", "remove"})
      */
-    private $typeOfTeacher;
+    private $currentEducationNoButDidFollow;
 
     /**
-     * @var string The Type of Course of this employee. **Professional**, **Volunteer**, **Both**
-     *
-     * @example Professional
-     *
-     * @Assert\Choice(
-     *      {"Professional","Volunteer","Both"}
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $typeOfCourse;
-
-    /**
-     * @var boolean Certificate Course of this Employee.
-     *
-     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $certificateCourse;
+    private $doesCurrentlyFollowCourse;
 
     /**
-     * @var string Relevant Additions of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $relevantAdditions;
+    private $currentlyFollowingCourseName;
 
     /**
-     * @var string The Employee Type of this employee. **Taalhuis**, **Aanbieder**
-     *
-     * @example Taalhuis
-     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $currentlyFollowingCourseInstitute;
+
+    /***
      * @Assert\Choice(
-     *      {"Taalhuis","Aanbieder"}
+     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
      * )
-     * @Assert\NotNull
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $employeeType;
+    private $currentlyFollowingCourseTeacherProfessionalism;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @Assert\Choice(
+     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $userGroupIds = [];
+    private $currentlyFollowingCourseCourseProfessionalism;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $doesCurrentlyFollowingCourseProvideCertificate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $otherRelevantCertificates;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVOGChecked;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $taalhuisId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $biscEmployeeId;
 
     public function __construct()
     {
@@ -423,14 +358,14 @@ class Employee
         return $this;
     }
 
-    public function getAvailabilityNote(): ?string
+    public function getAvailabilityNotes(): ?string
     {
-        return $this->availabilityNote;
+        return $this->availabilityNotes;
     }
 
-    public function setAvailabilityNote(?string $availabilityNote): self
+    public function setAvailabilityNotes(?string $availabilityNotes): self
     {
-        $this->availabilityNote = $availabilityNote;
+        $this->availabilityNotes = $availabilityNotes;
 
         return $this;
     }
@@ -447,30 +382,6 @@ class Employee
         return $this;
     }
 
-    public function getRole(): ?array
-    {
-        return $this->role;
-    }
-
-    public function setRole(array $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    public function getAvailability(): ?array
-    {
-        return $this->availability;
-    }
-
-    public function setAvailability(?array $availability): self
-    {
-        $this->availability = $availability;
-
-        return $this;
-    }
-
     public function getGender(): ?string
     {
         return $this->gender;
@@ -483,74 +394,14 @@ class Employee
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
+    public function getDateOfBirth(): ?\DateTimeInterface
     {
-        return $this->birthday;
+        return $this->dateOfBirth;
     }
 
-    public function setBirthday(?\DateTimeInterface $birthday): self
+    public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
     {
-        $this->birthday = $birthday;
-
-        return $this;
-    }
-
-    public function getStreet(): ?string
-    {
-        return $this->street;
-    }
-
-    public function setStreet(?string $street): self
-    {
-        $this->street = $street;
-
-        return $this;
-    }
-
-    public function getHouseNumber(): ?string
-    {
-        return $this->houseNumber;
-    }
-
-    public function setHouseNumber(?string $houseNumber): self
-    {
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    public function getHouseNumberSuffix(): ?string
-    {
-        return $this->houseNumberSuffix;
-    }
-
-    public function setHouseNumberSuffix(?string $houseNumberSuffix): self
-    {
-        $this->houseNumberSuffix = $houseNumberSuffix;
-
-        return $this;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getLocality(): ?string
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(?string $locality): self
-    {
-        $this->locality = $locality;
+        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }
@@ -579,206 +430,26 @@ class Employee
         return $this;
     }
 
-    public function getTargetAudience(): ?string
+    public function getTargetGroupPreference(): ?array
     {
-        return $this->targetAudience;
+        return $this->targetGroupPreference;
     }
 
-    public function setTargetAudience(?string $targetAudience): self
+    public function setTargetGroupPreference(?array $targetGroupPreference): self
     {
-        $this->targetAudience = $targetAudience;
+        $this->targetGroupPreference = $targetGroupPreference;
 
         return $this;
     }
 
-    public function getVolunteerPreference(): ?string
+    public function getVolunteringPreference(): ?string
     {
-        return $this->volunteerPreference;
+        return $this->volunteringPreference;
     }
 
-    public function setVolunteerPreference(?string $volunteerPreference): self
+    public function setVolunteringPreference(?string $volunteringPreference): self
     {
-        $this->volunteerPreference = $volunteerPreference;
-
-        return $this;
-    }
-
-    public function getVolunteerNote(): ?string
-    {
-        return $this->volunteerNote;
-    }
-
-    public function setVolunteerNote(?string $volunteerNote): self
-    {
-        $this->volunteerNote = $volunteerNote;
-
-        return $this;
-    }
-
-    public function getExperience(): ?string
-    {
-        return $this->experience;
-    }
-
-    public function setExperience(?string $experience): self
-    {
-        $this->experience = $experience;
-
-        return $this;
-    }
-
-    public function getStartEducation(): ?\DateTimeInterface
-    {
-        return $this->startEducation;
-    }
-
-    public function setStartEducation(?\DateTimeInterface $startEducation): self
-    {
-        $this->startEducation = $startEducation;
-
-        return $this;
-    }
-
-    public function getEducationInstitutionName(): ?string
-    {
-        return $this->educationInstitutionName;
-    }
-
-    public function setEducationInstitutionName(?string $educationInstitutionName): self
-    {
-        $this->educationInstitutionName = $educationInstitutionName;
-
-        return $this;
-    }
-
-    public function getCertificateEducation(): ?bool
-    {
-        return $this->certificateEducation;
-    }
-
-    public function setCertificateEducation(?bool $certificateEducation): self
-    {
-        $this->certificateEducation = $certificateEducation;
-
-        return $this;
-    }
-
-    public function getEndEducation(): ?\DateTimeInterface
-    {
-        return $this->endEducation;
-    }
-
-    public function setEndEducation(?\DateTimeInterface $endEducation): self
-    {
-        $this->endEducation = $endEducation;
-
-        return $this;
-    }
-
-    public function getIscedEducationLevelCode(): ?string
-    {
-        return $this->iscedEducationLevelCode;
-    }
-
-    public function setIscedEducationLevelCode(?string $iscedEducationLevelCode): self
-    {
-        $this->iscedEducationLevelCode = $iscedEducationLevelCode;
-
-        return $this;
-    }
-
-    public function getDegreeGrantedStatus(): ?bool
-    {
-        return $this->degreeGrantedStatus;
-    }
-
-    public function setDegreeGrantedStatus(?bool $degreeGrantedStatus): self
-    {
-        $this->degreeGrantedStatus = $degreeGrantedStatus;
-
-        return $this;
-    }
-
-    public function getCourseName(): ?string
-    {
-        return $this->courseName;
-    }
-
-    public function setCourseName(?string $courseName): self
-    {
-        $this->courseName = $courseName;
-
-        return $this;
-    }
-
-    public function getCourseInstitutionName(): ?string
-    {
-        return $this->courseInstitutionName;
-    }
-
-    public function setCourseInstitutionName(?string $courseInstitutionName): self
-    {
-        $this->courseInstitutionName = $courseInstitutionName;
-
-        return $this;
-    }
-
-    public function getTypeOfTeacher(): ?string
-    {
-        return $this->typeOfTeacher;
-    }
-
-    public function setTypeOfTeacher(?string $typeOfTeacher): self
-    {
-        $this->typeOfTeacher = $typeOfTeacher;
-
-        return $this;
-    }
-
-    public function getTypeOfCourse(): ?string
-    {
-        return $this->typeOfCourse;
-    }
-
-    public function setTypeOfCourse(?string $typeOfCourse): self
-    {
-        $this->typeOfCourse = $typeOfCourse;
-
-        return $this;
-    }
-
-    public function getCertificateCourse(): ?bool
-    {
-        return $this->certificateCourse;
-    }
-
-    public function setCertificateCourse(?bool $certificateCourse): self
-    {
-        $this->certificateCourse = $certificateCourse;
-
-        return $this;
-    }
-
-    public function getRelevantAdditions(): ?string
-    {
-        return $this->relevantAdditions;
-    }
-
-    public function setRelevantAdditions(?string $relevantAdditions): self
-    {
-        $this->relevantAdditions = $relevantAdditions;
-
-        return $this;
-    }
-
-    public function getEmployeeType(): ?string
-    {
-        return $this->employeeType;
-    }
-
-    public function setEmployeeType(?string $employeeType): self
-    {
-        $this->employeeType = $employeeType;
+        $this->volunteringPreference = $volunteringPreference;
 
         return $this;
     }
@@ -815,6 +486,234 @@ class Employee
     public function setUserGroupIds(?array $userGroupIds): self
     {
         $this->userGroupIds = $userGroupIds;
+
+        return $this;
+    }
+
+    public function getContactPreferenceOther(): ?string
+    {
+        return $this->contactPreferenceOther;
+    }
+
+    public function setContactPreferenceOther(?string $contactPreferenceOther): self
+    {
+        $this->contactPreferenceOther = $contactPreferenceOther;
+
+        return $this;
+    }
+
+    public function getGotHereVia(): ?string
+    {
+        return $this->gotHereVia;
+    }
+
+    public function setGotHereVia(?string $gotHereVia): self
+    {
+        $this->gotHereVia = $gotHereVia;
+
+        return $this;
+    }
+
+    public function getHasExperienceWithTargetGroup(): ?bool
+    {
+        return $this->hasExperienceWithTargetGroup;
+    }
+
+    public function setHasExperienceWithTargetGroup(?bool $hasExperienceWithTargetGroup): self
+    {
+        $this->hasExperienceWithTargetGroup = $hasExperienceWithTargetGroup;
+
+        return $this;
+    }
+
+    public function getExperienceWithTargetGroupYesReason(): ?bool
+    {
+        return $this->experienceWithTargetGroupYesReason;
+    }
+
+    public function setExperienceWithTargetGroupYesReason(?bool $experienceWithTargetGroupYesReason): self
+    {
+        $this->experienceWithTargetGroupYesReason = $experienceWithTargetGroupYesReason;
+
+        return $this;
+    }
+
+    public function getCurrentEducation(): ?string
+    {
+        return $this->currentEducation;
+    }
+
+    public function setCurrentEducation(?string $currentEducation): self
+    {
+        $this->currentEducation = $currentEducation;
+
+        return $this;
+    }
+
+    public function getDoesCurrentlyFollowCourse(): ?bool
+    {
+        return $this->doesCurrentlyFollowCourse;
+    }
+
+    public function setDoesCurrentlyFollowCourse(?bool $doesCurrentlyFollowCourse): self
+    {
+        $this->doesCurrentlyFollowCourse = $doesCurrentlyFollowCourse;
+
+        return $this;
+    }
+
+    public function getCurrentlyFollowingCourseName(): ?string
+    {
+        return $this->currentlyFollowingCourseName;
+    }
+
+    public function setCurrentlyFollowingCourseName(?string $currentlyFollowingCourseName): self
+    {
+        $this->currentlyFollowingCourseName = $currentlyFollowingCourseName;
+
+        return $this;
+    }
+
+    public function getCurrentlyFollowingCourseInstitute(): ?string
+    {
+        return $this->currentlyFollowingCourseInstitute;
+    }
+
+    public function setCurrentlyFollowingCourseInstitute(?string $currentlyFollowingCourseInstitute): self
+    {
+        $this->currentlyFollowingCourseInstitute = $currentlyFollowingCourseInstitute;
+
+        return $this;
+    }
+
+    public function getCurrentlyFollowingCourseTeacherProfessionalism(): ?string
+    {
+        return $this->currentlyFollowingCourseTeacherProfessionalism;
+    }
+
+    public function setCurrentlyFollowingCourseTeacherProfessionalism(?string $currentlyFollowingCourseTeacherProfessionalism): self
+    {
+        $this->currentlyFollowingCourseTeacherProfessionalism = $currentlyFollowingCourseTeacherProfessionalism;
+
+        return $this;
+    }
+
+    public function getCurrentlyFollowingCourseCourseProfessionalism(): ?string
+    {
+        return $this->currentlyFollowingCourseCourseProfessionalism;
+    }
+
+    public function setCurrentlyFollowingCourseCourseProfessionalism(?string $currentlyFollowingCourseCourseProfessionalism): self
+    {
+        $this->currentlyFollowingCourseCourseProfessionalism = $currentlyFollowingCourseCourseProfessionalism;
+
+        return $this;
+    }
+
+    public function getDoesCurrentlyFollowingCourseProvideCertificate(): ?bool
+    {
+        return $this->doesCurrentlyFollowingCourseProvideCertificate;
+    }
+
+    public function setDoesCurrentlyFollowingCourseProvideCertificate(?bool $doesCurrentlyFollowingCourseProvideCertificate): self
+    {
+        $this->doesCurrentlyFollowingCourseProvideCertificate = $doesCurrentlyFollowingCourseProvideCertificate;
+
+        return $this;
+    }
+
+    public function getOtherRelevantCertificates(): ?string
+    {
+        return $this->otherRelevantCertificates;
+    }
+
+    public function setOtherRelevantCertificates(?string $otherRelevantCertificates): self
+    {
+        $this->otherRelevantCertificates = $otherRelevantCertificates;
+
+        return $this;
+    }
+
+    public function getIsVOGChecked(): ?bool
+    {
+        return $this->isVOGChecked;
+    }
+
+    public function setIsVOGChecked(bool $isVOGChecked): self
+    {
+        $this->isVOGChecked = $isVOGChecked;
+
+        return $this;
+    }
+
+    public function getAanbiederId(): ?string
+    {
+        return $this->aanbiederId;
+    }
+
+    public function setAanbiederId(?string $aanbiederId): self
+    {
+        $this->aanbiederId = $aanbiederId;
+
+        return $this;
+    }
+
+    public function getTaalhuisId(): ?string
+    {
+        return $this->taalhuisId;
+    }
+
+    public function setTaalhuisId(?string $taalhuisId): self
+    {
+        $this->taalhuisId = $taalhuisId;
+
+        return $this;
+    }
+
+    public function getAvailability(): ?Availability
+    {
+        return $this->availability;
+    }
+
+    public function setAvailability(?Availability $availability): self
+    {
+        $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function getCurrentEducationYes(): ?CurrentEducationYes
+    {
+        return $this->currentEducationYes;
+    }
+
+    public function setCurrentEducationYes(?CurrentEducationYes $currentEducationYes): self
+    {
+        $this->currentEducationYes = $currentEducationYes;
+
+        return $this;
+    }
+
+    public function getCurrentEducationNoButDidFollow(): ?CurrentEducationNoButDidFollow
+    {
+        return $this->currentEducationNoButDidFollow;
+    }
+
+    public function setCurrentEducationNoButDidFollow(?CurrentEducationNoButDidFollow $currentEducationNoButDidFollow): self
+    {
+        $this->currentEducationNoButDidFollow = $currentEducationNoButDidFollow;
+
+        return $this;
+    }
+
+    public function getBiscEmployeeId(): ?string
+    {
+        return $this->biscEmployeeId;
+    }
+
+    public function setBiscEmployeeId(?string $biscEmployeeId): self
+    {
+        $this->biscEmployeeId = $biscEmployeeId;
 
         return $this;
     }
