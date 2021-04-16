@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LearningNeedRepository;
 use App\Resolver\LearningNeedMutationResolver;
+use App\Resolver\LearningNeedQueryCollectionResolver;
+use App\Resolver\LearningNeedQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -13,6 +15,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     graphql={
+ *          "item_query" = {
+ *              "item_query" = LearningNeedQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = LearningNeedQueryCollectionResolver::class
+ *          },
  *          "create" = {
  *              "mutation" = LearningNeedMutationResolver::class,
  *              "write" = false
@@ -26,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "remove" = {
  *              "mutation" = LearningNeedMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
