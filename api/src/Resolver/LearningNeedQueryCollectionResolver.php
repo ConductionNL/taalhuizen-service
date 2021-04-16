@@ -58,7 +58,25 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
             throw new HttpException($result['errorMessage'], 400);
         }
 
-        $paginator = new ArrayPaginator($collection->toArray(), 0, count($collection));
-        return $paginator;
+        return $this->createPaginator($collection, $context['args']);
+    }
+
+    public function createPaginator(ArrayCollection $collection, array $args){
+        if(key_exists('first', $args)){
+            $maxItems = $args['first'];
+            $firstItem = 0;
+        } elseif(key_exists('last', $args)) {
+            $maxItems = $args['last'];
+            $firstItem = (count($collection) - 1) - $maxItems;
+        } else {
+            $maxItems = count($collection);
+            $firstItem = 0;
+        }
+        if(key_exists('after', $args)){
+            $firstItem = base64_decode($args['after']);
+        } elseif(key_exists('before', $args)){
+            $firstItem = base64_decode($args['before']) - $maxItems;
+        }
+        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 }
