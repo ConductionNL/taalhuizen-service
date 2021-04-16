@@ -667,7 +667,7 @@ class Student
         $this->address = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

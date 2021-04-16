@@ -133,7 +133,7 @@ class Participation
      */
     private $detailsEngagements;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
