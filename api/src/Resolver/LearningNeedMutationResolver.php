@@ -78,7 +78,6 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($result['errorMessage'])) {
             throw new HttpException($result['errorMessage'], 400);
         }
-
         return $resourceResult;
     }
 
@@ -86,12 +85,17 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        // If learningNeedUrl or learningNeedId is set generate the url and id for it, needed for eav calls later
+        // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
         $learningNeedId = null;
         if ($input['learningNeedUrl']) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($input['learningNeedUrl']);
         } elseif ($input['learningNeedId']) {
             $learningNeedId = explode('/',$input['learningNeedId']);
+            if (is_array($learningNeedId)) {
+                $learningNeedId = end($learningNeedId);
+            }
+        } else {
+            throw new HttpException('Invalid request, please give a learningNeedId or learningNeedUrl when doing an update!', 400);
         }
 
         // Do some checks and error handling
@@ -111,14 +115,39 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($result['errorMessage'])) {
             throw new HttpException($result['errorMessage'], 400);
         }
-
         $this->entityManager->persist($resourceResult);
         return $resourceResult;
     }
 
     public function deleteLearningNeed(array $learningNeed): ?LearningNeed
     {
+        $result['result'] = [];
 
+        // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
+        $learningNeedId = null;
+        if ($learningNeed['learningNeedUrl']) {
+            $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
+        } elseif ($learningNeed['learningNeedId']) {
+            $learningNeedId = explode('/',$learningNeed['learningNeedId']);
+            if (is_array($learningNeedId)) {
+                $learningNeedId = end($learningNeedId);
+            }
+        } else {
+            throw new HttpException('Invalid request, please give a learningNeedId or learningNeedUrl when doing an update!', 400);
+        }
+
+        $result = array_merge($result, $this->deleteLearningNeed($learningNeedId));
+
+        $result['result'] = False;
+        if (isset($result['learningNeed'])){
+            // Now put together the expected result in $result['result'] for Lifely:
+            $result['result'] = True;
+        }
+
+        // If any error was catched throw it
+        if (isset($result['errorMessage'])) {
+            throw new HttpException($result['errorMessage'], 400);
+        }
         return null;
     }
 
