@@ -34,9 +34,8 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
 
@@ -46,9 +45,8 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
 
     private $username;
@@ -59,9 +57,8 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
 
@@ -71,15 +68,20 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $token;
 
     public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getEmail(): ?string

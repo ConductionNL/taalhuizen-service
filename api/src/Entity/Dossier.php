@@ -41,10 +41,6 @@ class Dossier
     /**
      * @var string The Event of this Student.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -70,17 +66,23 @@ class Dossier
     private $eventDescription;
 
     /**
-     * @var string organizer of this student Dossier.
+     * @var string studentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $organizer;
+    private $studentId;
 
     public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getEvent(): ?string
@@ -119,14 +121,14 @@ class Dossier
         return $this;
     }
 
-    public function getOrganizer(): ?string
+    public function getStudentId(): ?string
     {
-        return $this->organizer;
+        return $this->studentId;
     }
 
-    public function setOrganizer(string $organizer): self
+    public function setStudentId(string $studentId): self
     {
-        $this->organizer = $organizer;
+        $this->studentId = $studentId;
 
         return $this;
     }
