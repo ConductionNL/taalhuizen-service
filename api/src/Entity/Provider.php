@@ -107,9 +107,15 @@ class Provider
         $this->address = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getName(): ?string

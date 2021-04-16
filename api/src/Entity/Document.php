@@ -63,9 +63,15 @@ class Document
      */
     private $studentId;
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
     }
 
     public function getBase64Data(): ?string
