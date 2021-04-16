@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use SensioLabs\Security\Exception\HttpException;
 
 class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInterface
 {
@@ -35,7 +34,7 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
         if(key_exists('studentId', $context['args'])){
             $studentId = $context['args']['studentId'];
         } else {
-            throw new Exception('The student id was not specified');
+            throw new Exception('The studentId was not specified');
         }
 
         // Get the learningNeeds of this student from EAV
@@ -46,7 +45,7 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
             // Now put together the expected result for Lifely:
             foreach ($result['learningNeeds'] as &$learningNeed) {
                 if (!isset($learningNeed['errorMessage'])) {
-                    $resourceResult = $this->learningNeedService->handleResult($learningNeed);
+                    $resourceResult = $this->learningNeedService->handleResult($learningNeed, $studentId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                     $collection->add($resourceResult);
                     $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
@@ -54,9 +53,9 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
             }
         }
 
-        // If any error was catched throw it
+        // If any error was caught throw it
         if (isset($result['errorMessage'])) {
-            throw new HttpException($result['errorMessage'], 400);
+            throw new Exception($result['errorMessage']);
         }
 
         return $this->createPaginator($collection, $context['args']);

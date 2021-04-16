@@ -182,9 +182,7 @@ class LearningNeedService
         return $result;
     }
 
-    public function handleResult($learningNeed) {
-        // TODO: when participation subscriber is done, also make sure to connect and return the participations of this learningNeed
-        // TODO: add 'verwijzingen' in EAV to connect learningNeeds to participations¿
+    public function handleResult($learningNeed, $studentId = null) {
         // Put together the expected result for Lifely:
         $resource = new LearningNeed();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
@@ -203,7 +201,13 @@ class LearningNeedService
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
+        // TODO: when participation resolver is done, also make sure to connect and return the participations of this learningNeed
+        // TODO: add 'verwijzingen' in EAV to connect learningNeeds to participations¿
         $resource->setParticipations([]);
+
+        if (isset($studentId)) {
+            $resource->setStudentId($studentId);
+        }
         $this->entityManager->persist($resource);
         return $resource;
     }

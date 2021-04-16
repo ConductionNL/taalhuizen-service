@@ -128,7 +128,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             }
         }
 
-        // If any error was catched set $result['result'] to null
+        // If any error was caught set $result['result'] to null
         if (isset($result['errorMessage'])) {
             $result['result'] = null;
         }
