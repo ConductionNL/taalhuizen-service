@@ -5,7 +5,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-04-15T16:46:19.3613082Z"
+    created: "2021-04-16T08:59:40.2197283Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -34,4 +34,4 @@ entries:
     urls:
     - charts/postgresql-10.1.1.tgz
     version: 10.1.1
-generated: "2021-04-15T16:46:19.134728Z"
+generated: "2021-04-16T08:59:40.0383469Z"

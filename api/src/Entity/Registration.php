@@ -57,6 +57,11 @@ class Registration
      */
     private $memo;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -112,6 +117,18 @@ class Registration
     public function setRegistrar(?RegisterStudentRegistrar $registrar): self
     {
         $this->registrar = $registrar;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(?string $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }

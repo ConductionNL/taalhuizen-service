@@ -24022,6 +24022,12 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Student'
+          links:
+            GetStudentItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getStudentItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /students/{id}`.'
         400:
           description: 'Invalid input'
         404:
@@ -28484,6 +28490,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationDetails:
           type: string
           format: iri-reference
@@ -28563,6 +28574,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationDetails:
           type: string
           format: iri-reference
@@ -30053,12 +30069,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 08:15:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 08:15:57'
     required: []
   ChangeLog-write:
     properties:
@@ -30172,12 +30188,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 08:15:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 08:15:57'
     required: []
   AuditTrail-write:
     properties:

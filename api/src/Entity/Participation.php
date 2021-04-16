@@ -184,6 +184,41 @@ class Participation
      */
     private $learningNeedUrl;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $participationId;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $presenceStartDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $presenceEndDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presenceEndParticipationReason;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presenceEngagements;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -437,6 +472,90 @@ class Participation
     public function setLearningNeedUrl(?string $learningNeedUrl): self
     {
         $this->learningNeedUrl = $learningNeedUrl;
+
+        return $this;
+    }
+
+    public function getParticipationId(): ?string
+    {
+        return $this->participationId;
+    }
+
+    public function setParticipationId(?string $participationId): self
+    {
+        $this->participationId = $participationId;
+
+        return $this;
+    }
+
+    public function getPresenceStartDate(): ?\DateTimeInterface
+    {
+        return $this->presenceStartDate;
+    }
+
+    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
+    {
+        $this->presenceStartDate = $presenceStartDate;
+
+        return $this;
+    }
+
+    public function getPresenceEndDate(): ?\DateTimeInterface
+    {
+        return $this->presenceEndDate;
+    }
+
+    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
+    {
+        $this->presenceEndDate = $presenceEndDate;
+
+        return $this;
+    }
+
+    public function getPresenceEndParticipationReason(): ?string
+    {
+        return $this->presenceEndParticipationReason;
+    }
+
+    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
+    {
+        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeId(): ?string
+    {
+        return $this->aanbiederEmployeeId;
+    }
+
+    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    {
+        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    public function getPresenceEngagements(): ?string
+    {
+        return $this->presenceEngagements;
+    }
+
+    public function setPresenceEngagements(?string $presenceEngagements): self
+    {
+        $this->presenceEngagements = $presenceEngagements;
 
         return $this;
     }

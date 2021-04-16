@@ -63,6 +63,16 @@ class Document
      */
     private $studentId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeDocumentId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentDocumentId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -128,6 +138,30 @@ class Document
     public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeDocumentId(): ?string
+    {
+        return $this->aanbiederEmployeeDocumentId;
+    }
+
+    public function setAanbiederEmployeeDocumentId(?string $aanbiederEmployeeDocumentId): self
+    {
+        $this->aanbiederEmployeeDocumentId = $aanbiederEmployeeDocumentId;
+
+        return $this;
+    }
+
+    public function getStudentDocumentId(): ?string
+    {
+        return $this->studentDocumentId;
+    }
+
+    public function setStudentDocumentId(?string $studentDocumentId): self
+    {
+        $this->studentDocumentId = $studentDocumentId;
 
         return $this;
     }

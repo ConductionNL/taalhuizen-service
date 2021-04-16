@@ -130,6 +130,11 @@ class Student
      */
     private $taalhuisId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -341,6 +346,18 @@ class Student
     public function setTaalhuisId(string $taalhuisId): self
     {
         $this->taalhuisId = $taalhuisId;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(?string $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }
