@@ -27395,6 +27395,12 @@ components:
         studentId:
           type: string
           nullable: true
+        aanbiederEmployeeDocumentId:
+          type: string
+          nullable: true
+        studentDocumentId:
+          type: string
+          nullable: true
       required:
         - filename
     'Document:jsonld':
@@ -27428,6 +27434,12 @@ components:
         studentId:
           type: string
           nullable: true
+        aanbiederEmployeeDocumentId:
+          type: string
+          nullable: true
+        studentDocumentId:
+          type: string
+          nullable: true
       required:
         - filename
     Dossier:
@@ -27452,6 +27464,9 @@ components:
         studentId:
           description: 'studentId of this student Dossier.'
           type: string
+        studentDossierEventId:
+          type: string
+          nullable: true
       required:
         - event
         - eventDate
@@ -27488,6 +27503,9 @@ components:
         studentId:
           description: 'studentId of this student Dossier.'
           type: string
+        studentDossierEventId:
+          type: string
+          nullable: true
       required:
         - event
         - eventDate
@@ -27624,6 +27642,12 @@ components:
           format: iri-reference
           nullable: true
         biscEmployeeId:
+          type: string
+          nullable: true
+        userGroupId:
+          type: string
+          nullable: true
+        userId:
           type: string
           nullable: true
       required:
@@ -27771,6 +27795,12 @@ components:
         biscEmployeeId:
           type: string
           nullable: true
+        userGroupId:
+          type: string
+          nullable: true
+        userId:
+          type: string
+          nullable: true
       required:
         - familyName
         - email
@@ -27883,6 +27913,9 @@ components:
           nullable: true
         aanbiederId:
           type: string
+        groupId:
+          type: string
+          nullable: true
     'Group:jsonld':
       type: object
       description: ''
@@ -27964,6 +27997,9 @@ components:
           nullable: true
         aanbiederId:
           type: string
+        groupId:
+          type: string
+          nullable: true
     LearningNeed:
       type: object
       description: ''
@@ -28005,6 +28041,11 @@ components:
           nullable: true
         offerEngagements:
           type: string
+          nullable: true
+        participations:
+          type: array
+          items:
+            type: string
           nullable: true
         studentId:
           type: string
@@ -28069,6 +28110,11 @@ components:
           nullable: true
         offerEngagements:
           type: string
+          nullable: true
+        participations:
+          type: array
+          items:
+            type: string
           nullable: true
         studentId:
           type: string
@@ -28152,9 +28198,38 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
           type: string
-      required:
-        - learningNeedId
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
+          nullable: true
+        participationId:
+          type: string
+          nullable: true
+        presenceStartDate:
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndDate:
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndParticipationReason:
+          type: string
+          nullable: true
+        aanbiederEmployeeId:
+          type: string
+          nullable: true
+        groupId:
+          type: string
+          nullable: true
+        presenceEngagements:
+          type: string
+          nullable: true
     'Participation:jsonld':
       type: object
       description: ''
@@ -28233,9 +28308,38 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
           type: string
-      required:
-        - learningNeedId
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
+          nullable: true
+        participationId:
+          type: string
+          nullable: true
+        presenceStartDate:
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndDate:
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndParticipationReason:
+          type: string
+          nullable: true
+        aanbiederEmployeeId:
+          type: string
+          nullable: true
+        groupId:
+          type: string
+          nullable: true
+        presenceEngagements:
+          type: string
+          nullable: true
     Provider:
       type: object
       description: ''
@@ -28558,6 +28662,9 @@ components:
           nullable: true
         taalhuisId:
           type: string
+        studentId:
+          type: string
+          nullable: true
       required:
         - personDetails
         - permissionDetails
@@ -28642,6 +28749,9 @@ components:
           nullable: true
         taalhuisId:
           type: string
+        studentId:
+          type: string
+          nullable: true
       required:
         - personDetails
         - permissionDetails
@@ -29556,6 +29666,9 @@ components:
         examMemo:
           type: string
           nullable: true
+        testResultId:
+          type: string
+          nullable: true
     'TestResult:jsonld':
       type: object
       description: ''
@@ -29598,6 +29711,9 @@ components:
         examDate:
           type: string
         examMemo:
+          type: string
+          nullable: true
+        testResultId:
           type: string
           nullable: true
     User:
@@ -29847,6 +29963,7 @@ definitions:
       offerDifference: []
       offerDifferenceOther: []
       offerEngagements: []
+      participations: []
       studentId: []
       learningNeedId:
         description: 'The id of the objectEntity of an eav/learning_need.'
@@ -30069,12 +30186,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-16 08:15:57'
+        example: '2021-04-16 13:11:38'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-16 08:15:57'
+        example: '2021-04-16 13:11:38'
     required: []
   ChangeLog-write:
     properties:
@@ -30188,12 +30305,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-16 08:15:57'
+        example: '2021-04-16 13:11:38'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-16 08:15:57'
+        example: '2021-04-16 13:11:38'
     required: []
   AuditTrail-write:
     properties:
@@ -30201,59 +30318,6 @@ definitions:
         description: 'A note conserning this log lin'
         type: string
         example: 'This log line looks suspicius'
-        maxLength: 2555
-    required: []
-  ChangeLog-read:
-    properties:
-      id:
-        description: 'The UUID identifier of this object'
-        type: string
-        example: e2984465-190a-4562-829e-a8cca81aa35d
-        format: uuid
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-      action:
-        description: ''
-        type: string
-      objectId:
-        description: ''
-        type: string
-      objectClass:
-        description: ''
-        type: string
-      version:
-        description: ''
-        type: int
-      data:
-        description: ''
-        type: array
-      username:
-        description: ''
-        type: string
-      session:
-        description: 'The moment this request was created'
-        type: string
-        maxLength: 255
-      dateCreated:
-        description: 'The moment this request was created'
-        type: string
-        format: date-time
-        example: '2021-04-15 13:36:25'
-      dateModified:
-        description: 'The moment this request last Modified'
-        type: string
-        format: date-time
-        example: '2021-04-15 13:36:25'
-    required: []
-  ChangeLog-write:
-    properties:
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
         maxLength: 2555
     required: []
 tags:
@@ -30450,13 +30514,13 @@ tags:
       
       
   -
-    name: AuditTrail
+    name: ChangeLog
     description: |
       An resource representing a log line.
       
       This entity represents a product that can be ordered via the OrderRegistratieComponent.
   -
-    name: ChangeLog
+    name: AuditTrail
     description: |
       An resource representing a log line.
       
@@ -30467,15 +30531,15 @@ securityDefinitions:
     authorizationUrl: 'http://petstore.swagger.io/api/oauth/dialog'
     flow: implicit
     scopes:
-      read: 'read right to the ChangeLog resource'
-      write: 'write right to the ChangeLog resource'
+      read: 'read right to the AuditTrail resource'
+      write: 'write right to the AuditTrail resource'
   JWT-Token:
     type: apiKey
     in: header
     name: Authorization
     scopes:
-      read: 'read right to the ChangeLog resource'
-      write: 'write right to the ChangeLog resource'
+      read: 'read right to the AuditTrail resource'
+      write: 'write right to the AuditTrail resource'
 host: irc.zaakonline.nl
 servers:
   -
