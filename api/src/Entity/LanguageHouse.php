@@ -27,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     graphql={
+
  *          "item_query" = {
  *              "item_query" = LanguageHouseQueryItemResolver::class,
  *              "read" = false
@@ -47,11 +48,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "remove" = {
  *              "mutation" = LanguageHouseMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          }
+ *     },
+ *     attributes={
+ *          "validation_groups" = {"Default", "remove"}
  *     }
  * )
  * @ORM\Entity(repositoryClass=LanguageHouseRepository::class)

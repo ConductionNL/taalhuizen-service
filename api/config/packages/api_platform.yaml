@@ -64,6 +64,7 @@ api_platform:
         yaml:     ['application/x-yaml']
         csv:      ['text/csv']
         html:     ['text/html']
+        graphql:  ['application/graphql']
     patch_formats:
         jsonld:     ['application/ld+json']
         json:       ['application/json']
