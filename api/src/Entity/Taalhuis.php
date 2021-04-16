@@ -9,6 +9,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Resolver\TaalhuisMutationResolver;
+use App\Resolver\TaalhuisQueryCollectionResolver;
+use App\Resolver\TaalhuisQueryItemResolver;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,27 +24,35 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- *  * @ApiResource(
- *  collectionOperations={
- *          "get",
- *          "get_taalhuis"={
- *              "method"="GET",
- *              "path"="/taalhuis/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific Taalhuis",
- *                  "description"="Returns a Taalhuis"
- *              }
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = TaalhuisQueryItemResolver::class,
+ *              "read" = false
  *          },
- *          "delete_taalhuis"={
- *              "method"="GET",
- *              "path"="/taalhuis/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific taalhuis",
- *                  "description"="Returns true if this taalhuis was deleted"
- *              }
+ *          "collection_query" = {
+ *              "collection_query" = TaalhuisQueryCollectionResolver::class,
+ *              "read" = false
  *          },
- *          "post"
- *     },
+ *          "create" = {
+ *              "mutation" = TaalhuisMutationResolver::class,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = TaalhuisMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = TaalhuisMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
  * )
  * @ORM\Entity(repositoryClass=TaalhuisRepository::class)
  */
@@ -108,7 +119,7 @@ class Taalhuis
         $this->address = new ArrayCollection();
     }
 
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
