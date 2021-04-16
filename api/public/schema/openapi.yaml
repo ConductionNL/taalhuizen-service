@@ -24022,6 +24022,12 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Student'
+          links:
+            GetStudentItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getStudentItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /students/{id}`.'
         400:
           description: 'Invalid input'
         404:
@@ -28000,6 +28006,11 @@ components:
         offerEngagements:
           type: string
           nullable: true
+        participations:
+          type: array
+          items:
+            type: string
+          nullable: true
         studentId:
           type: string
           nullable: true
@@ -28063,6 +28074,11 @@ components:
           nullable: true
         offerEngagements:
           type: string
+          nullable: true
+        participations:
+          type: array
+          items:
+            type: string
           nullable: true
         studentId:
           type: string
@@ -28146,9 +28162,15 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
           type: string
-      required:
-        - learningNeedId
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
+          nullable: true
     'Participation:jsonld':
       type: object
       description: ''
@@ -28227,9 +28249,15 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          description: 'The id of the objectEntity of an eav/learning_need.'
           type: string
-      required:
-        - learningNeedId
+          nullable: true
+        learningNeedUrl:
+          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+          externalDocs:
+            url: 'http://schema.org/url'
+          type: string
+          nullable: true
     Provider:
       type: object
       description: ''
@@ -28484,6 +28512,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationDetails:
           type: string
           format: iri-reference
@@ -28563,6 +28596,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationDetails:
           type: string
           format: iri-reference
@@ -29831,6 +29869,7 @@ definitions:
       offerDifference: []
       offerDifferenceOther: []
       offerEngagements: []
+      participations: []
       studentId: []
       learningNeedId:
         description: 'The id of the objectEntity of an eav/learning_need.'
@@ -30015,59 +30054,6 @@ definitions:
         type: string
         maxLength: 2550
     required: []
-  ChangeLog-read:
-    properties:
-      id:
-        description: 'The UUID identifier of this object'
-        type: string
-        example: e2984465-190a-4562-829e-a8cca81aa35d
-        format: uuid
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-      action:
-        description: ''
-        type: string
-      objectId:
-        description: ''
-        type: string
-      objectClass:
-        description: ''
-        type: string
-      version:
-        description: ''
-        type: int
-      data:
-        description: ''
-        type: array
-      username:
-        description: ''
-        type: string
-      session:
-        description: 'The moment this request was created'
-        type: string
-        maxLength: 255
-      dateCreated:
-        description: 'The moment this request was created'
-        type: string
-        format: date-time
-        example: '2021-04-15 16:51:37'
-      dateModified:
-        description: 'The moment this request last Modified'
-        type: string
-        format: date-time
-        example: '2021-04-15 16:51:37'
-    required: []
-  ChangeLog-write:
-    properties:
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-    required: []
   AuditTrail-read:
     properties:
       id:
@@ -30172,12 +30158,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 09:00:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 16:51:37'
+        example: '2021-04-16 09:00:57'
     required: []
   AuditTrail-write:
     properties:
@@ -30225,12 +30211,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-15 13:36:25'
+        example: '2021-04-16 09:00:57'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-15 13:36:25'
+        example: '2021-04-16 09:00:57'
     required: []
   ChangeLog-write:
     properties:

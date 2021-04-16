@@ -42,7 +42,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             case 'updateLearningNeed':
                 return $this->updateLearningNeed($context['info']->variableValues['input']);
             case 'removeLearningNeed':
-                return $this->deleteLearningNeed($context['info']->variableValues['input']);
+                return $this->removeLearningNeed($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -58,7 +58,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $resource->getStudentId()]);
         }
 
-        // get all DTO info...
+        // Transform DTO info to learningNeed body...
         $learningNeed = $this->dtoToLearningNeed($resource);
 
         // Do some checks and error handling
@@ -87,19 +87,20 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
         // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
         $learningNeedId = null;
-        if ($input['learningNeedUrl']) {
+        if (isset($input['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($input['learningNeedUrl']);
-        } elseif ($input['learningNeedId']) {
-            $learningNeedId = explode('/',$input['learningNeedId']);
+        } else {
+            $learningNeedId = explode('/',$input['id']);
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
-        } else {
-            throw new HttpException('Invalid request, please give a learningNeedId or learningNeedUrl when doing an update!', 400);
         }
 
+        // Transform input info to learningNeed body...
+        $learningNeed = $this->inputToLearningNeed($input);
+
         // Do some checks and error handling
-        $result = array_merge($result, $this->checkLearningNeedValues($input, null, $learningNeedId));
+        $result = array_merge($result, $this->checkLearningNeedValues($learningNeed, null, $learningNeedId));
 
         if (!isset($result['errorMessage'])) {
             // No errors so lets continue... to:
@@ -119,7 +120,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function deleteLearningNeed(array $learningNeed): ?LearningNeed
+    public function removeLearningNeed(array $learningNeed): ?LearningNeed
     {
         $result['result'] = [];
 
@@ -212,6 +213,43 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $result;
     }
 
+    public function deleteLearningNeed($id) {
+        if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
+            $result['participants'] = [];
+            // Get the learningNeed from EAV
+            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+
+            // Remove this learningNeed from all EAV/edu/participants
+            foreach ($learningNeed['participants'] as $studentUrl) {
+                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+                if (isset($studentResult['participant'])) {
+                    // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
+                    array_push($result['participants'], $studentResult['participant']['@id']);
+                }
+            }
+
+            // Delete the learningNeed in EAV
+            $this->eavService->deleteObject($learningNeed['eavId']);
+            // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
+            $result['learningNeed'] = $learningNeed;
+        } else {
+            $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/learning_need!';
+        }
+        return $result;
+    }
+
+    public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl) {
+        $result = [];
+        if ($this->eavService->hasEavObject($studentUrl)) {
+            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
+                return $participantLearningNeed != $learningNeedUrl;
+            });
+            $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+        }
+        return $result;
+    }
+
     private function checkLearningNeedValues($learningNeed, $studentUrl, $learningNeedId = null) {
         $result = [];
         if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
@@ -235,7 +273,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     }
 
     private function dtoToLearningNeed(LearningNeed $resource) {
-        // Get all info from the dto for creating/updating a LearningNeed and return the body for this
+        // Get all info from the dto for creating a LearningNeed and return the body for this
         $learningNeed['description'] = $resource->getLearningNeedDescription();
         $learningNeed['motivation'] = $resource->getLearningNeedMotivation();
         $learningNeed['goal'] = $resource->getDesiredOutComesGoal();
@@ -263,6 +301,35 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeed;
     }
 
+    private function inputToLearningNeed(array $input) {
+        // Get all info from the input array for updating a LearningNeed and return the body for this
+        $learningNeed['description'] = $input['learningNeedDescription'];
+        $learningNeed['motivation'] = $input['learningNeedMotivation'];
+        $learningNeed['goal'] = $input['desiredOutComesGoal'];
+        $learningNeed['topic'] = $input['desiredOutComesTopic'];
+        if (isset($input['desiredOutComesTopicOther'])) {
+            $learningNeed['topicOther'] = $input['desiredOutComesTopicOther'];
+        }
+        $learningNeed['application'] = $input['desiredOutComesApplication'];
+        if (isset($input['desiredOutComesApplicationOther'])) {
+            $learningNeed['applicationOther'] = $input['desiredOutComesApplicationOther'];
+        }
+        $learningNeed['level'] = $input['desiredOutComesLevel'];
+        if (isset($input['desiredOutComesLevelOther'])) {
+            $learningNeed['levelOther'] = $input['desiredOutComesLevelOther'];
+        }
+        $learningNeed['desiredOffer'] = $input['offerDesiredOffer'];
+        $learningNeed['advisedOffer'] = $input['offerAdvisedOffer'];
+        $learningNeed['offerDifference'] = $input['offerDifference'];
+        if (isset($input['offerDifferenceOther'])) {
+            $learningNeed['offerDifferenceOther'] = $input['offerDifferenceOther'];
+        }
+        if (isset($input['offerEngagements'])) {
+            $learningNeed['offerEngagements'] = $input['offerEngagements'];
+        }
+        return $learningNeed;
+    }
+
     private function handleResult($learningNeed) {
         // TODO: when participation subscriber is done, also make sure to connect and return the participations of this learningNeed
         // TODO: add 'verwijzingen' in EAV to connect learningNeeds to participations¿
@@ -282,7 +349,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
-        $resource->setParticipations(null);
+        $resource->setParticipations([]);
         $this->entityManager->persist($resource);
         return $resource;
     }
