@@ -12,6 +12,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use SensioLabs\Security\Exception\HttpException;
 
@@ -29,13 +30,16 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
 
     /**
      * @inheritDoc
+     * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
-
-        // Todo get studentId from somewhere
-        $studentId = '4a976327-578f-485a-b485-b22a72ef38b0';
+        if(key_exists('studentId', $context['args'])){
+            $studentId = $context['args']['studentId'];
+        } else {
+            throw new Exception('The student id was not specified');
+        }
 
         // Get the learningNeeds of this student from EAV
         $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
