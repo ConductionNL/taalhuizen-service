@@ -80,7 +80,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
 //            throw new Exception($result['errorMessage']);
 //        }
 //        return $resourceResult;
-        return $resource;
+        $resourceResult = new Participation();
+        $resourceResult->setId(Uuid::getFactory()->fromString('708361df-b1e6-472f-a6f6-780427059d98'));
+        return $resourceResult;
     }
 
     public function updateParticipation(array $input): Participation
