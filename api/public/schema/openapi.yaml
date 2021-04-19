@@ -10959,54 +10959,6 @@ paths:
             type: string
             format: date-time
           in: query
-      responses:
-        200:
-          description: 'Participation resource response'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Participation'
-        404:
-          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
