@@ -20,22 +20,11 @@ services:
     depends_on:
       - db
     volumes:
-      - ./api/bin:/srv/api/bin:rw,cached
-      - ./api/config:/srv/api/config:rw,cached
-      - ./api/docker:/srv/api/docker:rw,cached
-      - ./api/helm:/srv/api/helm:rw,cached
-      - ./api/migrations:/srv/api/migrations:rw,cached
-      - ./api/public:/srv/api/public:rw,cached
-      - ./api/src:/srv/api/src:rw,cached
-      - ./api/templates:/srv/api/templates:rw,cached
-      - ./api/tests:/srv/api/tests:rw,cached
-      - ./api/translations:/srv/api/translations:rw,cached
-      - ./api/composer.json:/srv/api/composer.json:rw,cached
-      - ./api/composer.lock:/srv/api/composer.lock:rw,cached
+      - ./api:/srv/api:rw,cached
       - ./nlx-setup:/cert:rw,cached
       #- ./nlx-setup:/Users/<your-username>/nlx-setup:rw,cached
       # If you develop on Linux, uncomment the following line to use a bind-mounted host directory instead
-      - ./api/var:/srv/api/var:rw
+#      - ./api/var:/srv/api/var:rw
     environment:
       - CONTAINER_REGISTRY_BASE=${CONTAINER_REGISTRY_BASE}
       - CONTAINER_PROJECT_NAME=${CONTAINER_PROJECT_NAME}
