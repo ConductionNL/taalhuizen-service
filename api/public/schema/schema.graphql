@@ -1,0 +1,3994 @@
+type Address implements Node {
+  id: ID!
+  street: String
+  houseNumber: String
+  houseNumberSuffix: String
+  postalCode: String
+  locality: String
+}
+
+"""Connection for Address."""
+type AddressConnection {
+  edges: [AddressEdge]
+  pageInfo: AddressPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Address."""
+type AddressEdge {
+  node: Address
+  cursor: String!
+}
+
+"""Information about the current page."""
+type AddressPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""An resource representing a log line."""
+type AuditTrail implements Node {
+  id: ID!
+
+  """The id of the request within that application"""
+  request: String
+
+  """The user on behalf of wich the request was made"""
+  user: String
+
+  """???"""
+  subject: String
+
+  """The procces on behalf of wich the request was made"""
+  process: String
+
+  """The moment this request was created"""
+  dataElements: Iterable
+
+  """The moment this request was created"""
+  dataSubjects: Iterable
+
+  """The resource that was requested"""
+  resource: String
+
+  """The type of the resource that was requested"""
+  resourceType: String
+
+  """The moment this request was created"""
+  route: String
+
+  """The endpoint that the request was made to"""
+  endpoint: String
+
+  """The method that was used"""
+  method: String
+
+  """The contentType that was reqousted"""
+  accept: String
+
+  """The contentType that was suplieds"""
+  contentType: String
+
+  """The moment this request was created"""
+  content: String
+
+  """The moment this request was created"""
+  ip: String
+
+  """The moment this request was created"""
+  session: String!
+
+  """The headers supplied by client"""
+  headers: Iterable!
+
+  """The status code returned to client"""
+  statusCode: Int
+
+  """Whether or not the reqousted endpoint was found"""
+  notFound: Boolean
+
+  """Whether or not the client was allowed to the reqousted endpoint"""
+  forbidden: Boolean
+
+  """Whether or not there where any problems"""
+  ok: Boolean
+
+  """The moment this request was created"""
+  dateCreated: String
+
+  """The moment this request last Modified"""
+  dateModified: String
+}
+
+"""Connection for AuditTrail."""
+type AuditTrailConnection {
+  edges: [AuditTrailEdge]
+  pageInfo: AuditTrailPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of AuditTrail."""
+type AuditTrailEdge {
+  node: AuditTrail
+  cursor: String!
+}
+
+input AuditTrailFilter_dateCreated {
+  before: String
+  strictly_before: String
+  after: String
+  strictly_after: String
+}
+
+input AuditTrailFilter_dateModified {
+  before: String
+  strictly_before: String
+  after: String
+  strictly_after: String
+}
+
+input AuditTrailFilter_order {
+  application: String
+  request: String
+  user: String
+  subject: String
+  resource: String
+  resourceType: String
+  endpoint: String
+  contentType: String
+  content: String
+  session: String
+  dateCreated: String
+  dateModified: String
+}
+
+"""Information about the current page."""
+type AuditTrailPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Availability implements Node {
+  id: ID!
+  monday: AvailabilityDay!
+  tuesday: AvailabilityDay!
+  wednesday: AvailabilityDay!
+  thursday: AvailabilityDay!
+  friday: AvailabilityDay!
+  saturday: AvailabilityDay!
+  sunday: AvailabilityDay!
+}
+
+"""Connection for Availability."""
+type AvailabilityConnection {
+  edges: [AvailabilityEdge]
+  pageInfo: AvailabilityPageInfo!
+  totalCount: Int!
+}
+
+type AvailabilityDay implements Node {
+  id: ID!
+  morning: Boolean!
+  afternoon: Boolean!
+  evening: Boolean!
+}
+
+"""Connection for AvailabilityDay."""
+type AvailabilityDayConnection {
+  edges: [AvailabilityDayEdge]
+  pageInfo: AvailabilityDayPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of AvailabilityDay."""
+type AvailabilityDayEdge {
+  node: AvailabilityDay
+  cursor: String!
+}
+
+"""Information about the current page."""
+type AvailabilityDayPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""Edge of Availability."""
+type AvailabilityEdge {
+  node: Availability
+  cursor: String!
+}
+
+"""Information about the current page."""
+type AvailabilityPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""An resource representing a log line."""
+type ChangeLog implements Node {
+  id: ID!
+
+  """The moment this request was created"""
+  session: String
+
+  """The moment this request was created"""
+  dateCreated: String
+
+  """The moment this request last Modified"""
+  dateModified: String
+  action: String!
+  objectClass: String!
+  objectId: String
+  username: String
+  data: Iterable
+  version: Int!
+}
+
+"""Connection for ChangeLog."""
+type ChangeLogConnection {
+  edges: [ChangeLogEdge]
+  pageInfo: ChangeLogPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of ChangeLog."""
+type ChangeLogEdge {
+  node: ChangeLog
+  cursor: String!
+}
+
+input ChangeLogFilter_dateCreated {
+  before: String
+  strictly_before: String
+  after: String
+  strictly_after: String
+}
+
+input ChangeLogFilter_dateModified {
+  before: String
+  strictly_before: String
+  after: String
+  strictly_after: String
+}
+
+input ChangeLogFilter_order {
+  action: String
+  objectId: String
+  objectClass: String
+  version: String
+  username: String
+  dateCreated: String
+  dateModified: String
+}
+
+"""Information about the current page."""
+type ChangeLogPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type CurrentEducationNoButDidFollow implements Node {
+  id: ID!
+  dateUntil: String
+  level: String
+  gotCertificate: Boolean
+}
+
+"""Connection for CurrentEducationNoButDidFollow."""
+type CurrentEducationNoButDidFollowConnection {
+  edges: [CurrentEducationNoButDidFollowEdge]
+  pageInfo: CurrentEducationNoButDidFollowPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of CurrentEducationNoButDidFollow."""
+type CurrentEducationNoButDidFollowEdge {
+  node: CurrentEducationNoButDidFollow
+  cursor: String!
+}
+
+"""Information about the current page."""
+type CurrentEducationNoButDidFollowPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type CurrentEducationYes implements Node {
+  id: ID!
+  dateSince: String
+  name: String
+  doesProvideCertificate: Boolean
+}
+
+type Document implements Node {
+  id: ID!
+  base64Data: String!
+
+  """the name of the file"""
+  filename: String!
+  resource: String!
+  aanbiederEmployeeId: String
+  studentId: String
+  aanbiederEmployeeDocumentId: String
+  studentDocumentId: String
+}
+
+"""Connection for Document."""
+type DocumentConnection {
+  edges: [DocumentEdge]
+  pageInfo: DocumentPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Document."""
+type DocumentEdge {
+  node: Document
+  cursor: String!
+}
+
+"""Information about the current page."""
+type DocumentPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Dossier implements Node {
+  id: ID!
+
+  """The Event of this Student."""
+  event: String!
+
+  """date of this student Dossier."""
+  eventDate: String!
+
+  """description of this student Dossier."""
+  eventDescription: String!
+
+  """studentId of this student Dossier."""
+  studentId: String!
+  studentDossierEventId: String
+}
+
+"""Connection for Dossier."""
+type DossierConnection {
+  edges: [DossierEdge]
+  pageInfo: DossierPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Dossier."""
+type DossierEdge {
+  node: Dossier
+  cursor: String!
+}
+
+"""Information about the current page."""
+type DossierPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Employee implements Node {
+  id: ID!
+
+  """The Name of this Employee."""
+  givenName: String!
+
+  """The PrefixName of this Employee."""
+  additionalName: String
+
+  """The LastName of this Employee."""
+  familyName: String!
+
+  """The Telephone of this Employee."""
+  telephone: String
+
+  """The Availability Note of this Employee."""
+  availabilityNotes: String
+
+  """The Email of this Employee."""
+  email: String!
+
+  """The Gender of this Employee. **Male**, **Female**, **X**"""
+  gender: String
+
+  """Date of birth of this Employee."""
+  dateOfBirth: String
+
+  """Contact Telephone of this Employee."""
+  contactTelephone: String
+
+  """
+  Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
+  """
+  contactPreference: String
+
+  """Target Preference of this Employee. **NT1**, **NT2**"""
+  targetGroupPreference: String!
+
+  """
+  Voluntering Preference of this Employee.
+  
+   @Assert\Length(
+      max = 255
+  )
+  """
+  volunteringPreference: String
+
+  """The address of this Employee."""
+  address(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AddressConnection
+  userGroupIds: Iterable
+  contactPreferenceOther: String
+  gotHereVia: String
+  hasExperienceWithTargetGroup: Boolean
+  experienceWithTargetGroupYesReason: Boolean
+  currentEducation: String
+  doesCurrentlyFollowCourse: Boolean
+  currentlyFollowingCourseName: String
+  currentlyFollowingCourseInstitute: String
+  currentlyFollowingCourseTeacherProfessionalism: String
+  currentlyFollowingCourseCourseProfessionalism: String
+  doesCurrentlyFollowingCourseProvideCertificate: Boolean
+  otherRelevantCertificates: String
+  isVOGChecked: Boolean!
+  aanbiederId: String
+  taalhuisId: String
+  availability: Availability
+  currentEducationYes: CurrentEducationYes
+  currentEducationNoButDidFollow: CurrentEducationNoButDidFollow
+  biscEmployeeId: String
+  userGroupId: String
+  userId: String
+}
+
+"""Connection for Employee."""
+type EmployeeConnection {
+  edges: [EmployeeEdge]
+  pageInfo: EmployeePageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Employee."""
+type EmployeeEdge {
+  node: Employee
+  cursor: String!
+}
+
+"""Information about the current page."""
+type EmployeePageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Group implements Node {
+  id: ID!
+  name: String!
+  typeCourse: String!
+  outComesGoal: String!
+  detailsIsFormal: String!
+  detailsTotalClassHours: Int!
+  detailsCertificateWillBeAwarded: Boolean!
+  detailsStartDate: String
+  detailsEndDate: String
+  availabilityNotes: String
+  generalLocation: String!
+  generalParticipantsMin: Int
+  generalParticipantsMax: Int
+  generalEvaluation: String
+  aanbiederEmployeeIds: Iterable!
+  outComesTopic: String!
+  outComesTopicOther: String!
+  outComesApplication: String!
+  iscedEducationLevelCode: String!
+  outComesApplicationOther: String!
+  outComesLevelOther: String!
+  availability: Iterable
+  outComesLevel: String!
+  availabilityy: Availability
+  aanbiederId: String!
+  groupId: String
+}
+
+"""Connection for Group."""
+type GroupConnection {
+  edges: [GroupEdge]
+  pageInfo: GroupPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Group."""
+type GroupEdge {
+  node: Group
+  cursor: String!
+}
+
+"""Information about the current page."""
+type GroupPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""
+The `Iterable` scalar type represents an array or a Traversable with any kind of data.
+"""
+scalar Iterable
+
+type LanguageHouse implements Node {
+  id: ID!
+
+  """The Name of this Taalhuis."""
+  name: String!
+
+  """The Telephone of this Taalhuis."""
+  phoneNumber: String
+
+  """The Email of this Taalhuis."""
+  email: String
+
+  """The address of this Taalhuis."""
+  address: Address
+}
+
+"""Connection for LanguageHouse."""
+type LanguageHouseConnection {
+  edges: [LanguageHouseEdge]
+  pageInfo: LanguageHousePageInfo!
+  totalCount: Int!
+}
+
+"""Edge of LanguageHouse."""
+type LanguageHouseEdge {
+  node: LanguageHouse
+  cursor: String!
+}
+
+"""Information about the current page."""
+type LanguageHousePageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type LearningNeed implements Node {
+  id: ID!
+  learningNeedDescription: String!
+  learningNeedMotivation: String!
+  desiredOutComesGoal: String!
+  desiredOutComesTopic: String!
+  desiredOutComesTopicOther: String
+  desiredOutComesApplication: String!
+  desiredOutComesApplicationOther: String
+  desiredOutComesLevel: String!
+  desiredOutComesLevelOther: String
+  offerDesiredOffer: String!
+  offerAdvisedOffer: String!
+  offerDifference: String!
+  offerDifferenceOther: String
+  offerEngagements: String
+  participations: Iterable
+  studentId: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+}
+
+"""Connection for LearningNeed."""
+type LearningNeedConnection {
+  edges: [LearningNeedEdge]
+  pageInfo: LearningNeedPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of LearningNeed."""
+type LearningNeedEdge {
+  node: LearningNeed
+  cursor: String!
+}
+
+"""Information about the current page."""
+type LearningNeedPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Mutation {
+  """Deletes a Address."""
+  deleteAddress(input: deleteAddressInput!): deleteAddressPayload
+
+  """Updates a Address."""
+  updateAddress(input: updateAddressInput!): updateAddressPayload
+
+  """Creates a Address."""
+  createAddress(input: createAddressInput!): createAddressPayload
+
+  """Deletes a Availability."""
+  deleteAvailability(input: deleteAvailabilityInput!): deleteAvailabilityPayload
+
+  """Updates a Availability."""
+  updateAvailability(input: updateAvailabilityInput!): updateAvailabilityPayload
+
+  """Creates a Availability."""
+  createAvailability(input: createAvailabilityInput!): createAvailabilityPayload
+
+  """Deletes a AvailabilityDay."""
+  deleteAvailabilityDay(input: deleteAvailabilityDayInput!): deleteAvailabilityDayPayload
+
+  """Updates a AvailabilityDay."""
+  updateAvailabilityDay(input: updateAvailabilityDayInput!): updateAvailabilityDayPayload
+
+  """Creates a AvailabilityDay."""
+  createAvailabilityDay(input: createAvailabilityDayInput!): createAvailabilityDayPayload
+
+  """Deletes a CurrentEducationNoButDidFollow."""
+  deleteCurrentEducationNoButDidFollow(input: deleteCurrentEducationNoButDidFollowInput!): deleteCurrentEducationNoButDidFollowPayload
+
+  """Updates a CurrentEducationNoButDidFollow."""
+  updateCurrentEducationNoButDidFollow(input: updateCurrentEducationNoButDidFollowInput!): updateCurrentEducationNoButDidFollowPayload
+
+  """Creates a CurrentEducationNoButDidFollow."""
+  createCurrentEducationNoButDidFollow(input: createCurrentEducationNoButDidFollowInput!): createCurrentEducationNoButDidFollowPayload
+
+  """Deletes a CurrentEducationYes."""
+  deleteCurrentEducationYes(input: deleteCurrentEducationYesInput!): deleteCurrentEducationYesPayload
+
+  """Updates a CurrentEducationYes."""
+  updateCurrentEducationYes(input: updateCurrentEducationYesInput!): updateCurrentEducationYesPayload
+
+  """Creates a CurrentEducationYes."""
+  createCurrentEducationYes(input: createCurrentEducationYesInput!): createCurrentEducationYesPayload
+
+  """Deletes a Document."""
+  deleteDocument(input: deleteDocumentInput!): deleteDocumentPayload
+
+  """Updates a Document."""
+  updateDocument(input: updateDocumentInput!): updateDocumentPayload
+
+  """Creates a Document."""
+  createDocument(input: createDocumentInput!): createDocumentPayload
+
+  """Deletes a Dossier."""
+  deleteDossier(input: deleteDossierInput!): deleteDossierPayload
+
+  """Updates a Dossier."""
+  updateDossier(input: updateDossierInput!): updateDossierPayload
+
+  """Creates a Dossier."""
+  createDossier(input: createDossierInput!): createDossierPayload
+
+  """Deletes a Employee."""
+  deleteEmployee(input: deleteEmployeeInput!): deleteEmployeePayload
+
+  """Updates a Employee."""
+  updateEmployee(input: updateEmployeeInput!): updateEmployeePayload
+
+  """Creates a Employee."""
+  createEmployee(input: createEmployeeInput!): createEmployeePayload
+
+  """Deletes a Group."""
+  deleteGroup(input: deleteGroupInput!): deleteGroupPayload
+
+  """Updates a Group."""
+  updateGroup(input: updateGroupInput!): updateGroupPayload
+
+  """Creates a Group."""
+  createGroup(input: createGroupInput!): createGroupPayload
+
+  """Creates a LanguageHouse."""
+  createLanguageHouse(input: createLanguageHouseInput!): createLanguageHousePayload
+
+  """Updates a LanguageHouse."""
+  updateLanguageHouse(input: updateLanguageHouseInput!): updateLanguageHousePayload
+
+  """Removes a LanguageHouse."""
+  removeLanguageHouse(input: removeLanguageHouseInput!): removeLanguageHousePayload
+
+  """Creates a LearningNeed."""
+  createLearningNeed(input: createLearningNeedInput!): createLearningNeedPayload
+
+  """Updates a LearningNeed."""
+  updateLearningNeed(input: updateLearningNeedInput!): updateLearningNeedPayload
+
+  """Removes a LearningNeed."""
+  removeLearningNeed(input: removeLearningNeedInput!): removeLearningNeedPayload
+
+  """Deletes a Participation."""
+  deleteParticipation(input: deleteParticipationInput!): deleteParticipationPayload
+
+  """Updates a Participation."""
+  updateParticipation(input: updateParticipationInput!): updateParticipationPayload
+
+  """Creates a Participation."""
+  createParticipation(input: createParticipationInput!): createParticipationPayload
+
+  """Deletes a Provider."""
+  deleteProvider(input: deleteProviderInput!): deleteProviderPayload
+
+  """Updates a Provider."""
+  updateProvider(input: updateProviderInput!): updateProviderPayload
+
+  """Creates a Provider."""
+  createProvider(input: createProviderInput!): createProviderPayload
+
+  """Deletes a RegisterStudent."""
+  deleteRegisterStudent(input: deleteRegisterStudentInput!): deleteRegisterStudentPayload
+
+  """Updates a RegisterStudent."""
+  updateRegisterStudent(input: updateRegisterStudentInput!): updateRegisterStudentPayload
+
+  """Creates a RegisterStudent."""
+  createRegisterStudent(input: createRegisterStudentInput!): createRegisterStudentPayload
+
+  """Deletes a RegisterStudentRegistrar."""
+  deleteRegisterStudentRegistrar(input: deleteRegisterStudentRegistrarInput!): deleteRegisterStudentRegistrarPayload
+
+  """Updates a RegisterStudentRegistrar."""
+  updateRegisterStudentRegistrar(input: updateRegisterStudentRegistrarInput!): updateRegisterStudentRegistrarPayload
+
+  """Creates a RegisterStudentRegistrar."""
+  createRegisterStudentRegistrar(input: createRegisterStudentRegistrarInput!): createRegisterStudentRegistrarPayload
+
+  """Deletes a Report."""
+  deleteReport(input: deleteReportInput!): deleteReportPayload
+
+  """Updates a Report."""
+  updateReport(input: updateReportInput!): updateReportPayload
+
+  """Creates a Report."""
+  createReport(input: createReportInput!): createReportPayload
+
+  """Deletes a Student."""
+  deleteStudent(input: deleteStudentInput!): deleteStudentPayload
+
+  """Updates a Student."""
+  updateStudent(input: updateStudentInput!): updateStudentPayload
+
+  """Creates a Student."""
+  createStudent(input: createStudentInput!): createStudentPayload
+
+  """Deletes a StudentAvailability."""
+  deleteStudentAvailability(input: deleteStudentAvailabilityInput!): deleteStudentAvailabilityPayload
+
+  """Updates a StudentAvailability."""
+  updateStudentAvailability(input: updateStudentAvailabilityInput!): updateStudentAvailabilityPayload
+
+  """Creates a StudentAvailability."""
+  createStudentAvailability(input: createStudentAvailabilityInput!): createStudentAvailabilityPayload
+
+  """Deletes a StudentBackground."""
+  deleteStudentBackground(input: deleteStudentBackgroundInput!): deleteStudentBackgroundPayload
+
+  """Updates a StudentBackground."""
+  updateStudentBackground(input: updateStudentBackgroundInput!): updateStudentBackgroundPayload
+
+  """Creates a StudentBackground."""
+  createStudentBackground(input: createStudentBackgroundInput!): createStudentBackgroundPayload
+
+  """Deletes a StudentCivicIntegration."""
+  deleteStudentCivicIntegration(input: deleteStudentCivicIntegrationInput!): deleteStudentCivicIntegrationPayload
+
+  """Updates a StudentCivicIntegration."""
+  updateStudentCivicIntegration(input: updateStudentCivicIntegrationInput!): updateStudentCivicIntegrationPayload
+
+  """Creates a StudentCivicIntegration."""
+  createStudentCivicIntegration(input: createStudentCivicIntegrationInput!): createStudentCivicIntegrationPayload
+
+  """Deletes a StudentContact."""
+  deleteStudentContact(input: deleteStudentContactInput!): deleteStudentContactPayload
+
+  """Updates a StudentContact."""
+  updateStudentContact(input: updateStudentContactInput!): updateStudentContactPayload
+
+  """Creates a StudentContact."""
+  createStudentContact(input: createStudentContactInput!): createStudentContactPayload
+
+  """Deletes a StudentCourse."""
+  deleteStudentCourse(input: deleteStudentCourseInput!): deleteStudentCoursePayload
+
+  """Updates a StudentCourse."""
+  updateStudentCourse(input: updateStudentCourseInput!): updateStudentCoursePayload
+
+  """Creates a StudentCourse."""
+  createStudentCourse(input: createStudentCourseInput!): createStudentCoursePayload
+
+  """Deletes a StudentDutchNT."""
+  deleteStudentDutchNT(input: deleteStudentDutchNTInput!): deleteStudentDutchNTPayload
+
+  """Updates a StudentDutchNT."""
+  updateStudentDutchNT(input: updateStudentDutchNTInput!): updateStudentDutchNTPayload
+
+  """Creates a StudentDutchNT."""
+  createStudentDutchNT(input: createStudentDutchNTInput!): createStudentDutchNTPayload
+
+  """Deletes a StudentEducation."""
+  deleteStudentEducation(input: deleteStudentEducationInput!): deleteStudentEducationPayload
+
+  """Updates a StudentEducation."""
+  updateStudentEducation(input: updateStudentEducationInput!): updateStudentEducationPayload
+
+  """Creates a StudentEducation."""
+  createStudentEducation(input: createStudentEducationInput!): createStudentEducationPayload
+
+  """Deletes a StudentGeneral."""
+  deleteStudentGeneral(input: deleteStudentGeneralInput!): deleteStudentGeneralPayload
+
+  """Updates a StudentGeneral."""
+  updateStudentGeneral(input: updateStudentGeneralInput!): updateStudentGeneralPayload
+
+  """Creates a StudentGeneral."""
+  createStudentGeneral(input: createStudentGeneralInput!): createStudentGeneralPayload
+
+  """Deletes a StudentJob."""
+  deleteStudentJob(input: deleteStudentJobInput!): deleteStudentJobPayload
+
+  """Updates a StudentJob."""
+  updateStudentJob(input: updateStudentJobInput!): updateStudentJobPayload
+
+  """Creates a StudentJob."""
+  createStudentJob(input: createStudentJobInput!): createStudentJobPayload
+
+  """Deletes a StudentMotivation."""
+  deleteStudentMotivation(input: deleteStudentMotivationInput!): deleteStudentMotivationPayload
+
+  """Updates a StudentMotivation."""
+  updateStudentMotivation(input: updateStudentMotivationInput!): updateStudentMotivationPayload
+
+  """Creates a StudentMotivation."""
+  createStudentMotivation(input: createStudentMotivationInput!): createStudentMotivationPayload
+
+  """Deletes a StudentPermission."""
+  deleteStudentPermission(input: deleteStudentPermissionInput!): deleteStudentPermissionPayload
+
+  """Updates a StudentPermission."""
+  updateStudentPermission(input: updateStudentPermissionInput!): updateStudentPermissionPayload
+
+  """Creates a StudentPermission."""
+  createStudentPermission(input: createStudentPermissionInput!): createStudentPermissionPayload
+
+  """Deletes a StudentPerson."""
+  deleteStudentPerson(input: deleteStudentPersonInput!): deleteStudentPersonPayload
+
+  """Updates a StudentPerson."""
+  updateStudentPerson(input: updateStudentPersonInput!): updateStudentPersonPayload
+
+  """Creates a StudentPerson."""
+  createStudentPerson(input: createStudentPersonInput!): createStudentPersonPayload
+
+  """Deletes a StudentReferrer."""
+  deleteStudentReferrer(input: deleteStudentReferrerInput!): deleteStudentReferrerPayload
+
+  """Updates a StudentReferrer."""
+  updateStudentReferrer(input: updateStudentReferrerInput!): updateStudentReferrerPayload
+
+  """Creates a StudentReferrer."""
+  createStudentReferrer(input: createStudentReferrerInput!): createStudentReferrerPayload
+
+  """Deletes a TestResult."""
+  deleteTestResult(input: deleteTestResultInput!): deleteTestResultPayload
+
+  """Updates a TestResult."""
+  updateTestResult(input: updateTestResultInput!): updateTestResultPayload
+
+  """Creates a TestResult."""
+  createTestResult(input: createTestResultInput!): createTestResultPayload
+
+  """Deletes a User."""
+  deleteUser(input: deleteUserInput!): deleteUserPayload
+
+  """Updates a User."""
+  updateUser(input: updateUserInput!): updateUserPayload
+
+  """Creates a User."""
+  createUser(input: createUserInput!): createUserPayload
+
+  """Deletes a AuditTrail."""
+  deleteAuditTrail(input: deleteAuditTrailInput!): deleteAuditTrailPayload
+
+  """Updates a AuditTrail."""
+  updateAuditTrail(input: updateAuditTrailInput!): updateAuditTrailPayload
+
+  """Creates a AuditTrail."""
+  createAuditTrail(input: createAuditTrailInput!): createAuditTrailPayload
+
+  """Deletes a ChangeLog."""
+  deleteChangeLog(input: deleteChangeLogInput!): deleteChangeLogPayload
+
+  """Updates a ChangeLog."""
+  updateChangeLog(input: updateChangeLogInput!): updateChangeLogPayload
+
+  """Creates a ChangeLog."""
+  createChangeLog(input: createChangeLogInput!): createChangeLogPayload
+}
+
+"""A node, according to the Relay specification."""
+interface Node {
+  """The id of this node."""
+  id: ID!
+}
+
+type Participation implements Node {
+  id: ID!
+  aanbiederId: String
+  aanbiederName: String
+  aanbiederNote: String
+  offerName: String
+  offerCourse: String
+  outComesGoal: String
+  outComesTopic: String
+  outComesTopicOther: String
+  outComesApplication: String
+  outComesApplicationOther: String
+  outComesLevel: String
+  outComesLevelOther: String
+  detailsIsFormal: Boolean
+  detailsGroupFormation: String
+  detailsTotalClassHours: Float
+  detailsCertificateWillBeAwarded: Boolean
+  detailsStartDate: String
+  detailsEndDate: String
+  detailsEngagements: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+  participationId: String
+  presenceStartDate: String
+  presenceEndDate: String
+  presenceEndParticipationReason: String
+  aanbiederEmployeeId: String
+  groupId: String
+  presenceEngagements: String
+}
+
+"""Connection for Participation."""
+type ParticipationConnection {
+  edges: [ParticipationEdge]
+  pageInfo: ParticipationPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Participation."""
+type ParticipationEdge {
+  node: Participation
+  cursor: String!
+}
+
+"""Information about the current page."""
+type ParticipationPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Provider implements Node {
+  id: ID!
+
+  """The Name of this Provider."""
+  name: String!
+
+  """The Telephone of this Provider."""
+  phoneNumber: String
+
+  """The Email of this Provider."""
+  email: String
+
+  """The address of this Provider."""
+  address(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AddressConnection
+}
+
+"""Connection for Provider."""
+type ProviderConnection {
+  edges: [ProviderEdge]
+  pageInfo: ProviderPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Provider."""
+type ProviderEdge {
+  node: Provider
+  cursor: String!
+}
+
+"""Information about the current page."""
+type ProviderPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Query {
+  node(id: ID!): Node
+  address(id: ID!): Address
+  addresses(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AddressConnection
+  availability(id: ID!): Availability
+  availabilities(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AvailabilityConnection
+  availabilityDay(id: ID!): AvailabilityDay
+  availabilityDays(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AvailabilityDayConnection
+  currentEducationNoButDidFollow(id: ID!): CurrentEducationNoButDidFollow
+  currentEducationNoButDidFollows(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): CurrentEducationNoButDidFollowConnection
+  currentEducationYes(id: ID!): CurrentEducationYes
+  document(id: ID!): Document
+  documents(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): DocumentConnection
+  dossier(id: ID!): Dossier
+  dossiers(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): DossierConnection
+  employee(id: ID!): Employee
+  employees(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): EmployeeConnection
+  group(id: ID!): Group
+  groups(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): GroupConnection
+  languageHouse(id: ID!): LanguageHouse
+  languageHouses(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): LanguageHouseConnection
+  learningNeed(id: ID!): LearningNeed
+  learningNeeds(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    studentId: String
+    studentId_list: [String]
+  ): LearningNeedConnection
+  participation(id: ID!): Participation
+  participations(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): ParticipationConnection
+  provider(id: ID!): Provider
+  providers(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): ProviderConnection
+  registerStudent(id: ID!): RegisterStudent
+  registerStudents(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): RegisterStudentConnection
+  registerStudentRegistrar(id: ID!): RegisterStudentRegistrar
+  registerStudentRegistrars(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): RegisterStudentRegistrarConnection
+  report(id: ID!): Report
+  reports(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): ReportConnection
+  student(id: ID!): Student
+  students(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentConnection
+  studentAvailability(id: ID!): StudentAvailability
+  studentAvailabilities(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentAvailabilityConnection
+  studentBackground(id: ID!): StudentBackground
+  studentBackgrounds(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentBackgroundConnection
+  studentCivicIntegration(id: ID!): StudentCivicIntegration
+  studentCivicIntegrations(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentCivicIntegrationConnection
+  studentContact(id: ID!): StudentContact
+  studentContacts(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentContactConnection
+  studentCourse(id: ID!): StudentCourse
+  studentCourses(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentCourseConnection
+  studentDutchNT(id: ID!): StudentDutchNT
+  studentDutchNTs(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentDutchNTConnection
+  studentEducation(id: ID!): StudentEducation
+  studentEducations(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentEducationConnection
+  studentGeneral(id: ID!): StudentGeneral
+  studentGenerals(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentGeneralConnection
+  studentJob(id: ID!): StudentJob
+  studentJobs(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentJobConnection
+  studentMotivation(id: ID!): StudentMotivation
+  studentMotivations(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentMotivationConnection
+  studentPermission(id: ID!): StudentPermission
+  studentPermissions(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentPermissionConnection
+  studentPerson(id: ID!): StudentPerson
+  studentPeople(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentPersonConnection
+  studentReferrer(id: ID!): StudentReferrer
+  studentReferrers(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): StudentReferrerConnection
+  testResult(id: ID!): TestResult
+  testResults(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): TestResultConnection
+  user(id: ID!): User
+  users(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): UserConnection
+  auditTrail(id: ID!): AuditTrail
+  auditTrails(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    order: AuditTrailFilter_order
+    request: String
+    request_list: [String]
+    user: String
+    user_list: [String]
+    subject: String
+    subject_list: [String]
+    resource: String
+    resource_list: [String]
+    resourceType: String
+    endpoint: String
+    endpoint_list: [String]
+    contentType: String
+    contentType_list: [String]
+    content: String
+    content_list: [String]
+    session: String
+    session_list: [String]
+    dateCreated: AuditTrailFilter_dateCreated
+    dateModified: AuditTrailFilter_dateModified
+  ): AuditTrailConnection
+  changeLog(id: ID!): ChangeLog
+  changeLogs(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    order: ChangeLogFilter_order
+    action: String
+    action_list: [String]
+    objectId: String
+    objectId_list: [String]
+    objectClass: String
+    objectClass_list: [String]
+    version: Int
+    version_list: [Int]
+    dateCreated: ChangeLogFilter_dateCreated
+    dateModified: ChangeLogFilter_dateModified
+  ): ChangeLogConnection
+}
+
+type RegisterStudent implements Node {
+  id: ID!
+  address(
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+  ): AddressConnection
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  email: String!
+  telephone: String
+}
+
+"""Connection for RegisterStudent."""
+type RegisterStudentConnection {
+  edges: [RegisterStudentEdge]
+  pageInfo: RegisterStudentPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of RegisterStudent."""
+type RegisterStudentEdge {
+  node: RegisterStudent
+  cursor: String!
+}
+
+"""Information about the current page."""
+type RegisterStudentPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type RegisterStudentRegistrar implements Node {
+  id: ID!
+  _id: Int!
+  organizationName: String!
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  email: String!
+  telephone: String!
+}
+
+"""Connection for RegisterStudentRegistrar."""
+type RegisterStudentRegistrarConnection {
+  edges: [RegisterStudentRegistrarEdge]
+  pageInfo: RegisterStudentRegistrarPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of RegisterStudentRegistrar."""
+type RegisterStudentRegistrarEdge {
+  node: RegisterStudentRegistrar
+  cursor: String!
+}
+
+"""Information about the current page."""
+type RegisterStudentRegistrarPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Report implements Node {
+  id: ID!
+  taalhuisId: String
+  aanbiederId: String
+  dateFrom: String
+  dateUntil: String
+}
+
+"""Connection for Report."""
+type ReportConnection {
+  edges: [ReportEdge]
+  pageInfo: ReportPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of Report."""
+type ReportEdge {
+  node: Report
+  cursor: String!
+}
+
+"""Information about the current page."""
+type ReportPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Student implements Node {
+  id: ID!
+  civicIntegrationDetails: StudentCivicIntegration
+  personDetails: StudentPerson
+  contactDetails: StudentContact
+  generalDetails: StudentGeneral
+  referrerDetails: StudentReferrer
+  backgroundDetails: StudentBackground
+  dutchNTDetails: StudentDutchNT
+  speakingLevel: String
+  educationDetails: StudentEducation
+  courseDetails: StudentCourse
+  jobDetails: StudentJob
+  motivationDetails: StudentMotivation
+  availabilityDetails: StudentAvailability
+  readingTestResult: String
+  writingTestResult: String
+  permissionDetails: StudentPermission
+  taalhuisId: String!
+  studentId: String
+}
+
+type StudentAvailability implements Node {
+  id: ID!
+  availability: Availability
+  availabilityNotes: String
+}
+
+"""Connection for StudentAvailability."""
+type StudentAvailabilityConnection {
+  edges: [StudentAvailabilityEdge]
+  pageInfo: StudentAvailabilityPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentAvailability."""
+type StudentAvailabilityEdge {
+  node: StudentAvailability
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentAvailabilityPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentBackground implements Node {
+  id: ID!
+  foundVia: String
+  foundViaOther: String
+  wentToTaalhuisBefore: Boolean
+  wentToTaalhuisBeforeReason: String
+  wentToTaalhuisBeforeYear: Float
+  network: Iterable
+  participationLadder: Int
+}
+
+"""Connection for StudentBackground."""
+type StudentBackgroundConnection {
+  edges: [StudentBackgroundEdge]
+  pageInfo: StudentBackgroundPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentBackground."""
+type StudentBackgroundEdge {
+  node: StudentBackground
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentBackgroundPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentCivicIntegration implements Node {
+  id: ID!
+  civicIntegrationRequirement: String
+  civicIntegrationRequirementReason: String
+  civivIntegrationRequirementFinishDate: String
+}
+
+"""Connection for StudentCivicIntegration."""
+type StudentCivicIntegrationConnection {
+  edges: [StudentCivicIntegrationEdge]
+  pageInfo: StudentCivicIntegrationPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentCivicIntegration."""
+type StudentCivicIntegrationEdge {
+  node: StudentCivicIntegration
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentCivicIntegrationPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""Connection for Student."""
+type StudentConnection {
+  edges: [StudentEdge]
+  pageInfo: StudentPageInfo!
+  totalCount: Int!
+}
+
+type StudentContact implements Node {
+  id: ID!
+  street: String
+  postalCode: String
+  locality: String
+  houseNumber: String
+  houseNumberSuffix: String
+  email: String
+  telephone: String
+  contactPersonTelephone: String
+  contactPreference: String
+  contactPreferenceOther: String
+}
+
+"""Connection for StudentContact."""
+type StudentContactConnection {
+  edges: [StudentContactEdge]
+  pageInfo: StudentContactPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentContact."""
+type StudentContactEdge {
+  node: StudentContact
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentContactPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentCourse implements Node {
+  id: ID!
+  isFollowingCourseRightNow: Boolean
+  courseName: String
+  courseTeacher: String
+  courseGroup: String
+  amountOfHours: Int
+  doesCourseProvideCertificate: Boolean
+}
+
+"""Connection for StudentCourse."""
+type StudentCourseConnection {
+  edges: [StudentCourseEdge]
+  pageInfo: StudentCoursePageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentCourse."""
+type StudentCourseEdge {
+  node: StudentCourse
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentCoursePageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentDutchNT implements Node {
+  id: ID!
+  dutchNTLevel: String
+  inNetherlandsSinceYear: Float
+  languageInDailyLife: String
+  knowsLatinAlphabet: Boolean
+  lastKnownLevel: String
+}
+
+"""Connection for StudentDutchNT."""
+type StudentDutchNTConnection {
+  edges: [StudentDutchNTEdge]
+  pageInfo: StudentDutchNTPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentDutchNT."""
+type StudentDutchNTEdge {
+  node: StudentDutchNT
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentDutchNTPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""Edge of Student."""
+type StudentEdge {
+  node: Student
+  cursor: String!
+}
+
+type StudentEducation implements Node {
+  id: ID!
+  lastFollowedEducation: String
+  didGraduate: Boolean
+  followingEducationRightNow: String
+  followingEducationRightNowYesStartDate: String
+  followingEducationRightNowYesEndDate: String
+  followingEducationRightNowYesLevel: String
+  followingEducationRightNowYesInstitute: String
+  followingEducationRightNowYesProvidesCertificate: Boolean
+  followingEducationRightNowNoEndDate: String
+  followingEducationRightNowNoLevel: String
+  followingEducationRightNowNoGotCertificate: Boolean
+}
+
+"""Connection for StudentEducation."""
+type StudentEducationConnection {
+  edges: [StudentEducationEdge]
+  pageInfo: StudentEducationPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentEducation."""
+type StudentEducationEdge {
+  node: StudentEducation
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentEducationPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentGeneral implements Node {
+  id: ID!
+  countryOfOrigin: String
+  nativeLanguage: String
+  otherLanguages: String
+  familiComposition: Iterable
+  childrenCount: Int
+  childrenDatesOfBirth: String
+}
+
+"""Connection for StudentGeneral."""
+type StudentGeneralConnection {
+  edges: [StudentGeneralEdge]
+  pageInfo: StudentGeneralPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentGeneral."""
+type StudentGeneralEdge {
+  node: StudentGeneral
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentGeneralPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentJob implements Node {
+  id: ID!
+  trainedForJob: String
+  lastJob: String
+  dayTimeActivities: Iterable
+  dayTimeActivitiesOther: String
+}
+
+"""Connection for StudentJob."""
+type StudentJobConnection {
+  edges: [StudentJobEdge]
+  pageInfo: StudentJobPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentJob."""
+type StudentJobEdge {
+  node: StudentJob
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentJobPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentMotivation implements Node {
+  id: ID!
+  desiredSkills: Iterable!
+  desiredSkillsOther: String
+  hasTriedThisBefore: Boolean
+  hasTriedThisBeforeExplanation: String
+  whyWantTheseSkills: String
+  whyWantThisNow: String
+  desiredLearingMethod: Iterable!
+  remarks: String
+}
+
+"""Connection for StudentMotivation."""
+type StudentMotivationConnection {
+  edges: [StudentMotivationEdge]
+  pageInfo: StudentMotivationPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentMotivation."""
+type StudentMotivationEdge {
+  node: StudentMotivation
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentMotivationPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+"""Information about the current page."""
+type StudentPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentPermission implements Node {
+  id: ID!
+  didSignPermissionForm: Boolean!
+  hasPermissionToShareDataWithAanbieders: Boolean!
+  hasPermissionToShareDataWithLibraries: Boolean!
+  hasPermissionToSendInformationAboutLibraries: Boolean!
+}
+
+"""Connection for StudentPermission."""
+type StudentPermissionConnection {
+  edges: [StudentPermissionEdge]
+  pageInfo: StudentPermissionPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentPermission."""
+type StudentPermissionEdge {
+  node: StudentPermission
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentPermissionPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentPerson implements Node {
+  id: ID!
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  gender: String
+  dateOfBirth: String
+}
+
+"""Connection for StudentPerson."""
+type StudentPersonConnection {
+  edges: [StudentPersonEdge]
+  pageInfo: StudentPersonPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentPerson."""
+type StudentPersonEdge {
+  node: StudentPerson
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentPersonPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type StudentReferrer implements Node {
+  id: ID!
+  referringOrganization: String
+  referringOrganizationOther: String
+  email: String
+}
+
+"""Connection for StudentReferrer."""
+type StudentReferrerConnection {
+  edges: [StudentReferrerEdge]
+  pageInfo: StudentReferrerPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of StudentReferrer."""
+type StudentReferrerEdge {
+  node: StudentReferrer
+  cursor: String!
+}
+
+"""Information about the current page."""
+type StudentReferrerPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type TestResult implements Node {
+  id: ID!
+  participationId: String!
+  outComesGoal: String!
+  outComesTopic: String!
+  outComesTopicOther: String
+  outComesApplication: String!
+  outComesApplicationOther: String
+  outComesLevel: String!
+  outComesLevelOther: String
+  examUsedExam: String!
+  examDate: String!
+  examMemo: String
+  testResultId: String
+}
+
+"""Connection for TestResult."""
+type TestResultConnection {
+  edges: [TestResultEdge]
+  pageInfo: TestResultPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of TestResult."""
+type TestResultEdge {
+  node: TestResult
+  cursor: String!
+}
+
+"""Information about the current page."""
+type TestResultPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type User implements Node {
+  id: ID!
+
+  """The Email of this User."""
+  email: String
+
+  """The Username of this User"""
+  username: String
+
+  """The Password of this User."""
+  password: String
+
+  """The Token for password reset"""
+  token: String
+}
+
+"""Connection for User."""
+type UserConnection {
+  edges: [UserEdge]
+  pageInfo: UserPageInfo!
+  totalCount: Int!
+}
+
+"""Edge of User."""
+type UserEdge {
+  node: User
+  cursor: String!
+}
+
+"""Information about the current page."""
+type UserPageInfo {
+  endCursor: String
+  startCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+input createAddressInput {
+  street: String
+  houseNumber: String
+  houseNumberSuffix: String
+  postalCode: String
+  locality: String
+  clientMutationId: String
+}
+
+type createAddressPayload {
+  address: Address
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input createAuditTrailInput {
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type createAuditTrailPayload {
+  auditTrail: AuditTrail
+  clientMutationId: String
+}
+
+input createAvailabilityDayInput {
+  morning: Boolean!
+  afternoon: Boolean!
+  evening: Boolean!
+  clientMutationId: String
+}
+
+type createAvailabilityDayPayload {
+  availabilityDay: AvailabilityDay
+  clientMutationId: String
+}
+
+input createAvailabilityInput {
+  monday: String!
+  tuesday: String!
+  wednesday: String!
+  thursday: String!
+  friday: String!
+  saturday: String!
+  sunday: String!
+  clientMutationId: String
+}
+
+type createAvailabilityPayload {
+  availability: Availability
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input createChangeLogInput {
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type createChangeLogPayload {
+  changeLog: ChangeLog
+  clientMutationId: String
+}
+
+input createCurrentEducationNoButDidFollowInput {
+  dateUntil: String
+  level: String
+  gotCertificate: Boolean
+  clientMutationId: String
+}
+
+type createCurrentEducationNoButDidFollowPayload {
+  currentEducationNoButDidFollow: CurrentEducationNoButDidFollow
+  clientMutationId: String
+}
+
+input createCurrentEducationYesInput {
+  dateSince: String
+  name: String
+  doesProvideCertificate: Boolean
+  clientMutationId: String
+}
+
+type createCurrentEducationYesPayload {
+  currentEducationYes: CurrentEducationYes
+  clientMutationId: String
+}
+
+input createDocumentInput {
+  base64Data: String!
+
+  """the name of the file"""
+  filename: String!
+  resource: String!
+  aanbiederEmployeeId: String
+  studentId: String
+  aanbiederEmployeeDocumentId: String
+  studentDocumentId: String
+  clientMutationId: String
+}
+
+type createDocumentPayload {
+  document: Document
+  clientMutationId: String
+}
+
+input createDossierInput {
+  """The Event of this Student."""
+  event: String!
+
+  """date of this student Dossier."""
+  eventDate: String!
+
+  """description of this student Dossier."""
+  eventDescription: String!
+
+  """studentId of this student Dossier."""
+  studentId: String!
+  studentDossierEventId: String
+  clientMutationId: String
+}
+
+type createDossierPayload {
+  dossier: Dossier
+  clientMutationId: String
+}
+
+input createEmployeeInput {
+  name: String!
+
+  """The PrefixName of this Employee."""
+  additionalName: String
+
+  """The LastName of this Employee."""
+  familyName: String!
+
+  """The Telephone of this Employee."""
+  telephone: String
+
+  """The Availability Note of this Employee."""
+  availabilityNotes: String
+
+  """The Email of this Employee."""
+  email: String!
+
+  """The Gender of this Employee. **Male**, **Female**, **X**"""
+  gender: String
+
+  """Date of birth of this Employee."""
+  dateOfBirth: String
+
+  """Contact Telephone of this Employee."""
+  contactTelephone: String
+
+  """
+  Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
+  """
+  contactPreference: String
+
+  """Target Preference of this Employee. **NT1**, **NT2**"""
+  targetGroupPreference: String!
+
+  """
+  Voluntering Preference of this Employee.
+  
+   @Assert\Length(
+      max = 255
+  )
+  """
+  volunteringPreference: String
+
+  """The address of this Employee."""
+  address: [String]
+  userGroupIds: Iterable
+  contactPreferenceOther: String
+  gotHereVia: String
+  hasExperienceWithTargetGroup: Boolean
+  experienceWithTargetGroupYesReason: Boolean
+  currentEducation: String
+  doesCurrentlyFollowCourse: Boolean
+  currentlyFollowingCourseName: String
+  currentlyFollowingCourseInstitute: String
+  currentlyFollowingCourseTeacherProfessionalism: String
+  currentlyFollowingCourseCourseProfessionalism: String
+  doesCurrentlyFollowingCourseProvideCertificate: Boolean
+  otherRelevantCertificates: String
+  isVOGChecked: Boolean!
+  aanbiederId: String
+  taalhuisId: String
+  availability: String
+  currentEducationYes: String
+  currentEducationNoButDidFollow: String
+  biscEmployeeId: String
+  userGroupId: String
+  userId: String
+  clientMutationId: String
+}
+
+type createEmployeePayload {
+  employee: Employee
+  clientMutationId: String
+}
+
+input createGroupInput {
+  name: String!
+  typeCourse: String!
+  outComesGoal: String!
+  detailsIsFormal: String!
+  detailsTotalClassHours: Int!
+  detailsCertificateWillBeAwarded: Boolean!
+  detailsStartDate: String
+  detailsEndDate: String
+  availabilityNotes: String
+  generalLocation: String!
+  generalParticipantsMin: Int
+  generalParticipantsMax: Int
+  generalEvaluation: String
+  aanbiederEmployeeIds: Iterable!
+  outComesTopic: String!
+  outComesTopicOther: String!
+  outComesApplication: String!
+  iscedEducationLevelCode: String!
+  outComesApplicationOther: String!
+  outComesLevelOther: String!
+  availability: Iterable
+  outComesLevel: String!
+  availabilityy: String
+  aanbiederId: String!
+  groupId: String
+  clientMutationId: String
+}
+
+type createGroupPayload {
+  group: Group
+  clientMutationId: String
+}
+
+input createLanguageHouseInput {
+  """The Name of this Taalhuis."""
+  name: String!
+
+  """The Telephone of this Taalhuis."""
+  phoneNumber: String
+
+  """The Email of this Taalhuis."""
+  email: String
+
+  """The address of this Taalhuis."""
+  address: String
+  clientMutationId: String
+}
+
+type createLanguageHousePayload {
+  languageHouse: LanguageHouse
+  clientMutationId: String
+}
+
+input createLearningNeedInput {
+  learningNeedDescription: String!
+  learningNeedMotivation: String!
+  desiredOutComesGoal: String!
+  desiredOutComesTopic: String!
+  desiredOutComesTopicOther: String
+  desiredOutComesApplication: String!
+  desiredOutComesApplicationOther: String
+  desiredOutComesLevel: String!
+  desiredOutComesLevelOther: String
+  offerDesiredOffer: String!
+  offerAdvisedOffer: String!
+  offerDifference: String!
+  offerDifferenceOther: String
+  offerEngagements: String
+  participations: Iterable
+  studentId: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+  clientMutationId: String
+}
+
+type createLearningNeedPayload {
+  learningNeed: LearningNeed
+  clientMutationId: String
+}
+
+input createParticipationInput {
+  aanbiederId: String
+  aanbiederName: String
+  aanbiederNote: String
+  offerName: String
+  offerCourse: String
+  outComesGoal: String
+  outComesTopic: String
+  outComesTopicOther: String
+  outComesApplication: String
+  outComesApplicationOther: String
+  outComesLevel: String
+  outComesLevelOther: String
+  detailsIsFormal: Boolean
+  detailsGroupFormation: String
+  detailsTotalClassHours: Float
+  detailsCertificateWillBeAwarded: Boolean
+  detailsStartDate: String
+  detailsEndDate: String
+  detailsEngagements: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+  participationId: String
+  presenceStartDate: String
+  presenceEndDate: String
+  presenceEndParticipationReason: String
+  aanbiederEmployeeId: String
+  groupId: String
+  presenceEngagements: String
+  clientMutationId: String
+}
+
+type createParticipationPayload {
+  participation: Participation
+  clientMutationId: String
+}
+
+input createProviderInput {
+  """The Name of this Provider."""
+  name: String!
+
+  """The Telephone of this Provider."""
+  phoneNumber: String
+
+  """The Email of this Provider."""
+  email: String
+
+  """The address of this Provider."""
+  address: [String]
+  clientMutationId: String
+}
+
+type createProviderPayload {
+  provider: Provider
+  clientMutationId: String
+}
+
+input createRegisterStudentInput {
+  address: [String]
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  email: String!
+  telephone: String
+  clientMutationId: String
+}
+
+type createRegisterStudentPayload {
+  registerStudent: RegisterStudent
+  clientMutationId: String
+}
+
+input createRegisterStudentRegistrarInput {
+  organizationName: String!
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  email: String!
+  telephone: String!
+  clientMutationId: String
+}
+
+type createRegisterStudentRegistrarPayload {
+  registerStudentRegistrar: RegisterStudentRegistrar
+  clientMutationId: String
+}
+
+input createReportInput {
+  taalhuisId: String
+  aanbiederId: String
+  dateFrom: String
+  dateUntil: String
+  clientMutationId: String
+}
+
+type createReportPayload {
+  report: Report
+  clientMutationId: String
+}
+
+input createStudentAvailabilityInput {
+  availability: String
+  availabilityNotes: String
+  clientMutationId: String
+}
+
+type createStudentAvailabilityPayload {
+  studentAvailability: StudentAvailability
+  clientMutationId: String
+}
+
+input createStudentBackgroundInput {
+  foundVia: String
+  foundViaOther: String
+  wentToTaalhuisBefore: Boolean
+  wentToTaalhuisBeforeReason: String
+  wentToTaalhuisBeforeYear: Float
+  network: Iterable
+  participationLadder: Int
+  clientMutationId: String
+}
+
+type createStudentBackgroundPayload {
+  studentBackground: StudentBackground
+  clientMutationId: String
+}
+
+input createStudentCivicIntegrationInput {
+  civicIntegrationRequirement: String
+  civicIntegrationRequirementReason: String
+  civivIntegrationRequirementFinishDate: String
+  clientMutationId: String
+}
+
+type createStudentCivicIntegrationPayload {
+  studentCivicIntegration: StudentCivicIntegration
+  clientMutationId: String
+}
+
+input createStudentContactInput {
+  street: String
+  postalCode: String
+  locality: String
+  houseNumber: String
+  houseNumberSuffix: String
+  email: String
+  telephone: String
+  contactPersonTelephone: String
+  contactPreference: String
+  contactPreferenceOther: String
+  clientMutationId: String
+}
+
+type createStudentContactPayload {
+  studentContact: StudentContact
+  clientMutationId: String
+}
+
+input createStudentCourseInput {
+  isFollowingCourseRightNow: Boolean
+  courseName: String
+  courseTeacher: String
+  courseGroup: String
+  amountOfHours: Int
+  doesCourseProvideCertificate: Boolean
+  clientMutationId: String
+}
+
+type createStudentCoursePayload {
+  studentCourse: StudentCourse
+  clientMutationId: String
+}
+
+input createStudentDutchNTInput {
+  dutchNTLevel: String
+  inNetherlandsSinceYear: Float
+  languageInDailyLife: String
+  knowsLatinAlphabet: Boolean
+  lastKnownLevel: String
+  clientMutationId: String
+}
+
+type createStudentDutchNTPayload {
+  studentDutchNT: StudentDutchNT
+  clientMutationId: String
+}
+
+input createStudentEducationInput {
+  lastFollowedEducation: String
+  didGraduate: Boolean
+  followingEducationRightNow: String
+  followingEducationRightNowYesStartDate: String
+  followingEducationRightNowYesEndDate: String
+  followingEducationRightNowYesLevel: String
+  followingEducationRightNowYesInstitute: String
+  followingEducationRightNowYesProvidesCertificate: Boolean
+  followingEducationRightNowNoEndDate: String
+  followingEducationRightNowNoLevel: String
+  followingEducationRightNowNoGotCertificate: Boolean
+  clientMutationId: String
+}
+
+type createStudentEducationPayload {
+  studentEducation: StudentEducation
+  clientMutationId: String
+}
+
+input createStudentGeneralInput {
+  countryOfOrigin: String
+  nativeLanguage: String
+  otherLanguages: String
+  familiComposition: Iterable
+  childrenCount: Int
+  childrenDatesOfBirth: String
+  clientMutationId: String
+}
+
+type createStudentGeneralPayload {
+  studentGeneral: StudentGeneral
+  clientMutationId: String
+}
+
+input createStudentInput {
+  civicIntegrationDetails: String
+  personDetails: String
+  contactDetails: String
+  generalDetails: String
+  referrerDetails: String
+  backgroundDetails: String
+  dutchNTDetails: String
+  speakingLevel: String
+  educationDetails: String
+  courseDetails: String
+  jobDetails: String
+  motivationDetails: String
+  availabilityDetails: String
+  readingTestResult: String
+  writingTestResult: String
+  permissionDetails: String
+  taalhuisId: String!
+  studentId: String
+  clientMutationId: String
+}
+
+input createStudentJobInput {
+  trainedForJob: String
+  lastJob: String
+  dayTimeActivities: Iterable
+  dayTimeActivitiesOther: String
+  clientMutationId: String
+}
+
+type createStudentJobPayload {
+  studentJob: StudentJob
+  clientMutationId: String
+}
+
+input createStudentMotivationInput {
+  desiredSkills: Iterable!
+  desiredSkillsOther: String
+  hasTriedThisBefore: Boolean
+  hasTriedThisBeforeExplanation: String
+  whyWantTheseSkills: String
+  whyWantThisNow: String
+  desiredLearingMethod: Iterable!
+  remarks: String
+  clientMutationId: String
+}
+
+type createStudentMotivationPayload {
+  studentMotivation: StudentMotivation
+  clientMutationId: String
+}
+
+type createStudentPayload {
+  student: Student
+  clientMutationId: String
+}
+
+input createStudentPermissionInput {
+  didSignPermissionForm: Boolean!
+  hasPermissionToShareDataWithAanbieders: Boolean!
+  hasPermissionToShareDataWithLibraries: Boolean!
+  hasPermissionToSendInformationAboutLibraries: Boolean!
+  clientMutationId: String
+}
+
+type createStudentPermissionPayload {
+  studentPermission: StudentPermission
+  clientMutationId: String
+}
+
+input createStudentPersonInput {
+  givenName: String!
+  additionalName: String
+  familyName: String!
+  gender: String
+  dateOfBirth: String
+  clientMutationId: String
+}
+
+type createStudentPersonPayload {
+  studentPerson: StudentPerson
+  clientMutationId: String
+}
+
+input createStudentReferrerInput {
+  referringOrganization: String
+  referringOrganizationOther: String
+  email: String
+  clientMutationId: String
+}
+
+type createStudentReferrerPayload {
+  studentReferrer: StudentReferrer
+  clientMutationId: String
+}
+
+input createTestResultInput {
+  participationId: String!
+  outComesGoal: String!
+  outComesTopic: String!
+  outComesTopicOther: String
+  outComesApplication: String!
+  outComesApplicationOther: String
+  outComesLevel: String!
+  outComesLevelOther: String
+  examUsedExam: String!
+  examDate: String!
+  examMemo: String
+  testResultId: String
+  clientMutationId: String
+}
+
+type createTestResultPayload {
+  testResult: TestResult
+  clientMutationId: String
+}
+
+input createUserInput {
+  """The Email of this User."""
+  email: String
+
+  """The Username of this User"""
+  username: String
+
+  """The Password of this User."""
+  password: String
+  clientMutationId: String
+}
+
+type createUserPayload {
+  user: User
+  clientMutationId: String
+}
+
+input deleteAddressInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteAddressPayload {
+  address: Address
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input deleteAuditTrailInput {
+  id: ID!
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type deleteAuditTrailPayload {
+  auditTrail: AuditTrail
+  clientMutationId: String
+}
+
+input deleteAvailabilityDayInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteAvailabilityDayPayload {
+  availabilityDay: AvailabilityDay
+  clientMutationId: String
+}
+
+input deleteAvailabilityInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteAvailabilityPayload {
+  availability: Availability
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input deleteChangeLogInput {
+  id: ID!
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type deleteChangeLogPayload {
+  changeLog: ChangeLog
+  clientMutationId: String
+}
+
+input deleteCurrentEducationNoButDidFollowInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteCurrentEducationNoButDidFollowPayload {
+  currentEducationNoButDidFollow: CurrentEducationNoButDidFollow
+  clientMutationId: String
+}
+
+input deleteCurrentEducationYesInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteCurrentEducationYesPayload {
+  currentEducationYes: CurrentEducationYes
+  clientMutationId: String
+}
+
+input deleteDocumentInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteDocumentPayload {
+  document: Document
+  clientMutationId: String
+}
+
+input deleteDossierInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteDossierPayload {
+  dossier: Dossier
+  clientMutationId: String
+}
+
+input deleteEmployeeInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteEmployeePayload {
+  employee: Employee
+  clientMutationId: String
+}
+
+input deleteGroupInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteGroupPayload {
+  group: Group
+  clientMutationId: String
+}
+
+input deleteParticipationInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteParticipationPayload {
+  participation: Participation
+  clientMutationId: String
+}
+
+input deleteProviderInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteProviderPayload {
+  provider: Provider
+  clientMutationId: String
+}
+
+input deleteRegisterStudentInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteRegisterStudentPayload {
+  registerStudent: RegisterStudent
+  clientMutationId: String
+}
+
+input deleteRegisterStudentRegistrarInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteRegisterStudentRegistrarPayload {
+  registerStudentRegistrar: RegisterStudentRegistrar
+  clientMutationId: String
+}
+
+input deleteReportInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteReportPayload {
+  report: Report
+  clientMutationId: String
+}
+
+input deleteStudentAvailabilityInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentAvailabilityPayload {
+  studentAvailability: StudentAvailability
+  clientMutationId: String
+}
+
+input deleteStudentBackgroundInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentBackgroundPayload {
+  studentBackground: StudentBackground
+  clientMutationId: String
+}
+
+input deleteStudentCivicIntegrationInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentCivicIntegrationPayload {
+  studentCivicIntegration: StudentCivicIntegration
+  clientMutationId: String
+}
+
+input deleteStudentContactInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentContactPayload {
+  studentContact: StudentContact
+  clientMutationId: String
+}
+
+input deleteStudentCourseInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentCoursePayload {
+  studentCourse: StudentCourse
+  clientMutationId: String
+}
+
+input deleteStudentDutchNTInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentDutchNTPayload {
+  studentDutchNT: StudentDutchNT
+  clientMutationId: String
+}
+
+input deleteStudentEducationInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentEducationPayload {
+  studentEducation: StudentEducation
+  clientMutationId: String
+}
+
+input deleteStudentGeneralInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentGeneralPayload {
+  studentGeneral: StudentGeneral
+  clientMutationId: String
+}
+
+input deleteStudentInput {
+  id: ID!
+  clientMutationId: String
+}
+
+input deleteStudentJobInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentJobPayload {
+  studentJob: StudentJob
+  clientMutationId: String
+}
+
+input deleteStudentMotivationInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentMotivationPayload {
+  studentMotivation: StudentMotivation
+  clientMutationId: String
+}
+
+type deleteStudentPayload {
+  student: Student
+  clientMutationId: String
+}
+
+input deleteStudentPermissionInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentPermissionPayload {
+  studentPermission: StudentPermission
+  clientMutationId: String
+}
+
+input deleteStudentPersonInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentPersonPayload {
+  studentPerson: StudentPerson
+  clientMutationId: String
+}
+
+input deleteStudentReferrerInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteStudentReferrerPayload {
+  studentReferrer: StudentReferrer
+  clientMutationId: String
+}
+
+input deleteTestResultInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteTestResultPayload {
+  testResult: TestResult
+  clientMutationId: String
+}
+
+input deleteUserInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type deleteUserPayload {
+  user: User
+  clientMutationId: String
+}
+
+input removeLanguageHouseInput {
+  """the identifier"""
+  id: ID!
+  clientMutationId: String
+}
+
+type removeLanguageHousePayload {
+  languageHouse: LanguageHouse
+  clientMutationId: String
+}
+
+input removeLearningNeedInput {
+  """the identifier"""
+  id: ID!
+  clientMutationId: String
+}
+
+type removeLearningNeedPayload {
+  learningNeed: LearningNeed
+  clientMutationId: String
+}
+
+input updateAddressInput {
+  id: ID!
+  street: String
+  houseNumber: String
+  houseNumberSuffix: String
+  postalCode: String
+  locality: String
+  clientMutationId: String
+}
+
+type updateAddressPayload {
+  address: Address
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input updateAuditTrailInput {
+  id: ID!
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type updateAuditTrailPayload {
+  auditTrail: AuditTrail
+  clientMutationId: String
+}
+
+input updateAvailabilityDayInput {
+  id: ID!
+  morning: Boolean
+  afternoon: Boolean
+  evening: Boolean
+  clientMutationId: String
+}
+
+type updateAvailabilityDayPayload {
+  availabilityDay: AvailabilityDay
+  clientMutationId: String
+}
+
+input updateAvailabilityInput {
+  id: ID!
+  monday: String
+  tuesday: String
+  wednesday: String
+  thursday: String
+  friday: String
+  saturday: String
+  sunday: String
+  clientMutationId: String
+}
+
+type updateAvailabilityPayload {
+  availability: Availability
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+input updateChangeLogInput {
+  id: ID!
+  clientMutationId: String
+}
+
+"""An resource representing a log line."""
+type updateChangeLogPayload {
+  changeLog: ChangeLog
+  clientMutationId: String
+}
+
+input updateCurrentEducationNoButDidFollowInput {
+  id: ID!
+  dateUntil: String
+  level: String
+  gotCertificate: Boolean
+  clientMutationId: String
+}
+
+type updateCurrentEducationNoButDidFollowPayload {
+  currentEducationNoButDidFollow: CurrentEducationNoButDidFollow
+  clientMutationId: String
+}
+
+input updateCurrentEducationYesInput {
+  id: ID!
+  dateSince: String
+  name: String
+  doesProvideCertificate: Boolean
+  clientMutationId: String
+}
+
+type updateCurrentEducationYesPayload {
+  currentEducationYes: CurrentEducationYes
+  clientMutationId: String
+}
+
+input updateDocumentInput {
+  id: ID!
+  base64Data: String
+
+  """the name of the file"""
+  filename: String
+  resource: String
+  aanbiederEmployeeId: String
+  studentId: String
+  aanbiederEmployeeDocumentId: String
+  studentDocumentId: String
+  clientMutationId: String
+}
+
+type updateDocumentPayload {
+  document: Document
+  clientMutationId: String
+}
+
+input updateDossierInput {
+  id: ID!
+
+  """The Event of this Student."""
+  event: String
+
+  """date of this student Dossier."""
+  eventDate: String
+
+  """description of this student Dossier."""
+  eventDescription: String
+
+  """studentId of this student Dossier."""
+  studentId: String
+  studentDossierEventId: String
+  clientMutationId: String
+}
+
+type updateDossierPayload {
+  dossier: Dossier
+  clientMutationId: String
+}
+
+input updateEmployeeInput {
+  id: ID!
+  name: String
+
+  """The PrefixName of this Employee."""
+  additionalName: String
+
+  """The LastName of this Employee."""
+  familyName: String
+
+  """The Telephone of this Employee."""
+  telephone: String
+
+  """The Availability Note of this Employee."""
+  availabilityNotes: String
+
+  """The Email of this Employee."""
+  email: String
+
+  """The Gender of this Employee. **Male**, **Female**, **X**"""
+  gender: String
+
+  """Date of birth of this Employee."""
+  dateOfBirth: String
+
+  """Contact Telephone of this Employee."""
+  contactTelephone: String
+
+  """
+  Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
+  """
+  contactPreference: String
+
+  """Target Preference of this Employee. **NT1**, **NT2**"""
+  targetGroupPreference: String
+
+  """
+  Voluntering Preference of this Employee.
+  
+   @Assert\Length(
+      max = 255
+  )
+  """
+  volunteringPreference: String
+
+  """The address of this Employee."""
+  address: [String]
+  userGroupIds: Iterable
+  contactPreferenceOther: String
+  gotHereVia: String
+  hasExperienceWithTargetGroup: Boolean
+  experienceWithTargetGroupYesReason: Boolean
+  currentEducation: String
+  doesCurrentlyFollowCourse: Boolean
+  currentlyFollowingCourseName: String
+  currentlyFollowingCourseInstitute: String
+  currentlyFollowingCourseTeacherProfessionalism: String
+  currentlyFollowingCourseCourseProfessionalism: String
+  doesCurrentlyFollowingCourseProvideCertificate: Boolean
+  otherRelevantCertificates: String
+  isVOGChecked: Boolean
+  aanbiederId: String
+  taalhuisId: String
+  availability: String
+  currentEducationYes: String
+  currentEducationNoButDidFollow: String
+  biscEmployeeId: String
+  userGroupId: String
+  userId: String
+  clientMutationId: String
+}
+
+type updateEmployeePayload {
+  employee: Employee
+  clientMutationId: String
+}
+
+input updateGroupInput {
+  id: ID!
+  name: String
+  typeCourse: String
+  outComesGoal: String
+  detailsIsFormal: String
+  detailsTotalClassHours: Int
+  detailsCertificateWillBeAwarded: Boolean
+  detailsStartDate: String
+  detailsEndDate: String
+  availabilityNotes: String
+  generalLocation: String
+  generalParticipantsMin: Int
+  generalParticipantsMax: Int
+  generalEvaluation: String
+  aanbiederEmployeeIds: Iterable
+  outComesTopic: String
+  outComesTopicOther: String
+  outComesApplication: String
+  iscedEducationLevelCode: String
+  outComesApplicationOther: String
+  outComesLevelOther: String
+  availability: Iterable
+  outComesLevel: String
+  availabilityy: String
+  aanbiederId: String
+  groupId: String
+  clientMutationId: String
+}
+
+type updateGroupPayload {
+  group: Group
+  clientMutationId: String
+}
+
+input updateLanguageHouseInput {
+  id: ID!
+
+  """The Name of this Taalhuis."""
+  name: String
+
+  """The Telephone of this Taalhuis."""
+  phoneNumber: String
+
+  """The Email of this Taalhuis."""
+  email: String
+
+  """The address of this Taalhuis."""
+  address: String
+  clientMutationId: String
+}
+
+type updateLanguageHousePayload {
+  languageHouse: LanguageHouse
+  clientMutationId: String
+}
+
+input updateLearningNeedInput {
+  id: ID!
+  learningNeedDescription: String
+  learningNeedMotivation: String
+  desiredOutComesGoal: String
+  desiredOutComesTopic: String
+  desiredOutComesTopicOther: String
+  desiredOutComesApplication: String
+  desiredOutComesApplicationOther: String
+  desiredOutComesLevel: String
+  desiredOutComesLevelOther: String
+  offerDesiredOffer: String
+  offerAdvisedOffer: String
+  offerDifference: String
+  offerDifferenceOther: String
+  offerEngagements: String
+  participations: Iterable
+  studentId: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+  clientMutationId: String
+}
+
+type updateLearningNeedPayload {
+  learningNeed: LearningNeed
+  clientMutationId: String
+}
+
+input updateParticipationInput {
+  id: ID!
+  aanbiederId: String
+  aanbiederName: String
+  aanbiederNote: String
+  offerName: String
+  offerCourse: String
+  outComesGoal: String
+  outComesTopic: String
+  outComesTopicOther: String
+  outComesApplication: String
+  outComesApplicationOther: String
+  outComesLevel: String
+  outComesLevelOther: String
+  detailsIsFormal: Boolean
+  detailsGroupFormation: String
+  detailsTotalClassHours: Float
+  detailsCertificateWillBeAwarded: Boolean
+  detailsStartDate: String
+  detailsEndDate: String
+  detailsEngagements: String
+
+  """The id of the objectEntity of an eav/learning_need."""
+  learningNeedId: String
+
+  """The url of the objectEntity of an eav/learning_need '@eav'."""
+  learningNeedUrl: String
+  participationId: String
+  presenceStartDate: String
+  presenceEndDate: String
+  presenceEndParticipationReason: String
+  aanbiederEmployeeId: String
+  groupId: String
+  presenceEngagements: String
+  clientMutationId: String
+}
+
+type updateParticipationPayload {
+  participation: Participation
+  clientMutationId: String
+}
+
+input updateProviderInput {
+  id: ID!
+
+  """The Name of this Provider."""
+  name: String
+
+  """The Telephone of this Provider."""
+  phoneNumber: String
+
+  """The Email of this Provider."""
+  email: String
+
+  """The address of this Provider."""
+  address: [String]
+  clientMutationId: String
+}
+
+type updateProviderPayload {
+  provider: Provider
+  clientMutationId: String
+}
+
+input updateRegisterStudentInput {
+  id: ID!
+  address: [String]
+  givenName: String
+  additionalName: String
+  familyName: String
+  email: String
+  telephone: String
+  clientMutationId: String
+}
+
+type updateRegisterStudentPayload {
+  registerStudent: RegisterStudent
+  clientMutationId: String
+}
+
+input updateRegisterStudentRegistrarInput {
+  id: ID!
+  organizationName: String
+  givenName: String
+  additionalName: String
+  familyName: String
+  email: String
+  telephone: String
+  clientMutationId: String
+}
+
+type updateRegisterStudentRegistrarPayload {
+  registerStudentRegistrar: RegisterStudentRegistrar
+  clientMutationId: String
+}
+
+input updateReportInput {
+  id: ID!
+  taalhuisId: String
+  aanbiederId: String
+  dateFrom: String
+  dateUntil: String
+  clientMutationId: String
+}
+
+type updateReportPayload {
+  report: Report
+  clientMutationId: String
+}
+
+input updateStudentAvailabilityInput {
+  id: ID!
+  availability: String
+  availabilityNotes: String
+  clientMutationId: String
+}
+
+type updateStudentAvailabilityPayload {
+  studentAvailability: StudentAvailability
+  clientMutationId: String
+}
+
+input updateStudentBackgroundInput {
+  id: ID!
+  foundVia: String
+  foundViaOther: String
+  wentToTaalhuisBefore: Boolean
+  wentToTaalhuisBeforeReason: String
+  wentToTaalhuisBeforeYear: Float
+  network: Iterable
+  participationLadder: Int
+  clientMutationId: String
+}
+
+type updateStudentBackgroundPayload {
+  studentBackground: StudentBackground
+  clientMutationId: String
+}
+
+input updateStudentCivicIntegrationInput {
+  id: ID!
+  civicIntegrationRequirement: String
+  civicIntegrationRequirementReason: String
+  civivIntegrationRequirementFinishDate: String
+  clientMutationId: String
+}
+
+type updateStudentCivicIntegrationPayload {
+  studentCivicIntegration: StudentCivicIntegration
+  clientMutationId: String
+}
+
+input updateStudentContactInput {
+  id: ID!
+  street: String
+  postalCode: String
+  locality: String
+  houseNumber: String
+  houseNumberSuffix: String
+  email: String
+  telephone: String
+  contactPersonTelephone: String
+  contactPreference: String
+  contactPreferenceOther: String
+  clientMutationId: String
+}
+
+type updateStudentContactPayload {
+  studentContact: StudentContact
+  clientMutationId: String
+}
+
+input updateStudentCourseInput {
+  id: ID!
+  isFollowingCourseRightNow: Boolean
+  courseName: String
+  courseTeacher: String
+  courseGroup: String
+  amountOfHours: Int
+  doesCourseProvideCertificate: Boolean
+  clientMutationId: String
+}
+
+type updateStudentCoursePayload {
+  studentCourse: StudentCourse
+  clientMutationId: String
+}
+
+input updateStudentDutchNTInput {
+  id: ID!
+  dutchNTLevel: String
+  inNetherlandsSinceYear: Float
+  languageInDailyLife: String
+  knowsLatinAlphabet: Boolean
+  lastKnownLevel: String
+  clientMutationId: String
+}
+
+type updateStudentDutchNTPayload {
+  studentDutchNT: StudentDutchNT
+  clientMutationId: String
+}
+
+input updateStudentEducationInput {
+  id: ID!
+  lastFollowedEducation: String
+  didGraduate: Boolean
+  followingEducationRightNow: String
+  followingEducationRightNowYesStartDate: String
+  followingEducationRightNowYesEndDate: String
+  followingEducationRightNowYesLevel: String
+  followingEducationRightNowYesInstitute: String
+  followingEducationRightNowYesProvidesCertificate: Boolean
+  followingEducationRightNowNoEndDate: String
+  followingEducationRightNowNoLevel: String
+  followingEducationRightNowNoGotCertificate: Boolean
+  clientMutationId: String
+}
+
+type updateStudentEducationPayload {
+  studentEducation: StudentEducation
+  clientMutationId: String
+}
+
+input updateStudentGeneralInput {
+  id: ID!
+  countryOfOrigin: String
+  nativeLanguage: String
+  otherLanguages: String
+  familiComposition: Iterable
+  childrenCount: Int
+  childrenDatesOfBirth: String
+  clientMutationId: String
+}
+
+type updateStudentGeneralPayload {
+  studentGeneral: StudentGeneral
+  clientMutationId: String
+}
+
+input updateStudentInput {
+  id: ID!
+  civicIntegrationDetails: String
+  personDetails: String
+  contactDetails: String
+  generalDetails: String
+  referrerDetails: String
+  backgroundDetails: String
+  dutchNTDetails: String
+  speakingLevel: String
+  educationDetails: String
+  courseDetails: String
+  jobDetails: String
+  motivationDetails: String
+  availabilityDetails: String
+  readingTestResult: String
+  writingTestResult: String
+  permissionDetails: String
+  taalhuisId: String
+  studentId: String
+  clientMutationId: String
+}
+
+input updateStudentJobInput {
+  id: ID!
+  trainedForJob: String
+  lastJob: String
+  dayTimeActivities: Iterable
+  dayTimeActivitiesOther: String
+  clientMutationId: String
+}
+
+type updateStudentJobPayload {
+  studentJob: StudentJob
+  clientMutationId: String
+}
+
+input updateStudentMotivationInput {
+  id: ID!
+  desiredSkills: Iterable
+  desiredSkillsOther: String
+  hasTriedThisBefore: Boolean
+  hasTriedThisBeforeExplanation: String
+  whyWantTheseSkills: String
+  whyWantThisNow: String
+  desiredLearingMethod: Iterable
+  remarks: String
+  clientMutationId: String
+}
+
+type updateStudentMotivationPayload {
+  studentMotivation: StudentMotivation
+  clientMutationId: String
+}
+
+type updateStudentPayload {
+  student: Student
+  clientMutationId: String
+}
+
+input updateStudentPermissionInput {
+  id: ID!
+  didSignPermissionForm: Boolean
+  hasPermissionToShareDataWithAanbieders: Boolean
+  hasPermissionToShareDataWithLibraries: Boolean
+  hasPermissionToSendInformationAboutLibraries: Boolean
+  clientMutationId: String
+}
+
+type updateStudentPermissionPayload {
+  studentPermission: StudentPermission
+  clientMutationId: String
+}
+
+input updateStudentPersonInput {
+  id: ID!
+  givenName: String
+  additionalName: String
+  familyName: String
+  gender: String
+  dateOfBirth: String
+  clientMutationId: String
+}
+
+type updateStudentPersonPayload {
+  studentPerson: StudentPerson
+  clientMutationId: String
+}
+
+input updateStudentReferrerInput {
+  id: ID!
+  referringOrganization: String
+  referringOrganizationOther: String
+  email: String
+  clientMutationId: String
+}
+
+type updateStudentReferrerPayload {
+  studentReferrer: StudentReferrer
+  clientMutationId: String
+}
+
+input updateTestResultInput {
+  id: ID!
+  participationId: String
+  outComesGoal: String
+  outComesTopic: String
+  outComesTopicOther: String
+  outComesApplication: String
+  outComesApplicationOther: String
+  outComesLevel: String
+  outComesLevelOther: String
+  examUsedExam: String
+  examDate: String
+  examMemo: String
+  testResultId: String
+  clientMutationId: String
+}
+
+type updateTestResultPayload {
+  testResult: TestResult
+  clientMutationId: String
+}
+
+input updateUserInput {
+  id: ID!
+
+  """The Email of this User."""
+  email: String
+
+  """The Username of this User"""
+  username: String
+
+  """The Password of this User."""
+  password: String
+  clientMutationId: String
+}
+
+type updateUserPayload {
+  user: User
+  clientMutationId: String
+}

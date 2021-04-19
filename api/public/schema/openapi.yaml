@@ -1898,6 +1898,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability'
       parameters:
         -
           name: page
@@ -2037,6 +2042,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
           links:
             GetAvailabilityItem:
               parameters:
@@ -2086,6 +2094,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Availability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Availability'
         description: 'The new Availability resource'
@@ -2246,6 +2257,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
         404:
           description: 'Resource not found'
       produces:
@@ -2380,6 +2394,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
         400:
           description: 'Invalid input'
         404:
@@ -2423,6 +2440,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Availability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Availability'
         description: 'The updated Availability resource'
@@ -2508,6 +2528,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Availability'
             text/html:
+              schema:
+                $ref: '#/components/schemas/Availability'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/Availability'
         400:
@@ -2625,6 +2648,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/AvailabilityDay'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -2768,6 +2796,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
           links:
             GetAvailabilityDayItem:
               parameters:
@@ -2817,6 +2848,9 @@ paths:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
           text/html:
+            schema:
+              $ref: '#/components/schemas/AvailabilityDay'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
         description: 'The new AvailabilityDay resource'
@@ -2977,6 +3011,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
         404:
           description: 'Resource not found'
       produces:
@@ -3111,6 +3148,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
         400:
           description: 'Invalid input'
         404:
@@ -3154,6 +3194,9 @@ paths:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
           text/html:
+            schema:
+              $ref: '#/components/schemas/AvailabilityDay'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
         description: 'The updated AvailabilityDay resource'
@@ -3239,6 +3282,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
             text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
         400:
@@ -4289,6 +4335,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
       parameters:
         -
           name: page
@@ -4428,6 +4479,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           links:
             GetCurrentEducationNoButDidFollowItem:
               parameters:
@@ -4477,6 +4531,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         description: 'The new CurrentEducationNoButDidFollow resource'
@@ -4637,6 +4694,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         404:
           description: 'Resource not found'
       produces:
@@ -4771,6 +4831,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         400:
           description: 'Invalid input'
         404:
@@ -4814,6 +4877,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         description: 'The updated CurrentEducationNoButDidFollow resource'
@@ -4899,6 +4965,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
             text/html:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         400:
@@ -5016,6 +5085,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/CurrentEducationYes'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -5159,6 +5233,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
           links:
             GetCurrentEducationYesItem:
               parameters:
@@ -5208,6 +5285,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationYes'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
         description: 'The new CurrentEducationYes resource'
@@ -5368,6 +5448,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
         404:
           description: 'Resource not found'
       produces:
@@ -5502,6 +5585,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
         400:
           description: 'Invalid input'
         404:
@@ -5545,6 +5631,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationYes'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
         description: 'The updated CurrentEducationYes resource'
@@ -5630,6 +5719,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
             text/html:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
         400:
@@ -11568,6 +11660,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Participation'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
       parameters:
         -
           name: page
@@ -11657,54 +11754,6 @@ paths:
             type: string
             format: date-time
           in: query
-      responses:
-        200:
-          description: 'Participation resource response'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Participation'
-        404:
-          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -12091,6 +12140,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Participation'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -13252,12 +13306,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Registration'
+                  $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Registration'
+                  $ref: '#/components/schemas/RegisterStudentRegistrar'
       parameters:
         -
           name: page
@@ -13396,10 +13450,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
           links:
             GetRegisterStudentRegistrarItem:
               parameters:
@@ -13450,11 +13504,11 @@ paths:
               $ref: '#/components/schemas/RegisterStudentRegistrar'
           text/html:
             schema:
-              $ref: '#/components/schemas/Registration'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Registration'
-        description: 'The new Registration resource'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
+        description: 'The new RegisterStudentRegistrar resource'
       parameters:
         -
           name: Authorization
@@ -13611,10 +13665,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         404:
           description: 'Resource not found'
       produces:
@@ -13748,10 +13802,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         400:
           description: 'Invalid input'
         404:
@@ -13796,11 +13850,11 @@ paths:
               $ref: '#/components/schemas/RegisterStudentRegistrar'
           text/html:
             schema:
-              $ref: '#/components/schemas/Registration'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Registration'
-        description: 'The updated Registration resource'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
+        description: 'The updated RegisterStudentRegistrar resource'
     patch:
       tags:
         - RegisterStudentRegistrar
@@ -13884,10 +13938,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         400:
           description: 'Invalid input'
         404:
@@ -14003,6 +14057,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/RegisterStudent'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -14146,6 +14205,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
           links:
             GetRegisterStudentItem:
               parameters:
@@ -14195,6 +14257,9 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
           text/html:
+            schema:
+              $ref: '#/components/schemas/RegisterStudent'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
         description: 'The new RegisterStudent resource'
@@ -14355,6 +14420,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
         404:
           description: 'Resource not found'
       produces:
@@ -14489,6 +14557,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
         400:
           description: 'Invalid input'
         404:
@@ -14532,6 +14603,9 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
           text/html:
+            schema:
+              $ref: '#/components/schemas/RegisterStudent'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
         description: 'The updated RegisterStudent resource'
@@ -14617,6 +14691,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
             text/html:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
         400:
@@ -14734,6 +14811,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Report'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -14877,6 +14959,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
           links:
             GetReportItem:
               parameters:
@@ -14926,6 +15011,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Report'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Report'
         description: 'The new Report resource'
@@ -15086,6 +15174,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
         404:
           description: 'Resource not found'
       produces:
@@ -15220,6 +15311,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
         400:
           description: 'Invalid input'
         404:
@@ -15263,6 +15357,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Report'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Report'
         description: 'The updated Report resource'
@@ -15348,6 +15445,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
             text/html:
+              schema:
+                $ref: '#/components/schemas/Report'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/Report'
         400:
@@ -15465,6 +15565,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentAvailability'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -15608,6 +15713,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
           links:
             GetStudentAvailabilityItem:
               parameters:
@@ -15657,6 +15765,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentAvailability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
         description: 'The new StudentAvailability resource'
@@ -15817,6 +15928,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
         404:
           description: 'Resource not found'
       produces:
@@ -15951,6 +16065,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
         400:
           description: 'Invalid input'
         404:
@@ -15994,6 +16111,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentAvailability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
         description: 'The updated StudentAvailability resource'
@@ -16079,6 +16199,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
         400:
@@ -16196,6 +16319,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentBackground'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -16339,6 +16467,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
           links:
             GetStudentBackgroundItem:
               parameters:
@@ -16388,6 +16519,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentBackground'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentBackground'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentBackground'
         description: 'The new StudentBackground resource'
@@ -16548,6 +16682,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
         404:
           description: 'Resource not found'
       produces:
@@ -16682,6 +16819,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
         400:
           description: 'Invalid input'
         404:
@@ -16725,6 +16865,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentBackground'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentBackground'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentBackground'
         description: 'The updated StudentBackground resource'
@@ -16810,6 +16953,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
         400:
@@ -16927,6 +17073,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentCivicIntegration'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -17070,6 +17221,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
           links:
             GetStudentCivicIntegrationItem:
               parameters:
@@ -17119,6 +17273,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCivicIntegration'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
         description: 'The new StudentCivicIntegration resource'
@@ -17279,6 +17436,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
         404:
           description: 'Resource not found'
       produces:
@@ -17413,6 +17573,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
         400:
           description: 'Invalid input'
         404:
@@ -17456,6 +17619,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCivicIntegration'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
         description: 'The updated StudentCivicIntegration resource'
@@ -17541,6 +17707,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
         400:
@@ -17658,6 +17827,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentContact'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentContact'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -17801,6 +17975,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
           links:
             GetStudentContactItem:
               parameters:
@@ -17850,6 +18027,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentContact'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentContact'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentContact'
         description: 'The new StudentContact resource'
@@ -18010,6 +18190,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
         404:
           description: 'Resource not found'
       produces:
@@ -18144,6 +18327,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
         400:
           description: 'Invalid input'
         404:
@@ -18187,6 +18373,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentContact'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentContact'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentContact'
         description: 'The updated StudentContact resource'
@@ -18272,6 +18461,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentContact'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentContact'
         400:
@@ -18389,6 +18581,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentCourse'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -18532,6 +18729,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
           links:
             GetStudentCourseItem:
               parameters:
@@ -18581,6 +18781,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCourse'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCourse'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCourse'
         description: 'The new StudentCourse resource'
@@ -18741,6 +18944,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
         404:
           description: 'Resource not found'
       produces:
@@ -18875,6 +19081,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
         400:
           description: 'Invalid input'
         404:
@@ -18918,6 +19127,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCourse'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCourse'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCourse'
         description: 'The updated StudentCourse resource'
@@ -19003,6 +19215,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
         400:
@@ -19120,6 +19335,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentDutchNT'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -19263,6 +19483,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
           links:
             GetStudentDutchNTItem:
               parameters:
@@ -19312,6 +19535,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentDutchNT'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
         description: 'The new StudentDutchNT resource'
@@ -19472,6 +19698,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
         404:
           description: 'Resource not found'
       produces:
@@ -19606,6 +19835,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
         400:
           description: 'Invalid input'
         404:
@@ -19649,6 +19881,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentDutchNT'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
         description: 'The updated StudentDutchNT resource'
@@ -19734,6 +19969,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
         400:
@@ -19851,6 +20089,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentEducation'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -19994,6 +20237,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
           links:
             GetStudentEducationItem:
               parameters:
@@ -20043,6 +20289,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentEducation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentEducation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentEducation'
         description: 'The new StudentEducation resource'
@@ -20203,6 +20452,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
         404:
           description: 'Resource not found'
       produces:
@@ -20337,6 +20589,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
         400:
           description: 'Invalid input'
         404:
@@ -20380,6 +20635,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentEducation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentEducation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentEducation'
         description: 'The updated StudentEducation resource'
@@ -20465,6 +20723,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
         400:
@@ -20582,6 +20843,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentGeneral'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -20725,6 +20991,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
           links:
             GetStudentGeneralItem:
               parameters:
@@ -20774,6 +21043,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentGeneral'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
         description: 'The new StudentGeneral resource'
@@ -20934,6 +21206,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
         404:
           description: 'Resource not found'
       produces:
@@ -21068,6 +21343,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
         400:
           description: 'Invalid input'
         404:
@@ -21111,6 +21389,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentGeneral'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
         description: 'The updated StudentGeneral resource'
@@ -21196,6 +21477,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
         400:
@@ -21313,6 +21597,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentJob'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -21456,6 +21745,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
           links:
             GetStudentJobItem:
               parameters:
@@ -21505,6 +21797,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentJob'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentJob'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentJob'
         description: 'The new StudentJob resource'
@@ -21665,6 +21960,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
         404:
           description: 'Resource not found'
       produces:
@@ -21799,6 +22097,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
         400:
           description: 'Invalid input'
         404:
@@ -21842,6 +22143,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentJob'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentJob'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentJob'
         description: 'The updated StudentJob resource'
@@ -21927,6 +22231,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentJob'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentJob'
         400:
@@ -22044,6 +22351,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentMotivation'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -22187,6 +22499,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
           links:
             GetStudentMotivationItem:
               parameters:
@@ -22236,6 +22551,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentMotivation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
         description: 'The new StudentMotivation resource'
@@ -22396,6 +22714,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
         404:
           description: 'Resource not found'
       produces:
@@ -22530,6 +22851,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
         400:
           description: 'Invalid input'
         404:
@@ -22573,6 +22897,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentMotivation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
         description: 'The updated StudentMotivation resource'
@@ -22658,6 +22985,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
         400:
@@ -22775,6 +23105,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentPerson'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -22918,6 +23253,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
           links:
             GetStudentPersonItem:
               parameters:
@@ -22967,6 +23305,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPerson'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPerson'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPerson'
         description: 'The new StudentPerson resource'
@@ -23127,6 +23468,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
         404:
           description: 'Resource not found'
       produces:
@@ -23261,6 +23605,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
         400:
           description: 'Invalid input'
         404:
@@ -23304,6 +23651,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPerson'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPerson'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPerson'
         description: 'The updated StudentPerson resource'
@@ -23389,6 +23739,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
         400:
@@ -23506,6 +23859,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentPermission'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -23649,6 +24007,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
           links:
             GetStudentPermissionItem:
               parameters:
@@ -23698,6 +24059,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPermission'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPermission'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPermission'
         description: 'The new StudentPermission resource'
@@ -23858,6 +24222,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
         404:
           description: 'Resource not found'
       produces:
@@ -23992,6 +24359,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
         400:
           description: 'Invalid input'
         404:
@@ -24035,6 +24405,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPermission'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPermission'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPermission'
         description: 'The updated StudentPermission resource'
@@ -24120,6 +24493,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
         400:
@@ -24237,6 +24613,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentReferrer'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -24380,6 +24761,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
           links:
             GetStudentReferrerItem:
               parameters:
@@ -24429,6 +24813,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentReferrer'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
         description: 'The new StudentReferrer resource'
@@ -24589,6 +24976,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
         404:
           description: 'Resource not found'
       produces:
@@ -24723,6 +25113,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
         400:
           description: 'Invalid input'
         404:
@@ -24766,6 +25159,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentReferrer'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
         description: 'The updated StudentReferrer resource'
@@ -24851,6 +25247,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
         400:
@@ -28383,6 +28782,14 @@ components:
           items:
             type: string
           nullable: true
+        outComesLevel:
+          type: string
+        availabilityy:
+          type: string
+          format: iri-reference
+          nullable: true
+        aanbiederId:
+          type: string
     LanguageHouse:
       type: object
       description: ''
@@ -28395,21 +28802,6 @@ components:
         name:
           description: 'The Name of this Taalhuis.'
           type: string
-        street:
-          type: string
-          nullable: true
-        houseNumber:
-          type: string
-          nullable: true
-        houseNumberSuffix:
-          type: string
-          nullable: true
-        postalCode:
-          type: string
-          nullable: true
-        locality:
-          type: string
-          nullable: true
         phoneNumber:
           description: 'The Telephone of this Taalhuis.'
           type: string
@@ -28448,21 +28840,6 @@ components:
         name:
           description: 'The Name of this Taalhuis.'
           type: string
-        street:
-          type: string
-          nullable: true
-        houseNumber:
-          type: string
-          nullable: true
-        houseNumberSuffix:
-          type: string
-          nullable: true
-        postalCode:
-          type: string
-          nullable: true
-        locality:
-          type: string
-          nullable: true
         phoneNumber:
           description: 'The Telephone of this Taalhuis.'
           type: string
@@ -29848,10 +30225,150 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
-      required:
-        - familyName
-        - givenName
+        remarks:
+          type: string
+          nullable: true
+    StudentPermission:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        didSignPermissionForm:
+          type: boolean
+        hasPermissionToShareDataWithAanbieders:
+          type: boolean
+        hasPermissionToShareDataWithLibraries:
+          type: boolean
+        hasPermissionToSendInformationAboutLibraries:
+          type: boolean
+    'StudentPermission:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        didSignPermissionForm:
+          type: boolean
+        hasPermissionToShareDataWithAanbieders:
+          type: boolean
+        hasPermissionToShareDataWithLibraries:
+          type: boolean
+        hasPermissionToSendInformationAboutLibraries:
+          type: boolean
+    StudentPerson:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        givenName:
+          type: string
+        additionalName:
+          type: string
+          nullable: true
+        familyName:
+          type: string
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+    'StudentPerson:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        givenName:
+          type: string
+        additionalName:
+          type: string
+          nullable: true
+        familyName:
+          type: string
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+    StudentReferrer:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        referringOrganization:
+          type: string
+          nullable: true
+        referringOrganizationOther:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+    'StudentReferrer:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        referringOrganization:
+          type: string
+          nullable: true
+        referringOrganizationOther:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
     TestResult:
       type: object
       description: ''
@@ -30157,7 +30674,11 @@ definitions:
       - givenName
       - familyName
       - email
-      - employeeType
+  Group-write:
+    properties:
+      outComesApplication: []
+      outComesLevel: []
+    required: []
   LanguageHouse-read:
     properties:
       name:
@@ -30319,82 +30840,8 @@ definitions:
       personDetails: []
       permissionDetails: []
     required:
-      - familyName
-      - givenName
-  TestResult-read:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
-  TestResult-write:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
+      - personDetails
+      - permissionDetails
   User-read:
     properties:
       email:
@@ -30432,11 +30879,7 @@ definitions:
         description: 'The Token for password reset'
         type: string
         maxLength: 2550
-    required:
-      - email
-      - username
-      - password
-      - token
+    required: []
   AuditTrail-read:
     properties:
       id:
@@ -30541,12 +30984,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-16 12:14:44'
+        example: '2021-04-16 12:51:00'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-16 12:14:44'
+        example: '2021-04-16 12:51:00'
     required: []
   AuditTrail-write:
     properties:
@@ -30594,12 +31037,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-16 12:14:44'
+        example: '2021-04-16 12:51:00'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-16 12:14:44'
+        example: '2021-04-16 12:51:00'
     required: []
   ChangeLog-write:
     properties:
@@ -30708,6 +31151,84 @@ tags:
       
   -
     name: Student
+    description: |
+      
+      
+      
+  -
+    name: StudentAvailability
+    description: |
+      
+      
+      
+  -
+    name: StudentBackground
+    description: |
+      
+      
+      
+  -
+    name: StudentCivicIntegration
+    description: |
+      
+      
+      
+  -
+    name: StudentContact
+    description: |
+      
+      
+      
+  -
+    name: StudentCourse
+    description: |
+      
+      
+      
+  -
+    name: StudentDutchNT
+    description: |
+      
+      
+      
+  -
+    name: StudentEducation
+    description: |
+      
+      
+      
+  -
+    name: StudentGeneral
+    description: |
+      
+      
+      
+  -
+    name: StudentJob
+    description: |
+      
+      
+      
+  -
+    name: StudentMotivation
+    description: |
+      
+      
+      
+  -
+    name: StudentPermission
+    description: |
+      
+      
+      
+  -
+    name: StudentPerson
+    description: |
+      
+      
+      
+  -
+    name: StudentReferrer
     description: |
       
       
