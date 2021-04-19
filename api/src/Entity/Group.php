@@ -154,6 +154,11 @@ class Group
      */
     private $aanbiederEmployeeIds = [];
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -447,6 +452,18 @@ class Group
     public function setAanbiederId(string $aanbiederId): self
     {
         $this->aanbiederId = $aanbiederId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
 
         return $this;
     }

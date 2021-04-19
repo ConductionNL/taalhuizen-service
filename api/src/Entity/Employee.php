@@ -300,6 +300,16 @@ class Employee
      */
     private $biscEmployeeId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userGroupId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userId;
+
     public function __construct()
     {
         $this->address = new ArrayCollection();
@@ -720,6 +730,30 @@ class Employee
     public function setBiscEmployeeId(?string $biscEmployeeId): self
     {
         $this->biscEmployeeId = $biscEmployeeId;
+
+        return $this;
+    }
+
+    public function getUserGroupId(): ?string
+    {
+        return $this->userGroupId;
+    }
+
+    public function setUserGroupId(?string $userGroupId): self
+    {
+        $this->userGroupId = $userGroupId;
+
+        return $this;
+    }
+
+    public function getUserId(): ?string
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(?string $userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }
