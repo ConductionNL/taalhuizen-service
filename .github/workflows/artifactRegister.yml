@@ -18,7 +18,7 @@ jobs:
               id: process
               run: |
                   export ARTIFACTHUB_ID=$(grep ARTIFACTHUB_ID= .env | cut -d '=' -f2)
-                  if [ "${{ secrets.ARTIFACT_KEY }}" != "" ] && [ "$ARTIFACTHUB_ID" != "false" ] || [ "ARTIFACTHUB_ID" == "" ]; then
+                  if [ "${{ secrets.ARTIFACT_ID }}" != "" ] && [ "${{ secrets.ARTIFACT_SECRET }}" != "" ] && [ "$ARTIFACTHUB_ID" != "false" ] || [ "ARTIFACTHUB_ID" == "" ]; then
                     echo "##[set-output name=success;]true"
                   else
                     echo "##[set-output name=success;]false"
@@ -27,7 +27,7 @@ jobs:
               id: request
               if: steps.process.outputs.success == 'true'
               run: |
-                  export HEADER='{"X-API-KEY": "'${{secrets.ARTIFACT_KEY}}'"}'
+                  export HEADER='{"X-API-KEY-ID": "'${{secrets.ARTIFACT_ID}}'", "X-API-KEY-SECRET": "'${{secrets.ARTIFACT_SECRET}}'"}'
                   echo "HEADER=$HEADER" >> $GITHUB_ENV
                   echo "##[set-output name=header]$HEADER"
                   echo $HEADER
@@ -53,4 +53,4 @@ jobs:
                   url: https://artifacthub.io/api/v1/repositories/user
                   method: POST
                   payload: '{"name": "${{ env.NAME }}", "url": "${{ env.HELM }}"}'
-                  headers: '{"X-API-Key": "${{secrets.ARTIFACT_KEY}}"}'
+                  headers: '{"X-API-KEY-ID": "${{secrets.ARTIFACT_ID}}", "X-API-KEY-SECRET": "${{secrets.ARTIFACT_SECRET}}"}'
