@@ -87,26 +87,30 @@ jobs:
                   echo 'IMAGES=$images' >> $GITHUB_ENV
             - name: Show all images
               run: docker images
-            - name: Login to DockerHub Registry
-              id: dockerhub-login
+              
+            - name: Login to GitHub Container Registry
+              id: containerregistry-login
               run: |
-                  if [ "${{ secrets.DOCKERHUB_PASSWORD }}" != "" ] && [ "${{ secrets.DOCKERHUB_USERNAME }}" != "" ]; then
-                    echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+                  if [ "${{ secrets.CR_PAT }}" != "" ]; then
+                    echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $(cut -d'/' -f1 <<< $GITHUB_REPOSITORY) --password-stdin
                     echo "##[set-output name=success;]true"
                   else
                     echo "##[set-output name=success;]false"
                   fi
-            - if: steps.dockerhub-login.outputs.success == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/development')
-              name: Push to docker hub
+
+            - if: steps.containerregistry-login.outputs.success == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/development')
+              name: Push to container registry
               run: docker-compose push
-            - if: steps.dockerhub-login.outputs.success == 'true' && github.ref == 'refs/heads/master'
-              name: Push versioned containers to Docker Hub
+
+            - if: steps.containerregistry-login.outputs.success == 'true' && github.ref == 'refs/heads/master'
+              name: Push versioned containers to Container Registry
               run: |
                   images=$(docker-compose images -q | xargs docker inspect --format='{{ index .RepoTags 0}}' | cut -d':' -f1 | grep $APP_NAME)
                   for image in $images
                   do
                     docker push "${image}":"${APP_BUILD}"
                   done
+                  
             - name: Create kube config
               id: kubeconfig
               if: contains( github.ref, 'development' )
