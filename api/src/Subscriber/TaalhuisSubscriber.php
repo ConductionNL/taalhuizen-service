@@ -78,7 +78,7 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             // Now put together the expected result in $result['result'] for Lifely:
             $result['result'] = $this->handleResult($taalhuis);
 
-            // If any error was catched set $result['result'] to null
+            // If any error was caught set $result['result'] to null
             if(isset($result['errorMessage'])) {
                 $result['result'] = null;
             }
