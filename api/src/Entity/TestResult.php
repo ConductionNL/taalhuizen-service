@@ -93,6 +93,11 @@ class TestResult
      */
     private $examMemo;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $testResultId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -232,6 +237,18 @@ class TestResult
     public function setExamMemo(?string $examMemo): self
     {
         $this->examMemo = $examMemo;
+
+        return $this;
+    }
+
+    public function getTestResultId(): ?string
+    {
+        return $this->testResultId;
+    }
+
+    public function setTestResultId(?string $testResultId): self
+    {
+        $this->testResultId = $testResultId;
 
         return $this;
     }

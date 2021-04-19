@@ -41,6 +41,9 @@ class Dossier
     /**
      * @var string The Event of this Student.
      *
+     * @Assert\Choice(
+     *      {"FINAL_TALK","REMARK","FOLLOW_UP_TALK","INFO_FOR_STORYTELLING","INTAKE"}
+     * )
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -73,6 +76,11 @@ class Dossier
      * @ORM\Column(type="string", length=255)
      */
     private $studentId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentDossierEventId;
 
     public function getId(): UuidInterface
     {
@@ -129,6 +137,18 @@ class Dossier
     public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getStudentDossierEventId(): ?string
+    {
+        return $this->studentDossierEventId;
+    }
+
+    public function setStudentDossierEventId(?string $studentDossierEventId): self
+    {
+        $this->studentDossierEventId = $studentDossierEventId;
 
         return $this;
     }
