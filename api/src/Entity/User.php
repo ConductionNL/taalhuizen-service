@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
+use App\Resolver\UserMutationResolver;
+use App\Resolver\UserQueryCollectionResolver;
+use App\Resolver\UserQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -11,7 +14,39 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = UserQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = UserQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User

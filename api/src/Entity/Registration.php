@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RegistrationRepository;
+use App\Resolver\RegistrationMutationResolver;
+use App\Resolver\RegistrationQueryCollectionResolver;
+use App\Resolver\RegistrationQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +24,40 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=RegisterStudentRepository::class)
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = RegistrationQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = RegistrationQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
+ * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
 class Registration
 {
