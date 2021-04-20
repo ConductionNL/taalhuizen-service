@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ParticipationRepository;
+use App\Resolver\ParticipationMutationResolver;
+use App\Resolver\ParticipationQueryCollectionResolver;
+use App\Resolver\ParticipationQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -12,25 +15,33 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *  collectionOperations={
- *          "get",
- *          "get_participation"={
- *              "method"="GET",
- *              "path"="/participations/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific participation",
- *                  "description"="Returns a participation"
- *              }
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = ParticipationQueryItemResolver::class,
+ *              "read" = false
  *          },
- *          "delete_participation"={
- *              "method"="GET",
- *              "path"="/participations/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific participation",
- *                  "description"="Returns true if this participation was deleted"
- *              }
+ *          "collection_query" = {
+ *              "collection_query" = ParticipationQueryCollectionResolver::class
  *          },
- *          "post"
+ *          "create" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
  *     },
  * )
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
@@ -48,6 +59,13 @@ class Participation
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $status;
 
     /**
      * @Groups({"write"})
@@ -85,6 +103,7 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesGoal;
+
     /**
      * @Groups({"write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
@@ -222,6 +241,24 @@ class Participation
     public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function getAanbiederId(): ?string
