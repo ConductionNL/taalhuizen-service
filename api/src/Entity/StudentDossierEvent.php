@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\DossierRepository;
-use App\Resolver\DossierMutationResolver;
-use App\Resolver\DossierQueryCollectionResolver;
-use App\Resolver\DossierQueryItemResolver;
+use App\Resolver\StudentDossierEventMutationResolver;
+use App\Resolver\StudentDossierEventQueryCollectionResolver;
+use App\Resolver\StudentDossierEventQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -27,28 +27,28 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     graphql={
  *          "item_query" = {
- *              "item_query" = DossierQueryItemResolver::class,
+ *              "item_query" = StudentDossierEventQueryItemResolver::class,
  *              "read" = false
  *          },
  *          "collection_query" = {
- *              "collection_query" = DossierQueryCollectionResolver::class
+ *              "collection_query" = StudentDossierEventQueryCollectionResolver::class
  *          },
  *          "create" = {
- *              "mutation" = DossierMutationResolver::class,
+ *              "mutation" = StudentDossierEventMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          },
  *          "update" = {
- *              "mutation" = DossierMutationResolver::class,
+ *              "mutation" = StudentDossierEventMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          },
  *          "remove" = {
- *              "mutation" = DossierMutationResolver::class,
+ *              "mutation" = StudentDossierEventMutationResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *              "read" = false,
  *              "deserialize" = false,
@@ -57,9 +57,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=DossierRepository::class)
  */
-class Dossier
+class StudentDossierEvent
 {
     /**
      * @var UuidInterface The UUID identifier of this resource
@@ -104,13 +105,13 @@ class Dossier
     private $eventDescription;
 
     /**
-     * @var string studentId of this student Dossier.
+     * @var string|null studentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
-    private $studentId;
+    private ?string $studentId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -169,7 +170,7 @@ class Dossier
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
 
