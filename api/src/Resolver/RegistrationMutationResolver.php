@@ -25,7 +25,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
+        if (!$item instanceof Registration && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
         switch($context['info']->operation->name->value){

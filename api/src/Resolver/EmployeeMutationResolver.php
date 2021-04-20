@@ -27,13 +27,9 @@ class EmployeeMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-        var_dump($context['info']->variableValues);
-//        var_dump(get_class($item));
         if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-//        var_dump($context['info']->operation->name->value);
         switch($context['info']->operation->name->value){
             case 'createEmployee':
                 return $this->createEmployee($context['info']->variableValues['input']);
