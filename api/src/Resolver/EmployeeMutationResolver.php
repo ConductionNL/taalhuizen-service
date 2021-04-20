@@ -6,13 +6,15 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Address;
+use App\Entity\Document;
+use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class UserMutationResolver implements MutationResolverInterface
+class EmployeeMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
@@ -33,35 +35,35 @@ class UserMutationResolver implements MutationResolverInterface
         }
 //        var_dump($context['info']->operation->name->value);
         switch($context['info']->operation->name->value){
-            case 'createUser':
-                return $this->createUser($context['info']->variableValues['input']);
-            case 'updateUser':
-                return $this->updateUser($context['info']->variableValues['input']);
-            case 'removeUser':
-                return $this->deleteUser($context['info']->variableValues['input']);
+            case 'createEmployee':
+                return $this->createEmployee($context['info']->variableValues['input']);
+            case 'updateEmployee':
+                return $this->updateEmployee($context['info']->variableValues['input']);
+            case 'removeEmployee':
+                return $this->deleteEmployee($context['info']->variableValues['input']);
             default:
                 return $item;
         }
     }
 
-    public function createUser(array $userArray): User
+    public function createEmployee(array $employeeArray): Employee
     {
-        $user = new User();
-        $this->entityManager->persist($user);
-        return $user;
+        $employee = new Employee();
+        $this->entityManager->persist($employee);
+        return $employee;
     }
 
-    public function updateUser(array $input): User
+    public function updateEmployee(array $input): Employee
     {
         $id = explode('/',$input['id']);
-        $user = new User();
+        $employee = new Employee();
 
 
-        $this->entityManager->persist($user);
-        return $user;
+        $this->entityManager->persist($employee);
+        return $employee;
     }
 
-    public function deleteUser(array $user): ?User
+    public function deleteEmployee(array $employee): ?Employee
     {
 
         return null;

@@ -57,7 +57,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return $languageHouse;
     }
 
-    public function deleteRegistration(array $languageHouse): ?LanguageHouse
+    public function deleteRegistration(array $registration): ?LanguageHouse
     {
         return null;
     }

@@ -6,13 +6,14 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Address;
+use App\Entity\Document;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class UserMutationResolver implements MutationResolverInterface
+class DocumentMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
@@ -33,35 +34,35 @@ class UserMutationResolver implements MutationResolverInterface
         }
 //        var_dump($context['info']->operation->name->value);
         switch($context['info']->operation->name->value){
-            case 'createUser':
-                return $this->createUser($context['info']->variableValues['input']);
-            case 'updateUser':
-                return $this->updateUser($context['info']->variableValues['input']);
-            case 'removeUser':
-                return $this->deleteUser($context['info']->variableValues['input']);
+            case 'createDocument':
+                return $this->createDocument($context['info']->variableValues['input']);
+            case 'updateDocument':
+                return $this->updateDocument($context['info']->variableValues['input']);
+            case 'removeDocument':
+                return $this->deleteDocument($context['info']->variableValues['input']);
             default:
                 return $item;
         }
     }
 
-    public function createUser(array $userArray): User
+    public function createDocument(array $documentArray): Document
     {
-        $user = new User();
-        $this->entityManager->persist($user);
-        return $user;
+        $document = new Document();
+        $this->entityManager->persist($document);
+        return $document;
     }
 
-    public function updateUser(array $input): User
+    public function updateDocument(array $input): Document
     {
         $id = explode('/',$input['id']);
-        $user = new User();
+        $document = new Document();
 
 
-        $this->entityManager->persist($user);
-        return $user;
+        $this->entityManager->persist($document);
+        return $document;
     }
 
-    public function deleteUser(array $user): ?User
+    public function deleteDocument(array $document): ?Document
     {
 
         return null;
