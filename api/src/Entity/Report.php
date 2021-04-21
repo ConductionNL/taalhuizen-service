@@ -4,12 +4,47 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ReportRepository;
+use App\Resolver\ReportMutationResolver;
+use App\Resolver\ReportQueryCollectionResolver;
+use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = ReportQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = ReportQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */
 class Report

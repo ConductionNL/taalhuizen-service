@@ -6,7 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 
-class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
+class ReportQueryItemResolver implements QueryItemResolverInterface
 {
 
     /**
