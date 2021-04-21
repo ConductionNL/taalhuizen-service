@@ -7,19 +7,29 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\EDUService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
+class StudentDossierEventQueryCollectionResolver implements QueryCollectionResolverInterface
 {
+    private EDUService $eduService;
+    public function __construct(EDUService $eduService)
+    {
+        $this->eduService = $eduService;
+    }
 
     /**
      * @inheritDoc
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = new ArrayCollection();
-        //@TODO implement logic to find stuff and put it in the iterator
+
+        if(key_exists('studentId', $context['args'])){
+            $collection = $this->eduService->getEducationEvents($context['args']['studentId']);
+        } else {
+            $collection = $this->eduService->getEducationEvents();
+        }
         return $this->createPaginator($collection, $context['args']);
     }
 

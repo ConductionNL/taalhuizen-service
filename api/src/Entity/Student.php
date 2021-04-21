@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\StudentRepository;
+use App\Resolver\StudentMutationResolver;
+use App\Resolver\StudentQueryCollectionResolver;
+use App\Resolver\StudentQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +24,39 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = StudentQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -39,6 +74,7 @@ class Student
     private $id;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
      */
     private $civicIntegrationDetails;
@@ -53,66 +89,79 @@ class Student
     private $personDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentContact::class, cascade={"persist", "remove"})
      */
     private $contactDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
      */
     private $generalDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
      */
     private $referrerDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
      */
     private $backgroundDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
      */
     private $dutchNTDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $speakingLevel;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
      */
     private $educationDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
      */
     private $courseDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
      */
     private $jobDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
      */
     private $motivationDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
      */
     private $availabilityDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $readingTestResult;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $writingTestResult;
@@ -126,11 +175,13 @@ class Student
     private $permissionDetails;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $taalhuisId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $studentId;
