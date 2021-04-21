@@ -66,8 +66,7 @@ class EDUService
     {
         //@TODO: This has to be knotted to the event more properly
         if($person){
-            $person = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $person]);
-            $results = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'education_events'], ['participant.id' => $person, 'limit' => 2000])['hydra:member'];
+            $results = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'education_events'], ['participants.id' => $person, 'limit' => 2000])['hydra:member'];
         } else {
             $results = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'education_events'], ['limit' => 2000])['hydra:member'];
         }
