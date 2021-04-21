@@ -10959,6 +10959,54 @@ paths:
             type: string
             format: date-time
           in: query
+      responses:
+        200:
+          description: 'Participation resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Participation:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Participation:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Participation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Participation'
+        404:
+          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -27838,7 +27886,7 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
+          nullable: true
       required:
         - name
         - email
@@ -27876,7 +27924,7 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
+          nullable: true
       required:
         - name
         - email
@@ -29597,6 +29645,22 @@ components:
           type: string
           nullable: true
 definitions:
+  Address-read:
+    properties:
+      street: []
+      houseNumber: []
+      houseNumberSuffix: []
+      postalCode: []
+      locality: []
+    required: []
+  Address-write:
+    properties:
+      street: []
+      houseNumber: []
+      houseNumberSuffix: []
+      postalCode: []
+      locality: []
+    required: []
   Dossier-read:
     properties:
       event:
@@ -29772,17 +29836,17 @@ definitions:
         description: 'The Name of this Taalhuis.'
         type: string
         maxLength: 255
+      address:
+        description: 'The address of this Taalhuis.'
+        type: array|null
       phoneNumber:
         description: 'The Telephone of this Taalhuis.'
-        type: string
+        type: string|null
         maxLength: 255
       email:
         description: 'The Email of this Taalhuis.'
-        type: string
+        type: string|null
         maxLength: 2550
-      address:
-        description: 'The address of this Taalhuis.'
-        type: \Address
     required:
       - name
       - email
@@ -29792,17 +29856,17 @@ definitions:
         description: 'The Name of this Taalhuis.'
         type: string
         maxLength: 255
+      address:
+        description: 'The address of this Taalhuis.'
+        type: array|null
       phoneNumber:
         description: 'The Telephone of this Taalhuis.'
-        type: string
+        type: string|null
         maxLength: 255
       email:
         description: 'The Email of this Taalhuis.'
-        type: string
+        type: string|null
         maxLength: 2550
-      address:
-        description: 'The address of this Taalhuis.'
-        type: \Address
     required:
       - name
       - email
@@ -29918,14 +29982,46 @@ definitions:
       - telephone
   Student-read:
     properties:
+      speakingLevel: []
+      readingTestResult: []
+      writingTestResult: []
+      taalhuisId: []
+      studentId: []
+      civicIntegrationDetails: []
       personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
       permissionDetails: []
     required:
       - personDetails
       - permissionDetails
   Student-write:
     properties:
+      speakingLevel: []
+      readingTestResult: []
+      writingTestResult: []
+      taalhuisId: []
+      studentId: []
+      civicIntegrationDetails: []
       personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
       permissionDetails: []
     required:
       - personDetails
@@ -30072,12 +30168,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-19 13:16:17'
+        example: '2021-04-21 07:39:16'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-19 13:16:17'
+        example: '2021-04-21 07:39:16'
     required: []
   AuditTrail-write:
     properties:
@@ -30125,12 +30221,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-19 13:16:17'
+        example: '2021-04-21 07:39:16'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-19 13:16:17'
+        example: '2021-04-21 07:39:16'
     required: []
   ChangeLog-write:
     properties:
