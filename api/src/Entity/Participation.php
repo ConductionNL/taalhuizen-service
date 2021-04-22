@@ -43,7 +43,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          }
+ *          },
+ *          "addMentorTo" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
  *     },
  * )
  * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})

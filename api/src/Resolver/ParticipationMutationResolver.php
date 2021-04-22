@@ -31,8 +31,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-//        var_dump($context['info']->variableValues);
+        var_dump($context['info']->operation->name->value);
+        var_dump($context['info']->variableValues);
 //        var_dump(get_class($item));
         if (!$item instanceof Participation && !key_exists('input', $context['info']->variableValues)) {
             return null;
@@ -44,6 +44,16 @@ class ParticipationMutationResolver implements MutationResolverInterface
                 return $this->updateParticipation($context['info']->variableValues['input']);
             case 'removeParticipation':
                 return $this->removeParticipation($context['info']->variableValues['input']);
+            case 'addMentorToParticipation':
+                return $this->addMentorToParticipation($context['info']->variableValues['input']);
+            case 'removeMentorFromParticipation':
+                return $this->removeMentorFromParticipation($context['info']->variableValues['input']);
+            case 'addParticipationToGroup':
+                return $this->addParticipationToGroup($context['info']->variableValues['input']);
+            case 'updateGroupParticipation':
+                return $this->updateGroupParticipation($context['info']->variableValues['input']);
+            case 'removeParticipationFromGroup':
+                return $this->removeParticipationFromGroup($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -160,6 +170,56 @@ class ParticipationMutationResolver implements MutationResolverInterface
             throw new Exception($result['errorMessage']);
         }
         return null;
+    }
+
+    public function addMentorToParticipation(array $input): Participation
+    {
+        $participationId = explode('/',$input['id']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+
+        // TODO
+        // placeholder:
+        $output = new Participation();
+        $output->setId(Uuid::getFactory()->fromString($participationId));
+        return $output;
+    }
+
+    public function removeMentorFromParticipation(array $input): Participation
+    {
+        // TODO
+        // placeholder:
+        $output = new Participation();
+        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
+        return $output;
+    }
+
+    public function addParticipationToGroup(array $input): Participation
+    {
+        // TODO
+        // placeholder:
+        $output = new Participation();
+        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
+        return $output;
+    }
+
+    public function updateGroupParticipation(array $input): Participation
+    {
+        // TODO
+        // placeholder:
+        $output = new Participation();
+        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
+        return $output;
+    }
+
+    public function removeParticipationFromGroup(array $input): Participation
+    {
+        // TODO
+        // placeholder:
+        $output = new Participation();
+        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
+        return $output;
     }
 
     private function dtoToParticipation(Participation $resource) {
