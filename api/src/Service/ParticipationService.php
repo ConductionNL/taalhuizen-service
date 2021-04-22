@@ -121,31 +121,29 @@ class ParticipationService
                 $participation = $this->eavService->getObject('participations', $url);
                 $result['participation'] = $participation;
             } else {
-                $result['errorMessage'] = 'Invalid request, '. $url .' is not an existing eav/learning_need!';
+                $result['errorMessage'] = 'Invalid request, '. $url .' is not an existing eav/participation!';
             }
         }
         return $result;
     }
 
-    public function getParticipations($studentId) {
-        //todo:
-//        // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
-//            $result['learningNeeds'] = [];
-//            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-//            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-//                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-//                if (isset($learningNeed['learningNeed'])) {
-//                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
-//                } else {
-//                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
-//                }
-//            }
-//        } else {
-//            $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
-//        }
-//        return $result;
+    public function getParticipations($learningNeedId) {
+        // Get the eav/LearningNeed participations from EAV and add the $participations @id's to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+        if ($this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
+            $result['participations'] = [];
+            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $learningNeedId);
+            foreach ($learningNeed['participations'] as $participationUrl) {
+                $participation = $this->getParticipation(null, $participationUrl);
+                if (isset($participation['participation'])) {
+                    array_push($result['participations'], $participation['participation']);
+                } else {
+                    array_push($result['participations'], ['errorMessage' => $participation['errorMessage']]);
+                }
+            }
+        } else {
+            $result['message'] = 'Warning, '. $learningNeedId .' is not an existing eav/learning_need!';
+        }
+        return $result;
     }
 
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null) {

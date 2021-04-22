@@ -32,7 +32,10 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
     {
         $result['result'] = [];
         if(key_exists('studentId', $context['args'])){
-            $studentId = $context['args']['studentId'];
+            $studentId = explode('/',$context['args']['studentId']);
+            if (is_array($studentId)) {
+                $studentId = end($studentId);
+            }
         } else {
             throw new Exception('The studentId was not specified');
         }

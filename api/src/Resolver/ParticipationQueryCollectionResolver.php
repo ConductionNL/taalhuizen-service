@@ -7,7 +7,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
-use App\Service\LearningNeedService;
+use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -17,11 +17,11 @@ use Ramsey\Uuid\Uuid;
 class ParticipationQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private CommonGroundService $commonGroundService;
-    private LearningNeedService $learningNeedService;
+    private ParticipationService $participationService;
 
-    public function __construct(CommongroundService $commonGroundService, LearningNeedService $learningNeedService){
+    public function __construct(CommongroundService $commonGroundService, ParticipationService $participationService){
         $this->commonGroundService = $commonGroundService;
-        $this->learningNeedService = $learningNeedService;
+        $this->participationService = $participationService;
     }
 
     /**
@@ -30,35 +30,38 @@ class ParticipationQueryCollectionResolver implements QueryCollectionResolverInt
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-//        $result['result'] = [];
-//        if(key_exists('studentId', $context['args'])){
-//            $studentId = $context['args']['studentId'];
-//        } else {
-//            throw new Exception('The studentId was not specified');
-//        }
-//
-//        // Get the learningNeeds of this student from EAV
-//        $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
-//
-//        $collection = new ArrayCollection();
-//        if (isset($result['learningNeeds'])) {
-//            // Now put together the expected result for Lifely:
-//            foreach ($result['learningNeeds'] as &$learningNeed) {
-//                if (!isset($learningNeed['errorMessage'])) {
-//                    $resourceResult = $this->learningNeedService->handleResult($learningNeed, $studentId);
-//                    $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
-//                    $collection->add($resourceResult);
-//                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
-//                }
-//            }
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
-//
-//        return $this->createPaginator($collection, $context['args']);
+        $result['result'] = [];
+        if(key_exists('learningNeedId', $context['args'])){
+            $learningNeedId = explode('/',$context['args']['learningNeedId']);
+            if (is_array($learningNeedId)) {
+                $learningNeedId = end($learningNeedId);
+            }
+        } else {
+            throw new Exception('The learningNeedId was not specified');
+        }
+
+        // Get the participations of this learningNeed from EAV
+        $result = array_merge($result, $this->participationService->getParticipations($learningNeedId));
+
+        $collection = new ArrayCollection();
+        if (isset($result['participations'])) {
+            // Now put together the expected result for Lifely:
+            foreach ($result['participations'] as &$participation) {
+                if (!isset($participation['errorMessage'])) {
+                    $resourceResult = $this->participationService->handleResult($participation, $learningNeedId);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($participation['id']));
+                    $collection->add($resourceResult);
+                    $participation = $participation['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                }
+            }
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
+        return $this->createPaginator($collection, $context['args']);
     }
 
     public function createPaginator(ArrayCollection $collection, array $args){
