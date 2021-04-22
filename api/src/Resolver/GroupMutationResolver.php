@@ -36,6 +36,16 @@ class GroupMutationResolver implements MutationResolverInterface
                 return $this->updateGroup($context['info']->variableValues['input']);
             case 'removeGroup':
                 return $this->deleteGroup($context['info']->variableValues['input']);
+            case 'activeGroups':
+                return $this->activeGroups($context['info']->variableValues['input']);
+            case 'futureGroups':
+                return $this->futureGroups($context['info']->variableValues['input']);
+            case 'changeGroupTeachers':
+                return $this->changeGroupTeachers($context['info']->variableValues['input']);
+            case 'participants':
+                return $this->participants($context['info']->variableValues['input']);
+            case 'completedGroups':
+                return $this->completedGroups($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -59,6 +69,36 @@ class GroupMutationResolver implements MutationResolverInterface
     }
 
     public function deleteGroup(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function activeGroups(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function futureGroups(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function changeGroupTeachers(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function participants(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function completedGroups(array $group): ?Group
     {
 
         return null;

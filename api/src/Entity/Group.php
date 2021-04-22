@@ -54,6 +54,46 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
+ *          },
+ *          "activeGroups" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "futureGroups" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "changeGroupTeachers" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "participants" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "completedGroups" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *          }
  *     }
  * )
