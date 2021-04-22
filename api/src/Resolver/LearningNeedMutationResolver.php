@@ -31,9 +31,6 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-//        var_dump($context['info']->variableValues);
-//        var_dump(get_class($item));
         if (!$item instanceof LearningNeed && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }

@@ -37,6 +37,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "create" = {
  *              "mutation" = LanguageHouseMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
  *              "write" = false
  *          },
  *          "update" = {
@@ -73,7 +76,7 @@ class LanguageHouse
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var string The Name of this Taalhuis.
@@ -85,19 +88,19 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
     /**
-     * @var Address The address of this Taalhuis.
+     * @var array|null The address of this Taalhuis.
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity="App\Entity\Address")
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $address;
+    private ?array $address;
 
     /**
-     * @var string The Telephone of this Taalhuis.
+     * @var string|null The Telephone of this Taalhuis.
      *
      * @Assert\Length(
      *     max = 255
@@ -105,10 +108,10 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $phoneNumber;
+    private ?string $phoneNumber;
 
     /**
-     * @var string The Email of this Taalhuis.
+     * @var string|null The Email of this Taalhuis.
      *
      * @Assert\Length(
      *     max = 2550
@@ -117,13 +120,7 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $email;
-
-    public function __construct()
-    {
-        $this->address = new ArrayCollection();
-
-    }
+    private ?string $email;
 
     public function getId(): UuidInterface
     {
@@ -173,26 +170,14 @@ class LanguageHouse
         return $this;
     }
 
-    /**
-     * @return Collection|address[]
-     */
-    public function getAddress(): Collection
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function addAddress(address $address): self
+    public function setAddress(?Address $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(address $address): self
-    {
-        $this->address->removeElement($address);
+        $this->address = $address;
 
         return $this;
     }

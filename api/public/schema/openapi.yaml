@@ -1898,6 +1898,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability'
       parameters:
         -
           name: page
@@ -2037,6 +2042,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
           links:
             GetAvailabilityItem:
               parameters:
@@ -2086,6 +2094,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Availability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Availability'
         description: 'The new Availability resource'
@@ -2246,6 +2257,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
         404:
           description: 'Resource not found'
       produces:
@@ -2380,6 +2394,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Availability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability'
         400:
           description: 'Invalid input'
         404:
@@ -2423,6 +2440,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Availability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Availability'
         description: 'The updated Availability resource'
@@ -2508,6 +2528,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Availability'
             text/html:
+              schema:
+                $ref: '#/components/schemas/Availability'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/Availability'
         400:
@@ -2625,6 +2648,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/AvailabilityDay'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -2768,6 +2796,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
           links:
             GetAvailabilityDayItem:
               parameters:
@@ -2817,6 +2848,9 @@ paths:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
           text/html:
+            schema:
+              $ref: '#/components/schemas/AvailabilityDay'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
         description: 'The new AvailabilityDay resource'
@@ -2977,6 +3011,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
         404:
           description: 'Resource not found'
       produces:
@@ -3111,6 +3148,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
         400:
           description: 'Invalid input'
         404:
@@ -3154,6 +3194,9 @@ paths:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
           text/html:
+            schema:
+              $ref: '#/components/schemas/AvailabilityDay'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/AvailabilityDay'
         description: 'The updated AvailabilityDay resource'
@@ -3239,6 +3282,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
             text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/AvailabilityDay'
         400:
@@ -4289,6 +4335,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
       parameters:
         -
           name: page
@@ -4428,6 +4479,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           links:
             GetCurrentEducationNoButDidFollowItem:
               parameters:
@@ -4477,6 +4531,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         description: 'The new CurrentEducationNoButDidFollow resource'
@@ -4637,6 +4694,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         404:
           description: 'Resource not found'
       produces:
@@ -4771,6 +4831,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         400:
           description: 'Invalid input'
         404:
@@ -4814,6 +4877,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         description: 'The updated CurrentEducationNoButDidFollow resource'
@@ -4899,6 +4965,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
             text/html:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationNoButDidFollow'
         400:
@@ -5016,6 +5085,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/CurrentEducationYes'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -5159,6 +5233,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
           links:
             GetCurrentEducationYesItem:
               parameters:
@@ -5208,6 +5285,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationYes'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
         description: 'The new CurrentEducationYes resource'
@@ -5368,6 +5448,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
         404:
           description: 'Resource not found'
       produces:
@@ -5502,6 +5585,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
         400:
           description: 'Invalid input'
         404:
@@ -5545,6 +5631,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
           text/html:
+            schema:
+              $ref: '#/components/schemas/CurrentEducationYes'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/CurrentEducationYes'
         description: 'The updated CurrentEducationYes resource'
@@ -5630,6 +5719,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
             text/html:
+              schema:
+                $ref: '#/components/schemas/CurrentEducationYes'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes'
         400:
@@ -7928,754 +8020,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Employee'
         description: 'The updated Employee resource'
-  /examples:
-    get:
-      tags:
-        - Example
-      operationId: getExampleCollection
-      summary: 'Retrieves the collection of Example resources.'
-      responses:
-        200:
-          description: 'Example collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Example:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Example:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-            application/graphql:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-      parameters:
-        -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
-          schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      produces:
-        - application/health+json
-    post:
-      tags:
-        - Example
-      operationId: postExampleCollection
-      summary: 'Creates a Example resource.'
-      responses:
-        201:
-          description: 'Example resource created'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Example'
-        400:
-          description: 'Invalid input'
-        404:
-          description: 'Resource not found'
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Example:jsonld'
-          application/json+ld:
-            schema:
-              $ref: '#/components/schemas/Example:jsonld'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+hal:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+vnd.api:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/health+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+health:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/graphql:
-            schema:
-              $ref: '#/components/schemas/Example'
-        description: 'The new Example resource'
-      parameters:
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-  '/examples/{id}':
-    get:
-      tags:
-        - Example
-      operationId: getExampleItem
-      summary: 'Retrieves a Example resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      responses:
-        200:
-          description: 'Example resource response'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Example'
-        404:
-          description: 'Resource not found'
-      produces:
-        - application/health+json
-    delete:
-      tags:
-        - Example
-      operationId: deleteExampleItem
-      summary: 'Removes the Example resource.'
-      responses:
-        204:
-          description: 'Example resource deleted'
-        404:
-          description: 'Resource not found'
-      parameters:
-        -
-          name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-    put:
-      tags:
-        - Example
-      operationId: putExampleItem
-      summary: 'Replaces the Example resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-      responses:
-        200:
-          description: 'Example resource updated'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Example'
-        400:
-          description: 'Invalid input'
-        404:
-          description: 'Resource not found'
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Example:jsonld'
-          application/json+ld:
-            schema:
-              $ref: '#/components/schemas/Example:jsonld'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+hal:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+vnd.api:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/health+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/json+health:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/graphql:
-            schema:
-              $ref: '#/components/schemas/Example'
-        description: 'The updated Example resource'
-    patch:
-      tags:
-        - Example
-      operationId: patchExampleItem
-      summary: 'Updates the Example resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-      responses:
-        200:
-          description: 'Example resource updated'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Example:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Example'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Example'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Example'
-        400:
-          description: 'Invalid input'
-        404:
-          description: 'Resource not found'
-      requestBody:
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Example:jsonld'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/Example'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          applications/x-yaml:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/Example'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Example'
-        description: 'The updated Example resource'
   /groups:
     get:
       tags:
@@ -10276,6 +9620,22 @@ paths:
                   $ref: '#/components/schemas/LearningNeed'
       parameters:
         -
+          name: studentId
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: 'studentId[]'
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        -
           name: page
           in: query
           required: false
@@ -10592,6 +9952,22 @@ paths:
                 items:
                   $ref: '#/components/schemas/LearningNeed'
       parameters:
+        -
+          name: studentId
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: 'studentId[]'
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
         -
           name: page
           in: query
@@ -11077,6 +10453,22 @@ paths:
                   $ref: '#/components/schemas/LearningNeed'
       parameters:
         -
+          name: studentId
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: 'studentId[]'
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        -
           name: page
           in: query
           required: false
@@ -11487,105 +10879,15 @@ paths:
     get:
       tags:
         - Participation
-      operationId: get_participationParticipationCollection
-      summary: 'Retrieves the collection of Participation resources.'
-      responses:
-        200:
-          description: 'Participation collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
+      operationId: getParticipationItem
+      summary: 'Retrieves a Participation resource.'
       parameters:
         -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
+          name: id
+          in: path
+          required: true
           schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
+            type: string
         -
           name: Authorization
           description: 'The JWT of the entity performing the request'
@@ -11657,54 +10959,6 @@ paths:
             type: string
             format: date-time
           in: query
-      responses:
-        200:
-          description: 'Participation resource response'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/Participation:jsonld'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Participation'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/Participation'
-        404:
-          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -12010,182 +11264,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Participation'
         description: 'The updated Participation resource'
-  '/participations/{id}/delete':
-    get:
-      tags:
-        - Participation
-      operationId: delete_participationParticipationCollection
-      summary: 'Retrieves the collection of Participation resources.'
-      responses:
-        200:
-          description: 'Participation collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-      parameters:
-        -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
-          schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      produces:
-        - application/health+json
   /providers:
     get:
       tags:
@@ -13252,12 +12330,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Registration'
+                  $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Registration'
+                  $ref: '#/components/schemas/RegisterStudentRegistrar'
       parameters:
         -
           name: page
@@ -13396,10 +12474,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
           links:
             GetRegisterStudentRegistrarItem:
               parameters:
@@ -13450,11 +12528,11 @@ paths:
               $ref: '#/components/schemas/RegisterStudentRegistrar'
           text/html:
             schema:
-              $ref: '#/components/schemas/Registration'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Registration'
-        description: 'The new Registration resource'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
+        description: 'The new RegisterStudentRegistrar resource'
       parameters:
         -
           name: Authorization
@@ -13611,10 +12689,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         404:
           description: 'Resource not found'
       produces:
@@ -13748,10 +12826,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         400:
           description: 'Invalid input'
         404:
@@ -13796,11 +12874,11 @@ paths:
               $ref: '#/components/schemas/RegisterStudentRegistrar'
           text/html:
             schema:
-              $ref: '#/components/schemas/Registration'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Registration'
-        description: 'The updated Registration resource'
+              $ref: '#/components/schemas/RegisterStudentRegistrar'
+        description: 'The updated RegisterStudentRegistrar resource'
     patch:
       tags:
         - RegisterStudentRegistrar
@@ -13884,10 +12962,10 @@ paths:
                 $ref: '#/components/schemas/RegisterStudentRegistrar'
             text/html:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Registration'
+                $ref: '#/components/schemas/RegisterStudentRegistrar'
         400:
           description: 'Invalid input'
         404:
@@ -14003,6 +13081,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/RegisterStudent'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -14146,6 +13229,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
           links:
             GetRegisterStudentItem:
               parameters:
@@ -14195,6 +13281,9 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
           text/html:
+            schema:
+              $ref: '#/components/schemas/RegisterStudent'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
         description: 'The new RegisterStudent resource'
@@ -14355,6 +13444,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
         404:
           description: 'Resource not found'
       produces:
@@ -14489,6 +13581,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
         400:
           description: 'Invalid input'
         404:
@@ -14532,6 +13627,9 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
           text/html:
+            schema:
+              $ref: '#/components/schemas/RegisterStudent'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/RegisterStudent'
         description: 'The updated RegisterStudent resource'
@@ -14617,6 +13715,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
             text/html:
+              schema:
+                $ref: '#/components/schemas/RegisterStudent'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/RegisterStudent'
         400:
@@ -14734,6 +13835,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Report'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -14877,6 +13983,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
           links:
             GetReportItem:
               parameters:
@@ -14926,6 +14035,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Report'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Report'
         description: 'The new Report resource'
@@ -15086,6 +14198,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
         404:
           description: 'Resource not found'
       produces:
@@ -15220,6 +14335,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/Report'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Report'
         400:
           description: 'Invalid input'
         404:
@@ -15263,6 +14381,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Report'
           text/html:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/Report'
         description: 'The updated Report resource'
@@ -15348,6 +14469,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
             text/html:
+              schema:
+                $ref: '#/components/schemas/Report'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/Report'
         400:
@@ -15465,6 +14589,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentAvailability'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -15608,6 +14737,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
           links:
             GetStudentAvailabilityItem:
               parameters:
@@ -15657,6 +14789,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentAvailability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
         description: 'The new StudentAvailability resource'
@@ -15817,6 +14952,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
         404:
           description: 'Resource not found'
       produces:
@@ -15951,6 +15089,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
         400:
           description: 'Invalid input'
         404:
@@ -15994,6 +15135,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentAvailability'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentAvailability'
         description: 'The updated StudentAvailability resource'
@@ -16079,6 +15223,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentAvailability'
         400:
@@ -16196,6 +15343,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentBackground'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -16339,6 +15491,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
           links:
             GetStudentBackgroundItem:
               parameters:
@@ -16388,6 +15543,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentBackground'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentBackground'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentBackground'
         description: 'The new StudentBackground resource'
@@ -16548,6 +15706,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
         404:
           description: 'Resource not found'
       produces:
@@ -16682,6 +15843,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
         400:
           description: 'Invalid input'
         404:
@@ -16725,6 +15889,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentBackground'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentBackground'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentBackground'
         description: 'The updated StudentBackground resource'
@@ -16810,6 +15977,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentBackground'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentBackground'
         400:
@@ -16927,6 +16097,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentCivicIntegration'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -17070,6 +16245,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
           links:
             GetStudentCivicIntegrationItem:
               parameters:
@@ -17119,6 +16297,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCivicIntegration'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
         description: 'The new StudentCivicIntegration resource'
@@ -17279,6 +16460,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
         404:
           description: 'Resource not found'
       produces:
@@ -17413,6 +16597,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
         400:
           description: 'Invalid input'
         404:
@@ -17456,6 +16643,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCivicIntegration'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCivicIntegration'
         description: 'The updated StudentCivicIntegration resource'
@@ -17541,6 +16731,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentCivicIntegration'
         400:
@@ -17658,6 +16851,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentContact'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentContact'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -17801,6 +16999,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
           links:
             GetStudentContactItem:
               parameters:
@@ -17850,6 +17051,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentContact'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentContact'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentContact'
         description: 'The new StudentContact resource'
@@ -18010,6 +17214,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
         404:
           description: 'Resource not found'
       produces:
@@ -18144,6 +17351,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentContact'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
         400:
           description: 'Invalid input'
         404:
@@ -18187,6 +17397,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentContact'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentContact'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentContact'
         description: 'The updated StudentContact resource'
@@ -18272,6 +17485,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentContact'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentContact'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentContact'
         400:
@@ -18389,6 +17605,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentCourse'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -18532,6 +17753,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
           links:
             GetStudentCourseItem:
               parameters:
@@ -18581,6 +17805,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCourse'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCourse'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCourse'
         description: 'The new StudentCourse resource'
@@ -18741,6 +17968,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
         404:
           description: 'Resource not found'
       produces:
@@ -18875,6 +18105,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
         400:
           description: 'Invalid input'
         404:
@@ -18918,6 +18151,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentCourse'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentCourse'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentCourse'
         description: 'The updated StudentCourse resource'
@@ -19003,6 +18239,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCourse'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentCourse'
         400:
@@ -19120,6 +18359,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentDutchNT'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -19263,6 +18507,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
           links:
             GetStudentDutchNTItem:
               parameters:
@@ -19312,6 +18559,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentDutchNT'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
         description: 'The new StudentDutchNT resource'
@@ -19472,6 +18722,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
         404:
           description: 'Resource not found'
       produces:
@@ -19606,6 +18859,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
         400:
           description: 'Invalid input'
         404:
@@ -19649,6 +18905,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentDutchNT'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentDutchNT'
         description: 'The updated StudentDutchNT resource'
@@ -19734,6 +18993,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentDutchNT'
         400:
@@ -19851,6 +19113,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentEducation'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -19994,6 +19261,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
           links:
             GetStudentEducationItem:
               parameters:
@@ -20043,6 +19313,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentEducation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentEducation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentEducation'
         description: 'The new StudentEducation resource'
@@ -20203,6 +19476,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
         404:
           description: 'Resource not found'
       produces:
@@ -20337,6 +19613,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
         400:
           description: 'Invalid input'
         404:
@@ -20380,6 +19659,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentEducation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentEducation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentEducation'
         description: 'The updated StudentEducation resource'
@@ -20465,6 +19747,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentEducation'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentEducation'
         400:
@@ -20582,6 +19867,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentGeneral'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -20725,6 +20015,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
           links:
             GetStudentGeneralItem:
               parameters:
@@ -20774,6 +20067,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentGeneral'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
         description: 'The new StudentGeneral resource'
@@ -20934,6 +20230,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
         404:
           description: 'Resource not found'
       produces:
@@ -21068,6 +20367,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
         400:
           description: 'Invalid input'
         404:
@@ -21111,6 +20413,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentGeneral'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
         description: 'The updated StudentGeneral resource'
@@ -21196,6 +20501,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentGeneral'
         400:
@@ -21313,6 +20621,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentJob'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -21456,6 +20769,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
           links:
             GetStudentJobItem:
               parameters:
@@ -21505,6 +20821,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentJob'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentJob'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentJob'
         description: 'The new StudentJob resource'
@@ -21665,6 +20984,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
         404:
           description: 'Resource not found'
       produces:
@@ -21799,6 +21121,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentJob'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
         400:
           description: 'Invalid input'
         404:
@@ -21842,6 +21167,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentJob'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentJob'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentJob'
         description: 'The updated StudentJob resource'
@@ -21927,6 +21255,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentJob'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentJob'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentJob'
         400:
@@ -22044,6 +21375,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentMotivation'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -22187,6 +21523,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
           links:
             GetStudentMotivationItem:
               parameters:
@@ -22236,6 +21575,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentMotivation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
         description: 'The new StudentMotivation resource'
@@ -22396,6 +21738,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
         404:
           description: 'Resource not found'
       produces:
@@ -22530,6 +21875,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
         400:
           description: 'Invalid input'
         404:
@@ -22573,6 +21921,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentMotivation'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentMotivation'
         description: 'The updated StudentMotivation resource'
@@ -22658,6 +22009,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentMotivation'
         400:
@@ -22775,6 +22129,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentPerson'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -22918,6 +22277,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
           links:
             GetStudentPersonItem:
               parameters:
@@ -22967,6 +22329,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPerson'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPerson'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPerson'
         description: 'The new StudentPerson resource'
@@ -23127,6 +22492,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
         404:
           description: 'Resource not found'
       produces:
@@ -23261,6 +22629,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
         400:
           description: 'Invalid input'
         404:
@@ -23304,6 +22675,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPerson'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPerson'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPerson'
         description: 'The updated StudentPerson resource'
@@ -23389,6 +22763,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPerson'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentPerson'
         400:
@@ -23506,6 +22883,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentPermission'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -23649,6 +23031,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
           links:
             GetStudentPermissionItem:
               parameters:
@@ -23698,6 +23083,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPermission'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPermission'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPermission'
         description: 'The new StudentPermission resource'
@@ -23858,6 +23246,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
         404:
           description: 'Resource not found'
       produces:
@@ -23992,6 +23383,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
         400:
           description: 'Invalid input'
         404:
@@ -24035,6 +23429,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentPermission'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentPermission'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentPermission'
         description: 'The updated StudentPermission resource'
@@ -24120,6 +23517,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPermission'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentPermission'
         400:
@@ -24237,6 +23637,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/StudentReferrer'
             text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
               schema:
                 type: array
                 items:
@@ -24380,6 +23785,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
           links:
             GetStudentReferrerItem:
               parameters:
@@ -24429,6 +23837,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentReferrer'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
         description: 'The new StudentReferrer resource'
@@ -24589,6 +24000,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
         404:
           description: 'Resource not found'
       produces:
@@ -24723,6 +24137,9 @@ paths:
             text/html:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
         400:
           description: 'Invalid input'
         404:
@@ -24766,6 +24183,9 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
           text/html:
+            schema:
+              $ref: '#/components/schemas/StudentReferrer'
+          application/graphql:
             schema:
               $ref: '#/components/schemas/StudentReferrer'
         description: 'The updated StudentReferrer resource'
@@ -24851,6 +24271,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
             text/html:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer'
+            application/graphql:
               schema:
                 $ref: '#/components/schemas/StudentReferrer'
         400:
@@ -28231,43 +27654,6 @@ components:
       required:
         - familyName
         - email
-    Example:
-      type: object
-      description: ''
-      properties:
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
-        data:
-          type: array
-          items:
-            type: string
-          nullable: true
-    'Example:jsonld':
-      type: object
-      description: ''
-      properties:
-        '@context':
-          readOnly: true
-          type: string
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
-        data:
-          type: array
-          items:
-            type: string
-          nullable: true
     Group:
       type: object
       description: ''
@@ -28416,6 +27802,17 @@ components:
           items:
             type: string
           nullable: true
+        outComesLevel:
+          type: string
+        availabilityy:
+          type: string
+          format: iri-reference
+          nullable: true
+        aanbiederId:
+          type: string
+        groupId:
+          type: string
+          nullable: true
     LanguageHouse:
       type: object
       description: ''
@@ -28428,14 +27825,61 @@ components:
         name:
           description: 'The Name of this Taalhuis.'
           type: string
-        street:
+        phoneNumber:
+          description: 'The Telephone of this Taalhuis.'
           type: string
           nullable: true
-        houseNumber:
-          type: string
-        groupId:
+        email:
+          description: 'The Email of this Taalhuis.'
           type: string
           nullable: true
+        address:
+          description: 'The address of this Taalhuis.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
+        - email
+    'LanguageHouse:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        name:
+          description: 'The Name of this Taalhuis.'
+          type: string
+        phoneNumber:
+          description: 'The Telephone of this Taalhuis.'
+          type: string
+          nullable: true
+        email:
+          description: 'The Email of this Taalhuis.'
+          type: string
+          nullable: true
+        address:
+          description: 'The address of this Taalhuis.'
+          type: array
+          items:
+            type: string
+            format: iri-reference
+      required:
+        - name
+        - email
     LearningNeed:
       type: object
       description: ''
@@ -28574,6 +28018,9 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        status:
+          type: string
+          nullable: true
         aanbiederId:
           type: string
           nullable: true
@@ -28684,6 +28131,9 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        status:
+          type: string
+          nullable: true
         aanbiederId:
           type: string
           nullable: true
@@ -29856,10 +29306,150 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
-      required:
-        - familyName
-        - givenName
+        remarks:
+          type: string
+          nullable: true
+    StudentPermission:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        didSignPermissionForm:
+          type: boolean
+        hasPermissionToShareDataWithAanbieders:
+          type: boolean
+        hasPermissionToShareDataWithLibraries:
+          type: boolean
+        hasPermissionToSendInformationAboutLibraries:
+          type: boolean
+    'StudentPermission:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        didSignPermissionForm:
+          type: boolean
+        hasPermissionToShareDataWithAanbieders:
+          type: boolean
+        hasPermissionToShareDataWithLibraries:
+          type: boolean
+        hasPermissionToSendInformationAboutLibraries:
+          type: boolean
+    StudentPerson:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        givenName:
+          type: string
+        additionalName:
+          type: string
+          nullable: true
+        familyName:
+          type: string
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+    'StudentPerson:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        givenName:
+          type: string
+        additionalName:
+          type: string
+          nullable: true
+        familyName:
+          type: string
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+    StudentReferrer:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        referringOrganization:
+          type: string
+          nullable: true
+        referringOrganizationOther:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+    'StudentReferrer:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        referringOrganization:
+          type: string
+          nullable: true
+        referringOrganizationOther:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
     TestResult:
       type: object
       description: ''
@@ -30171,7 +29761,11 @@ definitions:
       - givenName
       - familyName
       - email
-      - employeeType
+  Group-write:
+    properties:
+      outComesApplication: []
+      outComesLevel: []
+    required: []
   LanguageHouse-read:
     properties:
       name:
@@ -30240,6 +29834,7 @@ definitions:
     required: []
   Participation-write:
     properties:
+      status: []
       aanbiederId: []
       aanbiederName: []
       aanbiederNote: []
@@ -30333,82 +29928,8 @@ definitions:
       personDetails: []
       permissionDetails: []
     required:
-      - familyName
-      - givenName
-  TestResult-read:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
-  TestResult-write:
-    properties:
-      verb:
-        description: 'The verb of this testResult.'
-        type: string
-        maxLength: 255
-      topic:
-        description: 'The topic of this testResult.'
-        type: string
-        maxLength: 255
-      application:
-        description: 'The application of this testResult.'
-        type: string
-        maxLength: 255
-      level:
-        description: 'The level of this testResult.'
-        type: string
-        maxLength: 255
-      usedTest:
-        description: 'The used test of this testResult.'
-        type: string
-        maxLength: 255
-      testDate:
-        description: 'The test date of this testResult.'
-        type: \DateTime
-      explanation:
-        description: 'The explanation of this testResult.'
-        type: string
-        maxLength: 2550
-    required:
-      - verb
-      - topic
-      - application
-      - level
-      - usedTest
-      - testDate
-      - explanation
+      - personDetails
+      - permissionDetails
   User-read:
     properties:
       email:
@@ -30446,59 +29967,6 @@ definitions:
         description: 'The Token for password reset'
         type: string
         maxLength: 2550
-    required: []
-  ChangeLog-read:
-    properties:
-      id:
-        description: 'The UUID identifier of this object'
-        type: string
-        example: e2984465-190a-4562-829e-a8cca81aa35d
-        format: uuid
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
-      action:
-        description: ''
-        type: string
-      objectId:
-        description: ''
-        type: string
-      objectClass:
-        description: ''
-        type: string
-      version:
-        description: ''
-        type: int
-      data:
-        description: ''
-        type: array
-      username:
-        description: ''
-        type: string
-      session:
-        description: 'The moment this request was created'
-        type: string
-        maxLength: 255
-      dateCreated:
-        description: 'The moment this request was created'
-        type: string
-        format: date-time
-        example: '2021-04-16 13:11:38'
-      dateModified:
-        description: 'The moment this request last Modified'
-        type: string
-        format: date-time
-        example: '2021-04-16 13:11:38'
-    required: []
-  ChangeLog-write:
-    properties:
-      note:
-        description: 'A note conserning this log lin'
-        type: string
-        example: 'This log line is suspicius'
-        maxLength: 2555
     required: []
   AuditTrail-read:
     properties:
@@ -30604,12 +30072,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-16 13:11:38'
+        example: '2021-04-19 13:16:17'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-16 13:11:38'
+        example: '2021-04-19 13:16:17'
     required: []
   AuditTrail-write:
     properties:
@@ -30617,6 +30085,59 @@ definitions:
         description: 'A note conserning this log lin'
         type: string
         example: 'This log line looks suspicius'
+        maxLength: 2555
+    required: []
+  ChangeLog-read:
+    properties:
+      id:
+        description: 'The UUID identifier of this object'
+        type: string
+        example: e2984465-190a-4562-829e-a8cca81aa35d
+        format: uuid
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
+        maxLength: 2555
+      action:
+        description: ''
+        type: string
+      objectId:
+        description: ''
+        type: string
+      objectClass:
+        description: ''
+        type: string
+      version:
+        description: ''
+        type: int
+      data:
+        description: ''
+        type: array
+      username:
+        description: ''
+        type: string
+      session:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      dateCreated:
+        description: 'The moment this request was created'
+        type: string
+        format: date-time
+        example: '2021-04-19 13:16:17'
+      dateModified:
+        description: 'The moment this request last Modified'
+        type: string
+        format: date-time
+        example: '2021-04-19 13:16:17'
+    required: []
+  ChangeLog-write:
+    properties:
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
         maxLength: 2555
     required: []
 tags:
@@ -30718,6 +30239,84 @@ tags:
       
   -
     name: Student
+    description: |
+      
+      
+      
+  -
+    name: StudentAvailability
+    description: |
+      
+      
+      
+  -
+    name: StudentBackground
+    description: |
+      
+      
+      
+  -
+    name: StudentCivicIntegration
+    description: |
+      
+      
+      
+  -
+    name: StudentContact
+    description: |
+      
+      
+      
+  -
+    name: StudentCourse
+    description: |
+      
+      
+      
+  -
+    name: StudentDutchNT
+    description: |
+      
+      
+      
+  -
+    name: StudentEducation
+    description: |
+      
+      
+      
+  -
+    name: StudentGeneral
+    description: |
+      
+      
+      
+  -
+    name: StudentJob
+    description: |
+      
+      
+      
+  -
+    name: StudentMotivation
+    description: |
+      
+      
+      
+  -
+    name: StudentPermission
+    description: |
+      
+      
+      
+  -
+    name: StudentPerson
+    description: |
+      
+      
+      
+  -
+    name: StudentReferrer
     description: |
       
       
