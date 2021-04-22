@@ -186,6 +186,16 @@ spec:
               {{- else }}
               value: https://{{ $.Values.settings.env }}.{{ $.Values.settings.domain }}
               {{- end }}
+              - name: PUBLIC_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "fullname" . }}
+                    key: app_public_key
+              - name: PRIVATE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "fullname" . }}
+                    key: app_private_key
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- if .Values.nodeSelector }}
