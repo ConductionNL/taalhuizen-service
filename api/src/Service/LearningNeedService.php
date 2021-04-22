@@ -13,12 +13,14 @@ class LearningNeedService
     private EntityManagerInterface $entityManager;
     private $commonGroundService;
     private EAVService $eavService;
+    private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService)
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService, ParticipationService $participationService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
+        $this->participationService = $participationService;
     }
 
     public function saveLearningNeed($learningNeed, $studentUrl = null, $learningNeedId = null) {
@@ -201,9 +203,17 @@ class LearningNeedService
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
-        // TODO: when participation resolver is done, also make sure to connect and return the participations of this learningNeed
-        // TODO: add 'verwijzingen' in EAV to connect learningNeeds to participations¿
-        $resource->setParticipations([]);
+        if (isset($learningNeed['participations'])) {
+            foreach ($learningNeed['participations'] as &$participation) {
+                $result = $this->participationService->getParticipation(null, $participation);
+                if (!isset($result['errorMessage'])) {
+                    $participation = $this->participationService->handleResultJson($result['participation'], $learningNeed['id']);
+                }
+            }
+            $resource->setParticipations($learningNeed['participations']);
+        } else {
+            $resource->setParticipations([]);
+        }
 
         if (isset($studentId)) {
             $resource->setStudentId($studentId);

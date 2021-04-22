@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ParticipationRepository;
 use App\Resolver\ParticipationMutationResolver;
 use App\Resolver\ParticipationQueryCollectionResolver;
@@ -44,6 +46,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     },
  * )
+ * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation

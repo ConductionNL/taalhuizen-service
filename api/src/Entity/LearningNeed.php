@@ -172,7 +172,7 @@ class LearningNeed
 
     /**
      * @Groups({"write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private $participations;
 
