@@ -75,106 +75,109 @@ class Student
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $civicIntegrationDetails;
-
-    /**
-     *
-     * @Assert\NotNull
-     * @MaxDepth(1)
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentPerson::class, cascade={"persist", "remove"})
-     */
-    private $personDetails;
+    private ?array $civicIntegrationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentContact::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $contactDetails;
+    private ?array $personDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $generalDetails;
+    private ?array $contactDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $referrerDetails;
+    private ?array $generalDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $backgroundDetails;
+    private ?array $referrerDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $dutchNTDetails;
+    private ?array $backgroundDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="array", length=255, nullable=true)
+     */
+    private ?array $dutchNTDetails;
 
     /**
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $speakingLevel;
+    private ?string $speakingLevel;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $educationDetails;
+    private ?array $educationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $courseDetails;
+    private ?array $courseDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $jobDetails;
+    private ?array $jobDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $motivationDetails;
+    private ?array $motivationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $availabilityDetails;
+    private ?array $availabilityDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $readingTestResult;
+    private ?array $readingTestResult;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
-    private $writingTestResult;
+    private ?array $writingTestResult;
 
     /**
      * @Assert\NotNull
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="array", length=255)
      */
-    private $permissionDetails;
+    private ?array $permissionDetails;
 
     /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="array", length=255, nullable=true)
+     */
+    private ?array $intakeDetail;
+
+    /**
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -197,84 +200,84 @@ class Student
         return $this;
     }
 
-    public function getCivicIntegrationDetails(): ?StudentCivicIntegration
+    public function getCivicIntegrationDetails(): ?array
     {
         return $this->civicIntegrationDetails;
     }
 
-    public function setCivicIntegrationDetails(?StudentCivicIntegration $civicIntegrationDetails): self
+    public function setCivicIntegrationDetails(?array $civicIntegrationDetails): self
     {
         $this->civicIntegrationDetails = $civicIntegrationDetails;
 
         return $this;
     }
 
-    public function getPersonDetails(): ?StudentPerson
+    public function getPersonDetails(): ?array
     {
         return $this->personDetails;
     }
 
-    public function setPersonDetails(?StudentPerson $personDetails): self
+    public function setPersonDetails(?array $personDetails): self
     {
         $this->personDetails = $personDetails;
 
         return $this;
     }
 
-    public function getContactDetails(): ?StudentContact
+    public function getContactDetails(): ?array
     {
         return $this->contactDetails;
     }
 
-    public function setContactDetails(?StudentContact $contactDetails): self
+    public function setContactDetails(?array $contactDetails): self
     {
         $this->contactDetails = $contactDetails;
 
         return $this;
     }
 
-    public function getGeneralDetails(): ?StudentGeneral
+    public function getGeneralDetails(): ?array
     {
         return $this->generalDetails;
     }
 
-    public function setGeneralDetails(?StudentGeneral $generalDetails): self
+    public function setGeneralDetails(?array $generalDetails): self
     {
         $this->generalDetails = $generalDetails;
 
         return $this;
     }
 
-    public function getReferrerDetails(): ?StudentReferrer
+    public function getReferrerDetails(): ?array
     {
         return $this->referrerDetails;
     }
 
-    public function setReferrerDetails(?StudentReferrer $referrerDetails): self
+    public function setReferrerDetails(?array $referrerDetails): self
     {
         $this->referrerDetails = $referrerDetails;
 
         return $this;
     }
 
-    public function getBackgroundDetails(): ?StudentBackground
+    public function getBackgroundDetails(): ?array
     {
         return $this->backgroundDetails;
     }
 
-    public function setBackgroundDetails(?StudentBackground $backgroundDetails): self
+    public function setBackgroundDetails(?array $backgroundDetails): self
     {
         $this->backgroundDetails = $backgroundDetails;
 
         return $this;
     }
 
-    public function getDutchNTDetails(): ?StudentDutchNT
+    public function getDutchNTDetails(): ?array
     {
         return $this->dutchNTDetails;
     }
 
-    public function setDutchNTDetails(?StudentDutchNT $dutchNTDetails): self
+    public function setDutchNTDetails(?array $dutchNTDetails): self
     {
         $this->dutchNTDetails = $dutchNTDetails;
 
@@ -293,60 +296,60 @@ class Student
         return $this;
     }
 
-    public function getEducationDetails(): ?StudentEducation
+    public function getEducationDetails(): ?array
     {
         return $this->educationDetails;
     }
 
-    public function setEducationDetails(?StudentEducation $educationDetails): self
+    public function setEducationDetails(?array $educationDetails): self
     {
         $this->educationDetails = $educationDetails;
 
         return $this;
     }
 
-    public function getCourseDetails(): ?StudentCourse
+    public function getCourseDetails(): ?array
     {
         return $this->courseDetails;
     }
 
-    public function setCourseDetails(?StudentCourse $courseDetails): self
+    public function setCourseDetails(?array $courseDetails): self
     {
         $this->courseDetails = $courseDetails;
 
         return $this;
     }
 
-    public function getJobDetails(): ?StudentJob
+    public function getJobDetails(): ?array
     {
         return $this->jobDetails;
     }
 
-    public function setJobDetails(?StudentJob $jobDetails): self
+    public function setJobDetails(?array $jobDetails): self
     {
         $this->jobDetails = $jobDetails;
 
         return $this;
     }
 
-    public function getMotivationDetails(): ?StudentMotivation
+    public function getMotivationDetails(): ?array
     {
         return $this->motivationDetails;
     }
 
-    public function setMotivationDetails(?StudentMotivation $motivationDetails): self
+    public function setMotivationDetails(?array $motivationDetails): self
     {
         $this->motivationDetails = $motivationDetails;
 
         return $this;
     }
 
-    public function getAvailabilityDetails(): ?StudentAvailability
+    public function getAvailabilityDetails(): ?array
     {
         return $this->availabilityDetails;
     }
 
-    public function setAvailabilityDetails(?StudentAvailability $availabilityDetails): self
+    public function setAvailabilityDetails(?array $availabilityDetails): self
     {
         $this->availabilityDetails = $availabilityDetails;
 
@@ -377,14 +380,26 @@ class Student
         return $this;
     }
 
-    public function getPermissionDetails(): ?StudentPermission
+    public function getPermissionDetails(): ?array
     {
         return $this->permissionDetails;
     }
 
-    public function setPermissionDetails(?StudentPermission $permissionDetails): self
+    public function setPermissionDetails(?array $permissionDetails): self
     {
         $this->permissionDetails = $permissionDetails;
+
+        return $this;
+    }
+
+    public function getIntakeDetail(): ?string
+    {
+        return $this->intakeDetail;
+    }
+
+    public function setIntakeDetails(?string $intakeDetail): self
+    {
+        $this->intakeDetail = $intakeDetail;
 
         return $this;
     }

@@ -149,7 +149,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function dtoToLearningNeed(LearningNeed $resource) {
+    private function     dtoToLearningNeed(LearningNeed $resource) {
         // Get all info from the dto for creating a LearningNeed and return the body for this
         $learningNeed['description'] = $resource->getLearningNeedDescription();
         $learningNeed['motivation'] = $resource->getLearningNeedMotivation();
@@ -178,7 +178,8 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeed;
     }
 
-    private function inputToLearningNeed(array $input) {
+    private function inputToLearningNeed(array $input)
+    {
         // Get all info from the input array for updating a LearningNeed and return the body for this
         $learningNeed['description'] = $input['learningNeedDescription'];
         $learningNeed['motivation'] = $input['learningNeedMotivation'];
