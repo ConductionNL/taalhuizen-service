@@ -54,7 +54,39 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          }
+ *          },
+ *          "activeStudents" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "newRefferedStudents" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "newRefferedStudent" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
+ *          "completedStudents" = {
+ *              "mutation" = StudentMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          },
  *     }
  * )
  * @ORM\Entity(repositoryClass=StudentRepository::class)

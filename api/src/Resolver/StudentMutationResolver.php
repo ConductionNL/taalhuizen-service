@@ -38,6 +38,14 @@ class StudentMutationResolver implements MutationResolverInterface
                 return $this->updateStudent($context['info']->variableValues['input']);
             case 'removeStudent':
                 return $this->deleteStudent($context['info']->variableValues['input']);
+            case 'activeStudents':
+                return $this->activeStudents($context['info']->variableValues['input']);
+            case 'newRefferedStudents':
+                return $this->newRefferedStudents($context['info']->variableValues['input']);
+            case 'newRefferedStudent':
+                return $this->newRefferedStudent($context['info']->variableValues['input']);
+            case 'completedStudents':
+                return $this->completedStudents($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -61,6 +69,30 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
     public function deleteStudent(array $student): ?Student
+    {
+
+        return null;
+    }
+
+    public function activeStudents(array $student): ?Student
+    {
+
+        return null;
+    }
+
+    public function newRefferedStudents(array $student): ?Student
+    {
+
+        return null;
+    }
+
+    public function newRefferedStudent(array $student): ?Student
+    {
+
+        return null;
+    }
+
+    public function completedStudents(array $student): ?Student
     {
 
         return null;
