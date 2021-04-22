@@ -24,13 +24,9 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-        var_dump($context['info']->variableValues);
-//        var_dump(get_class($item));
         if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-//        var_dump($context['info']->operation->name->value);
         switch($context['info']->operation->name->value){
             case 'createLanguageHouse':
                 return $this->createLanguageHouse($context['info']->variableValues['input']);
@@ -70,18 +66,17 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     public function updateLanguageHouse(array $input): LanguageHouse
     {
         $id = explode('/',$input['id']);
-        $LanguageHouse = new LanguageHouse();
-        $LanguageHouse->setId(Uuid::getFactory()->fromString(end($id)));
-        $LanguageHouse->setEmail($input['email']);
-        $LanguageHouse->setName($input['name']);
+        $languageHouse = new LanguageHouse();
+        $languageHouse->setId(Uuid::getFactory()->fromString(end($id)));
+        $languageHouse->setEmail($input['email']);
+        $languageHouse->setName($input['name']);
 
-        $this->entityManager->persist($LanguageHouse);
-        return $LanguageHouse;
+        $this->entityManager->persist($languageHouse);
+        return $languageHouse;
     }
 
-    public function deleteLanguageHouse(array $LanguageHouse): ?LanguageHouse
+    public function deleteLanguageHouse(array $languageHouse): ?LanguageHouse
     {
-var_dump('test');
         return null;
     }
 }

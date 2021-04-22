@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
+use App\Resolver\EmployeeQueryItemResolver;
+use App\Resolver\EmployeeQueryCollectionResolver;
+use App\Resolver\EmployeeMutationResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +24,39 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = EmployeeQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = EmployeeQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
  * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
  */

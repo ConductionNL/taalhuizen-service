@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\GroupRepository;
-use App\Repository\DossierRepository;
+use App\Resolver\GroupMutationResolver;
+use App\Resolver\GroupQueryCollectionResolver;
+use App\Resolver\GroupQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -22,7 +24,39 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = GroupQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=GroupRepository::class)
  * @ORM\Table(name="`group`")
  */
