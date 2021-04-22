@@ -54,9 +54,14 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         $result['result'] = [];
 
         // If studentId is set generate the url for it
-        $studentUrl = null;
         if ($resource->getStudentId()) {
-            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $resource->getStudentId()]);
+            $studentId = explode('/',$resource->getStudentId());
+            if (is_array($studentId)) {
+                $studentId = end($studentId);
+            }
+            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
+        } else {
+            throw new Exception('Invalid request, studentId is not set!');
         }
 
         // Transform DTO info to learningNeed body...
@@ -96,6 +101,9 @@ class LearningNeedMutationResolver implements MutationResolverInterface
                 $learningNeedId = end($learningNeedId);
             }
         }
+        if (!isset($input['studentId'])) {
+            $input['studentId'] = null;
+        }
 
         // Transform input info to learningNeed body...
         $learningNeed = $this->inputToLearningNeed($input);
@@ -105,7 +113,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
         if (!isset($result['errorMessage'])) {
             // No errors so lets continue... to:
-            // Save LearningNeed and connect student/participant to it
+            // Save LearningNeed
             $result = array_merge($result, $this->learningNeedService->saveLearningNeed($result['learningNeed'], null, $learningNeedId));
 
             // Now put together the expected result in $result['result'] for Lifely:
@@ -126,7 +134,6 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         $result['result'] = [];
 
         // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
-        $learningNeedId = null;
         if (isset($learningNeed['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
         } elseif (isset($learningNeed['id'])) {
@@ -135,7 +142,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
                 $learningNeedId = end($learningNeedId);
             }
         } else {
-            throw new Exception('No learningNeedUrl or id was specified');
+            throw new Exception('No learningNeedUrl or id was specified!');
         }
 
         $result = array_merge($result, $this->learningNeedService->deleteLearningNeed($learningNeedId));

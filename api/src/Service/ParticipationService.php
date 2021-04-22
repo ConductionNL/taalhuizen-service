@@ -37,12 +37,14 @@ class ParticipationService
         $result['participation'] = $participation;
 
         // Connect EAV/learningNeed to the participation
-        $result = array_merge($result, $this->connectLearningNeedToParticipation($learningNeedId, $participation));
+        if (isset($learningNeedId)) {
+            $result = array_merge($result, $this->addParticipationToLearningNeed($participation, $learningNeedId));
+        }
 
         return $result;
     }
 
-    public function connectLearningNeedToParticipation($learningNeedId, $participation) {
+    private function addParticipationToLearningNeed($participation, $learningNeedId) {
         $result = [];
         // should already be checked but just in case:
         if(!$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
@@ -55,7 +57,7 @@ class ParticipationService
             $learningNeed['participations'] = [];
         }
 
-        // Connect the learningNeed in EAV to the EAV/participation connected to it
+        // Connect the learningNeed in EAV to the EAV/participation
         if (!in_array($participation['@id'], $learningNeed['participations'])) {
             array_push($learningNeed['participations'], $participation['@id']);
             $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
@@ -75,42 +77,34 @@ class ParticipationService
     }
 
     public function deleteParticipation($id) {
-        //todo:
-//        if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
-//            $result['participants'] = [];
-//            // Get the learningNeed from EAV
-//            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
-//
-//            // Remove this learningNeed from all EAV/edu/participants
-//            foreach ($learningNeed['participants'] as $studentUrl) {
-//                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
-//                if (isset($studentResult['participant'])) {
-//                    // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
-//                    array_push($result['participants'], $studentResult['participant']['@id']);
-//                }
-//            }
-//
-//            // Delete the learningNeed in EAV
-//            $this->eavService->deleteObject($learningNeed['eavId']);
-//            // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//            $result['learningNeed'] = $learningNeed;
-//        } else {
-//            $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/learning_need!';
-//        }
-//        return $result;
+        if ($this->eavService->hasEavObject(null, 'participations', $id)) {
+            // Get the participation from EAV
+            $participation = $this->eavService->getObject('participations', null, 'eav', $id);
+
+            // Remove this participation from the EAV/edu/learningNeed
+            $result = $this->removeParticipationFromLearningNeed($participation['@eav'], $participation['learningNeed']);
+
+            // Delete the participation in EAV
+            $this->eavService->deleteObject($participation['eavId']);
+            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+            $result['participation'] = $participation;
+        } else {
+            $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/participation!';
+        }
+        return $result;
     }
 
-//    public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl) {
-//        $result = [];
-//        if ($this->eavService->hasEavObject($studentUrl)) {
-//            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
-//                return $participantLearningNeed != $learningNeedUrl;
-//            });
-//            $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
-//        }
-//        return $result;
-//    }
+    private function removeParticipationFromLearningNeed($participationUrl, $learningNeedUrl) {
+        $result = [];
+        if ($this->eavService->hasEavObject($learningNeedUrl)) {
+            $getLearningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+            $learningNeed['participations'] = array_filter($getLearningNeed['participations'], function($learningNeedParticipation) use($participationUrl) {
+                return $learningNeedParticipation != $participationUrl;
+            });
+            $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
+        }
+        return $result;
+    }
 
     public function getParticipation($id, $url = null) {
         $result = [];
@@ -156,11 +150,7 @@ class ParticipationService
 
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null) {
         $result = [];
-        if (!isset($learningNeedId)) {
-            $result['errorMessage'] = 'Invalid request, learningNeedId is not set!';
-        } elseif(!$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
-            $result['errorMessage'] = 'Invalid request, learningNeedId is not an existing eav/learning_need!';
-        } elseif (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
+        if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             $result['errorMessage'] = 'Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.';
         } elseif ($participation['topicOther'] == 'OTHER' && !isset($participation['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
@@ -168,15 +158,39 @@ class ParticipationService
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
         } elseif ($participation['level'] == 'OTHER' && !isset($participation['levelOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
-        } elseif(isset($participation['startDate']) && isset($participation['endDate']) && $participation['startDate'] >= $participation['endDate']) {
-            $result['errorMessage'] = 'Invalid request, detailsEndDate needs to be later than detailsStartDate!';
         } elseif (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
             $result['errorMessage'] = 'Invalid request, aanbiederId is not an existing cc/organization!';
         } elseif (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
             $result['errorMessage'] = 'Invalid request, participationId is not an existing eav/participation!';
+        } elseif(isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
+            $result['errorMessage'] = 'Invalid request, learningNeedId is not an existing eav/learning_need!';
+        }
+        if(isset($participation['startDate']) && isset($participation['endDate'])) {
+            if ($participation['startDate'] instanceof \DateTime && $participation['endDate'] instanceof \DateTime) {
+                $startDate = $participation['startDate'];
+                $endDate = $participation['endDate'];
+            } else {
+                $startDate = new \DateTime($participation['startDate']); $startDate->format('Y-m-d H:i:s');
+                $endDate = new \DateTime($participation['endDate']); $endDate->format('Y-m-d H:i:s');
+            }
+            if ($startDate >= $endDate) {
+                $result['errorMessage'] = 'Invalid request, detailsEndDate needs to be later than detailsStartDate!';
+            }
+        }
+        if(isset($participation['presenceStartDate']) && isset($participation['presenceEndDate'])) {
+            if ($participation['presenceStartDate'] instanceof \DateTime && $participation['presenceEndDate'] instanceof \DateTime) {
+                $startDate = $participation['presenceStartDate'];
+                $endDate = $participation['presenceEndDate'];
+            } else {
+                $startDate = new \DateTime($participation['presenceStartDate']); $startDate->format('Y-m-d H:i:s');
+                $endDate = new \DateTime($participation['presenceEndDate']); $endDate->format('Y-m-d H:i:s');
+            }
+            if ($startDate >= $endDate) {
+                $result['errorMessage'] = 'Invalid request, presenceEndDate needs to be later than presenceStartDate!';
+            }
         }
         // Make sure not to keep these values in the input/participation body when doing and update
-        unset($participation['participationId']);
+        unset($participation['participationId']); unset($participation['learningNeedId']);
         $result['participation'] = $participation;
         return $result;
     }
@@ -218,9 +232,7 @@ class ParticipationService
         if (isset($participation['presenceEndDate'])) {
             $resource->setPresenceEndDate(new \DateTime($participation['presenceEndDate']));
         }
-        if (isset($participation['presenceEndParticipationReason'])) {
-            $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
-        }
+        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
 
         if (isset($learningNeedId)) {
             $resource->setLearningNeedId($learningNeedId);

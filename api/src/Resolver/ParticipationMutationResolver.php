@@ -56,14 +56,19 @@ class ParticipationMutationResolver implements MutationResolverInterface
         // If aanbiederId is set generate the url for it
         $aanbiederUrl = null;
         if ($resource->getAanbiederId()) {
-            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $resource->getAanbiederId()]);
+            $aanbiederId = explode('/',$resource->getAanbiederId());
+            if (is_array($aanbiederId)) {
+                $aanbiederId = end($aanbiederId);
+            }
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
-        $learningNeedId = null;
         if ($resource->getLearningNeedId()) {
             $learningNeedId = explode('/',$resource->getLearningNeedId());
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
+        } else {
+            throw new Exception('Invalid request, learningNeedId is not set!');
         }
 
         // Transform DTO info to participation body...
@@ -97,62 +102,63 @@ class ParticipationMutationResolver implements MutationResolverInterface
         if (is_array($participationId)) {
             $participationId = end($participationId);
         }
+        // If aanbiederId is set generate the url for it
+        $aanbiederUrl = null;
+        if (isset($input['aanbiederId'])) {
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['aanbiederId']]);
+        }
+        if (!isset($input['learningNeedId'])) {
+            $input['learningNeedId'] = null;
+        }
 
         // Transform input info to participation body...
         $participation = $this->inputToParticipation($input);
 
-        //todo:
-//        // Do some checks and error handling
-//        $result = array_merge($result, $this->learningNeedService->checkLearningNeedValues($learningNeed, null, $learningNeedId));
-//
-//        if (!isset($result['errorMessage'])) {
-//            // No errors so lets continue... to:
-//            // Save LearningNeed and connect student/participant to it
-//            $result = array_merge($result, $this->learningNeedService->saveLearningNeed($result['learningNeed'], null, $learningNeedId));
-//
-//            // Now put together the expected result in $result['result'] for Lifely:
-//            $resourceResult = $this->learningNeedService->handleResult($result['learningNeed'], $input['studentId']);
-//            $resourceResult->setId(Uuid::getFactory()->fromString($result['learningNeed']['id']));
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
-//        $this->entityManager->persist($resourceResult);
-//        return $resourceResult;
-        return new Participation();
+        // Do some checks and error handling
+        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, $participationId));
+
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Save Participation
+            $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], null, $participationId));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation'], $input['learningNeedId']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['participation']['id']));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function removeParticipation(array $participation): ?Participation
     {
-        //todo:
-//        $result['result'] = [];
-//
-//        // If learningNeedUrl or learningNeedId is set generate the id for it, needed for eav calls later
-//        $learningNeedId = null;
-//        if (isset($learningNeed['learningNeedUrl'])) {
-//            $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
-//        } elseif (isset($learningNeed['id'])) {
-//            $learningNeedId = explode('/',$learningNeed['id']);
-//            if (is_array($learningNeedId)) {
-//                $learningNeedId = end($learningNeedId);
-//            }
-//        } else {
-//            throw new Exception('No learningNeedUrl or id was specified');
-//        }
-//
-//        $result = array_merge($result, $this->learningNeedService->deleteLearningNeed($learningNeedId));
-//
-//        $result['result'] = False;
-//        if (isset($result['learningNeed'])){
-//            $result['result'] = True;
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
+        $result['result'] = [];
+
+        if (isset($participation['id'])) {
+            $participationId = explode('/',$participation['id']);
+            if (is_array($participationId)) {
+                $participationId = end($participationId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+
+        $result = array_merge($result, $this->participationService->deleteParticipation($participationId));
+
+        $result['result'] = False;
+        if (isset($result['participation'])){
+            $result['result'] = True;
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
         return null;
     }
 
@@ -183,33 +189,29 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     private function inputToParticipation(array $input) {
         // Get all info from the input array for updating a Participation and return the body for this
-        $participation['aanbiederId'] = $input['aanbiederId'];
-
-        // todo:
-//        $participation['description'] = $input['learningNeedDescription'];
-//        $participation['motivation'] = $input['learningNeedMotivation'];
-//        $participation['goal'] = $input['desiredOutComesGoal'];
-//        $participation['topic'] = $input['desiredOutComesTopic'];
-//        if (isset($input['desiredOutComesTopicOther'])) {
-//            $participation['topicOther'] = $input['desiredOutComesTopicOther'];
-//        }
-//        $participation['application'] = $input['desiredOutComesApplication'];
-//        if (isset($input['desiredOutComesApplicationOther'])) {
-//            $participation['applicationOther'] = $input['desiredOutComesApplicationOther'];
-//        }
-//        $participation['level'] = $input['desiredOutComesLevel'];
-//        if (isset($input['desiredOutComesLevelOther'])) {
-//            $participation['levelOther'] = $input['desiredOutComesLevelOther'];
-//        }
-//        $participation['desiredOffer'] = $input['offerDesiredOffer'];
-//        $participation['advisedOffer'] = $input['offerAdvisedOffer'];
-//        $participation['offerDifference'] = $input['offerDifference'];
-//        if (isset($input['offerDifferenceOther'])) {
-//            $participation['offerDifferenceOther'] = $input['offerDifferenceOther'];
-//        }
-//        if (isset($input['offerEngagements'])) {
-//            $participation['offerEngagements'] = $input['offerEngagements'];
-//        }
+        // note: everything is nullabel in the dto, but eav doesn't like values set to null
+        if (isset($input['aanbiederId'])) { $participation['aanbiederId'] = $input['aanbiederId']; }
+        if (isset($input['aanbiederName'])) { $participation['aanbiederName'] = $input['aanbiederName']; }
+        if (isset($input['aanbiederNote'])) { $participation['aanbiederNote'] = $input['aanbiederNote']; }
+        if (isset($input['offerName'])) { $participation['offerName'] = $input['offerName']; }
+        if (isset($input['offerCourse'])) { $participation['offerCourse'] = $input['offerCourse']; }
+        if (isset($input['outComesGoal'])) { $participation['goal'] = $input['outComesGoal']; }
+        if (isset($input['outComesTopic'])) { $participation['topic'] = $input['outComesTopic']; }
+        if (isset($input['outComesTopicOther'])) { $participation['topicOther'] = $input['outComesTopicOther']; }
+        if (isset($input['outComesApplication'])) {  $participation['application'] = $input['outComesApplication']; }
+        if (isset($input['outComesApplicationOther'])) { $participation['applicationOther'] = $input['outComesApplicationOther']; }
+        if (isset($input['outComesLevel'])) { $participation['level'] = $input['outComesLevel']; }
+        if (isset($input['outComesLevelOther'])) { $participation['levelOther'] = $input['outComesLevelOther']; }
+        if (isset($input['detailsIsFormal'])) { $participation['isFormal'] = $input['detailsIsFormal']; }
+        if (isset($input['detailsGroupFormation'])) { $participation['groupFormation'] = $input['detailsGroupFormation']; }
+        if (isset($input['detailsTotalClassHours'])) { $participation['totalClassHours'] = $input['detailsTotalClassHours']; }
+        if (isset($input['detailsCertificateWillBeAwarded'])) { $participation['certificateWillBeAwarded'] = $input['detailsCertificateWillBeAwarded']; }
+        if (isset($input['detailsStartDate'])) { $participation['startDate'] = $input['detailsStartDate']; }
+        if (isset($input['detailsEndDate'])) { $participation['endDate'] = $input['detailsEndDate']; }
+        if (isset($input['detailsEngagements'])) { $participation['engagements'] = $input['detailsEngagements']; }
+        if (isset($input['presenceStartDate'])) { $participation['presenceStartDate'] = $input['presenceStartDate']; }
+        if (isset($input['presenceEndDate'])) { $participation['presenceEndDate'] = $input['presenceEndDate']; }
+        if (isset($input['presenceEndParticipationReason'])) { $participation['presenceEndParticipationReason'] = $input['presenceEndParticipationReason']; }
         return $participation;
     }
 }
