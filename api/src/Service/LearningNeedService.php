@@ -113,11 +113,12 @@ class LearningNeedService
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
+            $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
                 return $participantLearningNeed != $learningNeedUrl;
-            });
+            }));
             $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
         }
+        // only works when learningNeed is deleted after, because relation is not removed from the EAV learningNeed object in here
         return $result;
     }
 

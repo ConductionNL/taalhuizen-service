@@ -46,7 +46,45 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "addMentorTo" = {
  *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "removeMentorFrom" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "addGroupParticipation" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "updateGroupParticipation" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {
+ *                  "participationId"={"type" = "ID!"},
+ *                  "presenceEngagements"={"type" = "String"},
+ *                  "presenceStartDate"={"type" = "DateTime"},
+ *                  "presenceEndDate"={"type" = "DateTime"},
+ *                  "presenceEndParticipationReason"={"type" = "String"}
+ *              },
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "removeGroupParticipation" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
