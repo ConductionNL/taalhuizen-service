@@ -57,11 +57,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "accept" = {
  *              "mutation" = RegistrationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "write" = false
  *          }
  *     }
  * )
