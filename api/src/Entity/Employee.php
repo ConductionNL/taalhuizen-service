@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
+use App\Resolver\EmployeeQueryItemResolver;
+use App\Resolver\EmployeeQueryCollectionResolver;
+use App\Resolver\EmployeeMutationResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +24,39 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = EmployeeQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = EmployeeQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
  * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
  */
@@ -45,7 +80,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -68,7 +102,6 @@ class Employee
      * @Assert\Length(
      *     max = 255
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -86,9 +119,11 @@ class Employee
     private $telephone;
 
     /**
-     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @var array The availability for this employee
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $availability;
+    private array $availability = [];
 
     /**
      * @var string The Availability Note of this Employee.
@@ -107,7 +142,6 @@ class Employee
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -142,13 +176,13 @@ class Employee
     private $dateOfBirth;
 
     /**
-     * @var Address The address of this Employee.
+     * @var array The address of this Employee.
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity=Address::class)
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $address;
+    private array $address = [];
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -162,7 +196,7 @@ class Employee
     private $contactTelephone;
 
     /**
-     * @var string Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
+     * @var string|null Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
      *
      * @Assert\Choice(
      *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
@@ -170,7 +204,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $contactPreference;
+    private ?string $contactPreference;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -186,12 +220,12 @@ class Employee
      *      {"NT1","NT2"}
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="json", length=255)
      */
-    private $targetGroupPreference = [];
+    private array $targetGroupPreferences = [];
 
     /**
-     * @var string Voluntering Preference of this Employee.
+     * @var string|null Volunteering Preference of this Employee.
      *
      *  @Assert\Length(
      *     max = 255
@@ -199,7 +233,7 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $volunteringPreference;
+    private ?string $volunteeringPreference;
 
 
     /**
@@ -213,6 +247,7 @@ class Employee
     private $hasExperienceWithTargetGroup;
 
     /**
+     * @var bool Shouldn't this be a string to provide the reason for the experience with the target group?
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $experienceWithTargetGroupYesReason;
@@ -233,9 +268,9 @@ class Employee
      *
      * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=CurrentEducationNoButDidFollow::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $currentEducationNoButDidFollow;
+    private array $currentEducationNoButDidFollow = [];
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -303,17 +338,7 @@ class Employee
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $userGroupId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
     private $userId;
-
-    public function __construct()
-    {
-        $this->address = new ArrayCollection();
-    }
 
     public function getId(): UuidInterface
     {
@@ -446,50 +471,38 @@ class Employee
         return $this;
     }
 
-    public function getTargetGroupPreference(): ?array
+    public function getTargetGroupPreferences(): ?array
     {
-        return $this->targetGroupPreference;
+        return $this->targetGroupPreferences;
     }
 
-    public function setTargetGroupPreference(?array $targetGroupPreference): self
+    public function setTargetGroupPreferences(array $targetGroupPreferences): self
     {
-        $this->targetGroupPreference = $targetGroupPreference;
+        $this->targetGroupPreferences = $targetGroupPreferences;
 
         return $this;
     }
 
-    public function getVolunteringPreference(): ?string
+    public function getVolunteeringPreference(): ?string
     {
-        return $this->volunteringPreference;
+        return $this->volunteeringPreference;
     }
 
-    public function setVolunteringPreference(?string $volunteringPreference): self
+    public function setVolunteeringPreference(?string $volunteeringPreference): self
     {
-        $this->volunteringPreference = $volunteringPreference;
+        $this->volunteeringPreference = $volunteeringPreference;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddress(): Collection
+    public function getAddress(): array
     {
         return $this->address;
     }
 
-    public function addAddress(Address $address): self
+    public function setAddress(array $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        $this->address->removeElement($address);
+        $this->address = $address;
 
         return $this;
     }
@@ -686,12 +699,12 @@ class Employee
         return $this;
     }
 
-    public function getAvailability(): ?Availability
+    public function getAvailability(): ?array
     {
         return $this->availability;
     }
 
-    public function setAvailability(?Availability $availability): self
+    public function setAvailability(array $availability): self
     {
         $this->availability = $availability;
 
@@ -710,12 +723,12 @@ class Employee
         return $this;
     }
 
-    public function getCurrentEducationNoButDidFollow(): ?CurrentEducationNoButDidFollow
+    public function getCurrentEducationNoButDidFollow(): ?array
     {
         return $this->currentEducationNoButDidFollow;
     }
 
-    public function setCurrentEducationNoButDidFollow(?CurrentEducationNoButDidFollow $currentEducationNoButDidFollow): self
+    public function setCurrentEducationNoButDidFollow(array $currentEducationNoButDidFollow): self
     {
         $this->currentEducationNoButDidFollow = $currentEducationNoButDidFollow;
 

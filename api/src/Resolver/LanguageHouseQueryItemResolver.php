@@ -14,8 +14,6 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        echo 'congrats!';
-        die;
         // TODO: Implement __invoke() method.
     }
 }
