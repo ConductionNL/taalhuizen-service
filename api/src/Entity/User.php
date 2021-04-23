@@ -8,7 +8,6 @@ use App\Resolver\UserMutationResolver;
 use App\Resolver\UserQueryCollectionResolver;
 use App\Resolver\UserQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,30 +21,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "collection_query" = {
  *              "collection_query" = UserQueryCollectionResolver::class
- *          },
- *          "login" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
- *          },
- *          "requestPasswordReset" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"email" = {"type" = "String!"}}
- *          },
- *          "resetPassword" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"email" = {"type" = "String!"}, "password" = {"type" = "String!"}, "token" = {"type" = "String!"}}
  *          },
  *          "create" = {
  *              "mutation" = UserMutationResolver::class,
@@ -68,6 +43,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
+ *          },
+ *          "login" = {
+ *              "mutation"=UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
+ *          },
+ *          "requestPasswordReset" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"email" = {"type" = "String!"}}
+ *          },
+ *          "resetPassword" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"email" = {"type" = "String!"}, "password" = {"type" = "String!"}, "token" = {"type" = "String!"}}
  *          }
  *     }
  * )
