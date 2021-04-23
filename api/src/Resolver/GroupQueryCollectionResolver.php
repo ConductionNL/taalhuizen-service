@@ -7,6 +7,8 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Entity\Group;
+use App\Entity\LearningNeed;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -22,6 +24,22 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 
         //@TODO implement logic to find stuff and put it in the iterator
         return $this->createPaginator($collection, $context['args']);
+
+        if (!$collection instanceof Group && !key_exists('input', $context['info']->variableValues)) {
+            return null;
+        }
+        switch($context['info']->operation->name->value){
+            case 'activeGroup':
+                return $this->activeGroups($item);
+            case 'futureGroup':
+                return $this->futureGroups($context['info']->variableValues['input']);
+            case 'completedGroup':
+                return $this->participantsOfTheGroup($context['info']->variableValues['input']);
+            case 'participantsOfTheGroup':
+                return $this->completedGroups($context['info']->variableValues['input']);
+            default:
+                return $item;
+        }
     }
 
     public function createPaginator(ArrayCollection $collection, array $args){
@@ -41,5 +59,29 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
+    }
+
+    public function activeGroups(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function futureGroups(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function participantsOfTheGroup(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function completedGroups(array $group): ?Group
+    {
+
+        return null;
     }
 }

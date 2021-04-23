@@ -60,3 +60,21 @@ services:
     App\Resolver\UserQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LearningNeedMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\LearningNeedQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LearningNeedQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ParticipationMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\ParticipationQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ParticipationQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }

@@ -55,7 +55,8 @@ class LearningNeedService
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
             $participant['learningNeeds'] = $getParticipant['learningNeeds'];
-        } else {
+        }
+        if (!isset($participant['learningNeeds'])){
             $participant['learningNeeds'] = [];
         }
 
@@ -70,7 +71,8 @@ class LearningNeedService
             // Update the learningNeed to add the EAV/edu/participant to it
             if (isset($learningNeed['participants'])) {
                 $updateLearningNeed['participants'] = $learningNeed['participants'];
-            } else {
+            }
+            if (!isset($updateLearningNeed['participants'])){
                 $updateLearningNeed['participants'] = [];
             }
             if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
@@ -113,11 +115,14 @@ class LearningNeedService
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
-                return $participantLearningNeed != $learningNeedUrl;
-            });
-            $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            if (isset($getParticipant['learningNeeds'])) {
+                $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
+                    return $participantLearningNeed != $learningNeedUrl;
+                }));
+                $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            }
         }
+        // only works when learningNeed is deleted after, because relation is not removed from the EAV learningNeed object in here
         return $result;
     }
 
