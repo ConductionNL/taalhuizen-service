@@ -56,19 +56,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "write" = false
  *          },
  *          "active" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "collection_query" = GroupQueryCollectionResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
  *          "future" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "collection_query" = GroupQueryCollectionResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
  *          "completed" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "collection_query" = GroupQueryCollectionResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
  *          "participantsOfThe" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "collection_query" = GroupQueryCollectionResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
  *          "changeTeachersOfThe" = {
@@ -77,8 +77,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *          },
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          }
  *     }
  * )
  * @ORM\Entity(repositoryClass=GroupRepository::class)
