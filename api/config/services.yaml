@@ -51,6 +51,16 @@ services:
 #        arguments:
 #            - '@Redis'
 
+    App\Resolver\ProviderMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\ProviderQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ProviderQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+
     App\Resolver\TaalhuisQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
