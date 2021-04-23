@@ -30,7 +30,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
+        if (!$item instanceof Employee && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
         switch($context['info']->operation->name->value){
@@ -53,16 +53,13 @@ class EmployeeMutationResolver implements MutationResolverInterface
     public function updateEmployee(array $input): Employee
     {
         $id = explode('/',$input['id']);
-        $employee = new Employee();
-
-
-        $this->entityManager->persist($employee);
-        return $employee;
+        return $this->mrcService->updateEmployee(end($id), $input);;
     }
 
-    public function deleteEmployee(array $employee): ?Employee
+    public function deleteEmployee(array $input): ?Employee
     {
-
+        $id = explode('/',$input['id']);
+        $this->mrcService->deleteEmployee(end($id));
         return null;
     }
 }

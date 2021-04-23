@@ -7,20 +7,23 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\MrcService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class EmployeeQueryCollectionResolver implements QueryCollectionResolverInterface
 {
+    private MrcService $mrcService;
 
+    public function __construct(MrcService $mrcService){
+        $this->mrcService = $mrcService;
+    }
     /**
      * @inheritDoc
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = new ArrayCollection();
-
-        //@TODO implement logic to find stuff and put it in the iterator
+        $collection = $this->mrcService->getEmployees();
         return $this->createPaginator($collection, $context['args']);
     }
 
