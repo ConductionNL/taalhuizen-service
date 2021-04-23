@@ -36,6 +36,8 @@ class GroupMutationResolver implements MutationResolverInterface
                 return $this->updateGroup($context['info']->variableValues['input']);
             case 'removeGroup':
                 return $this->deleteGroup($context['info']->variableValues['input']);
+            case 'changeTeachersOfTheGroup':
+                return $this->changeTeachersOfTheGroup($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -59,6 +61,12 @@ class GroupMutationResolver implements MutationResolverInterface
     }
 
     public function deleteGroup(array $group): ?Group
+    {
+
+        return null;
+    }
+
+    public function changeTeachersOfTheGroup(array $group): ?Group
     {
 
         return null;

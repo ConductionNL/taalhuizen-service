@@ -54,6 +54,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
+ *          },
+ *          "active" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "future" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "completed" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "participantsOfThe" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "changeTeachersOfThe" = {
+ *              "mutation" = GroupMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          }
  *     }
  * )
