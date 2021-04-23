@@ -35,6 +35,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
                 return $this->updateRegistration($context['info']->variableValues['input']);
             case 'removeRegistration':
                 return $this->deleteRegistration($context['info']->variableValues['input']);
+            case 'acceptRegistration':
+                return $this->acceptRegistration($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -57,7 +59,12 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return $languageHouse;
     }
 
-    public function deleteRegistration(array $registration): ?LanguageHouse
+    public function deleteRegistration(array $registration): ?Registration
+    {
+        return null;
+    }
+
+    public function acceptRegistration(array $registration): ?Registration
     {
         return null;
     }

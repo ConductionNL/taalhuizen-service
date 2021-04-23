@@ -93,7 +93,6 @@ class LanguageHouse
     /**
      * @var array|null The address of this Taalhuis.
      *
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
@@ -170,12 +169,12 @@ class LanguageHouse
         return $this;
     }
 
-    public function getAddress(): Address
+    public function getAddress(): ?array
     {
         return $this->address;
     }
 
-    public function setAddress(?Address $address): self
+    public function setAddress(?array $address): self
     {
         $this->address = $address;
 
