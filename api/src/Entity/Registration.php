@@ -55,7 +55,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "login" = {
+ *          "accept" = {
  *              "mutation" = RegistrationMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
