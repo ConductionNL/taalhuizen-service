@@ -41,9 +41,9 @@ class StudentMutationResolver implements MutationResolverInterface
         if (!$item instanceof Student && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createStudent':
-                return $this->createStudent($item);
+                return $this->createStudent($context['info']->variableValues['input']);
             case 'updateStudent':
                 return $this->updateStudent($context['info']->variableValues['input']);
             case 'removeStudent':
@@ -53,23 +53,35 @@ class StudentMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createStudent(Student $resource): Student
+    public function createStudent(array $input): Student
     {
         $result['result'] = [];
 
-        // Not needed for student?
-        // If studentId is set generate the url for it
-//        $studentUrl = null;
-//        if ($resource->getStudentId()) {
-//            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $resource->getStudentId()]);
-//        }
+//         If languageHouseId is set generate the url for it
+        $languageHouseUrl = null;
+        if (isset($input['languageHouseId'])) {
+            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $input['languageHouseId']]);
+        } else {
+            throw new \Exception('languageHouseId not given');
+        }
 
         // Transform DTO info to student body...
-        $student = $this->dtoToStudent($resource);
 
-        // Not needed for student?
+
+        // First make cc/person
+        $ccPersonId = $this->savePerson($input);
+
+        // Then make edu/participant
+        $input['studentId'] = $this->saveParticipant($input, $ccPersonId);
+
+        // Then make memo if set
+        if (isset($input['memo'])) {
+            $input['memo'] = $this->saveMemo($input['memo'], $input['studentId']);
+        }
+
+
         // Do some checks and error handling
-//        $result = array_merge($result, $this->studentService->checkStudentValues($student, $studentUrl));
+        $result = array_merge($result, $this->studentService->checkStudentValues($input, $languageHouseUrl));
 
         if (!isset($result['errorMessage'])) {
             // No errors so lets continue... to:
@@ -77,7 +89,7 @@ class StudentMutationResolver implements MutationResolverInterface
 //            $result = array_merge($result, $this->studentService->saveStudent($result['student'], $studentUrl));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->studentService->handleResult($result['student'], $resource->getStudentId());
+            $resourceResult = $this->studentService->handleResult($result['student'], $input['studentId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['student']['id']));
         }
 
@@ -158,73 +170,8 @@ class StudentMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function dtoToStudent(Student $resource)
+    private function inputToStudent(array $input)
     {
-        // Get all info from the dto for creating a Student and return the body for this
-        if ($resource->getCivicIntegrationDetails()) {
-            $student['civicIntegrationDetails'] = $resource->getCivicIntegrationDetails();
-        }
-        if ($resource->getPersonDetails()) {
-            $student['personDetails'] = $resource->getPersonDetails();
-        }
-        if ($resource->getContactDetails()) {
-            $student['contactDetails'] = $resource->getContactDetails();
-        }
-        if ($resource->getGeneralDetails()) {
-            $student['generalDetails'] = $resource->getGeneralDetails();
-        }
-        if ($resource->getReferrerDetails()) {
-            $student['referrerDetails'] = $resource->getReferrerDetails();
-        }
-        if ($resource->getBackgroundDetails()) {
-            $student['backgroundDetails'] = $resource->getBackgroundDetails();
-        }
-        if ($resource->getDutchNTDetails()) {
-            $student['dutchNTDetails'] = $resource->getDutchNTDetails();
-        }
-        if ($resource->getSpeakingLevel()) {
-            $student['speakingLevel'] = $resource->getSpeakingLevel();
-        }
-        if ($resource->getEducationDetails()) {
-            $student['educationDetails'] = $resource->getEducationDetails();
-        }
-        if ($resource->getCourseDetails()) {
-            $student['courseDetails'] = $resource->getCourseDetails();
-        }
-        if ($resource->getJobDetails()) {
-            $student['jobDetails'] = $resource->getJobDetails();
-        }
-        if ($resource->getMotivationDetails()) {
-            $student['motivationDetails'] = $resource->getMotivationDetails();
-        }
-        if ($resource->getAvailabilityDetails()) {
-            $student['availabilityDetails'] = $resource->getAvailabilityDetails();
-        }
-        if ($resource->getReadingTestResult()) {
-            $student['readingTestResult'] = $resource->getReadingTestResult();
-        }
-        if ($resource->getWritingTestResult()) {
-            $student['writingTestResult'] = $resource->getWritingTestResult();
-        }
-        if ($resource->getPermissionDetails()) {
-            $student['permissionDetails'] = $resource->getPermissionDetails();
-        }
-        if ($resource->getIntakeDetail()) {
-            $student['intakeDetail'] = $resource->getIntakeDetail();
-        }
-        if ($resource->getIntakeDetail()) {
-            $student['intakeDetail'] = $resource->getIntakeDetail();
-        }
-        if ($resource->getTaalhuisId()) {
-            $student['taalhuisId'] = $resource->getTaalhuisId();
-        }
-        if ($resource->getStudentId()) {
-            $student['studentId'] = $resource->getStudentId();
-        }
-        return $student;
-    }
-
-    private function inputToStudent(array $input) {
         // Get all info from the input array for updating a Student and return the body for this
         if (isset($input['civicIntegrationDetails'])) {
             $student['civicIntegrationDetails'] = $input['civicIntegrationDetails'];
@@ -281,5 +228,25 @@ class StudentMutationResolver implements MutationResolverInterface
             $student['studentId'] = $input['studentId'];
         }
         return $student;
+    }
+
+    private function savePerson(array $input)
+    {
+
+        return;
+    }
+
+    private function saveParticipant(array $input)
+    {
+//        $civicIntegrationDetails
+
+        return;
+    }
+
+    private function saveMemo(string $participantId)
+    {
+//        $civicIntegrationDetails
+
+        return;
     }
 }

@@ -71,47 +71,67 @@ class Student
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
+
+    /**
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $status;
+
+    /**
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $memo;
+
+
+    /**
+     * @Groups({"write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private ?array $registrar;
+
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $civicIntegrationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $personDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $contactDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $generalDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $referrerDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $backgroundDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $dutchNTDetails;
 
@@ -123,56 +143,56 @@ class Student
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $educationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $courseDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $jobDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $motivationDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $availabilityDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $readingTestResult;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $writingTestResult;
 
     /**
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255)
+     * @ORM\Column(type="json", length=255)
      */
     private ?array $permissionDetails;
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\Column(type="array", length=255, nullable=true)
+     * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?array $intakeDetail;
 
@@ -181,13 +201,13 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $taalhuisId;
+    private ?string $languageHouseId;
 
     /**
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentId;
+    private ?string $studentId;
 
     public function getId(): UuidInterface
     {
@@ -197,6 +217,42 @@ class Student
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getMemo(): string
+    {
+        return $this->memo;
+    }
+
+    public function setMemo(?string $memo): self
+    {
+        $this->memo = $memo;
+
+        return $this;
+    }
+
+    public function getRegistrar(): array
+    {
+        return $this->registrar;
+    }
+
+    public function setRegistrar(?array $registrar): self
+    {
+        $this->registrar = $registrar;
+
         return $this;
     }
 
@@ -404,14 +460,14 @@ class Student
         return $this;
     }
 
-    public function getTaalhuisId(): ?string
+    public function getLanguageHouseId(): ?string
     {
-        return $this->taalhuisId;
+        return $this->languageHouseId;
     }
 
-    public function setTaalhuisId(string $taalhuisId): self
+    public function setLanguageHouseId(string $languageHouseId): self
     {
-        $this->taalhuisId = $taalhuisId;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }

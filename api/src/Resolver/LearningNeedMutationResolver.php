@@ -156,7 +156,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function     dtoToLearningNeed(LearningNeed $resource) {
+    private function dtoToLearningNeed(LearningNeed $resource) {
         // Get all info from the dto for creating a LearningNeed and return the body for this
         // note: everything that is nullabel in the dto has an if check, because eav doesn't like values set to null
         $learningNeed['description'] = $resource->getLearningNeedDescription();
