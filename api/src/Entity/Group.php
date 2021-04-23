@@ -55,7 +55,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "activeGroups" = {
+ *          "active" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "future" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "completed" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "participantsOfThe" = {
+ *              "collection_query" = GroupQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "changeTeachersOfThe" = {
  *              "mutation" = GroupMutationResolver::class,
  *              "read" = false,
  *              "deserialize" = false,
@@ -63,38 +79,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "write" = false,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *          },
- *          "futureGroups" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *          },
- *          "changeGroupTeachers" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *          },
- *          "participants" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *          },
- *          "completedGroups" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *          }
  *     }
  * )
  * @ORM\Entity(repositoryClass=GroupRepository::class)
