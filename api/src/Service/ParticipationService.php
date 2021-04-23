@@ -53,7 +53,8 @@ class ParticipationService
         $getLearningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $learningNeedId);
         if (isset($getLearningNeed['participations'])) {
             $learningNeed['participations'] = $getLearningNeed['participations'];
-        } else {
+        }
+        if (!isset($learningNeed['participations'])) {
             $learningNeed['participations'] = [];
         }
 
@@ -98,10 +99,12 @@ class ParticipationService
         $result = [];
         if ($this->eavService->hasEavObject($learningNeedUrl)) {
             $getLearningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
-            $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function($learningNeedParticipation) use($participationUrl) {
-                return $learningNeedParticipation != $participationUrl;
-            }));
-            $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
+            if (isset($getLearningNeed['participations'])) {
+                $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function($learningNeedParticipation) use($participationUrl) {
+                    return $learningNeedParticipation != $participationUrl;
+                }));
+                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
+            }
         }
         // only works when participation is deleted after, because relation is not removed from the EAV participation object in here
         return $result;
@@ -153,7 +156,8 @@ class ParticipationService
         if ($this->eavService->hasEavObject($mentorUrl)) {
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
             $employee['participations'] = $getEmployee['participations'];
-        } else {
+        }
+        if (!isset($employee['participations'])) {
             $employee['participations'] = [];
         }
 
@@ -168,7 +172,8 @@ class ParticipationService
             // Update the participant to add the EAV/mrc/employee to it
             if (isset($participation['mentors'])) {
                 $updateParticipation['mentors'] = $participation['mentors'];
-            } else {
+            }
+            if (!isset($updateParticipation['mentors'])) {
                 $updateParticipation['mentors'] = [];
             }
             if (!in_array($employee['@id'], $updateParticipation['mentors'])) {
@@ -187,10 +192,12 @@ class ParticipationService
         if ($this->eavService->hasEavObject($mentorUrl)) {
             // Update eav/mrc/employee to remove the participation from it
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
-            $employee['participations'] = array_values(array_filter($getEmployee['participations'], function($employeeParticipation) use($participation) {
-                return $employeeParticipation != $participation['@eav'];
-            }));
-            $result['employee'] = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
+            if (isset($getEmployee['participations'])) {
+                $employee['participations'] = array_values(array_filter($getEmployee['participations'], function($employeeParticipation) use($participation) {
+                    return $employeeParticipation != $participation['@eav'];
+                }));
+                $result['employee'] = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
+            }
         }
         if (isset($participation['mentors'])) {
             // Update eav/participation to remove the EAV/mrc/employee from it
@@ -211,7 +218,8 @@ class ParticipationService
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
             $group['participations'] = $getGroup['participations'];
-        } else {
+        }
+        if (!isset($group['participations'])){
             $group['participations'] = [];
         }
 
@@ -226,7 +234,8 @@ class ParticipationService
             // Update the participant to add the EAV/edu/group to it
             if (isset($participation['groups'])) {
                 $updateParticipation['groups'] = $participation['groups'];
-            } else {
+            }
+            if (!isset($updateParticipation['groups'])){
                 $updateParticipation['groups'] = [];
             }
             if (!in_array($group['@id'], $updateParticipation['groups'])) {
@@ -245,10 +254,12 @@ class ParticipationService
         if ($this->eavService->hasEavObject($groupUrl)) {
             // Update eav/edu/group to remove the participation from it
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
-            $group['participations'] = array_values(array_filter($getGroup['participations'], function($groupParticipation) use($participation) {
-                return $groupParticipation != $participation['@eav'];
-            }));
-            $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+            if (isset($getGroup['participations'])) {
+                $group['participations'] = array_values(array_filter($getGroup['participations'], function($groupParticipation) use($participation) {
+                    return $groupParticipation != $participation['@eav'];
+                }));
+                $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+            }
         }
         if (isset($participation['groups'])) {
             // Update eav/participation to remove the EAV/edu/group from it
