@@ -23,6 +23,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "collection_query" = {
  *              "collection_query" = UserQueryCollectionResolver::class
  *          },
+ *          "login" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
+ *          },
+ *          "requestPasswordReset" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"email" = {"type" = "String!"}}
+ *          },
+ *          "resetPassword" = {
+ *              "mutation" = UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"email" = {"type" = "String!"}, "password" = {"type" = "String!"}, "token" = {"type" = "String!"}}
+ *          },
  *          "create" = {
  *              "mutation" = UserMutationResolver::class,
  *              "read" = false,
@@ -92,7 +116,7 @@ class User
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
@@ -158,6 +182,13 @@ class User
     public function getToken(): ?string
     {
         return $this->token;
+    }
+
+    public function setToken(string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
     }
 
 }

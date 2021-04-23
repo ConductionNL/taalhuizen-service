@@ -10,6 +10,7 @@ use App\Entity\Document;
 use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
+use App\Service\MrcService;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -18,9 +19,11 @@ class EmployeeMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
+    private MrcService $mrcService;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService){
         $this->entityManager = $entityManager;
+        $this->mrcService = $mrcService;
     }
     /**
      * @inheritDoc
@@ -44,9 +47,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     public function createEmployee(array $employeeArray): Employee
     {
-        $employee = new Employee();
-        $this->entityManager->persist($employee);
-        return $employee;
+        return $this->mrcService->createEmployee($employeeArray);
     }
 
     public function updateEmployee(array $input): Employee
