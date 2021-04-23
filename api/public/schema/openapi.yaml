@@ -21639,6 +21639,760 @@ paths:
             schema:
               $ref: '#/components/schemas/StudentGeneral'
         description: 'The updated StudentGeneral resource'
+  /student_intake_details:
+    get:
+      tags:
+        - StudentIntakeDetail
+      operationId: getStudentIntakeDetailCollection
+      summary: 'Retrieves the collection of StudentIntakeDetail resources.'
+      responses:
+        200:
+          description: 'StudentIntakeDetail collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentIntakeDetail:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentIntakeDetail:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentIntakeDetail'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+        -
+          name: limit
+          in: query
+          required: false
+          description: 'The number of items per page'
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      produces:
+        - application/health+json
+    post:
+      tags:
+        - StudentIntakeDetail
+      operationId: postStudentIntakeDetailCollection
+      summary: 'Creates a StudentIntakeDetail resource.'
+      responses:
+        201:
+          description: 'StudentIntakeDetail resource created'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+          links:
+            GetStudentIntakeDetailItem:
+              parameters:
+                id: '$response.body#/id'
+              operationId: getStudentIntakeDetailItem
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /student_intake_details/{id}`.'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/graphql:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+        description: 'The new StudentIntakeDetail resource'
+      parameters:
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+  '/student_intake_details/{id}':
+    get:
+      tags:
+        - StudentIntakeDetail
+      operationId: getStudentIntakeDetailItem
+      summary: 'Retrieves a StudentIntakeDetail resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      responses:
+        200:
+          description: 'StudentIntakeDetail resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+        404:
+          description: 'Resource not found'
+      produces:
+        - application/health+json
+    delete:
+      tags:
+        - StudentIntakeDetail
+      operationId: deleteStudentIntakeDetailItem
+      summary: 'Removes the StudentIntakeDetail resource.'
+      responses:
+        204:
+          description: 'StudentIntakeDetail resource deleted'
+        404:
+          description: 'Resource not found'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+    put:
+      tags:
+        - StudentIntakeDetail
+      operationId: putStudentIntakeDetailItem
+      summary: 'Replaces the StudentIntakeDetail resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+      responses:
+        200:
+          description: 'StudentIntakeDetail resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/graphql:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+        description: 'The updated StudentIntakeDetail resource'
+    patch:
+      tags:
+        - StudentIntakeDetail
+      operationId: patchStudentIntakeDetailItem
+      summary: 'Updates the StudentIntakeDetail resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+      responses:
+        200:
+          description: 'StudentIntakeDetail resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentIntakeDetail'
+        400:
+          description: 'Invalid input'
+        404:
+          description: 'Resource not found'
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail:jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          applications/x-yaml:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/StudentIntakeDetail'
+        description: 'The updated StudentIntakeDetail resource'
   /student_jobs:
     get:
       tags:
@@ -29571,65 +30325,91 @@ components:
           type: string
           format: uuid
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         personDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         contactDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         generalDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         referrerDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         backgroundDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         speakingLevel:
           type: string
           nullable: true
         educationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         courseDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         jobDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         motivationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         availabilityDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         readingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         writingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         permissionDetails:
+          type: array
+          items:
+            type: string
+        intakeDetail:
+          readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        intakeDetails:
+          writeOnly: true
           type: string
-          format: iri-reference
           nullable: true
         taalhuisId:
           type: string
@@ -29637,8 +30417,8 @@ components:
           type: string
           nullable: true
       required:
-        - personDetails
         - permissionDetails
+        - taalhuisId
     'Student:jsonld':
       type: object
       description: ''
@@ -29658,65 +30438,91 @@ components:
           type: string
           format: uuid
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         personDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         contactDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         generalDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         referrerDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         backgroundDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         speakingLevel:
           type: string
           nullable: true
         educationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         courseDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         jobDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         motivationDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         availabilityDetails:
-          type: string
-          format: iri-reference
+          type: array
+          items:
+            type: string
           nullable: true
         readingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         writingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         permissionDetails:
+          type: array
+          items:
+            type: string
+        intakeDetail:
+          readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        intakeDetails:
+          writeOnly: true
           type: string
-          format: iri-reference
           nullable: true
         taalhuisId:
           type: string
@@ -29724,8 +30530,8 @@ components:
           type: string
           nullable: true
       required:
-        - personDetails
         - permissionDetails
+        - taalhuisId
     StudentAvailability:
       type: object
       description: ''
@@ -30328,6 +31134,117 @@ components:
           nullable: true
         childrenDatesOfBirth:
           type: string
+          nullable: true
+    StudentIntakeDetail:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        studentId:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        middleName:
+          type: string
+          nullable: true
+        nickname:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          format: date-time
+          nullable: true
+        streetAndHouseNumber:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        place:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        phoneNumberContactPerson:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        availability:
+          type: array
+          items:
+            type: string
+          nullable: true
+    'StudentIntakeDetail:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        studentId:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        middleName:
+          type: string
+          nullable: true
+        nickname:
+          type: string
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          format: date-time
+          nullable: true
+        streetAndHouseNumber:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        place:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        phoneNumberContactPerson:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        availability:
+          type: array
+          items:
+            type: string
           nullable: true
     StudentJob:
       type: object
@@ -31048,11 +31965,6 @@ definitions:
       - telephone
   Student-read:
     properties:
-      speakingLevel: []
-      readingTestResult: []
-      writingTestResult: []
-      taalhuisId: []
-      studentId: []
       civicIntegrationDetails: []
       personDetails: []
       contactDetails: []
@@ -31060,22 +31972,23 @@ definitions:
       referrerDetails: []
       backgroundDetails: []
       dutchNTDetails: []
+      speakingLevel: []
       educationDetails: []
       courseDetails: []
       jobDetails: []
       motivationDetails: []
       availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
       permissionDetails: []
+      intakeDetail: []
+      taalhuisId: []
+      studentId: []
     required:
-      - personDetails
       - permissionDetails
+      - taalhuisId
   Student-write:
     properties:
-      speakingLevel: []
-      readingTestResult: []
-      writingTestResult: []
-      taalhuisId: []
-      studentId: []
       civicIntegrationDetails: []
       personDetails: []
       contactDetails: []
@@ -31083,14 +31996,19 @@ definitions:
       referrerDetails: []
       backgroundDetails: []
       dutchNTDetails: []
+      speakingLevel: []
       educationDetails: []
       courseDetails: []
       jobDetails: []
       motivationDetails: []
       availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
       permissionDetails: []
+      intakeDetail: []
+      taalhuisId: []
+      studentId: []
     required:
-      - personDetails
       - permissionDetails
   StudentDossierEvent-read:
     properties:
@@ -31489,6 +32407,12 @@ tags:
       
   -
     name: StudentGeneral
+    description: |
+      
+      
+      
+  -
+    name: StudentIntakeDetail
     description: |
       
       
