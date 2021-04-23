@@ -12,6 +12,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Resolver\ProviderMutationResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
@@ -22,25 +23,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *     collectionOperations={
- *          "get",
- *          "get_provider"={
- *              "method"="GET",
- *              "path"="/providers/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific providers",
- *                  "description"="Returns a providers"
- *              }
+ *      graphql={
+ *
+ *          "create" = {
+ *              "mutation" = ProviderMutationResolver::class,
+ *              "write" = false
  *          },
- *          "delete_provider"={
- *              "method"="GET",
- *              "path"="/providers/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific providers",
- *                  "description"="Returns true if this providers was deleted"
- *              }
+ *          "update" = {
+ *              "mutation" = ProviderMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
  *          },
- *          "post"
+ *          "remove" = {
+ *              "mutation" = ProviderMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
  *     },
  * )
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
@@ -72,15 +74,6 @@ class Provider
     private $name;
 
     /**
-     * @var Address The address of this Provider.
-     *
-     * @MaxDepth(1)
-     * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity="App\Entity\Address")
-     */
-    private $address;
-
-    /**
      * @var string The Telephone of this Provider.
      *
      * @Assert\Length(
@@ -102,12 +95,15 @@ class Provider
      */
     private $email;
 
-    public function __construct()
-    {
-        $this->address = new ArrayCollection();
-    }
+    /**
+     * @var array|null The address of this Aanbieder.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $address;
 
-    public function getId(): UuidInterface
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }
@@ -154,27 +150,16 @@ class Provider
         return $this;
     }
 
-    /**
-     * @return Collection|address[]
-     */
-    public function getAddress(): Collection
+    public function getAddress(): ?array
     {
         return $this->address;
     }
 
-    public function addAddress(address $address): self
+    public function setAddress(?array $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-        }
+        $this->address = $address;
 
         return $this;
     }
 
-    public function removeAddress(address $address): self
-    {
-        $this->address->removeElement($address);
-
-        return $this;
-    }
 }

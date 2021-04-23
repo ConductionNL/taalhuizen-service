@@ -9896,6 +9896,22 @@ paths:
                   $ref: '#/components/schemas/Participation'
       parameters:
         -
+          name: learningNeedId
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: 'learningNeedId[]'
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        -
           name: page
           in: query
           required: false
@@ -10125,8 +10141,92 @@ paths:
     get:
       tags:
         - Participation
-      operationId: getParticipationItem
-      summary: 'Retrieves a Participation resource.'
+      operationId: get_participationParticipationCollection
+      summary: 'Retrieves the collection of Participation resources.'
+      responses:
+        200:
+          description: 'Participation collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
       parameters:
         -
           name: id
@@ -10558,6 +10658,187 @@ paths:
             schema:
               $ref: '#/components/schemas/Participation'
         description: 'The updated Participation resource'
+  '/participations/{id}/delete':
+    get:
+      tags:
+        - Participation
+      operationId: delete_participationParticipationCollection
+      summary: 'Retrieves the collection of Participation resources.'
+      responses:
+        200:
+          description: 'Participation collection response'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Participation'
+      parameters:
+        -
+          name: page
+          in: query
+          required: false
+          description: 'The collection page number'
+          schema:
+            type: integer
+            default: 1
+        -
+          name: limit
+          in: query
+          required: false
+          description: 'The number of items per page'
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      produces:
+        - application/health+json
   /providers:
     get:
       tags:
@@ -28915,12 +29196,14 @@ components:
           description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
           type: string
           nullable: true
-        targetGroupPreference:
+        targetGroupPreferences:
           description: 'Target Preference of this Employee. **NT1**, **NT2**'
-          type: string
-        volunteringPreference:
+          type: array
+          items:
+            type: string
+        volunteeringPreference:
           description: |
-            Voluntering Preference of this Employee.
+            Volunteering Preference of this Employee.
             
              @Assert\Length(
                 max = 255
@@ -28932,7 +29215,6 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
         userGroupIds:
           type: array
           items:
@@ -28948,6 +29230,7 @@ components:
           type: boolean
           nullable: true
         experienceWithTargetGroupYesReason:
+          description: 'Shouldn''t this be a string to provide the reason for the experience with the target group?'
           type: boolean
           nullable: true
         currentEducation:
@@ -28983,17 +29266,18 @@ components:
           type: string
           nullable: true
         availability:
-          type: string
-          format: iri-reference
-          nullable: true
+          description: 'The availability for this employee'
+          type: array
+          items:
+            type: string
         currentEducationYes:
           type: string
           format: iri-reference
           nullable: true
         currentEducationNoButDidFollow:
-          type: string
-          format: iri-reference
-          nullable: true
+          type: array
+          items:
+            type: string
         biscEmployeeId:
           type: string
           nullable: true
@@ -29003,9 +29287,6 @@ components:
         userId:
           type: string
           nullable: true
-      required:
-        - familyName
-        - email
     'Employee:jsonld':
       type: object
       description: ''
@@ -29066,12 +29347,14 @@ components:
           description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
           type: string
           nullable: true
-        targetGroupPreference:
+        targetGroupPreferences:
           description: 'Target Preference of this Employee. **NT1**, **NT2**'
-          type: string
-        volunteringPreference:
+          type: array
+          items:
+            type: string
+        volunteeringPreference:
           description: |
-            Voluntering Preference of this Employee.
+            Volunteering Preference of this Employee.
             
              @Assert\Length(
                 max = 255
@@ -29083,7 +29366,6 @@ components:
           type: array
           items:
             type: string
-            format: iri-reference
         userGroupIds:
           type: array
           items:
@@ -29099,6 +29381,7 @@ components:
           type: boolean
           nullable: true
         experienceWithTargetGroupYesReason:
+          description: 'Shouldn''t this be a string to provide the reason for the experience with the target group?'
           type: boolean
           nullable: true
         currentEducation:
@@ -29134,17 +29417,18 @@ components:
           type: string
           nullable: true
         availability:
-          type: string
-          format: iri-reference
-          nullable: true
+          description: 'The availability for this employee'
+          type: array
+          items:
+            type: string
         currentEducationYes:
           type: string
           format: iri-reference
           nullable: true
         currentEducationNoButDidFollow:
-          type: string
-          format: iri-reference
-          nullable: true
+          type: array
+          items:
+            type: string
         biscEmployeeId:
           type: string
           nullable: true
@@ -29154,9 +29438,6 @@ components:
         userId:
           type: string
           nullable: true
-      required:
-        - familyName
-        - email
     Group:
       type: object
       description: ''
@@ -31347,7 +31628,6 @@ components:
           type: string
           nullable: true
         token:
-          readOnly: true
           description: 'The Token for password reset'
           type: string
           nullable: true
@@ -31382,7 +31662,6 @@ components:
           type: string
           nullable: true
         token:
-          readOnly: true
           description: 'The Token for password reset'
           type: string
           nullable: true
@@ -31421,6 +31700,9 @@ definitions:
         description: 'The Telephone of this Employee.'
         type: string
         maxLength: 255
+      availability:
+        description: 'The availability for this employee'
+        type: array
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31437,35 +31719,32 @@ definitions:
         description: 'Date of birth of this Employee.'
         type: string
         example: 15-03-2000
+      address:
+        description: 'The address of this Employee.'
+        type: array
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
         maxLength: 255
       contactPreference:
         description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
-        type: string
-      targetGroupPreference:
+        type: string|null
+      targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
         type: array
         example: NT1
-      volunteringPreference:
+      volunteeringPreference:
         description: |
-          Voluntering Preference of this Employee.
+          Volunteering Preference of this Employee.
           
            @Assert\Length(
               max = 255
           )
-        type: string
-      currentlyFollowingCourseCourseProfessionalism: []
-      address:
-        description: 'The address of this Employee.'
-        type: \Address
-      currentEducationYes: []
+        type: string|null
       currentEducationNoButDidFollow: []
-    required:
-      - givenName
-      - familyName
-      - email
+      currentlyFollowingCourseCourseProfessionalism: []
+      currentEducationYes: []
+    required: []
   Employee-write:
     properties:
       givenName:
@@ -31484,6 +31763,9 @@ definitions:
         description: 'The Telephone of this Employee.'
         type: string
         maxLength: 255
+      availability:
+        description: 'The availability for this employee'
+        type: array
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31500,35 +31782,32 @@ definitions:
         description: 'Date of birth of this Employee.'
         type: string
         example: 15-03-2000
+      address:
+        description: 'The address of this Employee.'
+        type: array
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
         maxLength: 255
       contactPreference:
         description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
-        type: string
-      targetGroupPreference:
+        type: string|null
+      targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
         type: array
         example: NT1
-      volunteringPreference:
+      volunteeringPreference:
         description: |
-          Voluntering Preference of this Employee.
+          Volunteering Preference of this Employee.
           
            @Assert\Length(
               max = 255
           )
-        type: string
-      currentlyFollowingCourseCourseProfessionalism: []
-      address:
-        description: 'The address of this Employee.'
-        type: \Address
-      currentEducationYes: []
+        type: string|null
       currentEducationNoButDidFollow: []
-    required:
-      - givenName
-      - familyName
-      - email
+      currentlyFollowingCourseCourseProfessionalism: []
+      currentEducationYes: []
+    required: []
   Group-write:
     properties:
       outComesApplication: []
@@ -31731,7 +32010,6 @@ definitions:
       studentId: []
     required:
       - permissionDetails
-      - taalhuisId
   StudentDossierEvent-read:
     properties:
       event:
@@ -31770,22 +32048,6 @@ definitions:
       - eventDate
       - eventDescription
       - studentId
-  StudentIntakeDetail-write:
-    properties:
-      studentId: []
-      lastName: []
-      middleName: []
-      nickname: []
-      gender: []
-      dateOfBirth: []
-      streetAndHouseNumber: []
-      postalCode: []
-      place: []
-      phoneNumber: []
-      phoneNumberContactPerson: []
-      email: []
-      availability: []
-    required: []
   User-read:
     properties:
       email:
@@ -31794,10 +32056,6 @@ definitions:
         maxLength: 2550
       username:
         description: 'The Username of this User'
-        type: string
-        maxLength: 2550
-      password:
-        description: 'The Password of this User.'
         type: string
         maxLength: 2550
       token:
@@ -31928,12 +32186,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-22 13:53:13'
+        example: '2021-04-23 07:51:47'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-22 13:53:13'
+        example: '2021-04-23 07:51:47'
     required: []
   AuditTrail-write:
     properties:
@@ -31981,12 +32239,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-22 13:53:13'
+        example: '2021-04-23 07:51:47'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-22 13:53:13'
+        example: '2021-04-23 07:51:47'
     required: []
   ChangeLog-write:
     properties:

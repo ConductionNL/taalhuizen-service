@@ -8,6 +8,7 @@ use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use App\Entity\Student;
 
 class StudentQueryItemResolver implements QueryItemResolverInterface
 {
@@ -49,5 +50,11 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
         }
 
         return $resourceResult;
+    }
+
+    public function newRefferedStudent(array $student): ?Student
+    {
+
+        return null;
     }
 }

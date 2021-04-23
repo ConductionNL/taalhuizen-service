@@ -54,6 +54,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
+ *          },
+ *          "accept" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
  *          }
  *     }
  * )
@@ -77,14 +85,12 @@ class Registration
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity=RegisterStudent::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $student;
 
     /**
-     * @ORM\ManyToOne(targetEntity=RegisterStudentRegistrar::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $registrar;
 

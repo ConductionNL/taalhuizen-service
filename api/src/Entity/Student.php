@@ -54,7 +54,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          }
+ *          },
+ *          "active" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "newReffered" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "completed" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *          },
+ *          "newReffered" = {
+ *              "item_query" = StudentQueryItemResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false
+ *          },
  *     }
  * )
  * @ORM\Entity(repositoryClass=StudentRepository::class)

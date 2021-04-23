@@ -5,8 +5,6 @@ namespace App\Resolver;
 
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
-use App\Entity\LanguageHouse;
 use App\Entity\User;
 use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;

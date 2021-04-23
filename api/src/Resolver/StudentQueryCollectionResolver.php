@@ -9,6 +9,7 @@ use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use App\Entity\Student;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
@@ -59,6 +60,22 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
 
         return $this->createPaginator($collection, $context['args']);
+
+        if (!$item instanceof Student && !key_exists('input', $context['info']->variableValues)) {
+            return null;
+        }
+        switch($context['info']->operation->name->value){
+            case 'activeStudent':
+                return $this->activeStudents($context['info']->variableValues['input']);
+            case 'newRefferedStudent':
+                return $this->newRefferedStudents($context['info']->variableValues['input']);
+            case 'completedStudent':
+                return $this->completedStudents($context['info']->variableValues['input']);
+            default:
+                return $item;
+        }
+
+
     }
 
     public function createPaginator(ArrayCollection $collection, array $args){
@@ -78,5 +95,25 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
+    }
+
+    public function activeStudents(array $student): ?Student
+    {
+
+        return null;
+    }
+
+    public function newRefferedStudents(array $student): ?Student
+    {
+
+        return null;
+    }
+
+
+
+    public function completedStudents(array $student): ?Student
+    {
+
+        return null;
     }
 }
