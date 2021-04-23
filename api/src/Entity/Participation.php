@@ -51,8 +51,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          },
- *     },
+ *          }
+ *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
