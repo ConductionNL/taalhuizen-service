@@ -55,37 +55,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "activeStudents" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          "active" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
- *          "newRefferedStudents" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          "newReffered" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
- *          "newRefferedStudent" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *          "completed" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
  *          },
- *          "completedStudents" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
+ *          "newReffered" = {
+ *              "item_query" = StudentQueryItemResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false
  *          },
  *     }
  * )
