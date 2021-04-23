@@ -3,7 +3,6 @@
 
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Participation;
 use App\Service\ParticipationService;
@@ -254,11 +253,41 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function addGroupParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+        $groupId = explode('/',$input['groupId']);
+        if (is_array($groupId)) {
+            $groupId = end($groupId);
+        }
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+
+        // Do check if $groupUrl exists
+        if (!$this->commonGroundService->isResource($groupUrl)) {
+            throw new Exception('Invalid request, groupId is not an existing edu/group!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Add Group to Participation
+            $result = array_merge($result, $this->participationService->addGroupToParticipation($groupUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function updateGroupParticipation(array $input): Participation
@@ -272,11 +301,41 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function removeGroupParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+        $groupId = explode('/',$input['groupId']);
+        if (is_array($groupId)) {
+            $groupId = end($groupId);
+        }
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+
+        // Do check if groupUrl exists
+        if (!$this->commonGroundService->isResource($groupUrl)) {
+            throw new Exception('Invalid request, groupId is not an existing edu/group!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Remove Group from Participation
+            $result = array_merge($result, $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     private function dtoToParticipation(Participation $resource) {

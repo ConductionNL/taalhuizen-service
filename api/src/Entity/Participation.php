@@ -60,7 +60,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "addGroupParticipation" = {
+ *          "addGroup" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
  *              "read" = false,
@@ -68,7 +68,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "updateGroupParticipation" = {
+ *          "updateGroup" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {
  *                  "participationId"={"type" = "ID!"},
@@ -82,7 +82,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "removeGroupParticipation" = {
+ *          "removeGroup" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
  *              "read" = false,

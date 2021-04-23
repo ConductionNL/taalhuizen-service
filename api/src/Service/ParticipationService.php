@@ -205,6 +205,64 @@ class ParticipationService
         return $result;
     }
 
+    public function addGroupToParticipation($groupUrl, $participation) {
+        $result = [];
+        // Check if group already has an EAV object
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $group['participations'] = $getGroup['participations'];
+        } else {
+            $group['participations'] = [];
+        }
+
+        // Save the group in EAV with the EAV/participant connected to it
+        if (!in_array($participation['@id'], $group['participations'])) {
+            array_push($group['participations'], $participation['@id']);
+            $group = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+
+            // Add $group to the $result['group'] because this is convenient when testing or debugging (mostly for us)
+            $result['group'] = $group;
+
+            // Update the participant to add the EAV/edu/group to it
+            if (isset($participation['groups'])) {
+                $updateParticipation['groups'] = $participation['groups'];
+            } else {
+                $updateParticipation['groups'] = [];
+            }
+            if (!in_array($group['@id'], $updateParticipation['groups'])) {
+                array_push($updateParticipation['groups'], $group['@id']);
+                $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+
+                // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+                $result['participation'] = $participation;
+            }
+        }
+        return $result;
+    }
+
+    public function removeGroupFromParticipation($groupUrl, $participation) {
+        $result = [];
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            // Update eav/edu/group to remove the participation from it
+            $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $group['participations'] = array_values(array_filter($getGroup['participations'], function($groupParticipation) use($participation) {
+                return $groupParticipation != $participation['@eav'];
+            }));
+            $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+        }
+        if (isset($participation['groups'])) {
+            // Update eav/participation to remove the EAV/edu/group from it
+            $updateParticipation['groups'] = array_values(array_filter($participation['groups'], function($participationGroup) use($groupUrl) {
+                return $participationGroup != $groupUrl;
+            }));
+            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+
+            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+            $result['participation'] = $participation;
+        }
+        return $result;
+    }
+
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null) {
         $result = [];
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
