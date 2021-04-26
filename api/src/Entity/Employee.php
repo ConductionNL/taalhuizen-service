@@ -317,9 +317,11 @@ class Employee
     private $otherRelevantCertificates;
 
     /**
+     * @var boolean Whether the employee has submitted a police certificate
+     *
      * @ORM\Column(type="boolean")
      */
-    private $isVOGChecked;
+    private bool $isVOGChecked = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -669,7 +671,7 @@ class Employee
         return $this->isVOGChecked;
     }
 
-    public function setIsVOGChecked(bool $isVOGChecked): self
+    public function setIsVOGChecked(?bool $isVOGChecked): self
     {
         $this->isVOGChecked = $isVOGChecked;
 
