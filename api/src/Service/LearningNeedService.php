@@ -101,6 +101,11 @@ class LearningNeedService
                 }
             }
 
+            // TODO: delete all participations of this learningNeed (needs testing)
+//            foreach ($learningNeed['participations'] as $participationUrl) {
+//                $this->participationService->deleteParticipation(null, $participationUrl, True);
+//            }
+
             // Delete the learningNeed in EAV
             $this->eavService->deleteObject($learningNeed['eavId']);
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
