@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Address;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Group;
 use App\Service\EAVService;
 use App\Service\EDUService;
@@ -21,11 +22,13 @@ class GroupMutationResolver implements MutationResolverInterface
     private EntityManagerInterface $entityManager;
     private EAVService $eavService;
     private EDUService $eduService;
+    private CommonGroundService $commonGroundService;
 
-    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService){
+    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService, CommonGroundService $commonGroundService){
         $this->entityManager = $entityManager;
         $this->eavService = $eavService;
         $this->eduService = $eduService;
+        $this->commonGroundService = $commonGroundService;
     }
     /**
      * @inheritDoc
@@ -37,7 +40,7 @@ class GroupMutationResolver implements MutationResolverInterface
         }
         switch($context['info']->operation->name->value){
             case 'createGroup':
-                return $this->createGroup($context['info']->variableValues['input']);
+                return $this->createGroup($item);
             case 'updateGroup':
                 return $this->updateGroup($context['info']->variableValues['input']);
             case 'removeGroup':
@@ -49,14 +52,23 @@ class GroupMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createGroup(array $groupArray): Group
+    public function createGroup(Group $groupArray): Group
     {
         $result['result'] = [];
+        $participationId = explode('/',$groupArray['aanbiederId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
 
         $group = $this->dtoToGroup($groupArray);
-        $group = new Group();
-        $this->entityManager->persist($group);
-        return $group;
+        $course = $this->createCourse($group);
+
+        $result = array_merge($result, $this->makeGroup($course, $group));
+
+        $resourceResult = $this->handleResult($result['group']);
+        $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
+
+        return $resourceResult;
     }
 
     public function updateGroup(array $input): Group
@@ -81,6 +93,29 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
+    public function createCourse($group){
+        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
+        $course = [];
+        $course['name'] = 'course of '. $organization['name'];
+        $course['organization'] = $organization['@id'];
+        if ($this->eduService->hasProgram($organization)){
+            $program = $this->eduService->getProgram($organization);
+            $course['programs'][0] = $program;
+        }
+        $course['additionalType'] = $group['typeCourse'];
+        $course = $this->commonGroundService->saveResource($course,['component' => 'edu', 'type' => 'courses']);
+        return $course;
+    }
+
+    public function makeGroup($course,$group)
+    {
+
+
+
+        $result['group'] = [];
+        return $result;
+    }
+
     public function dtoToGroup(Group $resource){
         if ($resource->getId()){
             $group['id'] = $resource->getId();
@@ -89,7 +124,7 @@ class GroupMutationResolver implements MutationResolverInterface
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
         $group['outComesGoal'] = $resource->getOutComesGoal();
-        $group['outComesTopic'] =$resource->getOutComesTopic();
+        $group['outComesTopic'] = $resource->getOutComesTopic();
         if ($resource->getOutComesTopicOther()){
             $group['outComesTopicOther'] = $resource->getOutComesTopicOther();
         }
@@ -129,5 +164,12 @@ class GroupMutationResolver implements MutationResolverInterface
         $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
 
         return $group;
+    }
+
+    public function handleResult($group){
+        $resource = new Group();
+
+        $this->entityManager->persist($resource);
+        return $resource;
     }
 }

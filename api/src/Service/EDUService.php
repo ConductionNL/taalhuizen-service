@@ -47,19 +47,6 @@ class EDUService
         return false;
     }
 
-    public function createCourse($organizationId){
-        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $organizationId]);
-        $course = [];
-        $course['name'] = 'course of '. $organization['name'];
-        $course['organization'] = $organization['@id'];
-        if ($this->hasProgram($organization)){
-            $program = $this->getProgram($organization);
-            $course['programs'][0] = $program;
-        }
-        $course = $this->commonGroundService->saveResource($course,['component' => 'edu', 'type' => 'courses']);
-        return $course;
-    }
-
     public function convertEducationEvent(array $input, ?string $studentId = null): StudentDossierEvent
     {
         $studentDossierEvent = new StudentDossierEvent();
