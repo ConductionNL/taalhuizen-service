@@ -128,7 +128,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             }
         }
 
-        // If any error was catched set $result['result'] to null
+        // If any error was caught set $result['result'] to null
         if (isset($result['errorMessage'])) {
             $result['result'] = null;
         }
@@ -273,9 +273,9 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            $participant['learningNeeds'] = array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
+            $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function($participantLearningNeed) use($learningNeedUrl) {
                 return $participantLearningNeed != $learningNeedUrl;
-            });
+            }));
             $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
         }
         return $result;

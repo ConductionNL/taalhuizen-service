@@ -50,3 +50,49 @@ services:
 #    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
 #        arguments:
 #            - '@Redis'
+
+    App\Resolver\UserMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\UserQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\UserQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LearningNeedMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\LearningNeedQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LearningNeedQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ParticipationMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\ParticipationQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ParticipationQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\EmployeeMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\EmployeeQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\EmployeeQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\StudentDossierEventMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\StudentDossierEventQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\StudentDossierEventQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }

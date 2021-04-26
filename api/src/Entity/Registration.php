@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RegistrationRepository;
+use App\Resolver\RegistrationMutationResolver;
+use App\Resolver\RegistrationQueryCollectionResolver;
+use App\Resolver\RegistrationQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,7 +24,48 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=RegisterStudentRepository::class)
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = RegistrationQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = RegistrationQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "accept" = {
+ *              "mutation" = RegistrationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
+ * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
 class Registration
 {
@@ -41,14 +85,12 @@ class Registration
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity=RegisterStudent::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $student;
 
     /**
-     * @ORM\ManyToOne(targetEntity=RegisterStudentRegistrar::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $registrar;
 
@@ -56,6 +98,11 @@ class Registration
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private $memo;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
 
     public function getId(): UuidInterface
     {
@@ -112,6 +159,18 @@ class Registration
     public function setRegistrar(?RegisterStudentRegistrar $registrar): self
     {
         $this->registrar = $registrar;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(?string $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }

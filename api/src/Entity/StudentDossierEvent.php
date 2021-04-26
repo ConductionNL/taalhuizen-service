@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\DossierRepository;
+use App\Resolver\StudentDossierEventMutationResolver;
+use App\Resolver\StudentDossierEventQueryCollectionResolver;
+use App\Resolver\StudentDossierEventQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -21,10 +24,43 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = StudentDossierEventQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = StudentDossierEventQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = StudentDossierEventMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = StudentDossierEventMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = StudentDossierEventMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
+ * )
+ * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=DossierRepository::class)
  */
-class Dossier
+class StudentDossierEvent
 {
     /**
      * @var UuidInterface The UUID identifier of this resource
@@ -41,6 +77,9 @@ class Dossier
     /**
      * @var string The Event of this Student.
      *
+     * @Assert\Choice(
+     *      {"FINAL_TALK","REMARK","FOLLOW_UP_TALK","INFO_FOR_STORYTELLING","INTAKE"}
+     * )
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
@@ -66,13 +105,18 @@ class Dossier
     private $eventDescription;
 
     /**
-     * @var string studentId of this student Dossier.
+     * @var string|null studentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
-    private $studentId;
+    private ?string $studentId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentDossierEventId;
 
     public function getId(): UuidInterface
     {
@@ -126,9 +170,21 @@ class Dossier
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getStudentDossierEventId(): ?string
+    {
+        return $this->studentDossierEventId;
+    }
+
+    public function setStudentDossierEventId(?string $studentDossierEventId): self
+    {
+        $this->studentDossierEventId = $studentDossierEventId;
 
         return $this;
     }

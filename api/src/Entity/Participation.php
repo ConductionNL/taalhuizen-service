@@ -2,8 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ParticipationRepository;
+use App\Resolver\ParticipationMutationResolver;
+use App\Resolver\ParticipationQueryCollectionResolver;
+use App\Resolver\ParticipationQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -12,27 +17,82 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *  collectionOperations={
- *          "get",
- *          "get_participation"={
- *              "method"="GET",
- *              "path"="/participations/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific participation",
- *                  "description"="Returns a participation"
- *              }
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = ParticipationQueryItemResolver::class,
+ *              "read" = false
  *          },
- *          "delete_participation"={
- *              "method"="GET",
- *              "path"="/participations/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific participation",
- *                  "description"="Returns true if this participation was deleted"
- *              }
+ *          "collection_query" = {
+ *              "collection_query" = ParticipationQueryCollectionResolver::class
  *          },
- *          "post"
- *     },
+ *          "create" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "addMentorTo" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "removeMentorFrom" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "addGroup" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "updateGroup" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {
+ *                  "participationId"={"type" = "ID!"},
+ *                  "presenceEngagements"={"type" = "String"},
+ *                  "presenceStartDate"={"type" = "DateTime"},
+ *                  "presenceEndDate"={"type" = "DateTime"},
+ *                  "presenceEndParticipationReason"={"type" = "String"}
+ *              },
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "removeGroup" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation
@@ -48,6 +108,13 @@ class Participation
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private $id;
+
+    /**
+     * @Groups({"write"})
+     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $status;
 
     /**
      * @Groups({"write"})
@@ -85,6 +152,7 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesGoal;
+
     /**
      * @Groups({"write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
@@ -184,9 +252,62 @@ class Participation
      */
     private $learningNeedUrl;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $participationId;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $presenceStartDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $presenceEndDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presenceEndParticipationReason;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presenceEngagements;
+
     public function getId(): UuidInterface
     {
         return $this->id;
+    }
+
+    public function setId(?UuidInterface $uuid): self
+    {
+        $this->id = $uuid;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function getAanbiederId(): ?string
@@ -437,6 +558,90 @@ class Participation
     public function setLearningNeedUrl(?string $learningNeedUrl): self
     {
         $this->learningNeedUrl = $learningNeedUrl;
+
+        return $this;
+    }
+
+    public function getParticipationId(): ?string
+    {
+        return $this->participationId;
+    }
+
+    public function setParticipationId(?string $participationId): self
+    {
+        $this->participationId = $participationId;
+
+        return $this;
+    }
+
+    public function getPresenceStartDate(): ?\DateTimeInterface
+    {
+        return $this->presenceStartDate;
+    }
+
+    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
+    {
+        $this->presenceStartDate = $presenceStartDate;
+
+        return $this;
+    }
+
+    public function getPresenceEndDate(): ?\DateTimeInterface
+    {
+        return $this->presenceEndDate;
+    }
+
+    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
+    {
+        $this->presenceEndDate = $presenceEndDate;
+
+        return $this;
+    }
+
+    public function getPresenceEndParticipationReason(): ?string
+    {
+        return $this->presenceEndParticipationReason;
+    }
+
+    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
+    {
+        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeId(): ?string
+    {
+        return $this->aanbiederEmployeeId;
+    }
+
+    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    {
+        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    public function getPresenceEngagements(): ?string
+    {
+        return $this->presenceEngagements;
+    }
+
+    public function setPresenceEngagements(?string $presenceEngagements): self
+    {
+        $this->presenceEngagements = $presenceEngagements;
 
         return $this;
     }
