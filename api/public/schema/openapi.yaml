@@ -10141,92 +10141,8 @@ paths:
     get:
       tags:
         - Participation
-      operationId: get_participationParticipationCollection
-      summary: 'Retrieves the collection of Participation resources.'
-      responses:
-        200:
-          description: 'Participation collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/graphql:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
+      operationId: getParticipationItem
+      summary: 'Retrieves a Participation resource.'
       parameters:
         -
           name: id
@@ -10658,187 +10574,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Participation'
         description: 'The updated Participation resource'
-  '/participations/{id}/delete':
-    get:
-      tags:
-        - Participation
-      operationId: delete_participationParticipationCollection
-      summary: 'Retrieves the collection of Participation resources.'
-      responses:
-        200:
-          description: 'Participation collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-            application/graphql:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Participation'
-      parameters:
-        -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
-          schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      produces:
-        - application/health+json
   /providers:
     get:
       tags:
@@ -11160,110 +10895,15 @@ paths:
     get:
       tags:
         - Provider
-      operationId: get_providerProviderCollection
-      summary: 'Retrieves the collection of Provider resources.'
-      responses:
-        200:
-          description: 'Provider collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Provider:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Provider:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/graphql:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
+      operationId: getProviderItem
+      summary: 'Retrieves a Provider resource.'
       parameters:
         -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
+          name: id
+          in: path
+          required: true
           schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
+            type: string
         -
           name: Authorization
           description: 'The JWT of the entity performing the request'
@@ -11335,6 +10975,54 @@ paths:
             type: string
             format: date-time
           in: query
+      responses:
+        200:
+          description: 'Provider resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Provider:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Provider:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Provider'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        404:
+          description: 'Resource not found'
       produces:
         - application/health+json
     delete:
@@ -11640,187 +11328,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Provider'
         description: 'The updated Provider resource'
-  '/providers/{id}/delete':
-    get:
-      tags:
-        - Provider
-      operationId: delete_providerProviderCollection
-      summary: 'Retrieves the collection of Provider resources.'
-      responses:
-        200:
-          description: 'Provider collection response'
-          content:
-            application/ld+json:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Provider:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/json+ld:
-              schema:
-                type: object
-                properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Provider:jsonld' } }
-                  'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
-                required:
-                  - 'hydra:member'
-            application/hal+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+hal:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/vnd.api+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+vnd.api:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/health+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/json+health:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/x-yaml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            text/html:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-            application/graphql:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Provider'
-      parameters:
-        -
-          name: page
-          in: query
-          required: false
-          description: 'The collection page number'
-          schema:
-            type: integer
-            default: 1
-        -
-          name: limit
-          in: query
-          required: false
-          description: 'The number of items per page'
-          schema:
-            type: integer
-            default: 30
-            minimum: 0
-        -
-          name: Authorization
-          description: 'The JWT of the entity performing the request'
-          in: header
-        -
-          name: API-Version
-          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
-          example: 1.0.1
-          in: header
-        -
-          name: X-NLX-Logrecord-ID
-          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
-          in: header
-        -
-          name: X-NLX-Request-Process-Id
-          description: 'A process id for purpose registration (doelbinding)'
-          in: header
-        -
-          name: X-NLX-Request-Data-Elements
-          description: 'A list of requested data elements'
-          in: header
-        -
-          name: X-NLX-Request-Data-Subject
-          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
-          in: header
-        -
-          name: X-NLX-Audit-Clarification
-          description: 'A clarification as to why a request has been made  (doelbinding)'
-          in: header
-        -
-          name: Link
-          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
-          in: header
-        -
-          name: 'extend[]'
-          required: false
-          description: 'An array of nested objects to include in the return object'
-          in: query
-          schema:
-            type: array
-        -
-          name: 'fields[]'
-          required: false
-          description: 'An array of fields to return in output, wil return all fields is not supplied'
-          in: query
-          schema:
-            type: array
-        -
-          name: validOn
-          required: false
-          description: 'Returns object as valid on a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validFrom
-          required: false
-          description: 'Returns objects valid from a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-        -
-          name: validUntil
-          required: false
-          description: 'Returns objects valid until a given date time'
-          schema:
-            type: string
-            format: date-time
-          in: query
-      produces:
-        - application/health+json
   /register_student_registrars:
     get:
       tags:
@@ -29155,11 +28662,7 @@ components:
           type: string
           format: uuid
         givenName:
-          readOnly: true
           description: 'The Name of this Employee.'
-          type: string
-        name:
-          writeOnly: true
           type: string
         additionalName:
           description: 'The PrefixName of this Employee.'
@@ -29201,6 +28704,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         volunteeringPreference:
           description: |
             Volunteering Preference of this Employee.
@@ -29215,6 +28719,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         userGroupIds:
           type: array
           items:
@@ -29270,6 +28775,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         currentEducationYes:
           type: string
           format: iri-reference
@@ -29278,6 +28784,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         biscEmployeeId:
           type: string
           nullable: true
@@ -29306,11 +28813,7 @@ components:
           type: string
           format: uuid
         givenName:
-          readOnly: true
           description: 'The Name of this Employee.'
-          type: string
-        name:
-          writeOnly: true
           type: string
         additionalName:
           description: 'The PrefixName of this Employee.'
@@ -29352,6 +28855,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         volunteeringPreference:
           description: |
             Volunteering Preference of this Employee.
@@ -29366,6 +28870,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         userGroupIds:
           type: array
           items:
@@ -29421,6 +28926,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         currentEducationYes:
           type: string
           format: iri-reference
@@ -29429,6 +28935,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         biscEmployeeId:
           type: string
           nullable: true
@@ -30031,11 +29538,11 @@ components:
           type: string
           nullable: true
         address:
-          description: 'The address of this Provider.'
+          description: 'The address of this Aanbieder.'
           type: array
           items:
             type: string
-            format: iri-reference
+          nullable: true
       required:
         - name
     'Provider:jsonld':
@@ -30068,11 +29575,11 @@ components:
           type: string
           nullable: true
         address:
-          description: 'The address of this Provider.'
+          description: 'The address of this Aanbieder.'
           type: array
           items:
             type: string
-            format: iri-reference
+          nullable: true
       required:
         - name
     RegisterStudent:
@@ -30222,9 +29729,11 @@ components:
         student:
           type: string
           format: iri-reference
+          nullable: true
         registrar:
           type: string
           format: iri-reference
+          nullable: true
         studentId:
           type: string
           nullable: true
@@ -30254,9 +29763,11 @@ components:
         student:
           type: string
           format: iri-reference
+          nullable: true
         registrar:
           type: string
           format: iri-reference
+          nullable: true
         studentId:
           type: string
           nullable: true
@@ -30324,6 +29835,17 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        status:
+          type: string
+          nullable: true
+        memo:
+          type: string
+          nullable: true
+        registrar:
+          type: array
+          items:
+            type: string
+          nullable: true
         civicIntegrationDetails:
           type: array
           items:
@@ -30388,37 +29910,32 @@ components:
             type: string
           nullable: true
         readingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         writingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         permissionDetails:
           type: array
           items:
             type: string
+          nullable: true
         intakeDetail:
           readOnly: true
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         intakeDetails:
           writeOnly: true
           type: string
           nullable: true
-        taalhuisId:
+        languageHouseId:
           type: string
         studentId:
           type: string
           nullable: true
       required:
         - permissionDetails
-        - taalhuisId
+        - languageHouseId
     'Student:jsonld':
       type: object
       description: ''
@@ -30437,6 +29954,17 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        status:
+          type: string
+          nullable: true
+        memo:
+          type: string
+          nullable: true
+        registrar:
+          type: array
+          items:
+            type: string
+          nullable: true
         civicIntegrationDetails:
           type: array
           items:
@@ -30501,37 +30029,32 @@ components:
             type: string
           nullable: true
         readingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         writingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         permissionDetails:
           type: array
           items:
             type: string
+          nullable: true
         intakeDetail:
           readOnly: true
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         intakeDetails:
           writeOnly: true
           type: string
           nullable: true
-        taalhuisId:
+        languageHouseId:
           type: string
         studentId:
           type: string
           nullable: true
       required:
         - permissionDetails
-        - taalhuisId
+        - languageHouseId
     StudentAvailability:
       type: object
       description: ''
@@ -31702,7 +31225,7 @@ definitions:
         maxLength: 255
       availability:
         description: 'The availability for this employee'
-        type: array
+        type: array|null
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31721,7 +31244,7 @@ definitions:
         example: 15-03-2000
       address:
         description: 'The address of this Employee.'
-        type: array
+        type: array|null
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -31731,7 +31254,7 @@ definitions:
         type: string|null
       targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: array
+        type: array|null
         example: NT1
       volunteeringPreference:
         description: |
@@ -31765,7 +31288,7 @@ definitions:
         maxLength: 255
       availability:
         description: 'The availability for this employee'
-        type: array
+        type: array|null
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31784,7 +31307,7 @@ definitions:
         example: 15-03-2000
       address:
         description: 'The address of this Employee.'
-        type: array
+        type: array|null
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -31794,7 +31317,7 @@ definitions:
         type: string|null
       targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: array
+        type: array|null
         example: NT1
       volunteeringPreference:
         description: |
@@ -31924,8 +31447,8 @@ definitions:
         type: string
         maxLength: 2550
       address:
-        description: 'The address of this Provider.'
-        type: \Address
+        description: 'The address of this Aanbieder.'
+        type: array|null
     required:
       - name
   Provider-write:
@@ -31943,8 +31466,8 @@ definitions:
         type: string
         maxLength: 2550
       address:
-        description: 'The address of this Provider.'
-        type: \Address
+        description: 'The address of this Aanbieder.'
+        type: array|null
     required:
       - name
   RegisterStudent-read:
@@ -31963,6 +31486,33 @@ definitions:
       - familyName
       - email
       - telephone
+  Student-write:
+    properties:
+      status: []
+      memo: []
+      registrar: []
+      civicIntegrationDetails: []
+      personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      speakingLevel: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
+      permissionDetails: []
+      intakeDetail: []
+      languageHouseId: []
+      studentId: []
+    required:
+      - permissionDetails
+      - languageHouseId
   Student-read:
     properties:
       civicIntegrationDetails: []
@@ -31982,34 +31532,11 @@ definitions:
       writingTestResult: []
       permissionDetails: []
       intakeDetail: []
-      taalhuisId: []
+      languageHouseId: []
       studentId: []
     required:
       - permissionDetails
-      - taalhuisId
-  Student-write:
-    properties:
-      civicIntegrationDetails: []
-      personDetails: []
-      contactDetails: []
-      generalDetails: []
-      referrerDetails: []
-      backgroundDetails: []
-      dutchNTDetails: []
-      speakingLevel: []
-      educationDetails: []
-      courseDetails: []
-      jobDetails: []
-      motivationDetails: []
-      availabilityDetails: []
-      readingTestResult: []
-      writingTestResult: []
-      permissionDetails: []
-      intakeDetail: []
-      taalhuisId: []
-      studentId: []
-    required:
-      - permissionDetails
+      - languageHouseId
   StudentDossierEvent-read:
     properties:
       event:
@@ -32048,6 +31575,22 @@ definitions:
       - eventDate
       - eventDescription
       - studentId
+  StudentIntakeDetail-write:
+    properties:
+      studentId: []
+      lastName: []
+      middleName: []
+      nickname: []
+      gender: []
+      dateOfBirth: []
+      streetAndHouseNumber: []
+      postalCode: []
+      place: []
+      phoneNumber: []
+      phoneNumberContactPerson: []
+      email: []
+      availability: []
+    required: []
   User-read:
     properties:
       email:
@@ -32186,12 +31729,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 12:17:46'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 12:17:46'
     required: []
   AuditTrail-write:
     properties:
@@ -32239,12 +31782,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 12:17:46'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 12:17:46'
     required: []
   ChangeLog-write:
     properties:

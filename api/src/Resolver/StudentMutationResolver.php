@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Service\StudentService;
+use App\Service\EAVService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Address;
 use App\Entity\Document;
@@ -24,12 +25,14 @@ class StudentMutationResolver implements MutationResolverInterface
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
+    private EAVService $EAVService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, StudentService $studentService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, StudentService $studentService, EAVService $EAVService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
+        $this->EAVService = $EAVService;
     }
 
     /**
@@ -65,8 +68,7 @@ class StudentMutationResolver implements MutationResolverInterface
             throw new \Exception('languageHouseId not given');
         }
 
-        // Transform DTO info to student body...
-
+        var_dump('test1');
 
         // First make cc/person
         $ccPersonId = $this->savePerson($input);
@@ -74,10 +76,8 @@ class StudentMutationResolver implements MutationResolverInterface
         // Then make edu/participant
         $input['studentId'] = $this->saveParticipant($input, $ccPersonId);
 
-        // Then make memo if set
-        if (isset($input['memo'])) {
-            $input['memo'] = $this->saveMemo($input['memo'], $input['studentId']);
-        }
+        // Then make memo('s)
+        $this->saveMemos($input, $ccPersonId);
 
 
         // Do some checks and error handling
@@ -232,15 +232,78 @@ class StudentMutationResolver implements MutationResolverInterface
 
     private function savePerson(array $input)
     {
+        $person = [];
+//        if (isset($input['civicIntegrationDetails'])) {
+//            $person = $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input);
+//        }
+//        if (isset($input['personDetails'])) {
+//            $person = $this->getPersonPropertiesFromPersonDetails($person, $input);
+//        }
+        if (isset($input['contactDetails'])) {
+            $person = $this->getPersonPropertiesFromContactDetails($person, $input['contactDetails']);
+        }
+        if (isset($input['generalDetails'])) {
+            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails']);
+        }
+//        if (isset($input['referrerDetails'])) {
+//            $person = $this->getPersonPropertiesFromReferrerDetails($person, $input);
+//        }
+//        if (isset($input['backgroundDetails'])) {
+//            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input);
+//        }
+//        if (isset($input['dutchNTDetails'])) {
+//            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input);
+//        }
+//        if (isset($input['speakingLevel'])) {
+//            $person = $this->getPersonPropertiesFromSpeakingLevel($person, $input);
+//        }
+//        if (isset($input['educationDetails'])) {
+//            $person = $this->getPersonPropertiesFromEducationDetails($person, $input);
+//        }
+//        if (isset($input['courseDetails'])) {
+//            $person = $this->getPersonPropertiesFromCourseDetails($person, $input);
+//        }
+//        if (isset($input['jobDetails'])) {
+//            $person = $this->getPersonPropertiesFromJobDetails($person, $input);
+//        }
+//        if (isset($input['motivationDetails'])) {
+//            $person = $this->getPersonPropertiesFromMotivationDetails($person, $input);
+//        }
 
-        return;
+        if (isset($input['availabilityDetails'])) {
+            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
+        }
+//        if (isset($input['readingTestResult'])) {
+//            $person = $this->getPersonPropertiesFromReadingTestResult($person, $input);
+//        }
+//        if (isset($input['writingTestResult'])) {
+//            $person = $this->getPersonPropertiesFromWritingTestResult($person, $input);
+//        }
+//        if (isset($input['intakeDetail'])) {
+//            $person = $this->getPersonPropertiesFromIntakeDetail($person, $input);
+//        }
+var_dump('test2');
+        $person = $this->studentService->saveStudentResource($person, 'persons');
+
+        return $person['id'];
     }
 
-    private function saveParticipant(array $input)
+    private function saveParticipant(array $input, string $ccPeopleId)
     {
+        if (isset($input['id'])) {
+            $participant = $this->EAVService->getObject('organization', null, 'cc');
+        } else {
+            $participant = [];
+        }
+
+        $participant = [];
+        $participant['organization'] = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $input['languageHouseId']]);
 //        $civicIntegrationDetails
 
-        return;
+        var_dump('test3');
+        $participant = $this->studentService->saveStudentResource($participant, 'participants');
+
+        return $participant['id'];
     }
 
     private function saveMemo(string $participantId)
@@ -248,5 +311,69 @@ class StudentMutationResolver implements MutationResolverInterface
 //        $civicIntegrationDetails
 
         return;
+    }
+
+    private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
+    {
+        if (isset($availabilityDetails['availability'])) {
+            $person['availability'] = $availabilityDetails['availability'];
+        }
+
+        return $person;
+    }
+
+    private function getMemoPropertiesFromAvailabilityDetails(string $ccPersonId, array $availabilityDetails)
+    {
+        $memo['name'] = 'Availability notes';
+        $memo['description'] = $availabilityDetails['availabilityNotes'];
+        $memo['topic'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $ccPersonId]);
+
+        return $memo;
+    }
+
+    private function saveMemos(array $input, string $ccPersonId)
+    {
+        if (isset($input['id'])) {
+            $memos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $input['id']])])['hydra:member'];
+        } else {
+            $memos = [];
+        }
+
+        if (isset($input['availabilityDetails'])) {
+            $memos[] = $this->getMemoPropertiesFromAvailabilityDetails($ccPersonId, $input['availabilityDetails']);
+        }
+
+//        foreach ($memos as $memo) {
+//            $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'types' => 'memos']);
+//        }
+
+    }
+
+    private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails)
+    {
+
+
+        return $person;
+    }
+
+    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails)
+    {
+        if (isset($generalDetails['countryOfOrigin'])) {
+            $person['birthplace'] = $generalDetails['countryOfOrigin'];
+        }
+        if (isset($generalDetails['nativeLanguage'])) {
+            $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
+        }
+        if (isset($generalDetails['otherLanguages'])) {
+            $person['speakingLanguages'] = $generalDetails['otherLanguages'];
+        }
+        if (isset($generalDetails['familyComposition'])) {
+            $person['maritalStatus'] = $generalDetails['familyComposition'];
+        }
+        if (isset($generalDetails['childrenDatesOfBirth'])) {
+                $person['dependents'][] = $generalDetails['childrenDatesOfBirth'];
+        }
+
+        return $person;
     }
 }
