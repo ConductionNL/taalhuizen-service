@@ -3,7 +3,6 @@
 
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Participation;
 use App\Service\ParticipationService;
@@ -31,8 +30,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        var_dump($context['info']->operation->name->value);
-        var_dump($context['info']->variableValues);
+//        var_dump($context['info']->operation->name->value);
+//        var_dump($context['info']->variableValues);
 //        var_dump(get_class($item));
         if (!$item instanceof Participation && !key_exists('input', $context['info']->variableValues)) {
             return null;
@@ -48,12 +47,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
                 return $this->addMentorToParticipation($context['info']->variableValues['input']);
             case 'removeMentorFromParticipation':
                 return $this->removeMentorFromParticipation($context['info']->variableValues['input']);
-            case 'addParticipationToGroup':
-                return $this->addParticipationToGroup($context['info']->variableValues['input']);
+            case 'addGroupParticipation':
+                return $this->addGroupParticipation($context['info']->variableValues['input']);
             case 'updateGroupParticipation':
                 return $this->updateGroupParticipation($context['info']->variableValues['input']);
-            case 'removeParticipationFromGroup':
-                return $this->removeParticipationFromGroup($context['info']->variableValues['input']);
+            case 'removeGroupParticipation':
+                return $this->removeGroupParticipation($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -174,34 +173,121 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function addMentorToParticipation(array $input): Participation
     {
-        $participationId = explode('/',$input['id']);
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
         if (is_array($participationId)) {
             $participationId = end($participationId);
         }
+        $mentorId = explode('/',$input['aanbiederEmployeeId']);
+        if (is_array($mentorId)) {
+            $mentorId = end($mentorId);
+        }
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
 
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString($participationId));
-        return $output;
+        // Do check if mentorUrl exists
+        // todo: Maybe also check if this employee is an aanbieder employee?
+        if (!$this->commonGroundService->isResource($mentorUrl)) {
+            throw new Exception('Invalid request, aanbiederEmployeeId is not an existing mrc/employee!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Add Mentor to Participation
+            $result = array_merge($result, $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function removeMentorFromParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+        $mentorId = explode('/',$input['aanbiederEmployeeId']);
+        if (is_array($mentorId)) {
+            $mentorId = end($mentorId);
+        }
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
+
+        // Do check if mentorUrl exists
+        // todo: Maybe also check if this employee is an aanbieder employee?
+        if (!$this->commonGroundService->isResource($mentorUrl)) {
+            throw new Exception('Invalid request, aanbiederEmployeeId is not an existing mrc/employee!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Remove Mentor from Participation
+            $result = array_merge($result, $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
-    public function addParticipationToGroup(array $input): Participation
+    public function addGroupParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+        $groupId = explode('/',$input['groupId']);
+        if (is_array($groupId)) {
+            $groupId = end($groupId);
+        }
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+
+        // Do check if $groupUrl exists
+        if (!$this->commonGroundService->isResource($groupUrl)) {
+            throw new Exception('Invalid request, groupId is not an existing edu/group!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Add Group to Participation
+            $result = array_merge($result, $this->participationService->addGroupToParticipation($groupUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function updateGroupParticipation(array $input): Participation
@@ -213,13 +299,43 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $output;
     }
 
-    public function removeParticipationFromGroup(array $input): Participation
+    public function removeGroupParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+        $groupId = explode('/',$input['groupId']);
+        if (is_array($groupId)) {
+            $groupId = end($groupId);
+        }
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+
+        // Do check if groupUrl exists
+        if (!$this->commonGroundService->isResource($groupUrl)) {
+            throw new Exception('Invalid request, groupId is not an existing edu/group!');
+        }
+
+        // Get the participation
+        $result = array_merge($result, $this->participationService->getParticipation($participationId));
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Remove Group from Participation
+            $result = array_merge($result, $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->participationService->handleResult($result['participation']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     private function dtoToParticipation(Participation $resource) {

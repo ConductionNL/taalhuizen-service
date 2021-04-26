@@ -109,7 +109,8 @@ class ProviderMutationResolver implements MutationResolverInterface
             $providerWrc = $this->commonGroundService->saveResource($provider, ['component' => 'wrc', 'type' => 'organizations']);
 
 //            $provider['addresses'] = $provider['address'];
-            $provider['emails'] = $provider['email'];
+            $provider['emails']['name'] = 'Email of ...';
+            $provider['emails']['email'] = $provider['email'];
             $provider['sourceOrganization'] = $providerWrc['@id'];
             $providerCC = $this->commonGroundService->saveResource($provider, ['component' => 'cc', 'type' => 'organizations']);
         }

@@ -85,14 +85,12 @@ class Registration
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity=RegisterStudent::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $student;
 
     /**
-     * @ORM\ManyToOne(targetEntity=RegisterStudentRegistrar::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="json", nullable=true)
      */
     private $registrar;
 
