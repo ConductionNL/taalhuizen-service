@@ -99,6 +99,9 @@ parameters:
     gmail_secret: "%env(GMAIL_SECRET)%"
     idin_id: "%env(IDIN_ID)%"
     idin_secret: "%env(IDIN_SECRET)%"
+    
+    private_key: "%env(PRIVATE_KEY)%"
+    public_key: "%env(PUBLIC_KEY)%"
 
     # Busnes Engine
     env(APP_COMMONGROUND_BE_LOCATION): "https://ac.%env(APP_DOMAIN)%"
