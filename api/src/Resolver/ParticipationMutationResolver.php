@@ -292,11 +292,23 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function updateGroupParticipation(array $input): Participation
     {
-        // TODO
-        // placeholder:
-        $output = new Participation();
-        $output->setId(Uuid::getFactory()->fromString('uuidhier'));
-        return $output;
+        $result['result'] = [];
+
+        $participationId = explode('/',$input['participationId']);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
+        }
+
+        var_dump('test');
+        $resourceResult = new Participation();
+        $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function removeGroupParticipation(array $input): Participation

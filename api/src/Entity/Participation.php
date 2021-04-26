@@ -73,8 +73,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "args" = {
  *                  "participationId"={"type" = "ID!"},
  *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "DateTime"},
- *                  "presenceEndDate"={"type" = "DateTime"},
+ *                  "presenceStartDate"={"type" = "String"},
+ *                  "presenceEndDate"={"type" = "String"},
  *                  "presenceEndParticipationReason"={"type" = "String"}
  *              },
  *              "read" = false,
