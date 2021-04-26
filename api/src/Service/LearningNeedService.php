@@ -162,6 +162,7 @@ class LearningNeedService
                 }
             }
         } else {
+            // Do not throw an error, because we want to return an empty array in this case
             $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
         }
         return $result;
