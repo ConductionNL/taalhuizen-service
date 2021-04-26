@@ -31,7 +31,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "collection_query" = {
- *              "collection_query" = EmployeeQueryCollectionResolver::class
+ *              "collection_query" = EmployeeQueryCollectionResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
  *          },
  *          "create" = {
  *              "mutation" = EmployeeMutationResolver::class,
@@ -119,11 +123,11 @@ class Employee
     private $telephone;
 
     /**
-     * @var array The availability for this employee
+     * @var array|null The availability for this employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private array $availability = [];
+    private ?array $availability = [];
 
     /**
      * @var string The Availability Note of this Employee.
@@ -176,13 +180,12 @@ class Employee
     private $dateOfBirth;
 
     /**
-     * @var array The address of this Employee.
+     * @var array|null The address of this Employee.
      *
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private array $address = [];
+    private ?array $address = [];
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -212,7 +215,7 @@ class Employee
     private $contactPreferenceOther;
 
     /**
-     * @var array Target Preference of this Employee. **NT1**, **NT2**
+     * @var array|null Target Preference of this Employee. **NT1**, **NT2**
      *
      * @example NT1
      *
@@ -222,7 +225,7 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="json", length=255)
      */
-    private array $targetGroupPreferences = [];
+    private ?array $targetGroupPreferences = [];
 
     /**
      * @var string|null Volunteering Preference of this Employee.
@@ -258,19 +261,17 @@ class Employee
     private $currentEducation;
 
     /**
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=CurrentEducationYes::class, cascade={"persist", "remove"})
      */
-    private $currentEducationYes;
+    private ?array $currentEducationYes;
 
     /**
      *
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private array $currentEducationNoButDidFollow = [];
+    private ?array $currentEducationNoButDidFollow = [];
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -356,7 +357,7 @@ class Employee
         return $this->givenName;
     }
 
-    public function setName(string $givenName): self
+    public function setGivenName(string $givenName): self
     {
         $this->givenName = $givenName;
 
@@ -476,7 +477,7 @@ class Employee
         return $this->targetGroupPreferences;
     }
 
-    public function setTargetGroupPreferences(array $targetGroupPreferences): self
+    public function setTargetGroupPreferences(?array $targetGroupPreferences): self
     {
         $this->targetGroupPreferences = $targetGroupPreferences;
 
@@ -500,7 +501,7 @@ class Employee
         return $this->address;
     }
 
-    public function setAddress(array $address): self
+    public function setAddress(?array $address = []): self
     {
         $this->address = $address;
 
@@ -704,19 +705,19 @@ class Employee
         return $this->availability;
     }
 
-    public function setAvailability(array $availability): self
+    public function setAvailability(?array $availability = []): self
     {
         $this->availability = $availability;
 
         return $this;
     }
 
-    public function getCurrentEducationYes(): ?CurrentEducationYes
+    public function getCurrentEducationYes(): ?array
     {
         return $this->currentEducationYes;
     }
 
-    public function setCurrentEducationYes(?CurrentEducationYes $currentEducationYes): self
+    public function setCurrentEducationYes(?array $currentEducationYes = []): self
     {
         $this->currentEducationYes = $currentEducationYes;
 
@@ -728,7 +729,7 @@ class Employee
         return $this->currentEducationNoButDidFollow;
     }
 
-    public function setCurrentEducationNoButDidFollow(array $currentEducationNoButDidFollow): self
+    public function setCurrentEducationNoButDidFollow(?array $currentEducationNoButDidFollow = []): self
     {
         $this->currentEducationNoButDidFollow = $currentEducationNoButDidFollow;
 

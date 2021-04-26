@@ -29729,11 +29729,9 @@ components:
         student:
           type: string
           format: iri-reference
-          nullable: true
         registrar:
           type: string
           format: iri-reference
-          nullable: true
         studentId:
           type: string
           nullable: true
@@ -29763,11 +29761,9 @@ components:
         student:
           type: string
           format: iri-reference
-          nullable: true
         registrar:
           type: string
           format: iri-reference
-          nullable: true
         studentId:
           type: string
           nullable: true
@@ -29835,11 +29831,15 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
-          type: string
+        civicIntegrationDetails:
+          type: array
+          items:
+            type: string
           nullable: true
-        memo:
-          type: string
+        personDetails:
+          type: array
+          items:
+            type: string
           nullable: true
         registrar:
           type: array
@@ -29910,18 +29910,27 @@ components:
             type: string
           nullable: true
         readingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         writingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         permissionDetails:
           type: array
           items:
             type: string
-          nullable: true
         intakeDetail:
           readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        intakeDetails:
+          writeOnly: true
           type: string
           nullable: true
         intakeDetails:
@@ -29935,7 +29944,7 @@ components:
           nullable: true
       required:
         - permissionDetails
-        - languageHouseId
+        - taalhuisId
     'Student:jsonld':
       type: object
       description: ''
@@ -29954,11 +29963,15 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
-          type: string
+        civicIntegrationDetails:
+          type: array
+          items:
+            type: string
           nullable: true
-        memo:
-          type: string
+        personDetails:
+          type: array
+          items:
+            type: string
           nullable: true
         registrar:
           type: array
@@ -30029,18 +30042,27 @@ components:
             type: string
           nullable: true
         readingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         writingTestResult:
-          type: string
+          type: array
+          items:
+            type: string
           nullable: true
         permissionDetails:
           type: array
           items:
             type: string
-          nullable: true
         intakeDetail:
           readOnly: true
+          type: array
+          items:
+            type: string
+          nullable: true
+        intakeDetails:
+          writeOnly: true
           type: string
           nullable: true
         intakeDetails:
@@ -30054,7 +30076,7 @@ components:
           nullable: true
       required:
         - permissionDetails
-        - languageHouseId
+        - taalhuisId
     StudentAvailability:
       type: object
       description: ''
@@ -31488,9 +31510,6 @@ definitions:
       - telephone
   Student-write:
     properties:
-      status: []
-      memo: []
-      registrar: []
       civicIntegrationDetails: []
       personDetails: []
       contactDetails: []
@@ -31508,12 +31527,12 @@ definitions:
       writingTestResult: []
       permissionDetails: []
       intakeDetail: []
-      languageHouseId: []
+      taalhuisId: []
       studentId: []
     required:
       - permissionDetails
-      - languageHouseId
-  Student-read:
+      - taalhuisId
+  Student-write:
     properties:
       civicIntegrationDetails: []
       personDetails: []
@@ -31532,11 +31551,10 @@ definitions:
       writingTestResult: []
       permissionDetails: []
       intakeDetail: []
-      languageHouseId: []
+      taalhuisId: []
       studentId: []
     required:
       - permissionDetails
-      - languageHouseId
   StudentDossierEvent-read:
     properties:
       event:
@@ -31575,22 +31593,6 @@ definitions:
       - eventDate
       - eventDescription
       - studentId
-  StudentIntakeDetail-write:
-    properties:
-      studentId: []
-      lastName: []
-      middleName: []
-      nickname: []
-      gender: []
-      dateOfBirth: []
-      streetAndHouseNumber: []
-      postalCode: []
-      place: []
-      phoneNumber: []
-      phoneNumberContactPerson: []
-      email: []
-      availability: []
-    required: []
   User-read:
     properties:
       email:
@@ -31729,12 +31731,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-26 07:35:17'
+        example: '2021-04-23 07:51:47'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-26 07:35:17'
+        example: '2021-04-23 07:51:47'
     required: []
   AuditTrail-write:
     properties:
@@ -31782,12 +31784,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-26 07:35:17'
+        example: '2021-04-23 07:51:47'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-26 07:35:17'
+        example: '2021-04-23 07:51:47'
     required: []
   ChangeLog-write:
     properties:
