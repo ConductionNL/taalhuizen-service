@@ -46,6 +46,18 @@ class CCService
         ];
     }
 
+    public function cleanResource(array $array): array
+    {
+        foreach($array as $key=>$value){
+            if(is_array($value)){
+                $array[$key] = $this->cleanResource($value);
+            } elseif(!$value){
+                unset($array[$key]);
+            }
+        }
+        return $array;
+    }
+
     public function employeeToPerson(array $employee): array {
         $person = [
             'givenName' => $employee['givenName'],
@@ -61,10 +73,12 @@ class CCService
                         null
                     ),
             'telephones' => key_exists('telephone', $employee) ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
-            'emails' => key_exists('email', $employee) ? [['name' => 'email 1', 'emial' => $employee['email']]] : [],
+            'emails' => key_exists('email', $employee) ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
             'addresses' => key_exists('address', $employee) ? [$this->convertAddress($employee['address'])] : [],
         ];
         $person['telephones'][] = key_exists('contactTelephone', $employee) ? ['name' => 'contact telephone', 'telephone' => $employee['contactTelephone']] : null;
+
+        $person = $this->cleanResource($person);
         return $person;
     }
 

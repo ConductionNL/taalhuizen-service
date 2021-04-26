@@ -78,3 +78,21 @@ services:
     App\Resolver\ParticipationQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\EmployeeMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\EmployeeQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\EmployeeQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\StudentDossierEventMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\StudentDossierEventQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\StudentDossierEventQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
