@@ -63,8 +63,8 @@ class CCService
             'givenName' => $employee['givenName'],
             'additionalName' => key_exists('additionalName', $employee) ? $employee['additionalName'] : null,
             'familyName' => key_exists('familyName', $employee) ? $employee['familyName'] : null,
-            'birthday' => key_exists('dateOfBirth', $employee) ? $employee['dateOfBirt'] : null,
-            'gender' => key_exists('gender', $employee) ? $employee['gender'] : null,
+            'birthday' => key_exists('dateOfBirth', $employee) ? $employee['dateOfBirth'] : null,
+            'gender' => key_exists('gender', $employee) ? ($employee['gender'] == "X" ? null: strtolower($employee['gender'])): null,
             'contactPreference' =>
                 key_exists('contactPreference', $employee) ?
                     $employee['contactPreference'] :

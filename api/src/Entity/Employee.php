@@ -262,7 +262,7 @@ class Employee
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=CurrentEducationYes::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="json", nullable=true)
      */
     private ?array $currentEducationYes;
 
@@ -317,11 +317,11 @@ class Employee
     private $otherRelevantCertificates;
 
     /**
-     * @var boolean Whether the employee has submitted a police certificate
-     *
-     * @ORM\Column(type="boolean")
+     * @var boolean|null Whether the employee has submitted a police certificate
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    private bool $isVOGChecked = false;
+    private ?bool $isVOGChecked = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -331,7 +331,7 @@ class Employee
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $taalhuisId;
+    private $languageHouseId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -671,7 +671,7 @@ class Employee
         return $this->isVOGChecked;
     }
 
-    public function setIsVOGChecked(?bool $isVOGChecked): self
+    public function setIsVOGChecked(?bool $isVOGChecked = false): self
     {
         $this->isVOGChecked = $isVOGChecked;
 
@@ -690,14 +690,14 @@ class Employee
         return $this;
     }
 
-    public function getTaalhuisId(): ?string
+    public function getLanguageHouseId(): ?string
     {
-        return $this->taalhuisId;
+        return $this->languageHouseId;
     }
 
-    public function setTaalhuisId(?string $taalhuisId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
-        $this->taalhuisId = $taalhuisId;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }
