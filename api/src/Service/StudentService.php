@@ -29,13 +29,13 @@ class StudentService
         if (isset($id)) {
             // Update
             $resource['dateModified'] = $now;
-            var_dump($resource);die;
+//            var_dump($resource);die;
             $resource = $this->eavService->saveObject($resource, $type, 'eav', null, $id);
         } else {
             // Create
             $resource['dateCreated'] = $now;
             $resource['dateModified'] = $now;
-            var_dump($resource);die;
+//            var_dump($resource);die;
             $resource = $this->eavService->saveObject($resource, $type);
         }
 
