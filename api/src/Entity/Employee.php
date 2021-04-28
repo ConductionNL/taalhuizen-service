@@ -31,11 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "collection_query" = {
- *              "collection_query" = EmployeeQueryCollectionResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *              "collection_query" = EmployeeQueryCollectionResolver::class
  *          },
  *          "create" = {
  *              "mutation" = EmployeeMutationResolver::class,
@@ -63,6 +59,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
  * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "languageHouseId": "exact",
+ *     "providerId": "exact"
+ * })
  */
 class Employee
 {
@@ -324,14 +324,16 @@ class Employee
     private ?bool $isVOGChecked = false;
 
     /**
+     * @var string|null The provider this employee works for
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederId;
+    private ?string $providerId;
 
     /**
+     * @var string|null The language house this employee works for
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $languageHouseId;
+    private ?string $languageHouseId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -678,14 +680,14 @@ class Employee
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->aanbiederId;
+        return $this->providerId;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->providerId = $providerId;
 
         return $this;
     }

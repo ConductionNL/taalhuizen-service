@@ -39,16 +39,25 @@ class MrcService
         $this->eavService = $EAVService;
     }
 
-    public function getEmployees(): ArrayCollection
+    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null): ArrayCollection
     {
         $employees = new ArrayCollection();
-        $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'])['hydra:member'];
+        if($languageHouseId){
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations']), 'limit' => 1000])['hydra:member'];
+        } else {
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['limit' => 1000])['hydra:member'];
+        }
         foreach($results as $result){
             if($this->eavService->hasEavObject($result['@id'])){
                 $result = $this->eavService->getObject('employees', $result['@id'], 'mrc');
+                if($providerId && strpos($result['provider'], $providerId) === false){
+                    continue;
+                }
                 $employees->add($this->createEmployeeObject($result));
             }
         }
+
+
         return $employees;
     }
 
@@ -205,7 +214,11 @@ class MrcService
 
     public function setCurrentEducation(Employee $employee, array $education): Employee
     {
-        $education = $this->eavService->getObject('education',  $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+        if($this->eavService->hasEavObject($this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]))){
+            $education = $this->eavService->getObject('education',  $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+        } else {
+            return $employee;
+        }
         if($education['endDate']){
             $employee->setCurrentEducationNoButDidFollow(
                 [
@@ -355,7 +368,7 @@ class MrcService
         }
         $employee = $this->getUser($employee, $contact['@id']);
         $aanbiederIdArray = explode('/', parse_url($result['provider'])['path']);
-        $employee->setAanbiederId(end($aanbiederIdArray));
+        $employee->setProviderId(end($aanbiederIdArray));
         $languageHouseIdArray = explode('/', parse_url($result['organization'])['path']);
         $employee->setLanguageHouseId(end($languageHouseIdArray));
 
