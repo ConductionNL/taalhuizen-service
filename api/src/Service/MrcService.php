@@ -61,39 +61,42 @@ class MrcService
     public function createCompetences(array $employeeArray, string $employeeId, ?array $employee = []): array
     {
         if($employee){
-            foreach($employee['competences'] as $key => $competence){
-                if(in_array($competence['name'], $employeeArray['targetGroupPreference'])){
+            foreach($employee['competencies'] as $key => $competence){
+                if(in_array($competence['name'], $employeeArray['targetGroupPreferences'])){
                     $competence['grade'] = $employeeArray['hasExperienceWithTargetGroup'];
+                    unset($employeeArray['targetGroupPreferences'][array_search($competence['name'], $employeeArray['targetGroupPreferences'])]);
                 } else {
                     $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $employee['competences']['id']]);
                 }
             }
-        } else {
-            $competences = [];
-            foreach($employeeArray['targetGroupPreferences'] as $targetGroupPreference){
-                $competence = [
-                    'name'          => $targetGroupPreference,
-                    'description'   => '',
-                    'grade'         => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced': 'unexperienced',
-                    'employee'      => "/employees/$employeeId",
-                ];
-                $competences[] = $this->commonGroundService->createResource($competence, ['component' => 'mrc', 'type' => 'competences'])['id'];
-            }
+        }
+
+
+        $competences = [];
+        foreach($employeeArray['targetGroupPreferences'] as $targetGroupPreference){
+            $competence = [
+                'name'          => $targetGroupPreference,
+                'description'   => '',
+                'grade'         => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced': 'unexperienced',
+                'employee'      => "/employees/$employeeId",
+            ];
+            $competences[] = $this->commonGroundService->createResource($competence, ['component' => 'mrc', 'type' => 'competences'])['id'];
         }
         return $competences;
     }
 
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
+
         $education = [
             'name'                  => $employeeArray['currentEducationYes']['name'],
             'startDate'             => $employeeArray['currentEducationYes']['dateSince'],
             'degreeGrantedStatus'   => 'notGranted',
-            'providesCertificate'   => $employeeArray['doesProvideCertificate'],
+            'providesCertificate'   => $employeeArray['currentEducationYes']['doesProvideCertificate'],
             'employee'              => "/employees/$employeeId",
         ];
         if($educationId){
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'educations', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
         }
        return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
     }
@@ -105,11 +108,11 @@ class MrcService
             'endDate'                   => $employeeArray['currentEducationNoButDidFollow']['dateUntil'],
             'degreeGrantedStatus'       => 'notGranted',
             'iscedEducationLevelCode'   => $employeeArray['currentEducationNoButDidFollow']['level'],
-            'providesCertificate'       => $employeeArray['gotCertificate'],
+            'providesCertificate'       => $employeeArray['currentEducationNoButDidFollow']['gotCertificate'],
             'employee'                  => "/employees/$employeeId",
         ];
         if($educationId){
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'educations', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
         }
         return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
     }
@@ -118,15 +121,14 @@ class MrcService
     {
         $education = [
             'name'                      => $employeeArray['currentlyFollowingCourseName'],
-            'institute'                 => $employeeArray['currentlyFollowingCourseInstitute'],
-            'endDate'                   => $employeeArray['currentEducation']['dateUntil'],
+            'institution'                 => $employeeArray['currentlyFollowingCourseInstitute'],
             'providesCertificate'       => $employeeArray['doesCurrentlyFollowingCourseProvideCertificate'],
             'courseProfessionalism'     => $employeeArray['currentlyFollowingCourseCourseProfessionalism'],
             'teacherProfessionalism'    => $employeeArray['currentlyFollowingCourseTeacherProfessionalism'],
             'employee'                  => "/employees/$employeeId",
         ];
         if($educationId){
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'educations', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
         }
         return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
     }
@@ -134,19 +136,20 @@ class MrcService
     public function getEducation (string $type, array $educations): ?string
     {
         foreach($educations as $education){
+//            var_dump($education);
             switch($type){
                 case 'currentEducation':
-                    if($education['startDate'] && !$education['endDate'] && !$education['institute']){
+                    if($education['startDate'] && !$education['endDate'] && !$education['institution']){
                         return $education['id'];
                     }
                     break;
                 case 'unfinishedEducation':
-                    if($education['endDate'] && !$education['institute']){
+                    if($education['endDate'] && !$education['institution']){
                         return $education['id'];
                     }
                     break;
                 case 'course':
-                    if($education['institute']){
+                    if($education['institution']){
                         return $education['id'];
                     }
                     break;
@@ -161,30 +164,35 @@ class MrcService
         if($employeeArray['currentEducation'] == 'YES') {
             if($existingEducations && $existing = $this->getEducation('currentEducation', $existingEducations)){
                 $educations[] = $this->createCurrentEducation($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId);
             }
-            $educations[] = $this->createCurrentEducation($employeeArray, $employeeId);
         }
         if($employeeArray['currentEducation'] == 'NO_BUT_DID_FOLLOW'){
             if($existingEducations && $existing = $this->getEducation('unfinishedEducation', $existingEducations)){
-                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId, $existing);
+                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId);
             }
-            $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId);
         }
 
         if($employeeArray['doesCurrentlyFollowCourse']){
             if($existingEducations && $existing = $this->getEducation('course', $existingEducations)){
-                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId, $existing);
+                $educations[] = $this->createCourse($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createCourse($employeeArray, $employeeId);
             }
-            $educations[] = $this->createCourse($employeeArray, $employeeId);
         }
         return $educations;
     }
 
-    public function createInterests(array $employeeArray, string $employeeId, ?array $existingInterests = []): array
+    public function createInterests(array $employeeArray, string $employeeId, ?array $existingInterests = []): string
     {
         foreach($existingInterests as $existingInterest){
-            if(!in_array($existingInterest, $employeeArray['volunteeringPreference'])){
+            if($existingInterest['name'] != $employeeArray['volunteeringPreference']){
                 $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'interests', 'id' =>$existingInterest['id']]);
+            } else {
+                return $existingInterest['id'];
             }
         }
         $interest = [
@@ -197,7 +205,7 @@ class MrcService
 
     public function setCurrentEducation(Employee $employee, array $education): Employee
     {
-        $education = $this->eavService->getObject('education', $education['@id']);
+        $education = $this->eavService->getObject('education',  $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
         if($education['endDate']){
             $employee->setCurrentEducationNoButDidFollow(
                 [
@@ -209,10 +217,10 @@ class MrcService
             );
             $employee->setCurrentEducation('NO_BUT_DID_FOLLOW');
         } elseif ($education['startDate']){
-            $employee->setCurrentEducationNoButDidFollow(
+            $employee->setCurrentEducationYes(
                 [
                     'id'                        => $education['id'],
-                    'dateUntil'                 => $education['endDate'],
+                    'dateSince'                 => $education['endDate'],
                     'name'                      => $education['name'],
                     'doesProvideCertificate'    => $education['providesCertificate'],
                 ]
@@ -224,10 +232,11 @@ class MrcService
 
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
-        $education = $this->eavService->getObject('education', $education['@id']);
+//        var_Dump($education);
+        $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
         $employee->setDoesCurrentlyFollowCourse(true);
         $employee->setCurrentlyFollowingCourseName($education['name']);
-        $employee->setCurrentlyFollowingCourseInstitute($education['institute']);
+        $employee->setCurrentlyFollowingCourseInstitute($education['institution']);
         $employee->setCurrentlyFollowingCourseTeacherProfessionalism($education['courseProfessionalism']);
         $employee->setCurrentlyFollowingCourseCourseProfessionalism($education['teacherProfessionalism']);
         $employee->setDoesCurrentlyFollowingCourseProvideCertificate($education['providesCertificate']);
@@ -291,8 +300,8 @@ class MrcService
         $employee->setGivenName($contact['givenName']);
         $employee->setAdditionalName($contact['additionalName']);
         $employee->setFamilyName($contact['familyName']);
-        $employee->setGender($contact['gender']);
-        $employee->setDateOfBirth($contact['birthday']);
+        $employee->setGender($contact['gender'] ? $contact['gender'] : 'X');
+        $employee->setDateOfBirth(new \DateTime($contact['birthday']));
         $employee->setIsVOGChecked($result['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($result['relevantCertificates']);
         $employee->setGotHereVia($result['referrer']);
@@ -316,7 +325,7 @@ class MrcService
             $employee->setEmail($email['email']);
         }
         foreach($contact['addresses'] as $address){
-            $employee->setAddress($address['address']);
+            $employee->setAddress($address);
         }
 
         $competences = [];
@@ -325,6 +334,7 @@ class MrcService
         }
         $employee->setTargetGroupPreferences($competences);
 
+        //@TODO: Dit geeft nog intermittende problemen
         foreach($result['interests'] as $interest){
             $employee->setVolunteeringPreference($interest['name']);
         }
@@ -337,7 +347,7 @@ class MrcService
         }
 
         foreach($result['educations'] as $education){
-            if(!$education['institute']){
+            if(!$education['institution']){
                 $employee = $this->setCurrentEducation($employee, $education);
             } else {
                 $employee = $this->setCurrentCourse($employee, $education);
@@ -346,8 +356,8 @@ class MrcService
         $employee = $this->getUser($employee, $contact['@id']);
         $aanbiederIdArray = explode('/', parse_url($result['provider'])['path']);
         $employee->setAanbiederId(end($aanbiederIdArray));
-        $taalhuisIdArray = explode('/', parse_url($result['organization'])['path']);
-        $employee->setTaalhuisId(end($taalhuisIdArray));
+        $languageHouseIdArray = explode('/', parse_url($result['organization'])['path']);
+        $employee->setLanguageHouseId(end($languageHouseIdArray));
 
         $employee->setBiscEmployeeId($result['id']);
 
@@ -390,7 +400,7 @@ class MrcService
     {
         $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         $resource = [
-            'organization'          => key_exists('taalhuisId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['taalhuisId']]) : null,
+            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
             'person'                => $contact['@id'],
             'provider'              => key_exists('aanbiederId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['aanbiederId']]) : null,
             'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
@@ -407,7 +417,7 @@ class MrcService
         if(key_exists('currentEducation', $employeeArray)){
             $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
-        if(key_exists('volunteeringPreferences', $employeeArray)){
+        if(key_exists('volunteeringPreference', $employeeArray)){
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
         if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || $user = $this->checkIfUserExists(null, $employeeArray['email'])){
@@ -427,7 +437,7 @@ class MrcService
         //@TODO: keep CC Database clean
         $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         $resource = [
-            'organization'          => key_exists('taalhuisId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['taalhuisId']]) : null,
+            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
             'person'                => $contact['@id'],
             'provider'              => key_exists('aanbiederId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['aanbiederId']]) : null,
             'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
@@ -438,12 +448,12 @@ class MrcService
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
         if(key_exists('targetGroupPreferences', $employeeArray)){
-            $this->createCompetences($employeeArray, $result['id'], $result['educations']);
+            $this->createCompetences($employeeArray, $result['id'], $result);
         }
         if(key_exists('currentEducation', $employeeArray)){
             $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
-        if(key_exists('volunteeringPreferences', $employeeArray)){
+        if(key_exists('volunteeringPreference', $employeeArray)){
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
         if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || $user = $this->checkIfUserExists(null, $employeeArray['email'])){
