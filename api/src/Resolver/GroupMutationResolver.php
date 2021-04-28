@@ -13,6 +13,7 @@ use App\Service\EDUService;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -63,11 +64,19 @@ class GroupMutationResolver implements MutationResolverInterface
         $group = $this->dtoToGroup($groupArray);
         $course = $this->createCourse($group);
 
-        $result = array_merge($result, $this->makeGroup($course, $group));
+        $result = array_merge($result,$this->checkGroupValues($group));
 
-        $resourceResult = $this->handleResult($result['group']);
-        $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
+        if (!isset($result['errorMessage'])) {
 
+            $result = array_merge($result, $this->makeGroup($course, $group));
+
+            $resourceResult = $this->handleResult($result['group']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
+        }
+
+        if (isset($result['errorMessage'])){
+            throw new Exception($result['errorMessage']);
+        }
         return $resourceResult;
     }
 
@@ -107,12 +116,25 @@ class GroupMutationResolver implements MutationResolverInterface
         return $course;
     }
 
-    public function makeGroup($course,$group)
+    public function makeGroup($course,$group,$groupId = null)
     {
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $now = $now->format('d-m-Y H:i:s');
 
+        if (isset($groupId)){
+            //update
+            $group['course'] ='/courses/'.$course['id'];
+            $group['dateModified'] = $now;
+            $group = $this->eavService->saveObject($group,'groups','edu', null,$groupId);
+        }else{
+            //create
+            $group['dateCreated'] = $now;
+            $group['dateModified'] = $now;
+            $group['course'] ='/courses/'.$course['id'];
+            $group = $this->eavService->saveObject($group,'groups','edu');
+        }
 
-
-        $result['group'] = [];
+        $result['group'] = $group;
         return $result;
     }
 
@@ -166,9 +188,37 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
+    public function checkGroupValues($group){
+        $result = [];
+        if ($group['outComesTopic'] == 'OTHER' && !isset($group['outComesTopicOther'])){
+            $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
+        }elseif ($group['outComesApplication'] == 'OTHER' && !isset($group['outComesApplicationOther'])){
+            $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
+        }elseif ($group['outComesLevel'] == 'OTHER' && !isset($group['outComesLevelOther'])){
+            $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+        }
+        $result['group'] = $group;
+        return $result;
+    }
+
     public function handleResult($group){
         $resource = new Group();
-
+        $resource->setName($group['name']);
+        $resource->setTypeCourse($group['course']['additionalType']);
+        $resource->setOutComesGoal($group['goal']);
+        $resource->setOutComesTopic($group['topic']);
+        $resource->setOutComesTopicOther($group['topicOther']);
+        $resource->setOutComesApplication($group['application']);
+        $resource->setOutComesApplicationOther($group['applicationOther']);
+        $resource->setOutComesLevel($group['level']);
+        $resource->setOutComesLevelOther($group['levelOther']);
+        $resource->setDetailsIsFormal($group['isFormal']);
+        $resource->setDetailsTotalClassHours($group['course']['timeRequired']);
+        $resource->setDetailsCertificateWillBeAwarded($group['certificateWillBeAwarded']);
+        $resource->setGeneralLocation($group['location']);
+        $resource->setGeneralParticipantsMin($group['minParticipations']);
+        $resource->setGeneralParticipantsMax($group['maxParticipations']);
+        $resource->setGeneralEvaluation($group['evaluation']);
         $this->entityManager->persist($resource);
         return $resource;
     }
