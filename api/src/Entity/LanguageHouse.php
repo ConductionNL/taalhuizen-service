@@ -36,9 +36,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "create" = {
  *              "mutation" = LanguageHouseMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
  *              "write" = false
  *          },
  *          "update" = {

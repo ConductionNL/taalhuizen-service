@@ -7,19 +7,44 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\LanguageHouseService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
+use Ramsey\Uuid\Uuid;
 
 class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
 {
+    private LanguageHouseService $languageHouse;
 
     /**
      * @inheritDoc
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
+        $result['result'] = [];
+
+        // Get the languageHouses
+        $result = array_merge($result, $this->languageHouse->getLanguageHouses());
+
         $collection = new ArrayCollection();
-        //@TODO implement logic to find stuff and put it in the iterator
+        if (isset($result['languageHouses'])) {
+            // Now put together the expected result for Lifely:
+            foreach ($result['languageHouses'] as &$languageHouse) {
+                if (!isset($languageHouse['errorMessage'])) {
+                    $resourceResult = $this->languageHouse->handleResult($languageHouse);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
+                    $collection->add($resourceResult);
+                    $languageHouse = $languageHouse['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                }
+            }
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
         return $this->createPaginator($collection, $context['args']);
     }
 

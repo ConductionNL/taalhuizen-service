@@ -45,7 +45,6 @@ class ProviderMutationResolver implements MutationResolverInterface
             case 'updateProvider':
                 return $this->updateProvider($context['info']->variableValues['input']);
             case 'removeProvider':
-                var_dump($context['info']->operation->name->value);
                 return $this->removeProvider($context['info']->variableValues['input']);
             default:
                 return $item;
@@ -114,7 +113,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         $result = array_merge($result, $this->providerService->deleteProvider($id));
 
         $result['result'] = False;
-        if (isset($result['learningNeed'])){
+        if (isset($result['provider'])){
             $result['result'] = True;
         }
 

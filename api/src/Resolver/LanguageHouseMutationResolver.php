@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
+use App\Service\LanguageHouseService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -19,10 +20,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
+    private LanguageHouseService $languageHouseService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService){
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LanguageHouseService $languageHouseService){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
+        $this->languageHouseService = $languageHouseService;
     }
     /**
      * @inheritDoc
@@ -53,11 +56,11 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         // get all DTO info...
         $languageHouse = $this->dtoToLanguageHouse($resource);
 
-        $result = array_merge($result, $this->saveLanguageHouse($languageHouse));
+        $result = array_merge($result, $this->languageHouseService->createLanguageHouse($languageHouse));
         var_dump($result);
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->handleResult($result['languageHouse']);
+        $resourceResult = $this->languageHouseService->handleResult($languageHouse);
         $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
 
         // If any error was catched throw it
@@ -72,14 +75,9 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $result['result'] = [];
 
         // If LanguageHouseUrl or LanguageHouseId is set generate the id for it, needed for eav calls later
-        $languageHouseId = null;
-        if (isset($input['languageHouseUrl'])) {
-            $languageHouseId = $this->commonGroundService->getUuidFromUrl($input['languageHouseUrl']);
-        } else {
-            $languageHouseId = explode('/',$input['id']);
-            if (is_array($languageHouseId)) {
-                $languageHouseId = end($languageHouseId);
-            }
+        $languageHouseId = explode('/', $input['id']);
+        if (is_array($languageHouseId)) {
+            $languageHouseId = end($languageHouseId);
         }
 
         // Transform input info to LanguageHouse body...
@@ -88,10 +86,10 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         if (!isset($result['errorMessage'])) {
             // No errors so lets continue... to:
             // Save LanguageHouse
-            $result = array_merge($result, $this->saveLanguageHouse($result['languageHouse'], $languageHouseId));
+            $result = array_merge($result, $this->languageHouseService->updateLanguageHouse($languageHouse, $languageHouseId));
 
             // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->handleResult($result['languageHouse']);
+            $resourceResult = $this->languageHouseService->handleResult($languageHouse);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
         }
 
@@ -99,55 +97,30 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         $this->entityManager->persist($resourceResult);
         return $resourceResult;
     }
 
-    public function deleteLanguageHouse(array $languageHouse): ?LanguageHouse
+    public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
-        return null;
-    }
+        $result['result'] = [];
 
-    public function saveLanguageHouse($languageHouse, $languageHouseId = null)
-    {
-        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $now = $now->format('d-m-Y H:i:s');
+        $id = explode('/', $input['id']);
+        $id = end($id);
+        $result = array_merge($result, $this->languageHouseService->deleteLanguageHouse($id));
 
-        // Save the languageHouse
-        if (isset($languageHouseId)) {
-            // Update
-            $languageHouse['dateModified'] = $now;
-            $languageHouseWrc = $this->commonGroundService->saveResource($languageHouse, ['component' => 'wrc', 'type' => 'organizations']);
-            $languageHouseCC = $this->commonGroundService->saveResource($languageHouse, ['component' => 'cc', 'type' => 'organizations']);
-        } else {
-            // Create
-            $languageHouse['dateCreated'] = $now;
-            $languageHouse['dateModified'] = $now;
-
-            $languageHouseWrc = $this->commonGroundService->saveResource($languageHouse, ['component' => 'wrc', 'type' => 'organizations']);
-
-            $languageHouse['addresses'][]['name'] = 'Address of '.$languageHouse['name'];
-            $languageHouse['addresses'][] = $languageHouse['address'];
-
-            $languageHouse['emails'][]['name'] = 'Email of '.$languageHouse['name'];
-            $languageHouse['emails'][]['email'] = $languageHouse['email'];
-
-            $languageHouse['telephones'][]['name'] = 'Telephone of '.$languageHouse['name'];
-            $languageHouse['telephones'][]['telephone'] = $languageHouse['phoneNumber'];
-
-            //add source organization to cc organization
-            $languageHouse['sourceOrganization'] = $languageHouseWrc['@id'];
-            $languageHouseCC = $this->commonGroundService->saveResource($languageHouse, ['component' => 'cc', 'type' => 'organizations']);
-
-            //add contact to wrc organization
-            $languageHouse['contact'] = $languageHouseCC['@id'];
-            $languageHouseWrc = $this->commonGroundService->saveResource($languageHouse, ['component' => 'wrc', 'type' => 'organizations']);
-
+        $result['result'] = False;
+        if (isset($result['languageHouse'])){
+            $result['result'] = True;
         }
-        // Add $providerCC and $providerWrc to the $result['providerCC'] and $result['providerWrc'] because this is convenient when testing or debugging (mostly for us)
-        $result['languageHouse'] = $languageHouseCC;
 
-        return $result;
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
+        return null;
     }
 
     private function dtoToLanguageHouse(LanguageHouse $resource)
@@ -161,25 +134,13 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return $languageHouse;
     }
 
-    private function handleResult($languageHouse)
-    {
-        $resource = new LanguageHouse();
-        $resource->setAddress($languageHouse['address']);
-        $resource->setEmail($languageHouse['email']);
-        $resource->setPhoneNumber($languageHouse['phoneNumber']);
-        $resource->setName($languageHouse['name']);
-
-        $this->entityManager->persist($resource);
-        return $resource;
-    }
-
     private function inputToLanguageHouse(array $input)
     {
         // Get all info from the input array for updating a LanguageHouse and return the body for this
+        $languageHouse['address'] = $input['address'];
+        $languageHouse['email'] = $input['email'];
+        $languageHouse['phoneNumber'] = $input['phoneNumber'];
         $languageHouse['name'] = $input['name'];
-        $languageHouse['addresses'][] = $input['address'];
-        $languageHouse['emails'][]['email'] = $input['email'];
-        $languageHouse['telephones'][]['telephones'] = $input['phoneNumber'];
 
         return $languageHouse;
     }
