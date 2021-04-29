@@ -35,10 +35,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "create" = {
  *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *              "write" = false,
+ *
  *          },
  *          "update" = {
  *              "mutation" = GroupMutationResolver::class,
@@ -432,18 +430,6 @@ class Group
         return $this;
     }
 
-    public function getIscedEducationLevelCode(): ?string
-    {
-        return $this->iscedEducationLevelCode;
-    }
-
-    public function setIscedEducationLevelCode(string $iscedEducationLevelCode): self
-    {
-        $this->iscedEducationLevelCode = $iscedEducationLevelCode;
-
-        return $this;
-    }
-
     public function getOutComesApplicationOther(): ?string
     {
         return $this->outComesApplicationOther;
@@ -464,6 +450,8 @@ class Group
     public function setOutComesLevelOther(string $outComesLevelOther): self
     {
         $this->outComesLevelOther = $outComesLevelOther;
+
+        return $this;
     }
 
     public function getAvailability(): ?array

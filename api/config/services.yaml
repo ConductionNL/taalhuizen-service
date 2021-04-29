@@ -96,3 +96,12 @@ services:
     App\Resolver\StudentDossierEventQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\GroupMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\GroupQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\GroupQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
