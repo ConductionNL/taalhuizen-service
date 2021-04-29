@@ -31,51 +31,11 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $result['result'] = [];
-        if(key_exists('languageHouseId', $context['args'])){
-            $languageHouseId = $context['args']['languageHouseId'];
-        } else {
-            throw new Exception('The languageHouseId was not specified');
-        }
-
-        // Get the students from this taalhuis from EAV
-        $result = array_merge($result, $this->studentService->getStudents($languageHouseId));
-
         $collection = new ArrayCollection();
-        if (isset($result['students'])) {
-            // Now put together the expected result for Lifely:
-            foreach ($result['students'] as $student) {
-                if (!isset($student['errorMessage'])) {
-                    $resourceResult = $this->studentService->handleResult($student, $languageHouseId);
-                    $resourceResult->setId(Uuid::getFactory()->fromString($student['id']));
-                    $collection->add($resourceResult);
-                    $student = $student['@id']; // Can be removed to show the entire body of all the students when dumping $result
-                }
-            }
-        }
 
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
+        //todo:
 
         return $this->createPaginator($collection, $context['args']);
-
-        if (!$item instanceof Student && !key_exists('input', $context['info']->variableValues)) {
-            return null;
-        }
-        switch($context['info']->operation->name->value){
-            case 'activeStudent':
-                return $this->activeStudents($context['info']->variableValues['input']);
-            case 'newRefferedStudent':
-                return $this->newRefferedStudents($context['info']->variableValues['input']);
-            case 'completedStudent':
-                return $this->completedStudents($context['info']->variableValues['input']);
-            default:
-                return $item;
-        }
-
-
     }
 
     public function createPaginator(ArrayCollection $collection, array $args){
@@ -108,8 +68,6 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
         return null;
     }
-
-
 
     public function completedStudents(array $student): ?Student
     {

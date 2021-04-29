@@ -9,6 +9,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Promise\Each;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -26,6 +27,18 @@ class EDUService
         $this->commonGroundService = $commonGroundService;
         $this->params = $params;
         $this->eavService = $eavService;
+    }
+
+    public function saveEavParticipant($body, $participantUrl = null) {
+        // Save the edu/participant in EAV
+        if (isset($participantUrl)) {
+            // Update
+            $person = $this->eavService->saveObject($body, 'participants', 'edu', $participantUrl);
+        } else {
+            // Create
+            $person = $this->eavService->saveObject($body, 'participants', 'edu');
+        }
+        return $person;
     }
 
     //@todo uitwerken
