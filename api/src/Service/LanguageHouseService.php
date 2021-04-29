@@ -59,8 +59,9 @@ class LanguageHouseService
 
     public function getLanguageHouse($languageHouseId)
     {
-        $result = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-
+        $result['languageHouse'] = [];
+        $languageHouse = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        $result['languageHouse'] = $languageHouse;
         return $result;
     }
 
@@ -127,23 +128,15 @@ class LanguageHouseService
         return $resource;
     }
 
-    public function createLanguageHouseObject($result)
+    public function createLanguageHouseObject($languageHouse)
     {
-        $languageHouse = new LanguageHouse();
-
-        foreach ($result['addresses'] as $address) {
-            $languageHouse->setAddress($address['address']);
-        }
-        foreach ($result['emails'] as $email) {
-            $languageHouse->setEmail($email['email']);
-        }
-        foreach ($result['telephones'] as $telephone) {
-            $languageHouse->setPhoneNumber($telephone['phoneNumber']);
-        }
-        $languageHouse->setName($result['name']);
-
-        $this->entityManager->persist($languageHouse);
-        return $languageHouse;
+        $resource = new LanguageHouse();
+        $resource->setAddress($languageHouse['addresses']);
+        $resource->setEmail($languageHouse['emails'][0]['email']);
+        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone']);
+        $resource->setName($languageHouse['name']);
+        $this->entityManager->persist($resource);
+        return $resource;
     }
 
 }

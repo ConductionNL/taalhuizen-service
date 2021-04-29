@@ -58,7 +58,9 @@ class ProviderService
 
     public function getProvider($providerId)
     {
-        $result = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
+        $result['provider'] = [];
+        $provider = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
+        $result['provider'] = $provider;
 
         return $result;
     }
@@ -66,7 +68,6 @@ class ProviderService
     public function getProviders() {
 
         $result['providers'] = [];
-
         $providers = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations']);
         $result['providers'] = $providers;
 
@@ -120,6 +121,17 @@ class ProviderService
         $resource->setAddress($provider['address']);
         $resource->setEmail($provider['email']);
         $resource->setPhoneNumber($provider['phoneNumber']);
+        $resource->setName($provider['name']);
+        $this->entityManager->persist($resource);
+        return $resource;
+    }
+
+    public function createProviderObject($provider)
+    {
+        $resource = new Provider();
+        $resource->setAddress($provider['addresses']);
+        $resource->setEmail($provider['emails'][0]['email']);
+        $resource->setPhoneNumber($provider['telephones'][0]['telephone']);
         $resource->setName($provider['name']);
         $this->entityManager->persist($resource);
         return $resource;

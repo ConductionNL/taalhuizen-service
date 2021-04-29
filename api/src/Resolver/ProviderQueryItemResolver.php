@@ -29,14 +29,13 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
                 $providerId = end($providerId);
             }
         } else {
-            throw new Exception('The learningNeedId was not specified');
+            throw new Exception('The providerId was not specified');
         }
 
-        $result['provider'] = array_merge($result, $this->providerService->getProvider($providerId));
-        var_dump($result['provider']);
+        $result = array_merge($result, $this->providerService->getProvider($providerId));
 
         if (isset($result['provider'])) {
-            $resourceResult = $this->providerService->handleResult($result['provider']);
+            $resourceResult = $this->providerService->createProviderObject($result['provider']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
         }
 

@@ -30,14 +30,13 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
                 $languageHouseId = end($languageHouseId);
             }
         } else {
-            throw new Exception('The learningNeedId was not specified');
+            throw new Exception('The languageHouseId was not specified');
         }
 
-        $result['languageHouse'] = array_merge($result, $this->languageHouseService->getLanguageHouse($languageHouseId));
-        var_dump($result['languageHouse']);
+        $result = array_merge($result, $this->languageHouseService->getLanguageHouse($languageHouseId));
 
         if (isset($result['languageHouse'])) {
-            $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
+            $resourceResult = $this->languageHouseService->createLanguageHouseObject($result['languageHouse']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
         }
 
