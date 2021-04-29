@@ -308,7 +308,11 @@ class MrcService
 
     public function createEmployeeObject(array $result): Employee
     {
-        $contact = $this->commonGroundService->getResource($result['person']);
+        if($this->eavService->hasEavObject($result['person'])){
+            $contact = $this->eavService->getObject('people', $result['person'], 'cc');
+        } else {
+            $contact = $this->commonGroundService->getResource($result['person']);
+        }
         $employee = new Employee();
         $employee->setGivenName($contact['givenName']);
         $employee->setAdditionalName($contact['additionalName']);
@@ -373,6 +377,10 @@ class MrcService
         $employee->setLanguageHouseId(end($languageHouseIdArray));
 
         $employee->setBiscEmployeeId($result['id']);
+
+        if(key_exists('availability', $contact)){
+            $employee->setAvailability($contact['availability']);
+        }
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($result['id']));
