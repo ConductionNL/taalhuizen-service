@@ -221,8 +221,8 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($input['intakeDetail'])) {
             $student['intakeDetail'] = $input['intakeDetail'];
         }
-        if (isset($input['taalhuisId'])) {
-            $student['taalhuisId'] = $input['taalhuisId'];
+        if (isset($input['languageHouseId'])) {
+            $student['languageHouseId'] = $input['languageHouseId'];
         }
         if (isset($input['studentId'])) {
             $student['studentId'] = $input['studentId'];

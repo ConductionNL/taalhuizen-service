@@ -32,21 +32,21 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
-        if(key_exists('taalhuisId', $context['args'])){
-            $taalhuisId = $context['args']['taalhuisId'];
+        if(key_exists('languageHouseId', $context['args'])){
+            $languageHouseId = $context['args']['languageHouseId'];
         } else {
-            throw new Exception('The taalhuisId was not specified');
+            throw new Exception('The languageHouseId was not specified');
         }
 
         // Get the students from this taalhuis from EAV
-        $result = array_merge($result, $this->studentService->getStudents($taalhuisId));
+        $result = array_merge($result, $this->studentService->getStudents($languageHouseId));
 
         $collection = new ArrayCollection();
         if (isset($result['students'])) {
             // Now put together the expected result for Lifely:
             foreach ($result['students'] as $student) {
                 if (!isset($student['errorMessage'])) {
-                    $resourceResult = $this->studentService->handleResult($student, $taalhuisId);
+                    $resourceResult = $this->studentService->handleResult($student, $languageHouseId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($student['id']));
                     $collection->add($resourceResult);
                     $student = $student['@id']; // Can be removed to show the entire body of all the students when dumping $result
