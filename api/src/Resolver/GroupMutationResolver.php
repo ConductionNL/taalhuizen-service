@@ -13,6 +13,7 @@ use App\Service\EDUService;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
@@ -54,11 +55,11 @@ class GroupMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createGroup(Group $groupArray): Group
+    public function createGroup(Group $input): Group
     {
         $result['result'] = [];
 
-        $group = $this->dtoToGroup($groupArray);
+        $group = $this->dtoToGroup($input);
         $course = $this->createCourse($group);
 
         $result = array_merge($result,$this->checkGroupValues($group));
@@ -66,9 +67,8 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!isset($result['errorMessage'])) {
 
             $result = array_merge($result, $this->makeGroup($course, $group));
-//            var_dump($result);
 
-            $resourceResult = $this->handleResult($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
@@ -79,14 +79,32 @@ class GroupMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function updateGroup(array $input): Group
+    public function updateGroup(array $groupArray): Group
     {
-        $id = explode('/',$input['id']);
-        $group = new Group();
+        $id = explode('/',$groupArray['id']);
+        $id = end($id);
+        $result['result'] = [];
 
+        $groupArray = array_merge(
+            $this->dtoToGroup($this->eduService->getGroup($id)),
+            $groupArray
+        );
+        $course = $this->createCourse($groupArray);
+        $result = array_merge($result,$this->checkGroupValues($groupArray));
 
-        $this->entityManager->persist($group);
-        return $group;
+        if (!isset($result['errorMessage'])) {
+
+            $result = array_merge($result, $this->makeGroup($course, $groupArray, $id));
+
+            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
+            $this->entityManager->persist($resourceResult);
+        }
+
+        if (isset($result['errorMessage'])){
+            throw new Exception($result['errorMessage']);
+        }
+        return $resourceResult;
     }
 
     public function deleteGroup(array $group): ?Group
@@ -102,7 +120,7 @@ class GroupMutationResolver implements MutationResolverInterface
     }
 
     public function createCourse($group){
-        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
+        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations','id' => $group['aanbiederId']]);
         $course = [];
         $course['name'] = 'course of '. $organization['name'];
         $course['organization'] = $organization['@id'];
@@ -118,7 +136,7 @@ class GroupMutationResolver implements MutationResolverInterface
 
     public function makeGroup($course,$group,$groupId = null)
     {
-        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
         $now = $now->format('d-m-Y H:i:s');
 
         foreach($group as $key=>$value)
@@ -186,7 +204,7 @@ class GroupMutationResolver implements MutationResolverInterface
             $group['course'] ='/courses/'.$course['id'];
 //            $group['dateModified'] = $now;
 //            var_dump($group);
-            $group = $this->eavService->saveObject($group,'groups','edu', null,$groupId);
+            $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         }else{
             //create
             $group['course'] ='/courses/'.$course['id'];
@@ -261,29 +279,4 @@ class GroupMutationResolver implements MutationResolverInterface
         return $result;
     }
 
-    public function handleResult($group){
-        $resource = new Group();
-        $resource->setGroupId($group['id']);
-        $resource->setAanbiederId($group['course']['organization']);
-        $resource->setName($group['name']);
-        $resource->setTypeCourse($group['course']['additionalType']);
-        $resource->setOutComesGoal($group['goal']);
-        $resource->setOutComesTopic($group['topic']);
-        $resource->setOutComesTopicOther($group['topicOther']);
-        $resource->setOutComesApplication($group['application']);
-        $resource->setOutComesApplicationOther($group['applicationOther']);
-        $resource->setOutComesLevel($group['level']);
-        $resource->setOutComesLevelOther($group['levelOther']);
-        $resource->setDetailsIsFormal($group['isFormal']);
-        $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
-        $resource->setDetailsCertificateWillBeAwarded($group['certificateWillBeAwarded']);
-        $resource->setGeneralLocation($group['location']);
-        $resource->setGeneralParticipantsMin($group['minParticipations']);
-        $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        $resource->setDetailsEndDate(new DateTime($group['endDate']));
-        $resource->setDetailsStartDate(new DateTime($group['startDate']));
-        $resource->setGeneralEvaluation($group['evaluation']);
-        $this->entityManager->persist($resource);
-        return $resource;
-    }
 }
