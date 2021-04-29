@@ -2,29 +2,28 @@
 
 namespace App\Entity;
 
-use App\Repository\ProviderRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\LearningNeedRepository;
 use App\Resolver\ProviderMutationResolver;
+use App\Resolver\ProviderQueryCollectionResolver;
+use App\Resolver\ProviderQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *      graphql={
- *
+ *          "item_query" = {
+ *              "item_query" = ProviderQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = ProviderQueryCollectionResolver::class
+ *          },
  *          "create" = {
  *              "mutation" = ProviderMutationResolver::class,
  *              "write" = false
@@ -45,6 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     },
  * )
+ *
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
 class Provider
@@ -67,8 +67,7 @@ class Provider
      * @Assert\Length(
      *     max = 255
      * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -79,7 +78,7 @@ class Provider
      * @Assert\Length(
      *     max = 255
      * )
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $phoneNumber;
@@ -90,7 +89,7 @@ class Provider
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
@@ -98,10 +97,10 @@ class Provider
     /**
      * @var array|null The address of this Aanbieder.
      *
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private ?array $address;
+    private ?array $address = [];
 
     public function getId(): ?UuidInterface
     {

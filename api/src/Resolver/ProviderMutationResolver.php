@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
+use App\Service\ProviderService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -18,8 +19,9 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
+    private ProviderService $providerService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ProviderService $providerService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -37,14 +39,14 @@ class ProviderMutationResolver implements MutationResolverInterface
         if (!$item instanceof Provider && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-//        var_dump($context['info']->operation->name->value);
         switch ($context['info']->operation->name->value) {
             case 'createProvider':
                 return $this->createProvider($item);
             case 'updateProvider':
                 return $this->updateProvider($context['info']->variableValues['input']);
             case 'removeProvider':
-                return $this->deleteProvider($context['info']->variableValues['input']);
+                var_dump($context['info']->operation->name->value);
+                return $this->removeProvider($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -57,12 +59,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         // get all DTO info...
         $provider = $this->dtoToProvider($resource);
 
-        $result = array_merge($result, $this->saveProvider($provider));
+        $result = array_merge($result, $this->providerService->createProvider($provider));
         var_dump($result);
 
-        // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->handleResult($result['aanbieder']);
-        $resourceResult->setId(Uuid::getFactory()->fromString($result['aanbieder']['id']));
+        // Now put together the expected result in $provider for Lifely:
+        $resourceResult = $this->providerService->handleResult($provider);
+        $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
 
         // If any error was catched throw it
         if (isset($result['errorMessage'])) {
@@ -74,56 +76,59 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     public function updateProvider(array $input): Provider
     {
-        $id = explode('/', $input['id']);
-        $provider = new Provider();
-        $provider->setId(Uuid::getFactory()->fromString(end($id)));
-        $provider->setEmail($input['email']);
-        $provider->setName($input['name']);
+        $result['result'] = [];
 
-        $this->entityManager->persist($provider);
-        return $provider;
+        $providerId = explode('/', $input['id']);
+        if (is_array($providerId)) {
+            $providerId = end($providerId);
+        }
+        // Transform input info to Provider body...
+        $provider = $this->inputToProvider($input);
+
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Save Provider
+            $result = array_merge($result, $this->providerService->updateProvider($provider, $providerId));
+            var_dump($result);
+
+            // Now put together the expected result in $provider for Lifely:
+            $resourceResult = $this->providerService->handleResult($provider);
+            var_dump($providerId);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
-    public function deleteProvider(array $provider): ?Provider
+    public function removeProvider(array $input): ?Provider
     {
+        $result['result'] = [];
+
+        $id = explode('/', $input['id']);
+        $id = end($id);
+        $result = array_merge($result, $this->providerService->deleteProvider($id));
+
+        $result['result'] = False;
+        if (isset($result['learningNeed'])){
+            $result['result'] = True;
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
 
         return null;
     }
 
-    public function saveProvider($provider, $providerId = null)
-    {
-        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $now = $now->format('d-m-Y H:i:s');
-
-        // Save the aanbieder
-        if (isset($providerId)) {
-            // Update
-            $provider['dateModified'] = $now;
-            $providerWrc = $this->commonGroundService->saveResource($provider, ['component' => 'wrc', 'type' => 'organizations']);
-            $providerCC = $this->commonGroundService->saveResource($provider, ['component' => 'cc', 'type' => 'organizations']);
-        } else {
-            // Create
-            $provider['dateCreated'] = $now;
-            $provider['dateModified'] = $now;
-
-            $providerWrc = $this->commonGroundService->saveResource($provider, ['component' => 'wrc', 'type' => 'organizations']);
-
-//            $provider['addresses'] = $provider['address'];
-            $provider['emails']['name'] = 'Email of ...';
-            $provider['emails']['email'] = $provider['email'];
-            $provider['sourceOrganization'] = $providerWrc['@id'];
-            $providerCC = $this->commonGroundService->saveResource($provider, ['component' => 'cc', 'type' => 'organizations']);
-        }
-
-        // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-        $result['provider'] = $providerCC;
-
-        return $result;
-    }
-
     private function dtoToProvider(Provider $resource)
     {
-        // Get all info from the dto for creating/updating a Aanbieder and return the body for this
+        // Get all info from the dto for creating/updating a Provider and return the body for this
         $provider['address'] = $resource->getAddress();
         $provider['email'] = $resource->getEmail();
         $provider['phoneNumber'] = $resource->getPhoneNumber();
@@ -132,14 +137,16 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $provider;
     }
 
-    private function handleResult($provider)
+
+    private function inputToProvider(array $input)
     {
-        $resource = new Provider();
-        $resource->setAddress([]);
-        $resource->setEmail($provider['email']);
-        $resource->setPhoneNumber($provider['phoneNumber']);
-        $resource->setName($provider['name']);
-        $this->entityManager->persist($resource);
-        return $resource;
+        // Get all info from the input array for updating a LearningNeed and return the body for this
+        $provider['address'] = $input['address'];
+        $provider['email'] = $input['email'];
+        $provider['phoneNumber'] = $input['phoneNumber'];
+        $provider['name'] = $input['name'];
+
+        return $provider;
     }
+
 }

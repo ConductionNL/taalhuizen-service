@@ -29831,27 +29831,7 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        civicIntegrationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        personDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
         registrar:
-          type: array
-          items:
-            type: string
-          nullable: true
-        civicIntegrationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        personDetails:
           type: array
           items:
             type: string
@@ -29928,14 +29908,6 @@ components:
           type: array
           items:
             type: string
-          nullable: true
-        intakeDetails:
-          writeOnly: true
-          type: string
-          nullable: true
-        intakeDetails:
-          writeOnly: true
-          type: string
           nullable: true
         languageHouseId:
           type: string
@@ -29963,27 +29935,12 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        civicIntegrationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        personDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
         registrar:
           type: array
           items:
             type: string
           nullable: true
         civicIntegrationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        personDetails:
           type: array
           items:
             type: string
@@ -30055,16 +30012,6 @@ components:
           type: array
           items:
             type: string
-        intakeDetail:
-          readOnly: true
-          type: array
-          items:
-            type: string
-          nullable: true
-        intakeDetails:
-          writeOnly: true
-          type: string
-          nullable: true
         intakeDetails:
           writeOnly: true
           type: string
@@ -31508,53 +31455,6 @@ definitions:
       - familyName
       - email
       - telephone
-  Student-write:
-    properties:
-      civicIntegrationDetails: []
-      personDetails: []
-      contactDetails: []
-      generalDetails: []
-      referrerDetails: []
-      backgroundDetails: []
-      dutchNTDetails: []
-      speakingLevel: []
-      educationDetails: []
-      courseDetails: []
-      jobDetails: []
-      motivationDetails: []
-      availabilityDetails: []
-      readingTestResult: []
-      writingTestResult: []
-      permissionDetails: []
-      intakeDetail: []
-      taalhuisId: []
-      studentId: []
-    required:
-      - permissionDetails
-      - taalhuisId
-  Student-write:
-    properties:
-      civicIntegrationDetails: []
-      personDetails: []
-      contactDetails: []
-      generalDetails: []
-      referrerDetails: []
-      backgroundDetails: []
-      dutchNTDetails: []
-      speakingLevel: []
-      educationDetails: []
-      courseDetails: []
-      jobDetails: []
-      motivationDetails: []
-      availabilityDetails: []
-      readingTestResult: []
-      writingTestResult: []
-      permissionDetails: []
-      intakeDetail: []
-      taalhuisId: []
-      studentId: []
-    required:
-      - permissionDetails
   StudentDossierEvent-read:
     properties:
       event:
