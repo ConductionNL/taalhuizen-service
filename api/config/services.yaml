@@ -96,3 +96,6 @@ services:
     App\Resolver\StudentDossierEventQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ReportMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }

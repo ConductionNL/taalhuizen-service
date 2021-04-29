@@ -40,7 +40,7 @@ settings:
   archiveEnabled: false
 
 security:
-  applicationKey: "b820b925-b4c3-4d48-8035-248ccc628ea7"
+  applicationKey: "8b55691f-346d-423c-bdcf-3f5365806d39"
 
 
 php:
