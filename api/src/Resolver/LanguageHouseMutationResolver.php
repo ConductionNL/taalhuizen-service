@@ -15,6 +15,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use SensioLabs\Security\Exception\HttpException;
 
+
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
 
@@ -140,5 +141,34 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $languageHouse['name'] = $input['name'];
 
         return $languageHouse;
+    }
+
+    private function dtoToTaalhuis(LanguageHouse $resource)
+    {
+        if ($resource->getId()){
+            $taalhuis['id'] = $resource->getId();
+        }
+        $taalhuis['name'] = $resource->getName();
+        if ($resource->getAddress()){
+            $taalhuis['address'] = $resource->getAddress();
+        }
+        if ($resource->getEmail()) {
+            $taalhuis['email'] = $resource->getEmail();
+        }
+        if ($resource->getPhoneNumber()) {
+            $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
+        }
+        return $taalhuis;
+    }
+
+    private function handleResult($taalhuis){
+        $resource = new LanguageHouse();
+        $resource->setId($taalhuis['id']);
+        $resource->setName($taalhuis['name']);
+        $resource->setEmail($taalhuis['email']);
+        $resource->setPhoneNumber($taalhuis['phoneNumber']);
+        //@todo add address
+        $this->entityManager->persist($resource);
+        return $resource;
     }
 }
