@@ -56,17 +56,21 @@ class ProviderService
         return $result;
     }
 
-    public function getProvider(): ArrayCollection
+    public function getProvider($providerId)
     {
-        $providers = new ArrayCollection();
-        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'])['hydra:member'];
-        foreach($results as $result){
-            if($this->eavService->hasEavObject($result['@id'])){
-                $result = $this->eavService->getObject('employees', $result['@id'], 'mrc');
-                $providers->add($this->createEmployeeObject($result));
-            }
-        }
-        return $providers;
+        $result = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
+
+        return $result;
+    }
+
+    public function getProviders() {
+
+        $result['providers'] = [];
+
+        $providers = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations']);
+        $result['providers'] = $providers;
+
+        return $result;
     }
 
     public function updateProvider($provider, $providerId = null)

@@ -11,7 +11,11 @@ use Ramsey\Uuid\Uuid;
 
 class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
 {
-    private LanguageHouseService $languageHouse;
+    private LanguageHouseService $languageHouseService;
+
+    public function __construct(LanguageHouseService $languageHouseService){
+        $this->languageHouseService = $languageHouseService;
+    }
 
     /**
      * @inheritDoc
@@ -29,11 +33,11 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
             throw new Exception('The learningNeedId was not specified');
         }
 
-        $result = array_merge($result, $this->languageHouse->getLanguageHouse($languageHouseId));
-        var_dump($result);
+        $result['languageHouse'] = array_merge($result, $this->languageHouseService->getLanguageHouse($languageHouseId));
+        var_dump($result['languageHouse']);
 
         if (isset($result['languageHouse'])) {
-            $resourceResult = $this->languageHouse->handleResult($result['languageHouse']);
+            $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
         }
 

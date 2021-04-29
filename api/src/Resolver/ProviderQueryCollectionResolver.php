@@ -7,20 +7,19 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
-use App\Service\CCService;
+use App\Service\ProviderService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class ProviderQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private CCService $CCService;
-    private CommonGroundService $commonGroundService;
+    private ProviderService $providerService;
 
-    public function __construct(CommongroundService $commonGroundService, CCService $CCService){
-        $this->CCService = $CCService;
-        $this->commonGroundService = $commonGroundService;
+    public function __construct(ProviderService $providerService){
+        $this->providerService = $providerService;
     }
     /**
      * @inheritDoc
@@ -30,24 +29,15 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     {
         $result['result'] = [];
 
-        if(key_exists('id', $context['args'])){
-            $id = explode('/',$context['args']['id']);
-            if (is_array($id)) {
-                $id = end($id);
-            }
-        } else {
-            throw new Exception('The studentId was not specified');
-        }
-
-        // Get the learningNeeds of this student from EAV
-        $result = array_merge($result, $this->CCService->getProviders($id));
+        // Get the languageHouses
+        $result = array_merge($result, $this->providerService->getProviders());
 
         $collection = new ArrayCollection();
         if (isset($result['providers'])) {
             // Now put together the expected result for Lifely:
             foreach ($result['providers'] as &$provider) {
-                if (!isset($learningNeed['errorMessage'])) {
-                    $resourceResult = $this->CCService->handleResult($provider, $studentId);
+                if (!isset($provider['errorMessage'])) {
+                    $resourceResult = $this->providerService->handleResult($provider);
                     $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
                     $collection->add($resourceResult);
                     $provider = $provider['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result

@@ -57,23 +57,22 @@ class LanguageHouseService
         return $result;
     }
 
-    public function getLanguageHouse($languageHouseId): ArrayCollection
+    public function getLanguageHouse($languageHouseId)
     {
-        $providers = new ArrayCollection();
-        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId])['hydra:member'];
-
-
-        return $results;
-    }
-
-    public function getLanguageHouses() {
-
-        $result['languageHouses'] = [];
-
-        $languageHouse = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations']);
-        $result['languageHouses'] = $languageHouse;
+        $result = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
 
         return $result;
+    }
+
+    public function getLanguageHouses(): ArrayCollection {
+
+        $languageHouses = new ArrayCollection();
+        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis']);
+       foreach ($results as $result) {
+           $languageHouses->add($this->createLanguageHouseObject($result));
+       }
+
+        return $languageHouses;
     }
 
     public function updateLanguageHouse($languageHouse, $languageHouseId = null)
@@ -126,6 +125,25 @@ class LanguageHouseService
         $resource->setName($languageHouse['name']);
         $this->entityManager->persist($resource);
         return $resource;
+    }
+
+    public function createLanguageHouseObject($result)
+    {
+        $languageHouse = new LanguageHouse();
+
+        foreach ($result['addresses'] as $address) {
+            $languageHouse->setAddress($address['address']);
+        }
+        foreach ($result['emails'] as $email) {
+            $languageHouse->setEmail($email['email']);
+        }
+        foreach ($result['telephones'] as $telephone) {
+            $languageHouse->setPhoneNumber($telephone['phoneNumber']);
+        }
+        $languageHouse->setName($result['name']);
+
+        $this->entityManager->persist($languageHouse);
+        return $languageHouse;
     }
 
 }
