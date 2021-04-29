@@ -20,10 +20,10 @@ class CCService
         $this->params = $params;
     }
 
-    public function saveOrganization(Example $example){
-            $resource = $example->getData();
-            $resource['organization'] = '/organizations/'.$resource['organization'];
-            return $this->commonGroundService->saveResource($resource, ['component' => 'wrc', 'type' => 'organization']);
+    public function saveOrganization(array $body, $type = null, $sourceOrgurl = null){
+        if (isset($type)) $body['type'] = $type;
+        if (isset($sourceOrgurl)) $body['sourceOrganization'];
+            return $this->commonGroundService->saveResource($body, ['component' => 'cc', 'type' => 'organization']);
     }
 
     public function getOrganization($id){
