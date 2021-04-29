@@ -12,6 +12,7 @@ use App\Service\EAVService;
 use App\Service\EDUService;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
@@ -65,6 +66,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!isset($result['errorMessage'])) {
 
             $result = array_merge($result, $this->makeGroup($course, $group));
+//            var_dump($result);
 
             $resourceResult = $this->handleResult($result['group']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
@@ -119,14 +121,76 @@ class GroupMutationResolver implements MutationResolverInterface
         $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $now = $now->format('d-m-Y H:i:s');
 
+        foreach($group as $key=>$value)
+        {
+            switch($key){
+                case 'outComesGoal':
+                    $group['goal'] = $value;
+                    break;
+                case 'outComesTopic':
+                    $group['topic'] = $value;
+                    break;
+                case 'outComesTopicOther':
+                    $group['topicOther'] = $value;
+                    break;
+                case 'outComesApplication':
+                    $group['application'] = $value;
+                    break;
+                case 'outComesApplicationOther':
+                    $group['applicationOther'] = $value;
+                    break;
+                case 'outComesLevel':
+                    $group['level'] = $value;
+                    break;
+                case 'outComesLevelOther':
+                    $group['levelOther'] = $value;
+                    break;
+                case 'detailsIsFormal':
+                    $group['isFormal'] = (bool)$value;
+                    break;
+                case 'detailsCertificateWillBeAwarded':
+                    $group['certificateWillBeAwarded'] = (bool)$value;
+                    break;
+                case 'detailsStartDate':
+                    if($value instanceof DateTime){
+                        $value = $value->format("YmdHis");
+                    }
+                    $group['startDate'] = $value;
+                    break;
+                case 'detailsEndDate':
+
+                    if($value instanceof DateTime){
+                        $value = $value->format("YmdHis");
+                    }
+                    $group['endDate'] = $value;
+                    break;
+                case 'generalLocation':
+                    $group['location'] = $value;
+                    break;
+                case 'generalParticipantsMin':
+                    $group['participantsMin'] = $value;
+                    break;
+                case 'generalParticipantsMax':
+                    $group['participantsMax'] = $value;
+                    break;
+                case 'generalEvaluation':
+                    $group['evaluation'] = $value;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         if (isset($groupId)){
             //update
             $group['course'] ='/courses/'.$course['id'];
-            $group['dateModified'] = $now;
+//            $group['dateModified'] = $now;
+//            var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', null,$groupId);
         }else{
             //create
             $group['course'] ='/courses/'.$course['id'];
+//            var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
 
@@ -200,6 +264,7 @@ class GroupMutationResolver implements MutationResolverInterface
     public function handleResult($group){
         $resource = new Group();
         $resource->setGroupId($group['id']);
+        $resource->setAanbiederId($group['course']['organization']);
         $resource->setName($group['name']);
         $resource->setTypeCourse($group['course']['additionalType']);
         $resource->setOutComesGoal($group['goal']);
@@ -215,8 +280,8 @@ class GroupMutationResolver implements MutationResolverInterface
         $resource->setGeneralLocation($group['location']);
         $resource->setGeneralParticipantsMin($group['minParticipations']);
         $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        $resource->setDetailsEndDate($group['endDate']);
-        $resource->setDetailsStartDate($group['startDate']);
+        $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $this->entityManager->persist($resource);
         return $resource;

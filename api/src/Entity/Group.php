@@ -176,9 +176,10 @@ class Group
     private $detailsEndDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     *
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $availabilityy;
+    private ?array $availability = [];
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
@@ -474,18 +475,6 @@ class Group
     public function setOutComesLevel(string $outComesLevel): self
     {
         $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getAvailabilityy(): ?Availability
-    {
-        return $this->availabilityy;
-    }
-
-    public function setAvailabilityy(?Availability $availabilityy): self
-    {
-        $this->availabilityy = $availabilityy;
 
         return $this;
     }
