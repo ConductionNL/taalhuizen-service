@@ -32,11 +32,6 @@ class CCService
         return $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
     }
 
-    public function savePerson($person){
-
-        return $person;
-    }
-
     public function convertAddress(array $addressArray): array
     {
         return [
@@ -105,4 +100,15 @@ class CCService
         return $this->commonGroundService->updateResource($person, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
     }
 
+    public function saveEavPerson($body, $personUrl = null) {
+        // Save the cc/people in EAV
+        if (isset($personUrl)) {
+            // Update
+            $person = $this->eavService->saveObject($body, 'people', 'cc', $personUrl);
+        } else {
+            // Create
+            $person = $this->eavService->saveObject($body, 'people', 'cc');
+        }
+        return $person;
+    }
 }
