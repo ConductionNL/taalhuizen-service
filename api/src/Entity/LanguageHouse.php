@@ -27,7 +27,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     graphql={
-
  *          "item_query" = {
  *              "item_query" = LanguageHouseQueryItemResolver::class,
  *              "read" = false
@@ -37,9 +36,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "create" = {
  *              "mutation" = LanguageHouseMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
  *              "write" = false
  *          },
  *          "update" = {
@@ -76,7 +72,7 @@ class LanguageHouse
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private UuidInterface $id;
+    private $id;
 
     /**
      * @var string The Name of this Taalhuis.
@@ -99,7 +95,7 @@ class LanguageHouse
     private ?array $address;
 
     /**
-     * @var string|null The Telephone of this Taalhuis.
+     * @var string The Telephone of this Provider.
      *
      * @Assert\Length(
      *     max = 255
@@ -107,29 +103,38 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $phoneNumber;
+    private $phoneNumber;
 
     /**
-     * @var string|null The Email of this Taalhuis.
+     * @var string The Email of this Provider.
      *
      * @Assert\Length(
      *     max = 2550
      * )
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $email;
+    private $email;
 
-    public function getId(): UuidInterface
+    /**
+     * @var string Type LanguageHouse
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(Uuid $id): self
+    public function setId(?UuidInterface $uuid): self
     {
-        $this->id = $id;
-
+        $this->id = $uuid;
         return $this;
     }
 
@@ -177,6 +182,18 @@ class LanguageHouse
     public function setAddress(?array $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
