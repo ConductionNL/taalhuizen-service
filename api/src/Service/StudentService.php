@@ -21,30 +21,25 @@ class StudentService
         $this->eavService = $eavService;
     }
 
-    public function saveStudent($student, $studentUrl = null, $studentId = null) {
+    public function saveStudentResource(array $resource, string $type, $resourceUrl = null, $id = null) {
         $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $now = $now->format('d-m-Y H:i:s');
 
         // Save the student in EAV
-        if (isset($studentId)) {
+        if (isset($id)) {
             // Update
-            $student['dateModified'] = $now;
-            $student = $this->eavService->saveObject($student, 'students', 'eav', null, $studentId);
+            $resource['dateModified'] = $now;
+//            var_dump($resource);die;
+            $resource = $this->eavService->saveObject($resource, $type, 'eav', null, $id);
         } else {
             // Create
-            $student['dateCreated'] = $now;
-            $student['dateModified'] = $now;
-            $student = $this->eavService->saveObject($student, 'students');
+            $resource['dateCreated'] = $now;
+            $resource['dateModified'] = $now;
+//            var_dump($resource);die;
+            $resource = $this->eavService->saveObject($resource, $type);
         }
 
-        // Add $student to the $result['student'] because this is convenient when testing or debugging (mostly for us)
-        $result['student'] = $student;
-
-        // Save the participant in EAV with the EAV/student connected to it
-//        if (isset($studentUrl)) {
-//            $result = array_merge($result, $this->addStudentToStudent($studentUrl, $student));
-//        }
-        return $result;
+        return $resource;
     }
 
 //    public function addStudentToStudent($studentUrl, $student) {
