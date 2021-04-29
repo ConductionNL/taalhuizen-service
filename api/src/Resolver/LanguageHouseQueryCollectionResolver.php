@@ -33,7 +33,27 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         $result['result'] = [];
 
         // Get the languageHouses
-        $collection = $this->languageHouseService->getLanguageHouses();
+        $result = array_merge($result, $this->languageHouseService->getLanguageHouses());
+//        var_dump($result);
+
+        $collection = new ArrayCollection();
+        if (isset($result['languageHouses'])) {
+            // Now put together the expected result for Lifely:
+            foreach ($result['languageHouses'] as &$languageHouse) {
+                if (!isset($languageHouse['errorMessage'])) {
+                    $resourceResult = $this->languageHouseService->createLanguageHouseObject($languageHouse);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
+                    $collection->add($resourceResult);
+                    $languageHouse = $languageHouse['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                }
+            }
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
         return $this->createPaginator($collection, $context['args']);
     }
 

@@ -5,7 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Repository\LearningNeedRepository;
+use App\Repository\ProviderRepository;
 use App\Resolver\ProviderMutationResolver;
 use App\Resolver\ProviderQueryCollectionResolver;
 use App\Resolver\ProviderQueryItemResolver;

@@ -58,19 +58,13 @@ class ProviderService
 
     public function getProvider($providerId)
     {
-        $result['provider'] = [];
-        $provider = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
-        $result['provider'] = $provider;
-
+        $result['provider'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId])["hydra:member"];
         return $result;
     }
 
-    public function getProviders() {
-
-        $result['providers'] = [];
-        $providers = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations']);
-        $result['providers'] = $providers;
-
+    public function getProviders()
+    {
+        $result['providers'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Aanbieder'])["hydra:member"];
         return $result;
     }
 
@@ -97,7 +91,7 @@ class ProviderService
             $providerWrc = $this->commonGroundService->updateResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $providerWrcOrganization['id']]);
         }
 
-        // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
+        // Add $providerCC to the $result['provider'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
 
         return $result;

@@ -8,7 +8,6 @@ use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ProviderService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
@@ -29,7 +28,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     {
         $result['result'] = [];
 
-        // Get the languageHouses
+        // Get the providers
         $result = array_merge($result, $this->providerService->getProviders());
 
         $collection = new ArrayCollection();
@@ -37,7 +36,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
             // Now put together the expected result for Lifely:
             foreach ($result['providers'] as &$provider) {
                 if (!isset($provider['errorMessage'])) {
-                    $resourceResult = $this->providerService->handleResult($provider);
+                    $resourceResult = $this->providerService->createProviderObject($provider);
                     $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
                     $collection->add($resourceResult);
                     $provider = $provider['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result

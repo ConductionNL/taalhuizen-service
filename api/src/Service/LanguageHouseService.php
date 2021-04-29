@@ -59,21 +59,14 @@ class LanguageHouseService
 
     public function getLanguageHouse($languageHouseId)
     {
-        $result['languageHouse'] = [];
-        $languageHouse = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        $result['languageHouse'] = $languageHouse;
+        $result['languageHouse'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId])["hydra:member"];
         return $result;
     }
 
-    public function getLanguageHouses(): ArrayCollection {
-
-        $languageHouses = new ArrayCollection();
-        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis']);
-       foreach ($results as $result) {
-           $languageHouses->add($this->createLanguageHouseObject($result));
-       }
-
-        return $languageHouses;
+    public function getLanguageHouses()
+    {
+        $result['languageHouses'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis'])["hydra:member"];
+        return $result;
     }
 
     public function updateLanguageHouse($languageHouse, $languageHouseId = null)
