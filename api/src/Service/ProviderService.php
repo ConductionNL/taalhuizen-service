@@ -31,6 +31,7 @@ class ProviderService
         $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
         $providerCCOrganization['name'] = $provider['name'];
+        $providerCCOrganization['type'] = 'Aanbieder';
 
         $providerCCOrganization['addresses'][0]['name'] = 'Address of ' . $provider['name'];
         $providerCCOrganization['addresses'][0] = $provider['address'];

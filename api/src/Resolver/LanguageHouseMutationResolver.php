@@ -32,8 +32,6 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-//        var_dump($context['info']->variableValues);
         if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
@@ -57,7 +55,6 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $languageHouse = $this->dtoToLanguageHouse($resource);
 
         $result = array_merge($result, $this->languageHouseService->createLanguageHouse($languageHouse));
-        var_dump($result);
 
         // Now put together the expected result in $result['result'] for Lifely:
         $resourceResult = $this->languageHouseService->handleResult($languageHouse);

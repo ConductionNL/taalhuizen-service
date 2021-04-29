@@ -32,6 +32,7 @@ class LanguageHouseService
         $languageHouseWrc = $this->commonGroundService->saveResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
         $languageHouseCCOrganization['name'] = $languageHouse['name'];
+        $languageHouseCCOrganization['type'] = 'Taalhuis';
 
         $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of ' . $languageHouse['name'];
         $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
