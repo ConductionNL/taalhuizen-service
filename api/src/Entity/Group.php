@@ -35,10 +35,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "create" = {
  *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *              "write" = false,
+ *
  *          },
  *          "update" = {
  *              "mutation" = GroupMutationResolver::class,
@@ -178,9 +176,10 @@ class Group
     private $detailsEndDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     *
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $availabilityy;
+    private ?array $availability = [];
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
@@ -432,18 +431,6 @@ class Group
         return $this;
     }
 
-    public function getIscedEducationLevelCode(): ?string
-    {
-        return $this->iscedEducationLevelCode;
-    }
-
-    public function setIscedEducationLevelCode(string $iscedEducationLevelCode): self
-    {
-        $this->iscedEducationLevelCode = $iscedEducationLevelCode;
-
-        return $this;
-    }
-
     public function getOutComesApplicationOther(): ?string
     {
         return $this->outComesApplicationOther;
@@ -464,6 +451,8 @@ class Group
     public function setOutComesLevelOther(string $outComesLevelOther): self
     {
         $this->outComesLevelOther = $outComesLevelOther;
+
+        return $this;
     }
 
     public function getAvailability(): ?array
@@ -486,18 +475,6 @@ class Group
     public function setOutComesLevel(string $outComesLevel): self
     {
         $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getAvailabilityy(): ?Availability
-    {
-        return $this->availabilityy;
-    }
-
-    public function setAvailabilityy(?Availability $availabilityy): self
-    {
-        $this->availabilityy = $availabilityy;
 
         return $this;
     }
