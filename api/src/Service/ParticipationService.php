@@ -265,11 +265,10 @@ class ParticipationService
         // Update eav/participation to remove the EAV/mrc/employee from it
         $updateParticipation['mentor'] = null;
         $updateParticipation['status'] = 'REFERRED';
-        // todo: reset the 4 presence eav variables (needs testing)
-//        $updateParticipation['presenceEngagements'] = null;
-//        $updateParticipation['presenceStartDate'] = null;
-//        $updateParticipation['presenceEndDate'] = null;
-//        $updateParticipation['presenceEndParticipationReason'] = null;
+        $updateParticipation['presenceEngagements'] = null;
+        $updateParticipation['presenceStartDate'] = null;
+        $updateParticipation['presenceEndDate'] = null;
+        $updateParticipation['presenceEndParticipationReason'] = null;
         $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
@@ -335,11 +334,10 @@ class ParticipationService
         // Update eav/participation to remove the EAV/edu/group from it
         $updateParticipation['group'] = null;
         $updateParticipation['status'] = 'REFERRED';
-        // todo: reset the 4 presence eav variables (needs testing)
-//        $updateParticipation['presenceEngagements'] = null;
-//        $updateParticipation['presenceStartDate'] = null;
-//        $updateParticipation['presenceEndDate'] = null;
-//        $updateParticipation['presenceEndParticipationReason'] = null;
+        $updateParticipation['presenceEngagements'] = null;
+        $updateParticipation['presenceStartDate'] = null;
+        $updateParticipation['presenceEndDate'] = null;
+        $updateParticipation['presenceEndParticipationReason'] = null;
         $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
