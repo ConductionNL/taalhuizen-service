@@ -59,7 +59,7 @@ class LanguageHouseService
 
     public function getLanguageHouse($languageHouseId)
     {
-        $result['languageHouse'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId])["hydra:member"];
+        $result['languageHouse'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         return $result;
     }
 
@@ -128,6 +128,7 @@ class LanguageHouseService
         $resource->setEmail($languageHouse['emails'][0]['email']);
         $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone']);
         $resource->setName($languageHouse['name']);
+        $resource->setType($languageHouse['type']);
         $this->entityManager->persist($resource);
         return $resource;
     }

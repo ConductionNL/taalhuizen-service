@@ -25,7 +25,7 @@ class ProviderMutationResolver implements MutationResolverInterface
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-
+        $this->providerService = $providerService;
     }
 
     /**
@@ -33,9 +33,6 @@ class ProviderMutationResolver implements MutationResolverInterface
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-//        var_dump($context['info']->variableValues);
-//        var_dump(get_class($item));
         if (!$item instanceof Provider && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
@@ -59,7 +56,6 @@ class ProviderMutationResolver implements MutationResolverInterface
         $provider = $this->dtoToProvider($resource);
 
         $result = array_merge($result, $this->providerService->createProvider($provider));
-        var_dump($result);
 
         // Now put together the expected result in $provider for Lifely:
         $resourceResult = $this->providerService->handleResult($provider);
@@ -88,11 +84,9 @@ class ProviderMutationResolver implements MutationResolverInterface
             // No errors so lets continue... to:
             // Save Provider
             $result = array_merge($result, $this->providerService->updateProvider($provider, $providerId));
-            var_dump($result);
 
             // Now put together the expected result in $provider for Lifely:
             $resourceResult = $this->providerService->handleResult($provider);
-            var_dump($providerId);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
         }
 

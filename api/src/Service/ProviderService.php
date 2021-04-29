@@ -58,7 +58,7 @@ class ProviderService
 
     public function getProvider($providerId)
     {
-        $result['provider'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId])["hydra:member"];
+        $result['provider'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
         return $result;
     }
 
@@ -127,6 +127,7 @@ class ProviderService
         $resource->setEmail($provider['emails'][0]['email']);
         $resource->setPhoneNumber($provider['telephones'][0]['telephone']);
         $resource->setName($provider['name']);
+        $resource->setType($provider['type']);
         $this->entityManager->persist($resource);
         return $resource;
     }

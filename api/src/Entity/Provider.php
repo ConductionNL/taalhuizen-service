@@ -102,6 +102,17 @@ class Provider
      */
     private ?array $address = [];
 
+    /**
+     * @var string Type Aanbieder
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+
     public function getId(): ?UuidInterface
     {
         return $this->id;
@@ -157,6 +168,18 @@ class Provider
     public function setAddress(?array $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
