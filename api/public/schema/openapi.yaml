@@ -28662,11 +28662,7 @@ components:
           type: string
           format: uuid
         givenName:
-          readOnly: true
           description: 'The Name of this Employee.'
-          type: string
-        name:
-          writeOnly: true
           type: string
         additionalName:
           description: 'The PrefixName of this Employee.'
@@ -28708,6 +28704,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         volunteeringPreference:
           description: |
             Volunteering Preference of this Employee.
@@ -28722,6 +28719,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         userGroupIds:
           type: array
           items:
@@ -28777,6 +28775,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         currentEducationYes:
           type: string
           format: iri-reference
@@ -28785,6 +28784,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         biscEmployeeId:
           type: string
           nullable: true
@@ -28813,11 +28813,7 @@ components:
           type: string
           format: uuid
         givenName:
-          readOnly: true
           description: 'The Name of this Employee.'
-          type: string
-        name:
-          writeOnly: true
           type: string
         additionalName:
           description: 'The PrefixName of this Employee.'
@@ -28859,6 +28855,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         volunteeringPreference:
           description: |
             Volunteering Preference of this Employee.
@@ -28873,6 +28870,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         userGroupIds:
           type: array
           items:
@@ -28928,6 +28926,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         currentEducationYes:
           type: string
           format: iri-reference
@@ -28936,6 +28935,7 @@ components:
           type: array
           items:
             type: string
+          nullable: true
         biscEmployeeId:
           type: string
           nullable: true
@@ -29729,9 +29729,11 @@ components:
         student:
           type: string
           format: iri-reference
+          nullable: true
         registrar:
           type: string
           format: iri-reference
+          nullable: true
         studentId:
           type: string
           nullable: true
@@ -29761,9 +29763,11 @@ components:
         student:
           type: string
           format: iri-reference
+          nullable: true
         registrar:
           type: string
           format: iri-reference
+          nullable: true
         studentId:
           type: string
           nullable: true
@@ -29831,110 +29835,12 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        registrar:
-          type: array
-          items:
-            type: string
-          nullable: true
-        contactDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        generalDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        referrerDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        backgroundDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        dutchNTDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        speakingLevel:
+        status:
           type: string
           nullable: true
-        educationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        courseDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        jobDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        motivationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        availabilityDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        readingTestResult:
-          type: array
-          items:
-            type: string
-          nullable: true
-        writingTestResult:
-          type: array
-          items:
-            type: string
-          nullable: true
-        permissionDetails:
-          type: array
-          items:
-            type: string
-        intakeDetail:
-          readOnly: true
-          type: array
-          items:
-            type: string
-          nullable: true
-        languageHouseId:
-          type: string
-        studentId:
+        memo:
           type: string
           nullable: true
-      required:
-        - permissionDetails
-        - taalhuisId
-    'Student:jsonld':
-      type: object
-      description: ''
-      properties:
-        '@context':
-          readOnly: true
-          type: string
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         registrar:
           type: array
           items:
@@ -29999,19 +29905,138 @@ components:
             type: string
           nullable: true
         readingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         writingTestResult:
-          type: array
-          items:
-            type: string
+          type: string
           nullable: true
         permissionDetails:
           type: array
           items:
             type: string
+          nullable: true
+        intakeDetail:
+          readOnly: true
+          type: string
+          nullable: true
+        languageHouseId:
+          type: string
+          nullable: true
+        languageHouseId:
+          type: string
+        studentId:
+          type: string
+          nullable: true
+      required:
+        - permissionDetails
+        - languageHouseId
+    'Student:jsonld':
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          type: string
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
+        status:
+          type: string
+          nullable: true
+        memo:
+          type: string
+          nullable: true
+        registrar:
+          type: array
+          items:
+            type: string
+          nullable: true
+        civicIntegrationDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        civicIntegrationDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        contactDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        generalDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        referrerDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        backgroundDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        dutchNTDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        speakingLevel:
+          type: string
+          nullable: true
+        educationDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        courseDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        jobDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        motivationDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        availabilityDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        readingTestResult:
+          type: string
+          nullable: true
+        writingTestResult:
+          type: string
+          nullable: true
+        permissionDetails:
+          type: array
+          items:
+            type: string
+          nullable: true
+        intakeDetail:
+          readOnly: true
+          type: string
+          nullable: true
         intakeDetails:
           writeOnly: true
           type: string
@@ -30023,7 +30048,7 @@ components:
           nullable: true
       required:
         - permissionDetails
-        - taalhuisId
+        - languageHouseId
     StudentAvailability:
       type: object
       description: ''
@@ -31194,7 +31219,7 @@ definitions:
         maxLength: 255
       availability:
         description: 'The availability for this employee'
-        type: array
+        type: array|null
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31213,7 +31238,7 @@ definitions:
         example: 15-03-2000
       address:
         description: 'The address of this Employee.'
-        type: array
+        type: array|null
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -31223,7 +31248,7 @@ definitions:
         type: string|null
       targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: array
+        type: array|null
         example: NT1
       volunteeringPreference:
         description: |
@@ -31257,7 +31282,7 @@ definitions:
         maxLength: 255
       availability:
         description: 'The availability for this employee'
-        type: array
+        type: array|null
       availabilityNotes:
         description: 'The Availability Note of this Employee.'
         type: string
@@ -31276,7 +31301,7 @@ definitions:
         example: 15-03-2000
       address:
         description: 'The address of this Employee.'
-        type: array
+        type: array|null
       contactTelephone:
         description: 'Contact Telephone of this Employee.'
         type: string
@@ -31286,7 +31311,7 @@ definitions:
         type: string|null
       targetGroupPreferences:
         description: 'Target Preference of this Employee. **NT1**, **NT2**'
-        type: array
+        type: array|null
         example: NT1
       volunteeringPreference:
         description: |
@@ -31455,6 +31480,57 @@ definitions:
       - familyName
       - email
       - telephone
+  Student-write:
+    properties:
+      status: []
+      memo: []
+      registrar: []
+      civicIntegrationDetails: []
+      personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      speakingLevel: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
+      permissionDetails: []
+      intakeDetail: []
+      languageHouseId: []
+      studentId: []
+    required:
+      - permissionDetails
+      - languageHouseId
+  Student-read:
+    properties:
+      civicIntegrationDetails: []
+      personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      speakingLevel: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
+      permissionDetails: []
+      intakeDetail: []
+      languageHouseId: []
+      studentId: []
+    required:
+      - permissionDetails
+      - languageHouseId
   StudentDossierEvent-read:
     properties:
       event:
@@ -31493,6 +31569,22 @@ definitions:
       - eventDate
       - eventDescription
       - studentId
+  StudentIntakeDetail-write:
+    properties:
+      studentId: []
+      lastName: []
+      middleName: []
+      nickname: []
+      gender: []
+      dateOfBirth: []
+      streetAndHouseNumber: []
+      postalCode: []
+      place: []
+      phoneNumber: []
+      phoneNumberContactPerson: []
+      email: []
+      availability: []
+    required: []
   User-read:
     properties:
       email:
@@ -31631,12 +31723,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 08:43:07'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 08:43:07'
     required: []
   AuditTrail-write:
     properties:
@@ -31684,12 +31776,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 08:43:07'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-23 07:51:47'
+        example: '2021-04-26 08:43:07'
     required: []
   ChangeLog-write:
     properties:

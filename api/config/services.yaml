@@ -95,4 +95,13 @@ services:
             - { name: api_platform.graphql.query_resolver }
     App\Resolver\StudentDossierEventQueryItemResolver:
         tags:
+            - { name: api_platform.graphql.query_resolver }    
+    App\Resolver\StudentMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\StudentQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\StudentQueryItemResolver:
+        tags:
             - { name: api_platform.graphql.query_resolver }
