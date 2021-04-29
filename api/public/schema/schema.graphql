@@ -424,7 +424,7 @@ type Employee implements Node {
 
   """
   Voluntering Preference of this Employee.
-  
+
    @Assert\Length(
       max = 255
   )
@@ -464,7 +464,7 @@ type Employee implements Node {
   otherRelevantCertificates: String
   isVOGChecked: Boolean!
   aanbiederId: String
-  taalhuisId: String
+  languageHouseId: String
   availability: Availability
   currentEducationYes: CurrentEducationYes
   currentEducationNoButDidFollow: CurrentEducationNoButDidFollow
@@ -1770,7 +1770,7 @@ type RegisterStudentRegistrarPageInfo {
 
 type Report implements Node {
   id: ID!
-  taalhuisId: String
+  languageHouseId: String
   aanbiederId: String
   dateFrom: String
   dateUntil: String
@@ -1815,7 +1815,7 @@ type Student implements Node {
   readingTestResult: String
   writingTestResult: String
   permissionDetails: StudentPermission
-  taalhuisId: String!
+  languageHouseId: String!
   studentId: String
 }
 
@@ -2477,7 +2477,7 @@ input createEmployeeInput {
 
   """
   Voluntering Preference of this Employee.
-  
+
    @Assert\Length(
       max = 255
   )
@@ -2501,7 +2501,7 @@ input createEmployeeInput {
   otherRelevantCertificates: String
   isVOGChecked: Boolean!
   aanbiederId: String
-  taalhuisId: String
+  languageHouseId: String
   availability: String
   currentEducationYes: String
   currentEducationNoButDidFollow: String
@@ -2693,7 +2693,7 @@ type createRegisterStudentRegistrarPayload {
 }
 
 input createReportInput {
-  taalhuisId: String
+  languageHouseId: String
   aanbiederId: String
   dateFrom: String
   dateUntil: String
@@ -2844,7 +2844,7 @@ input createStudentInput {
   readingTestResult: String
   writingTestResult: String
   permissionDetails: String
-  taalhuisId: String!
+  languageHouseId: String!
   studentId: String
   clientMutationId: String
 }
@@ -3482,7 +3482,7 @@ input updateEmployeeInput {
 
   """
   Voluntering Preference of this Employee.
-  
+
    @Assert\Length(
       max = 255
   )
@@ -3506,7 +3506,7 @@ input updateEmployeeInput {
   otherRelevantCertificates: String
   isVOGChecked: Boolean
   aanbiederId: String
-  taalhuisId: String
+  languageHouseId: String
   availability: String
   currentEducationYes: String
   currentEducationNoButDidFollow: String
@@ -3708,7 +3708,7 @@ type updateRegisterStudentRegistrarPayload {
 
 input updateReportInput {
   id: ID!
-  taalhuisId: String
+  languageHouseId: String
   aanbiederId: String
   dateFrom: String
   dateUntil: String
@@ -3868,7 +3868,7 @@ input updateStudentInput {
   readingTestResult: String
   writingTestResult: String
   permissionDetails: String
-  taalhuisId: String
+  languageHouseId: String
   studentId: String
   clientMutationId: String
 }

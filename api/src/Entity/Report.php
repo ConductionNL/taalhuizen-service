@@ -7,6 +7,7 @@ use App\Repository\ReportRepository;
 use App\Resolver\ReportMutationResolver;
 use App\Resolver\ReportQueryCollectionResolver;
 use App\Resolver\ReportQueryItemResolver;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -24,6 +25,14 @@ use Ramsey\Uuid\UuidInterface;
  *          "create" = {
  *              "mutation" = ReportMutationResolver::class,
  *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "downloadParticipants" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "read" = false,
+ *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
@@ -59,59 +68,73 @@ class Report
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var string|null The language house the report applies to
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $taalhuisId;
+    private ?string $languageHouseId;
 
     /**
+     * @var string|null The provider this report applies to
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederId;
+    private ?string $providerId;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateFrom;
+    private DateTime $dateFrom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $dateUntil;
+    private DateTime $dateUntil;
+
+    /**
+     * @var string|null The filename of the report
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $filename;
+
+    /**
+     * @var string|null A base64 encoded string containing the file's contents
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $base64data;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
         return $this;
     }
 
-    public function getTaalhuisId(): ?string
+    public function getLanguageHouseId(): ?string
     {
-        return $this->taalhuisId;
+        return $this->languageHouseId;
     }
 
-    public function setTaalhuisId(?string $taalhuisId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
-        $this->taalhuisId = $taalhuisId;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->aanbiederId;
+        return $this->providerId;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->providerId = $providerId;
 
         return $this;
     }
@@ -136,6 +159,30 @@ class Report
     public function setDateUntil(?string $dateUntil): self
     {
         $this->dateUntil = $dateUntil;
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): self
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getBase64data(): ?string
+    {
+        return $this->base64data;
+    }
+
+    public function setBase64data(?string $base64data): self
+    {
+        $this->base64data = $base64data;
 
         return $this;
     }

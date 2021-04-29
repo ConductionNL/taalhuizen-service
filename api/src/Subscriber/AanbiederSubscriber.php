@@ -55,7 +55,7 @@ class AanbiederSubscriber implements EventSubscriberInterface
 
         // Handle a post collection
         if($route == 'api_providers_post_collection' and $resource instanceof Provider) {
-            var_dump($resource->getAddress());
+//            var_dump($resource->getAddress());
 
                 // No errors so lets continue... to: get all DTO info and save this in the correct places
 //                $aanbieder = $this->dtoAanbieder($resource);

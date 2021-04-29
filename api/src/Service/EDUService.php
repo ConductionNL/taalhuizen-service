@@ -114,4 +114,9 @@ class EDUService
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
     }
+
+    public function getParticipants(?string $languageHouse, ?DateTime $dateFrom, ?DateTime $dateUntil): array
+    {
+        return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['extend' => 'person'])['hydra:member'];
+    }
 }
