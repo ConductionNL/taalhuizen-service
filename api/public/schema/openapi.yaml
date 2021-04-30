@@ -29853,11 +29853,6 @@ components:
           items:
             type: string
           nullable: true
-        personDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
         contactDetails:
           type: array
           items:
@@ -29926,8 +29921,7 @@ components:
           readOnly: true
           type: string
           nullable: true
-        intakeDetails:
-          writeOnly: true
+        languageHouseId:
           type: string
           nullable: true
         languageHouseId:
@@ -29972,7 +29966,7 @@ components:
           items:
             type: string
           nullable: true
-        personDetails:
+        civicIntegrationDetails:
           type: array
           items:
             type: string
