@@ -89,12 +89,6 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->getGroups($query);
     }
 
-    public function participantsOfTheGroup(): ?ArrayCollection
-    {
-
-        return null;
-    }
-
     public function completedGroups(?array $query = []): ?ArrayCollection
     {
         $now = new DateTime('now');

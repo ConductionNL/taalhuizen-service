@@ -7,6 +7,8 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\Group;
 use App\Service\EDUService;
+use Doctrine\Common\Collections\ArrayCollection;
+use phpDocumentor\Reflection\Types\This;
 
 class GroupQueryItemResolver implements QueryItemResolverInterface
 {
@@ -25,6 +27,13 @@ class GroupQueryItemResolver implements QueryItemResolverInterface
             $groupId = end($groupId);
         }
         return $this->eduService->getGroup($groupId);
+    }
+
+    public function participantsOfTheGroup()
+    {
+        $participants = [];
+
+        return $participants;
     }
 
 }
