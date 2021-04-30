@@ -27,12 +27,15 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
     public function __invoke($item, array $context)
     {
         if(key_exists('studentId', $context['info']->variableValues)){
-            $studentId = explode('/',$context['info']->variableValues['studentId']);
-            if (is_array($studentId)) {
-                $studentId = end($studentId);
-            }
+            $studentId = $context['info']->variableValues['studentId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $studentId = $context['args']['id'];
         } else {
             throw new Exception('The studentId was not specified');
+        }
+        $studentId = explode('/',$studentId);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
         }
 
         $student = $this->studentService->getStudent($studentId);
