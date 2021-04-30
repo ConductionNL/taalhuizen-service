@@ -5,15 +5,11 @@ namespace App\Resolver;
 
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
+use App\Service\CCService;
+use App\Service\EDUService;
 use App\Service\StudentService;
-use App\Service\EAVService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use App\Entity\Address;
-use App\Entity\Document;
-use App\Entity\Employee;
-use App\Entity\LanguageHouse;
 use App\Entity\Student;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -24,14 +20,16 @@ class StudentMutationResolver implements MutationResolverInterface
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
-    private EAVService $EAVService;
+    private CCService $ccService;
+    private EDUService $eduService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, StudentService $studentService, EAVService $EAVService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, StudentService $studentService, CCService $ccService, EDUService $eduService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
-        $this->EAVService = $EAVService;
+        $this->ccService = $ccService;
+        $this->eduService = $eduService;
     }
 
     /**
@@ -57,92 +55,86 @@ class StudentMutationResolver implements MutationResolverInterface
 
     public function createStudent(array $input): Student
     {
-        $result['result'] = [];
-
-//         If languageHouseId is set generate the url for it
-        $languageHouseUrl = null;
         if (isset($input['languageHouseId'])) {
-            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $input['languageHouseId']]);
+            $languageHouseId = explode('/',$input['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
+            }
+            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         } else {
             throw new \Exception('languageHouseId not given');
         }
 
-//        var_dump('test1');
-
-        // First make cc/person
-        $ccPersonUrl = $this->savePerson($input, $input['languageHouseId']);
-
-        // Then make edu/participant
-        $input['studentId'] = $this->saveParticipant($input, $ccPersonUrl, $languageHouseUrl);
-
-        // Then make mrc/employee / mrc objects
-        $this->saveMRCObjects($input, $ccPersonUrl);
-
-        // Then make memo('s)
-        $this->saveMemos($input, $ccPersonUrl);
-
-
         // Do some checks and error handling
-        $result = array_merge($result, $this->studentService->checkStudentValues($input, $languageHouseUrl));
+        $this->studentService->checkStudentValues($input, $languageHouseUrl);
 
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Save Student and connect student/participant to it
-//            $result = array_merge($result, $this->studentService->saveStudent($result['student'], $studentUrl));
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent...
 
-            // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->studentService->handleResult($result['student'], $input['studentId']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['student']['id']));
-        }
+        // Transform DTO info to cc/person body
+        $person = $this->inputToPerson($input, $languageHouseId);
+        // Save cc/person
+        $person = $this->ccService->saveEavPerson($person);
 
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
+        // Transform DTO info to edu/participant body
+        $participant = $this->inputToParticipant($input, $person['@id'], $languageHouseUrl);
+        // Save edu/participant
+        $participant = $this->eduService->saveEavParticipant($participant);
+
+        // todo: w.i.p...
+//        // Then save mrc/employee / mrc objects
+//        $this->saveMRCObjects($input, $ccPersonUrl);
+//
+//        // Then save memo('s)
+//        $this->saveMemos($input, $ccPersonUrl);
+
+        // Now put together the expected result in $result['result'] for Lifely:
+        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
         return $resourceResult;
     }
 
-//    public function updateStudent(array $input): Student
-//    {
-//        $result['result'] = [];
+    public function updateStudent(array $input): Student
+    {
+        $studentId = explode('/',$input['id']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
+        }
+        $student = $this->studentService->getStudent($studentId);
+
+        // Do some checks and error handling
+        $this->studentService->checkStudentValues($input);
+
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent
+
+        // Transform DTO info to cc/person body
+        $person = $this->inputToPerson($input);
+        // Save cc/person
+        $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);
+
+        // Transform DTO info to edu/participant body
+        $participant = $this->inputToParticipant($input);
+        // Save edu/participant
+        $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
+
+        // todo: w.i.p...
+//        // Then save mrc/employee / mrc objects
+//        $this->saveMRCObjects($input, $ccPersonUrl);
 //
-//        // If studentUrl or studentId is set generate the id for it, needed for eav calls later
-//        $studentId = null;
-//        if (isset($input['studentUrl'])) {
-//            $studentId = $this->commonGroundService->getUuidFromUrl($input['studentUrl']);
-//        } else {
-//            $studentId = explode('/', $input['id']);
-//            if (is_array($studentId)) {
-//                $studentId = end($studentId);
-//            }
-//        }
-//
-//        // Transform input info to student body...
-////        $student = $this->inputToStudent($input);
-//
-//        // Do some checks and error handling
-//        $result = array_merge($result, $this->studentService->checkStudentValues($student, null, $studentId));
-//
-//        if (!isset($result['errorMessage'])) {
-//            // No errors so lets continue... to:
-//            // Save Student and connect student/participant to it
-//            $result = array_merge($result, $this->studentService->saveStudent($result['student'], null, $studentId));
-//
-//            // Now put together the expected result in $result['result'] for Lifely:
-//            $resourceResult = $this->studentService->handleResult($result['student'], $input['studentId']);
-//            $resourceResult->setId(Uuid::getFactory()->fromString($result['student']['id']));
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
-//        $this->entityManager->persist($resourceResult);
-//        return $resourceResult;
-//    }
-//
-//    public function removeStudent(array $student): ?Student
-//    {
+//        // Then save memo('s)
+//        $this->saveMemos($input, $ccPersonUrl);
+
+        // Now put together the expected result in $result['result'] for Lifely:
+        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
+    }
+
+    //todo:
+    public function removeStudent(array $student): ?Student
+    {
 //        $result['result'] = [];
 //
 //        // If studentUrl or studentId is set generate the id for it, needed for eav calls later
@@ -169,43 +161,10 @@ class StudentMutationResolver implements MutationResolverInterface
 //        if (isset($result['errorMessage'])) {
 //            throw new Exception($result['errorMessage']);
 //        }
-//        return null;
-//    }
-
-    private function savePerson(array $input, string $languageHouseId): string
-    {
-        if (isset($input['studentId'])) {
-            $person = $this->EAVService->getObject('person', null, 'cc', $input['studentId']);
-        } else {
-            $person = [];
-        }
-        $person['organization'] = '/organizations/' . $languageHouseId;
-        if (isset($input['personDetails'])) {
-            $person = $this->getPersonPropertiesFromPersonDetails($person, $input['personDetails']);
-        }
-        if (isset($input['contactDetails'])) {
-            $person = $this->getPersonPropertiesFromContactDetails($person, $input['contactDetails']);
-        }
-        if (isset($input['generalDetails'])) {
-            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails']);
-        }
-        if (isset($input['backgroundDetails'])) {
-            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
-        }
-        if (isset($input['dutchNTDetails'])) {
-            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']);
-        }
-        if (isset($input['availabilityDetails'])) {
-            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
-        }
-        if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input);
-        }
-        $person = $this->studentService->saveStudentResource($person, 'people');
-
-        return $person['@id'];
+        return null;
     }
 
+    //todo: should be done in StudentService
     private function saveMRCObjects(array $input, string $ccPersonId)
     {
 //        MRC
@@ -220,43 +179,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     }
 
-    private function saveParticipant(array $input, string $ccPersonUrl, string $languageHouseUrl)
-    {
-        if (isset($ccPersonUrl)) {
-            $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $ccPersonUrl])['hydra:member'][0];
-            $participant = $this->EAVService->getObject('participant', null, 'edu', $participant['id']);
-        } else {
-            $participant = [];
-        }
-
-        if (isset($input['referrerDetails'])) {
-            $participant = $this->getParticipantPropertiesFromReferrerDetails($participant, $input['referrerDetails']);
-        }
-
-        // EAV or Result objects?
-        if (isset($input['speakingLevel'])) {
-            $participant['speakingLevel'] = $input['speakingLevel'];
-        }
-        if (isset($input['readingTestResult'])) {
-            $participant['readingTestResult'] = $input['readingTestResult'];
-        }
-        if (isset($input['writingTestResult'])) {
-            $participant['writingTestResult'] = $input['writingTestResult'];
-        }
-
-//        if (isset($input['educationDetails'])) {
-//            $participant = $this->getParticipantPropertiesFromEducationDetails($participant, $input['educationDetails']);
-//        }
-
-//        if (isset($input['courseDetails'])) {
-//            $participant = $this->getParticipantPropertiesFromCourseDetails($participant, $input['courseDetails']);
-//        }
-
-        $participant = $this->studentService->saveStudentResource($participant, 'participants');
-
-        return $participant['id'];
-    }
-
+    //todo: should be done in StudentService
     private function saveMemos(array $input, string $ccPersonId)
     {
         if (isset($input['id'])) {
@@ -283,6 +206,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     }
 
+    //todo: should be done in StudentService
     private function getMemoFromAvailabilityDetails(string $ccPersonId, array $availabilityDetails)
     {
         $memo['name'] = 'Availability notes';
@@ -292,45 +216,32 @@ class StudentMutationResolver implements MutationResolverInterface
         return $memo;
     }
 
-    private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
-    {
-        if (isset($availabilityDetails['availability'])) {
-            $person['availability'] = $availabilityDetails['availability'];
+    private function inputToPerson(array $input, string $languageHouseId = null) {
+        if (isset($languageHouseId)) {
+            $person['organization'] = '/organizations/' . $languageHouseId;
+        } else {
+            $person = [];
         }
-
-        return $person;
-    }
-
-
-    private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails): array
-    {
-        if (isset($contactDetails['contactPreference'])) {
-            $person['contactPreference'] = $contactDetails['contactPreference'];
-        } elseif ($contactDetails['contactPreferenceOther']) {
-            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
+        if (isset($input['personDetails'])) {
+            $person = $this->getPersonPropertiesFromPersonDetails($person, $input['personDetails']);
         }
-
-        return $person;
-    }
-
-    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails): array
-    {
-        if (isset($generalDetails['countryOfOrigin'])) {
-            $person['birthplace'] = $generalDetails['countryOfOrigin'];
+        if (isset($input['contactDetails'])) {
+            $person = $this->getPersonPropertiesFromContactDetails($person, $input['contactDetails']);
         }
-        if (isset($generalDetails['nativeLanguage'])) {
-            $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
+        if (isset($input['generalDetails'])) {
+            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails']);
         }
-        if (isset($generalDetails['otherLanguages'])) {
-            $person['speakingLanguages'] = $generalDetails['otherLanguages'];
+        if (isset($input['backgroundDetails'])) {
+            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
         }
-        if (isset($generalDetails['familyComposition'])) {
-            $person['maritalStatus'] = $generalDetails['familyComposition'];
+        if (isset($input['dutchNTDetails'])) {
+            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']);
         }
-        if (isset($generalDetails['childrenDatesOfBirth'])) {
-            foreach ($generalDetails['childrenDatesOfBirth'] as $child) {
-                $person['dependents'][] = $child;
-            }
+        if (isset($input['availabilityDetails'])) {
+            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
+        }
+        if (isset($input['permissionDetails'])) {
+            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input);
         }
 
         return $person;
@@ -353,47 +264,54 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($personDetails['dateOfBirth'])) {
             $person['birthday'] = $personDetails['dateOfBirth'];
         }
+        return $person;
+    }
+
+    private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails): array
+    {
+        //todo: check in StudentService -> checkStudentValues() if other is chosen, if so make sure an other option is given (see learningNeed)
+        if (isset($contactDetails['contactPreference'])) {
+            $person['contactPreference'] = $contactDetails['contactPreference'];
+        } elseif ($contactDetails['contactPreferenceOther']) {
+            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
+        }
 
         return $person;
     }
 
-    private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
+    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails): array
     {
-        if (isset($participant['referredBy'])) {
-            $referringOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-        } else {
-            $referringOrganization = [];
+        // todo:birthplace is an cc/address not an string!
+//        if (isset($generalDetails['countryOfOrigin'])) {
+//            $person['birthplace'] = $generalDetails['countryOfOrigin'];
+//        }
+        //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
+        if (isset($generalDetails['nativeLanguage'])) {
+            $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
         }
-        if (isset($referrerDetails['referringOrganization'])) {
-            $referringOrganization['name'] = $referrerDetails['referringOrganization'];
-        } elseif (isset($referrerDetails['referringOrganizationOther'])) {
-            $referringOrganization['name'] = $referrerDetails['referringOrganizationOther'];
-        }
-        if (isset($referringOrganization['id'])) {
-            $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $referringOrganization['id']]);
-        } else {
-            $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations']);
-        }
-        if (isset($referrerDetails['email'])) {
-            if (isset($referringOrganization['emails'][0])) {
-                $referringOrganization['emails'][0]['email'] = $referrerDetails['email'];
-                $email = $this->commonGroundService->saveResource($referringOrganization['emails'][0], $referringOrganization['emails'][0]['@id']);
-            } else {
-                $email['name'] = 'Email ' . $referringOrganization['name'];
-                $email['email'] = $referrerDetails['email'];
-                $email['organization'] = '/organization/' . $referringOrganization['id'];
-                $email = $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails']);
-            }
-            $referringOrganization['emails'][0] = '/emails/' . $email['id'];
-        }
+        // todo:must be an array, convert string to an array
+//        if (isset($generalDetails['otherLanguages'])) {
+//            $person['speakingLanguages'] = $generalDetails['otherLanguages'];
+//        }
+        //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
+        //todo: needs to update taalhuizen CC for update enum options to match these options ^
+//        if (isset($generalDetails['familyComposition'])) {
+//            $person['maritalStatus'] = $generalDetails['familyComposition'];
+//        }
+        //todo: loop through dates in a string, not an array!
+//        if (isset($generalDetails['childrenDatesOfBirth'])) {
+//            foreach ($generalDetails['childrenDatesOfBirth'] as $child) {
+//                $person['dependents'][] = $child;
+//            }
+//        }
 
-        $participant['referredBy'] = $referringOrganization['@id'];
-
-        return $participant;
+        return $person;
     }
 
     private function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
     {
+        //todo: check in StudentService -> checkStudentValues() for enum options and if other is chosen make sure an other option is given (see learningNeed)
+        // (VOLUNTEER_CENTER, LIBRARY_WEBSITE, SOCIAL_MEDIA, NEWSPAPER, VIA_VIA, OTHER)
         if (isset($backgroundDetails['foundVia'])) {
             $person['foundVia'] = $backgroundDetails['foundVia'];
         } elseif (isset($backgroundDetails['foundViaOther'])) {
@@ -408,6 +326,8 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($backgroundDetails['wentToTaalhuisBeforeYear'])) {
             $person['wentToTaalhuisBeforeYear'] = $backgroundDetails['wentToTaalhuisBeforeYear'];
         }
+        //todo: check in StudentService -> checkStudentValues() if all values in this array are one of the enum values
+        // (HOUSEHOLD_MEMBERS, NEIGHBORS, FAMILY_MEMBERS, AID_WORKERS, FRIENDS_ACQUAINTANCES, PEOPLE_AT_MOSQUE_CHURCH, ACQUAINTANCES_SPEAKING_OWN_LANGUAGE, ACQUAINTANCES_SPEAKING_DUTCH)
         if (isset($backgroundDetails['network'])) {
             $person['network'] = $backgroundDetails['network'];
         }
@@ -439,6 +359,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
+    {
+        if (isset($availabilityDetails['availability'])) {
+            $person['availability'] = $availabilityDetails['availability'];
+        }
+
+        return $person;
+    }
+
     private function getPersonPropertiesFromPermissionDetails(array $person, array $permissionDetails): array
     {
         if (isset($permissionDetails['didSignPermissionForm'])) {
@@ -455,5 +384,97 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         return $person;
+    }
+
+    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null) {
+        // Add cc/person to this edu/participant
+        if (isset($ccPersonUrl)) {
+            $participant['person'] = $ccPersonUrl;
+        } else {
+            $participant = [];
+        }
+
+        //todo: convert 2 functions below to this one... >>>
+
+        return $participant;
+    }
+
+    //todo: replace to other function ^ inputToParticipant saving resources should be done in createStudent, updateStudent or actually even in StudentService
+    private function saveParticipant(array $input, string $ccPersonUrl, string $languageHouseUrl)
+    {
+        if (isset($ccPersonUrl)) {
+            $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $ccPersonUrl])['hydra:member'][0];
+            $participant = $this->EAVService->getObject('participants', null, 'edu', $participant['id']);
+        } else {
+            $participant = [];
+        }
+
+        if (isset($input['referrerDetails'])) {
+            $participant = $this->getParticipantPropertiesFromReferrerDetails($participant, $input['referrerDetails']);
+        }
+
+        // EAV or Result objects?
+        if (isset($input['speakingLevel'])) {
+            $participant['speakingLevel'] = $input['speakingLevel'];
+        }
+        if (isset($input['readingTestResult'])) {
+            $participant['readingTestResult'] = $input['readingTestResult'];
+        }
+        if (isset($input['writingTestResult'])) {
+            $participant['writingTestResult'] = $input['writingTestResult'];
+        }
+
+//        if (isset($input['educationDetails'])) {
+//            $participant = $this->getParticipantPropertiesFromEducationDetails($participant, $input['educationDetails']);
+//        }
+
+//        if (isset($input['courseDetails'])) {
+//            $participant = $this->getParticipantPropertiesFromCourseDetails($participant, $input['courseDetails']);
+//        }
+
+        //todo: this not here?:
+//        $participant = $this->studentService->saveStudentResource($participant, 'participants');
+
+        return $participant['id'];
+    }
+
+    //todo: replace to other function ^ inputToParticipant saving resources should be done in createStudent, updateStudent or actually even in StudentService
+    private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
+    {
+        if (isset($participant['referredBy'])) {
+            $referringOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+        } else {
+            $referringOrganization = [];
+        }
+        if (isset($referrerDetails['referringOrganization'])) {
+            $referringOrganization['name'] = $referrerDetails['referringOrganization'];
+        } elseif (isset($referrerDetails['referringOrganizationOther'])) {
+            $referringOrganization['name'] = $referrerDetails['referringOrganizationOther'];
+        }
+        if (isset($referringOrganization['id'])) {
+            //todo: this not here?:
+//            $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $referringOrganization['id']]);
+        } else {
+            //todo: this not here?:
+//            $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations']);
+        }
+        if (isset($referrerDetails['email'])) {
+            if (isset($referringOrganization['emails'][0])) {
+                $referringOrganization['emails'][0]['email'] = $referrerDetails['email'];
+                //todo: this not here?:
+//                $email = $this->commonGroundService->saveResource($referringOrganization['emails'][0], $referringOrganization['emails'][0]['@id']);
+            } else {
+                $email['name'] = 'Email ' . $referringOrganization['name'];
+                $email['email'] = $referrerDetails['email'];
+                $email['organization'] = '/organization/' . $referringOrganization['id'];
+                //todo: this not here?:
+//                $email = $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails']);
+            }
+            $referringOrganization['emails'][0] = '/emails/' . $email['id'];
+        }
+
+        $participant['referredBy'] = $referringOrganization['@id'];
+
+        return $participant;
     }
 }

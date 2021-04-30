@@ -7,33 +7,47 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
-use App\Service\StudentService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use App\Entity\Student;
+use App\Service\ProviderService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
-class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
+class ProviderQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private CommonGroundService $commonGroundService;
-    private StudentService $studentService;
+    private ProviderService $providerService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService){
-        $this->commonGroundService = $commonGroundService;
-        $this->studentService = $studentService;
+    public function __construct(ProviderService $providerService){
+        $this->providerService = $providerService;
     }
-
     /**
      * @inheritDoc
      * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = new ArrayCollection();
+        $result['result'] = [];
 
-        //todo:
+        // Get the providers
+        $result = array_merge($result, $this->providerService->getProviders());
+
+        $collection = new ArrayCollection();
+        if (isset($result['providers'])) {
+            // Now put together the expected result for Lifely:
+            foreach ($result['providers'] as &$provider) {
+                if (!isset($provider['errorMessage'])) {
+                    $resourceResult = $this->providerService->createProviderObject($provider);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
+                    $collection->add($resourceResult);
+                    $provider = $provider['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                }
+            }
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
 
         return $this->createPaginator($collection, $context['args']);
     }
@@ -55,23 +69,5 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
-
-    public function activeStudents(array $student): ?Student
-    {
-
-        return null;
-    }
-
-    public function newRefferedStudents(array $student): ?Student
-    {
-
-        return null;
-    }
-
-    public function completedStudents(array $student): ?Student
-    {
-
-        return null;
     }
 }

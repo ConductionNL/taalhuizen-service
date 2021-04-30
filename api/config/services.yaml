@@ -105,6 +105,24 @@ services:
     App\Resolver\StudentQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ProviderMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\ProviderQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\ProviderQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LanguageHouseMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\LanguageHouseQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\LanguageHouseQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
     App\Resolver\ReportMutationResolver:
         tags:
             - { name: api_platform.graphql.mutation_resolver }
