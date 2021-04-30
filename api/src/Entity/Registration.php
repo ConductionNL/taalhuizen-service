@@ -81,7 +81,7 @@ class Registration
      * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
-    private $taalhuisId;
+    private $languageHouseId;
 
     /**
      *
@@ -115,14 +115,14 @@ class Registration
         return $this;
     }
 
-    public function getTaalhuisId(): ?string
+    public function getLanguageHouseId(): ?string
     {
-        return $this->taalhuisId;
+        return $this->languageHouseId;
     }
 
-    public function setTaalhuisId(?string $taalhuisId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
-        $this->taalhuisId = $taalhuisId;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }

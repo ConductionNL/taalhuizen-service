@@ -9,15 +9,17 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CCService
 {
-    private $em;
-    private $commonGroundService;
-    private $params;
+    private EntityManagerInterface $entityManager;
+    private CommonGroundService $commonGroundService;
+    private ParameterBagInterface $parameterBag;
+    private EAVService $eavService;
 
-    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParameterBagInterface $parameterBag, EAVService $eavService)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->params = $params;
+        $this->parameterBag = $parameterBag;
+        $this->eavService = $eavService;
     }
 
     public function saveOrganization(array $body, $type = null, $sourceOrgurl = null){
@@ -28,11 +30,6 @@ class CCService
 
     public function getOrganization($id){
         return $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
-    }
-
-    public function savePerson($person){
-
-        return $person;
     }
 
     public function convertAddress(array $addressArray): array
@@ -61,10 +58,10 @@ class CCService
     public function employeeToPerson(array $employee): array {
         $person = [
             'givenName' => $employee['givenName'],
-            'additionalName' => key_exists('additionalName', $employee) ? $employee['additionalName'] : null,
-            'familyName' => key_exists('familyName', $employee) ? $employee['familyName'] : null,
-            'birthday' => key_exists('dateOfBirth', $employee) ? $employee['dateOfBirt'] : null,
-            'gender' => key_exists('gender', $employee) ? $employee['gender'] : null,
+            'additionalName'    => key_exists('additionalName', $employee) ? $employee['additionalName'] : null,
+            'familyName'        => key_exists('familyName', $employee) ? $employee['familyName'] : null,
+            'birthday'          => key_exists('dateOfBirth', $employee) ? $employee['dateOfBirth'] : null,
+            'gender'            => key_exists('gender', $employee) ? ($employee['gender'] == "X" ? null: strtolower($employee['gender'])): null,
             'contactPreference' =>
                 key_exists('contactPreference', $employee) ?
                     $employee['contactPreference'] :
@@ -72,9 +69,10 @@ class CCService
                         $employee['contactPreferenceOther'] :
                         null
                     ),
-            'telephones' => key_exists('telephone', $employee) ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
-            'emails' => key_exists('email', $employee) ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
-            'addresses' => key_exists('address', $employee) ? [$this->convertAddress($employee['address'])] : [],
+            'telephones'        => key_exists('telephone', $employee) ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
+            'emails'            => key_exists('email', $employee) ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
+            'addresses'         => key_exists('address', $employee) ? [$this->convertAddress($employee['address'])] : [],
+            'availability'      => key_exists('availability', $employee) ? $employee['availability'] : [],
         ];
         $person['telephones'][] = key_exists('contactTelephone', $employee) ? ['name' => 'contact telephone', 'telephone' => $employee['contactTelephone']] : null;
 
@@ -92,7 +90,8 @@ class CCService
 
     public function createPerson(array $person): array
     {
-        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+        return $this->eavService->saveObject($person, 'people', 'cc');
+//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
 
     }
 
@@ -101,4 +100,15 @@ class CCService
         return $this->commonGroundService->updateResource($person, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
     }
 
+    public function saveEavPerson($body, $personUrl = null) {
+        // Save the cc/people in EAV
+        if (isset($personUrl)) {
+            // Update
+            $person = $this->eavService->saveObject($body, 'people', 'cc', $personUrl);
+        } else {
+            // Create
+            $person = $this->eavService->saveObject($body, 'people', 'cc');
+        }
+        return $person;
+    }
 }

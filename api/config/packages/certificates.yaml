@@ -1,0 +1,6 @@
+parameters:
+    env(PRIVATE_KEY): ""
+    env(PUBLIC_KEY): ""
+    
+    public_key: "%env(PUBLIC_KEY)%"
+    private_key: "%env(PRIVATE_KEY)%"

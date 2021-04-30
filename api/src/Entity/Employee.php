@@ -31,11 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "collection_query" = {
- *              "collection_query" = EmployeeQueryCollectionResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *              "collection_query" = EmployeeQueryCollectionResolver::class
  *          },
  *          "create" = {
  *              "mutation" = EmployeeMutationResolver::class,
@@ -63,6 +59,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
  * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "languageHouseId": "exact",
+ *     "providerId": "exact"
+ * })
  */
 class Employee
 {
@@ -262,7 +262,7 @@ class Employee
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=CurrentEducationYes::class, cascade={"persist", "remove"})
+     * @ORM\Column(type="json", nullable=true)
      */
     private ?array $currentEducationYes;
 
@@ -317,19 +317,23 @@ class Employee
     private $otherRelevantCertificates;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @var boolean|null Whether the employee has submitted a police certificate
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isVOGChecked;
+    private ?bool $isVOGChecked = false;
 
     /**
+     * @var string|null The provider this employee works for
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederId;
+    private ?string $providerId;
 
     /**
+     * @var string|null The language house this employee works for
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $taalhuisId;
+    private ?string $languageHouseId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -669,33 +673,33 @@ class Employee
         return $this->isVOGChecked;
     }
 
-    public function setIsVOGChecked(bool $isVOGChecked): self
+    public function setIsVOGChecked(?bool $isVOGChecked = false): self
     {
         $this->isVOGChecked = $isVOGChecked;
 
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->aanbiederId;
+        return $this->providerId;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->providerId = $providerId;
 
         return $this;
     }
 
-    public function getTaalhuisId(): ?string
+    public function getLanguageHouseId(): ?string
     {
-        return $this->taalhuisId;
+        return $this->languageHouseId;
     }
 
-    public function setTaalhuisId(?string $taalhuisId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
-        $this->taalhuisId = $taalhuisId;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }

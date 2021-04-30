@@ -54,16 +54,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "write" = false
  *          },
  *          "active" = {
- *              "collection_query" = GroupQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = GroupQueryCollectionResolver::class
  *          },
  *          "future" = {
- *              "collection_query" = GroupQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = GroupQueryCollectionResolver::class
  *          },
  *          "completed" = {
- *              "collection_query" = GroupQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = GroupQueryCollectionResolver::class
  *          },
  *          "participantsOfThe" = {
  *              "collection_query" = GroupQueryCollectionResolver::class,
@@ -80,6 +77,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  * )
  * @ORM\Entity(repositoryClass=GroupRepository::class)
+ * @ApiFilter(SearchFilter::class, properties={"aanbiederId" = "exact"})
  * @ORM\Table(name="`group`")
  */
 class Group
@@ -97,76 +95,76 @@ class Group
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $aanbiederId;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $typeCourse;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesGoal;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesTopic;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesTopicOther;
 
     /**
      * @Groups({"write"})
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesApplication;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesApplicationOther;
 
     /**
      * @Groups({"write"})
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesLevel;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesLevelOther;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $detailsIsFormal;
 
     /**
-     * @ORM\Column(type="integer", length=255)
+     * @ORM\Column(type="integer", length=255, nullable=true)
      */
     private $detailsTotalClassHours;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $detailsCertificateWillBeAwarded;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true, nullable=true)
      */
     private $detailsStartDate;
 
@@ -176,9 +174,10 @@ class Group
     private $detailsEndDate;
 
     /**
-     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     *
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $availabilityy;
+    private ?array $availability = [];
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
@@ -186,7 +185,7 @@ class Group
     private $availabilityNotes;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $generalLocation;
 
@@ -206,7 +205,7 @@ class Group
     private $generalEvaluation;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="array", nullable=true)
      */
     private $aanbiederEmployeeIds = [];
 
@@ -231,7 +230,7 @@ class Group
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -243,7 +242,7 @@ class Group
         return $this->typeCourse;
     }
 
-    public function setTypeCourse(string $typeCourse): self
+    public function setTypeCourse(?string $typeCourse): self
     {
         $this->typeCourse = $typeCourse;
 
@@ -255,7 +254,7 @@ class Group
         return $this->outComesGoal;
     }
 
-    public function setOutComesGoal(string $outComesGoal): self
+    public function setOutComesGoal(?string $outComesGoal): self
     {
         $this->outComesGoal = $outComesGoal;
 
@@ -267,7 +266,7 @@ class Group
         return $this->detailsIsFormal;
     }
 
-    public function setDetailsIsFormal(string $detailsIsFormal): self
+    public function setDetailsIsFormal(?string $detailsIsFormal): self
     {
         $this->detailsIsFormal = $detailsIsFormal;
 
@@ -291,7 +290,7 @@ class Group
         return $this->detailsCertificateWillBeAwarded;
     }
 
-    public function setDetailsCertificateWillBeAwarded(bool $detailsCertificateWillBeAwarded): self
+    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
     {
         $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
 
@@ -339,7 +338,7 @@ class Group
         return $this->generalLocation;
     }
 
-    public function setGeneralLocation(string $generalLocation): self
+    public function setGeneralLocation(?string $generalLocation): self
     {
         $this->generalLocation = $generalLocation;
 
@@ -399,7 +398,7 @@ class Group
         return $this->outComesTopic;
     }
 
-    public function setOutComesTopic(string $outComesTopic): self
+    public function setOutComesTopic(?string $outComesTopic): self
     {
         $this->outComesTopic = $outComesTopic;
 
@@ -411,7 +410,7 @@ class Group
         return $this->outComesTopicOther;
     }
 
-    public function setOutComesTopicOther(string $outComesTopicOther): self
+    public function setOutComesTopicOther(?string $outComesTopicOther): self
     {
         $this->outComesTopicOther = $outComesTopicOther;
 
@@ -423,7 +422,7 @@ class Group
         return $this->outComesApplication;
     }
 
-    public function setOutComesApplication(string $outComesApplication): self
+    public function setOutComesApplication(?string $outComesApplication): self
     {
         $this->outComesApplication = $outComesApplication;
 
@@ -435,7 +434,7 @@ class Group
         return $this->outComesApplicationOther;
     }
 
-    public function setOutComesApplicationOther(string $outComesApplicationOther): self
+    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
     {
         $this->outComesApplicationOther = $outComesApplicationOther;
 
@@ -447,7 +446,7 @@ class Group
         return $this->outComesLevelOther;
     }
 
-    public function setOutComesLevelOther(string $outComesLevelOther): self
+    public function setOutComesLevelOther(?string $outComesLevelOther): self
     {
         $this->outComesLevelOther = $outComesLevelOther;
 
@@ -471,21 +470,9 @@ class Group
         return $this->outComesLevel;
     }
 
-    public function setOutComesLevel(string $outComesLevel): self
+    public function setOutComesLevel(?string $outComesLevel): self
     {
         $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getAvailabilityy(): ?Availability
-    {
-        return $this->availabilityy;
-    }
-
-    public function setAvailabilityy(?Availability $availabilityy): self
-    {
-        $this->availabilityy = $availabilityy;
 
         return $this;
     }
@@ -495,7 +482,7 @@ class Group
         return $this->aanbiederId;
     }
 
-    public function setAanbiederId(string $aanbiederId): self
+    public function setAanbiederId(?string $aanbiederId): self
     {
         $this->aanbiederId = $aanbiederId;
 

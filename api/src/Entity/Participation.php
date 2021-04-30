@@ -60,7 +60,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "addGroup" = {
+ *          "updateMentor" = {
+ *              "mutation" = ParticipationMutationResolver::class,
+ *              "args" = {
+ *                  "participationId"={"type" = "ID!"},
+ *                  "presenceEngagements"={"type" = "String"},
+ *                  "presenceStartDate"={"type" = "String"},
+ *                  "presenceEndDate"={"type" = "String"},
+ *                  "presenceEndParticipationReason"={"type" = "String"}
+ *              },
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "addGroupTo" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
  *              "read" = false,
@@ -73,8 +87,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "args" = {
  *                  "participationId"={"type" = "ID!"},
  *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "DateTime"},
- *                  "presenceEndDate"={"type" = "DateTime"},
+ *                  "presenceStartDate"={"type" = "String"},
+ *                  "presenceEndDate"={"type" = "String"},
  *                  "presenceEndParticipationReason"={"type" = "String"}
  *              },
  *              "read" = false,
@@ -82,7 +96,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "removeGroup" = {
+ *          "removeGroupFrom" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
  *              "read" = false,
@@ -258,6 +272,11 @@ class Participation
     private $participationId;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presenceEngagements;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $presenceStartDate;
@@ -268,6 +287,7 @@ class Participation
     private $presenceEndDate;
 
     /**
+     * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $presenceEndParticipationReason;
@@ -281,11 +301,6 @@ class Participation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $groupId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $presenceEngagements;
 
     public function getId(): UuidInterface
     {
@@ -574,6 +589,18 @@ class Participation
         return $this;
     }
 
+    public function getPresenceEngagements(): ?string
+    {
+        return $this->presenceEngagements;
+    }
+
+    public function setPresenceEngagements(?string $presenceEngagements): self
+    {
+        $this->presenceEngagements = $presenceEngagements;
+
+        return $this;
+    }
+
     public function getPresenceStartDate(): ?\DateTimeInterface
     {
         return $this->presenceStartDate;
@@ -630,18 +657,6 @@ class Participation
     public function setGroupId(?string $groupId): self
     {
         $this->groupId = $groupId;
-
-        return $this;
-    }
-
-    public function getPresenceEngagements(): ?string
-    {
-        return $this->presenceEngagements;
-    }
-
-    public function setPresenceEngagements(?string $presenceEngagements): self
-    {
-        $this->presenceEngagements = $presenceEngagements;
 
         return $this;
     }
