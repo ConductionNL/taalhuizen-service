@@ -19,6 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "item_query" = UserQueryItemResolver::class,
  *              "read" = false
  *          },
+ *          "current" = {
+ *              "item_query" = UserQueryItemResolver::class,
+ *              "args" = {},
+ *              "read" = false
+ *          },
  *          "collection_query" = {
  *              "collection_query" = UserQueryCollectionResolver::class
  *          },
