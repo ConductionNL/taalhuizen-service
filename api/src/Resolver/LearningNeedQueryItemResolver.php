@@ -26,14 +26,16 @@ class LearningNeedQueryItemResolver implements QueryItemResolverInterface
     public function __invoke($item, array $context)
     {
         $result['result'] = [];
-
         if(key_exists('learningNeedId', $context['info']->variableValues)){
-            $learningNeedId = explode('/',$context['info']->variableValues['learningNeedId']);
-            if (is_array($learningNeedId)) {
-                $learningNeedId = end($learningNeedId);
-            }
+            $learningNeedId = $context['info']->variableValues['learningNeedId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $learningNeedId = $context['args']['id'];
         } else {
             throw new Exception('The learningNeedId was not specified');
+        }
+        $learningNeedId = explode('/',$learningNeedId);
+        if (is_array($learningNeedId)) {
+            $learningNeedId = end($learningNeedId);
         }
 
         $result = array_merge($result, $this->learningNeedService->getLearningNeed($learningNeedId));

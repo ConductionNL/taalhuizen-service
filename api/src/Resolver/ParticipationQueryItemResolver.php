@@ -28,12 +28,15 @@ class ParticipationQueryItemResolver implements QueryItemResolverInterface
         $result['result'] = [];
 
         if(key_exists('participationId', $context['info']->variableValues)){
-            $participationId = explode('/',$context['info']->variableValues['participationId']);
-            if (is_array($participationId)) {
-                $participationId = end($participationId);
-            }
+            $participationId = $context['info']->variableValues['participationId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $participationId = $context['args']['id'];
         } else {
             throw new Exception('The participationId was not specified');
+        }
+        $participationId = explode('/',$participationId);
+        if (is_array($participationId)) {
+            $participationId = end($participationId);
         }
 
         $result = array_merge($result, $this->participationService->getParticipation($participationId));
