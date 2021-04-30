@@ -55,25 +55,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "active" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
  *          "newReffered" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *          },
+ *          "active" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
  *          "completed" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
- *          "newReffered" = {
- *              "item_query" = StudentQueryItemResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -211,10 +204,20 @@ class Student
     private $intakeDetail;
 
     /**
+     * @var string The id of the cc/organization of a languageHouse.
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $languageHouseId;
+
+    /**
+     * @var string The id of the cc/organization of a provider.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $providerId;
 
     /**
      * @Groups({"read", "write"})
@@ -487,6 +490,18 @@ class Student
     public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
 
         return $this;
     }

@@ -33,7 +33,14 @@ class UcService
         $this->parameterBag = $parameterBag;
     }
 
-    public function getUser(string $id): array
+    public function getUser(string $id): User
+    {
+        $userArray = $this->getUserArray($id);
+        return $this->createUserObject($userArray, $this->commonGroundService->getResource($userArray['person']));
+
+    }
+
+    public function getUserArray(string $id): array
     {
         return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
@@ -59,7 +66,7 @@ class UcService
 
     public function updateUserContactForEmployee(string $id, array $employee): array
     {
-        $personId = $this->getUser($id)['person'];
+        $personId = $this->getUserArray($id)['person'];
         $person = $this->ccService->employeeToPerson($employee);
         $result = $this->ccService->updatePerson($personId, $person);
 

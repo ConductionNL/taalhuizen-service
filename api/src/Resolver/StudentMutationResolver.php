@@ -394,6 +394,15 @@ class StudentMutationResolver implements MutationResolverInterface
             $participant = [];
         }
 
+        if (isset($languageHouseUrl)) {
+            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
+            if (count($programs) > 0) {
+                $participant['program'] = '/programs/'.$programs[0]['id'];
+            } else {
+                throw new Exception('Invalid request, '. $languageHouseUrl .' does not have an existing program (edu/program)!');
+            }
+        }
+
         //todo: convert 2 functions below to this one... >>>
 
         return $participant;

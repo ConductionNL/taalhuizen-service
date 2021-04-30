@@ -73,7 +73,8 @@ class StudentService
 //        return $result;
     }
 
-    public function getStudent($id) {
+    public function getStudent($id): array
+    {
         $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
         if (!$this->commonGroundService->isResource($studentUrl)) {
             throw new Exception('Invalid request, studentId is not an existing student (edu/participant)!');
@@ -101,25 +102,28 @@ class StudentService
         return $result;
     }
 
-    // todo:
-    public function getStudents($studentId) {
-//        // Get the eav/edu/participant student from EAV and add the $student @id's to the $result['student'] because this is convenient when testing or debugging (mostly for us)
-//        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
-//            $result['student'] = [];
-//            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-//            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            foreach ($participant['student'] as $studentUrl) {
-//                $student = $this->getStudent(null, $studentUrl);
-//                if (isset($student['student'])) {
-//                    array_push($result['student'], $student['student']);
-//                } else {
-//                    array_push($result['student'], ['errorMessage' => $student['errorMessage']]);
-//                }
-//            }
-//        } else {
-//            $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
-//        }
-//        return $result;
+    /**
+     * @throws Exception
+     */
+    public function getStudents($languageHouseId): array
+    {
+        // Get the edu/participants from EAV
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        if ($this->commonGroundService->isResource($languageHouseUrl)) {
+            // check if this taalhuis has an edu/program and get it
+            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
+            if (count($programs) > 0) {
+                $students = [];
+                foreach ($programs[0]['participants'] as $student) {
+                    array_push($students, $this->getStudent($student['id']));
+                }
+            } else {
+                throw new Exception('Invalid request, '. $languageHouseId .' does not have an existing program (edu/program)!');
+            }
+        } else {
+            throw new Exception('Invalid request, '. $languageHouseId .' is not an existing taalhuis (cc/organization)!');
+        }
+        return $students;
     }
 
     public function checkStudentValues($input, $languageHouseUrl = null) {
@@ -269,7 +273,7 @@ class StudentService
         ];
 
         // Set all subresources in response DTO body
-        $resource->setDateCreated(new \DateTime($participant['dateCreated'])); //todo: this is currently incorrect, timezone problem
+        if (isset($participant['dateCreated'])) { $resource->setDateCreated(new \DateTime($participant['dateCreated'])); } //todo: this is currently incorrect, timezone problem
         $resource->setStatus(null);
         $resource->setMemo(null);
         $resource->setRegistrar([]);
