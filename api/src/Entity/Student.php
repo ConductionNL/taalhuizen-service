@@ -55,25 +55,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "active" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
  *          "newReffered" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *          },
+ *          "active" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
  *          "completed" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
- *          "newReffered" = {
- *              "item_query" = StudentQueryItemResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false
+ *          "group" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -211,10 +207,28 @@ class Student
     private $intakeDetail;
 
     /**
-     * @Groups({"read", "write"})
+     * @var string The id of the cc/organization of a languageHouse.
+     *
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $languageHouseId;
+
+    /**
+     * @var string The id of the cc/organization of a provider.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $providerId;
+
+    /**
+     * @var string The id of the edu/group of a group.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
 
     /**
      * @Groups({"read", "write"})
@@ -487,6 +501,30 @@ class Student
     public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
+
+        return $this;
+    }
+
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
 
         return $this;
     }

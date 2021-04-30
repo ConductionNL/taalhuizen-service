@@ -20,7 +20,7 @@ security:
         # The mollie webhook does not have our API key
         webhook:
             anonymous: true
-            pattern: ^/payments/mollie_webhook
+            pattern: ^/payments/mollie_webhook|^/graphql|^/graphql/$
             methods: [POST]
         main:
             provider: chain_provider
