@@ -63,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "completed" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
- *          }
+ *          },
  *          "group" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
@@ -209,7 +209,7 @@ class Student
     /**
      * @var string The id of the cc/organization of a languageHouse.
      *
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $languageHouseId;
