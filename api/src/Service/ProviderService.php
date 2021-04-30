@@ -50,6 +50,12 @@ class ProviderService
         $providerWrcOrganization['contact'] = $providerCC['@id'];
         $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
+        //program
+        $program['name'] = 'Program of '.$provider['name'];
+        $program['provider'] = $provider['contact'];
+
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
 

@@ -31,11 +31,24 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = new ArrayCollection();
-
-        //todo:
-
-        return $this->createPaginator($collection, $context['args']);
+        if (!key_exists('languageHouseId', $context['args']) &&
+            !key_exists('providerId', $context['args'])) {
+            return null;
+        }
+        switch ($context['info']->operation->name->value) {
+            case 'students':
+                return $this->createPaginator($this->students($context), $context['args']);
+            case 'newRefferedStudents':
+                return $this->createPaginator($this->newRefferedStudents($context), $context['args']);
+            case 'activeStudents':
+                return $this->createPaginator($this->activeStudents($context), $context['args']);
+            case 'completedStudents':
+                return $this->createPaginator($this->completedStudents($context), $context['args']);
+            case 'groupStudents':
+                return $this->createPaginator($this->groupStudents($context), $context['args']);
+            default:
+                return $this->createPaginator(new ArrayCollection(), $context['args']);
+        }
     }
 
     public function createPaginator(ArrayCollection $collection, array $args){
@@ -57,21 +70,85 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
-    public function activeStudents(array $student): ?Student
+    public function students(array $context): ?ArrayCollection
     {
+        if(key_exists('languageHouseId', $context['args'])){
+            $languageHouseId = explode('/',$context['args']['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
+            }
+        } else {
+            throw new Exception('The languageHouseId was not specified');
+        }
 
-        return null;
+        $students = $this->studentService->getStudents($languageHouseId);
+
+        $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
+        foreach ($students as $student) {
+            if (isset($student['participant']['id'])) {
+                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                $collection->add($resourceResult);
+            }
+        }
+
+        return $collection;
     }
 
-    public function newRefferedStudents(array $student): ?Student
+    //todo:
+    public function newRefferedStudents(array $context): ?ArrayCollection
     {
+        $collection = new ArrayCollection();
 
-        return null;
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
+        return $collection;
     }
 
-    public function completedStudents(array $student): ?Student
+    //todo:
+    public function activeStudents(array $context): ?ArrayCollection
     {
+        $collection = new ArrayCollection();
 
-        return null;
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
+        return $collection;
+    }
+
+    //todo:
+    public function completedStudents(array $context): ?ArrayCollection
+    {
+        $collection = new ArrayCollection();
+
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
+        return $collection;
+    }
+
+    //todo:
+    public function groupStudents(array $context): ?ArrayCollection
+    {
+        $collection = new ArrayCollection();
+
+        return $collection;
     }
 }

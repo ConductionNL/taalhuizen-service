@@ -40,7 +40,7 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 //            case 'completedGroups':
 //                $collection = $this->participantsOfTheGroup($context['info']->variableValues['input']);
 //                break;
-            case 'participantsOfTheGroups':
+            case 'completedGroups':
                 $collection = $this->completedGroups(['course.organization' => $providerId]);
                 break;
             default:
