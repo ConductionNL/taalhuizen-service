@@ -44,7 +44,15 @@ class MrcService
         $employees = new ArrayCollection();
         if($languageHouseId){
             $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations']), 'limit' => 1000])['hydra:member'];
-        } else {
+        } elseif(!$languageHouseId && !$providerId) {
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['limit' => 1000])['hydra:member'];
+            foreach($results as $key=>$result){
+                if($result['organization'] !== null){
+                    unset($result[$key]);
+                }
+            }
+        }
+        else {
             $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['limit' => 1000])['hydra:member'];
         }
         foreach($results as $result){
@@ -56,8 +64,6 @@ class MrcService
                 $employees->add($this->createEmployeeObject($result));
             }
         }
-
-
         return $employees;
     }
 
