@@ -126,6 +126,32 @@ class StudentService
         return $students;
     }
 
+    /**
+     * @throws Exception
+     */
+    public function getProviderStudents($providerId, $status): array
+    {
+        $students = [];
+        //todo:
+//        // Get the edu/participants from EAV
+//        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+//        if ($this->commonGroundService->isResource($languageHouseUrl)) {
+//            // check if this taalhuis has an edu/program and get it
+//            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
+//            if (count($programs) > 0) {
+//                $students = [];
+//                foreach ($programs[0]['participants'] as $student) {
+//                    array_push($students, $this->getStudent($student['id']));
+//                }
+//            } else {
+//                throw new Exception('Invalid request, '. $languageHouseId .' does not have an existing program (edu/program)!');
+//            }
+//        } else {
+//            throw new Exception('Invalid request, '. $languageHouseId .' is not an existing taalhuis (cc/organization)!');
+//        }
+        return $students;
+    }
+
     public function checkStudentValues($input, $languageHouseUrl = null) {
         if (isset($languageHouseUrl) and !$this->commonGroundService->isResource($languageHouseUrl)) {
             throw new Exception('Invalid request, languageHouseId is not an existing cc/organization!');

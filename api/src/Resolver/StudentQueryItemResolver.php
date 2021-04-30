@@ -47,10 +47,4 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
 
         return $resourceResult;
     }
-
-    public function newRefferedStudent(array $student): ?Student
-    {
-
-        return null;
-    }
 }
