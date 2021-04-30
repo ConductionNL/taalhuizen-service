@@ -51,6 +51,12 @@ class LanguageHouseService
         $languageHouseWrcOrganization['contact'] = $languageHouseCC['@id'];
         $languageHouseWrc = $this->commonGroundService->saveResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
+        //program
+        $program['name'] = 'Program of '.$languageHouse['name'];
+        $program['provider'] = $languageHouseWrc['contact'];
+
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['languageHouse'] = $languageHouseCC;
 
