@@ -64,9 +64,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "completed" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
+ *          "group" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *          }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -218,6 +221,14 @@ class Student
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $providerId;
+
+    /**
+     * @var string The id of the edu/group of a group.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
 
     /**
      * @Groups({"read", "write"})
@@ -502,6 +513,18 @@ class Student
     public function setProviderId(?string $providerId): self
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
 
         return $this;
     }

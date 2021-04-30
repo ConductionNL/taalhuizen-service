@@ -44,6 +44,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
                 return $this->createPaginator($this->activeStudents($context), $context['args']);
             case 'completedStudents':
                 return $this->createPaginator($this->completedStudents($context), $context['args']);
+            case 'groupStudents':
+                return $this->createPaginator($this->groupStudents($context), $context['args']);
             default:
                 return $this->createPaginator(new ArrayCollection(), $context['args']);
         }
@@ -94,21 +96,56 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $collection;
     }
 
+    //todo:
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
         $collection = new ArrayCollection();
 
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
         return $collection;
     }
 
+    //todo:
     public function activeStudents(array $context): ?ArrayCollection
     {
         $collection = new ArrayCollection();
 
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
         return $collection;
     }
 
+    //todo:
     public function completedStudents(array $context): ?ArrayCollection
+    {
+        $collection = new ArrayCollection();
+
+        // Get all participations (verwijzingen! eav),
+        // filter participations on aanbiederId and status
+        // get learningNeed and its student for every participation
+        //
+        // check for duplicate students and filter them out
+
+        // use one StudentService call with different status as filter
+
+        return $collection;
+    }
+
+    //todo:
+    public function groupStudents(array $context): ?ArrayCollection
     {
         $collection = new ArrayCollection();
 
