@@ -51,22 +51,26 @@ class WRCService
                 throw new Exception('No ' . $prop . ' has been given');
             }
         }
-        if (isset($input['studentId']) && isset($input['aanbiederEmployeetId'])) {
-            throw new Exception('Both studentId and aanbiederEmployeetId are given, please give one type of id');
+        if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
+            throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
         }
         if (isset($input['studentId'])) {
             $id = $input['studentId'];
-        } elseif (isset($input['aanbiederEmployeetId'])) {
+            if (strpos($id, '/') !== false) {
+                $idArray = explode('/', $id);
+                $id = end($idArray);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+            }
+        } elseif (isset($input['aanbiederEmployeeId'])) {
             $id = $input['aanbiederEmployeeId'];
+            if (strpos($id, '/') !== false) {
+                $idArray = explode('/', $id);
+                $id = end($idArray);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+            }
         } else {
             throw new Exception('No studentId or aanbiederEmployeetId given');
         }
-        if (strpos($id, '/') !== false) {
-            $idArray = explode('/', $id);
-            $id = end($idArray);
-        }
-
-        $contact = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
 
         if ($this->commonGroundService->isResource($contact)) {
             $document['name'] = $input['filename'];
@@ -150,6 +154,48 @@ class WRCService
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getDocument(string $id)
+    {
+        try {
+            $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id])['hydra:member'];
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        $documentObject = new Document();
+        $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
+        $documentObject->setFilename($document['name']);
+        $documentObject->setDateCreated($document['dateCreated']);
+
+        return $documentObject;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getDocuments(string $contact)
+    {
+        try {
+            $documents = $this->commonGroundService->getResourceList(['component' => 'wrc', 'type' => 'documents'], ['contact' => $contact])['hydra:member'];
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        $documentObjects = [];
+
+        foreach ($documents as $document) {
+            $actualDocument['id'] = $document['id'];
+            $actualDocument['filename'] = $document['name'];
+            $actualDocument['dateCreated'] = $document['dateCreated'];
+            $documentObjects[] = $actualDocument;
+        }
+
+        return $documentObjects;
     }
 
 
