@@ -110,15 +110,15 @@ class WRCService
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
-        var_dump($id);die;
 
         try {
-            $document = $this->commonGroundService->saveResource($this->commonGroundService->cleanUrl(['component' => 'wrc', 'type' => 'documents', 'id' => $id]));
+            $document = $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'wrc', 'type' => 'documents', 'id' => $id]));
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
 
         $documentObject = new Document();
+        $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
         $documentObject->setBase64data($document['base64']);
 
         return $documentObject;
@@ -128,7 +128,7 @@ class WRCService
     /**
      * @throws Exception
      */
-    public function removeDocument($input)
+    public function removeDocument($input): ?Document
     {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
             throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');

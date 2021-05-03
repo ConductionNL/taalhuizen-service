@@ -34,8 +34,8 @@ class DocumentMutationResolver implements MutationResolverInterface
         switch($context['info']->operation->name->value){
             case 'createDocument':
                 return $this->wrcService->createDocument($context['info']->variableValues['input']);
-//            case 'downloadDocument':
-//                return $this->wrcService->downloadDocument($context['info']->variableValues['input']);
+            case 'downloadDocument':
+                return $this->wrcService->downloadDocument($context['info']->variableValues['input']);
             case 'deleteDocument':
                 return $this->wrcService->removeDocument($context['info']->variableValues['input']);
             default:
