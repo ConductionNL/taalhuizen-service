@@ -12,17 +12,19 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use App\Service\WRCService;
 
 class DocumentMutationResolver implements MutationResolverInterface
 {
+    private WRCService $wrcService;
 
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager){
-        $this->entityManager = $entityManager;
+    public function __construct(WRCService $wrcService){
+        $this->wrcService = $wrcService;
     }
+
     /**
      * @inheritDoc
+     * @throws \Exception
      */
     public function __invoke($item, array $context)
     {
@@ -31,36 +33,13 @@ class DocumentMutationResolver implements MutationResolverInterface
         }
         switch($context['info']->operation->name->value){
             case 'createDocument':
-                return $this->createDocument($context['info']->variableValues['input']);
-            case 'updateDocument':
-                return $this->updateDocument($context['info']->variableValues['input']);
-            case 'removeDocument':
-                return $this->deleteDocument($context['info']->variableValues['input']);
+                return $this->wrcService->createDocument($context['info']->variableValues['input']);
+            case 'downloadDocument':
+                return $this->wrcService->downloadDocument($context['info']->variableValues['input']);
+            case 'deleteDocument':
+                return $this->wrcService->deleteDocument($context['info']->variableValues['input']);
             default:
                 return $item;
         }
-    }
-
-    public function createDocument(array $documentArray): Document
-    {
-        $document = new Document();
-        $this->entityManager->persist($document);
-        return $document;
-    }
-
-    public function updateDocument(array $input): Document
-    {
-        $id = explode('/',$input['id']);
-        $document = new Document();
-
-
-        $this->entityManager->persist($document);
-        return $document;
-    }
-
-    public function deleteDocument(array $document): ?Document
-    {
-
-        return null;
     }
 }
