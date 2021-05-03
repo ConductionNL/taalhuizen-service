@@ -39,21 +39,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "update" = {
+ *          "download" = {
  *              "mutation" = DocumentMutationResolver::class,
+ *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "remove" = {
+ *          "delete" = {
  *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          }
+ *          },
  *     }
  * )
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
@@ -66,7 +67,7 @@ class Document
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\Column(type="uuid", unique=true, nullable=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
