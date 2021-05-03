@@ -197,12 +197,10 @@ class EDUService
 
     public function getGroupsWithStatus($aanbiederId, $status): ArrayCollection{
         $watanders = new ArrayCollection();
-        var_dump($aanbiederId);
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
             //get provider
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
-            var_dump($providerUrl);
             $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
             // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
             $groupUrls = [];
@@ -217,7 +215,6 @@ class EDUService
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
                         if(!in_array($participation['group'],$groupUrls)){
-                            var_dump($participation['group']);
                             array_push($groupUrls, $participation['group']);
                             //get group
                             $group = $this->eavService->getObject('groups',$participation['group'],'edu');
