@@ -29,7 +29,14 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $aanbiederId = isset($context['args']['aanbiederId']) ? $context['args']['aanbiederId'] : null;
+        if(key_exists('aanbiederId', $context['args'])){
+            $aanbiederId = explode('/',$context['args']['aanbiederId']);
+            if (is_array($aanbiederId)) {
+                $aanbiederId = end($aanbiederId);
+            }
+        } else {
+            throw new Exception('The languageHouseId was not specified');
+        }
         switch($context['info']->operation->name->value){
             case 'activeGroups':
                 return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'ACTIVE'), $context['args']);

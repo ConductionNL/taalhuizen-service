@@ -136,14 +136,24 @@ class EDUService
         return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['extend' => 'person'])['hydra:member'];
     }
 
-    public function convertGroupObject(array $group): Group
+    public function convertGroupObject(array $group, $aanbiederId = null): Group
     {
-        $aanbieder = explode('/',$group['course']['organization']);
         $resource = new Group();
         $resource->setGroupId($group['id']);
-        $resource->setAanbiederId(end($aanbieder));
         $resource->setName($group['name']);
-        $resource->setTypeCourse($group['course']['additionalType']);
+        if (isset($group['course'])){
+            $aanbieder = explode('/',$group['course']['organization']);
+            if(is_array($aanbieder)){
+                $aanbieder =  end($aanbieder);
+            }
+            $resource->setAanbiederId($aanbieder);
+            $resource->setTypeCourse($group['course']['additionalType']);
+            $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
+        }else{
+            if (isset($aanbiederId)) $resource->setAanbiederId($aanbiederId);
+            $resource->setTypeCourse(null);
+            $resource->setDetailsTotalClassHours(null);
+        }
         $resource->setOutComesGoal($group['goal']);
         $resource->setOutComesTopic($group['topic']);
         $resource->setOutComesTopicOther($group['topicOther']);
@@ -152,13 +162,12 @@ class EDUService
         $resource->setOutComesLevel($group['level']);
         $resource->setOutComesLevelOther($group['levelOther']);
         $resource->setDetailsIsFormal($group['isFormal']);
-        $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
         $resource->setDetailsCertificateWillBeAwarded($group['certificateWillBeAwarded']);
         $resource->setGeneralLocation($group['location']);
         $resource->setGeneralParticipantsMin($group['minParticipations']);
         $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        $resource->setDetailsEndDate(new DateTime($group['endDate']));
-        $resource->setDetailsStartDate(new DateTime($group['startDate']));
+        if (isset($group['endDate'])) $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $this->entityManager->persist($resource);
         return $resource;
@@ -188,10 +197,12 @@ class EDUService
 
     public function getGroupsWithStatus($aanbiederId, $status): ArrayCollection{
         $watanders = new ArrayCollection();
+        var_dump($aanbiederId);
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
             //get provider
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
+            var_dump($providerUrl);
             $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
             // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
             $groupUrls = [];
@@ -206,12 +217,12 @@ class EDUService
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
                         if(!in_array($participation['group'],$groupUrls)){
-
+                            var_dump($participation['group']);
                             array_push($groupUrls, $participation['group']);
                             //get group
                             $group = $this->eavService->getObject('groups',$participation['group'],'edu');
                             //handle result
-                            $resourceResult = $this->convertGroupObject($group);
+                            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
                             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
                             $watanders->add($resourceResult);
                         }
