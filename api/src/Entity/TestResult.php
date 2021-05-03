@@ -2,26 +2,50 @@
 
 namespace App\Entity;
 
-use App\Repository\TestResultRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\TestResultRepository;
+use App\Resolver\TestResultMutationResolver;
+use App\Resolver\TestResultQueryCollectionResolver;
+use App\Resolver\TestResultQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     graphql={
+ *          "item_query" = {
+ *              "item_query" = TestResultQueryItemResolver::class,
+ *              "read" = false
+ *          },
+ *          "collection_query" = {
+ *              "collection_query" = TestResultQueryCollectionResolver::class
+ *          },
+ *          "create" = {
+ *              "mutation" = TestResultMutationResolver::class,
+ *              "write" = false
+ *          },
+ *          "update" = {
+ *              "mutation" = TestResultMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "remove" = {
+ *              "mutation" = TestResultMutationResolver::class,
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          }
+ *     },
+ * )
+ * @ApiFilter(SearchFilter::class, properties={"participationId": "exact"})
  * @ORM\Entity(repositoryClass=TestResultRepository::class)
  */
 class TestResult
@@ -39,61 +63,82 @@ class TestResult
     private $id;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $participationId;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $outComesGoal;
 
     /**
+     * @Groups({"write"})
+     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $outComesTopic;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesTopicOther;
 
     /**
+     * @Groups({"write"})
+     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $outComesApplication;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesApplicationOther;
 
     /**
+     * @Groups({"write"})
+     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
     private $outComesLevel;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $outComesLevelOther;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $examUsedExam;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private $examDate;
 
     /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $examMemo;
 
     /**
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $examResult;
+
+    /**
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $testResultId;
@@ -237,6 +282,18 @@ class TestResult
     public function setExamMemo(?string $examMemo): self
     {
         $this->examMemo = $examMemo;
+
+        return $this;
+    }
+
+    public function getExamResult(): ?string
+    {
+        return $this->examResult;
+    }
+
+    public function setExamResult(?string $examResult): self
+    {
+        $this->examResult = $examResult;
 
         return $this;
     }

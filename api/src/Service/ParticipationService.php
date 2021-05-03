@@ -409,7 +409,7 @@ class ParticipationService
         $result = [];
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             $result['errorMessage'] = 'Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.';
-        } elseif (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['applicationOther'])) {
+        } elseif (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
         } elseif(isset($participation['application']) && $participation['application'] == 'OTHER' && !isset($participation['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
