@@ -185,4 +185,53 @@ class EDUService
         }
         return $results;
     }
+
+    public function getGroupsWithStatus($aanbiederId, $status): ArrayCollection{
+        $watanders = new ArrayCollection();
+        // Check if provider exists in eav and get it if it does
+        if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
+            //get provider
+            $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
+            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
+            $groupUrls = [];
+            //$provider['participations'] contain all participations urls
+            foreach ($provider['participations'] as $participationUrl) {
+                try {
+                    //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
+//                    if ($this->eavService->hasEavObject($participationUrl)) {
+                    // Get eav/Participation
+                    $participation = $this->eavService->getObject('participations', $participationUrl);
+                    //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
+                    //see if the status of said participation is the requested one and if the participation holds a group url
+                    if ($participation['status'] == $status && isset($participation['group'])) {
+                        if(!in_array($participation['group'],$groupUrls)){
+
+                            array_push($groupUrls, $participation['group']);
+                            //get group
+                            $group = $this->eavService->getObject('groups',$participation['group'],'edu');
+                            //handle result
+                            $resourceResult = $this->convertGroupObject($group);
+                            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
+                            $watanders->add($resourceResult);
+                        }
+
+                    }
+                    //else {
+                      //  $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
+                    //}
+                    //                } else {
+                    //                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+                    //                }
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+            // Then get the actual groups and return them...
+        } else {
+            // Do not throw an error, because we want to return an empty array in this case
+            $result['message'] = 'Warning, '. $aanbiederId .' is not an existing eav/cc/organization!';
+        }
+        return $watanders;
+    }
 }

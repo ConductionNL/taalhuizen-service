@@ -29,24 +29,24 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $providerId = isset($context['args']['aanbiederId']) ? $context['args']['aanbiederId'] : null;
+        $aanbiederId = isset($context['args']['aanbiederId']) ? $context['args']['aanbiederId'] : null;
         switch($context['info']->operation->name->value){
             case 'activeGroups':
-                $collection = $this->activeGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'ACTIVE'), $context['args']);
                 break;
             case 'futureGroups':
-                $collection = $this->futureGroups(['course.organization' => $providerId]);
+                $collection = $this->futureGroups(['course.organization' => $aanbiederId]);
                 break;
 //            case 'completedGroups':
 //                $collection = $this->participantsOfTheGroup($context['info']->variableValues['input']);
 //                break;
             case 'completedGroups':
-                $collection = $this->completedGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'COMPLETED'),$context['args']);
                 break;
             default:
-                $collection = $this->getGroups(['course.organization' => $providerId]);
+                $collection = $this->getGroups(['course.organization' => $aanbiederId]);
         }
-        return $this->createPaginator($collection, $context['args']);
+        return $this->createPaginator(new ArrayCollection(), $context['args']);
     }
 
     public function getGroups(?array $query = []): ArrayCollection

@@ -261,7 +261,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGeneralEvaluation()){
             $group['generalEvaluation'] = $resource->getGeneralEvaluation();
         }
-        $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
+        $group['mentors'] = $resource->getAanbiederEmployeeIds();
 
         return $group;
     }
