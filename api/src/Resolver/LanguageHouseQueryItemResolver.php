@@ -25,15 +25,19 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         $result['result'] = [];
 
         if(key_exists('languageHouseId', $context['info']->variableValues)){
-            $languageHouseId = explode('/',$context['info']->variableValues['languageHouseId']);
-            if (is_array($languageHouseId)) {
-                $languageHouseId = end($languageHouseId);
-            }
+            $languageHouseId = $context['info']->variableValues['languageHouseId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $languageHouseId = $context['args']['id'];
         } else {
-            throw new Exception('The languageHouseId was not specified');
+            throw new Exception('The languageHouseId / id was not specified');
         }
 
-        $result = array_merge($result, $this->languageHouseService->getLanguageHouse($languageHouseId));
+        $id = explode('/',$languageHouseId);
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        $result = array_merge($result, $this->languageHouseService->getLanguageHouse($id));
 
         if (isset($result['languageHouse'])) {
             $resourceResult = $this->languageHouseService->createLanguageHouseObject($result['languageHouse']);
