@@ -78,7 +78,7 @@ class Document
      * @Assert\NotNull
      * @ORM\Column(type="text")
      */
-    private $base64data;
+    private string $base64data;
 
     /**
      * @var string the name of the file
@@ -86,27 +86,33 @@ class Document
      * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
-    private $filename;
+    private string $filename;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeId;
+    private ?string $aanbiederEmployeeId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentId;
+    private ?string $studentId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeDocumentId;
+    private ?string $aanbiederEmployeeDocumentId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentDocumentId;
+    private ?string $studentDocumentId;
+
+    /**
+     * @Groups({"write"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private ?string $dateCreated;
 
     public function getId(): UuidInterface
     {
@@ -119,12 +125,12 @@ class Document
         return $this;
     }
 
-    public function getBase64Data(): ?string
+    public function getBase64data(): ?string
     {
         return $this->base64data;
     }
 
-    public function setBase64Data(string $base64data): self
+    public function setBase64data(string $base64data): self
     {
         $this->base64data = $base64data;
 
@@ -139,16 +145,6 @@ class Document
     public function setFilename(string $filename): self
     {
         $this->filename = $filename;
-    }
-
-    public function getResource(): ?string
-    {
-        return $this->resource;
-    }
-
-    public function setResource(string $resource): self
-    {
-        $this->resource = $resource;
 
         return $this;
     }
@@ -197,6 +193,18 @@ class Document
     public function setStudentDocumentId(?string $studentDocumentId): self
     {
         $this->studentDocumentId = $studentDocumentId;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?string
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(?string $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
 
         return $this;
     }

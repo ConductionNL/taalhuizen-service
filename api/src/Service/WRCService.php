@@ -3,9 +3,12 @@
 
 namespace App\Service;
 
+use App\Entity\Document;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class WRCService
@@ -40,21 +43,27 @@ class WRCService
     /**
      * @throws Exception
      */
-    public function createDocument($input): array
+    public function createDocument($input): Document
     {
-        if (!isset($input['studentId']) && !isset($input['aanbiederEmployeeId'])) {
-            throw new Exception('No studentId or aanbiederEmployeeId given');
-        }
         $requiredProps = ['base64data', 'filename'];
         foreach ($requiredProps as $prop) {
             if (!isset($input[$prop])) {
                 throw new Exception('No ' . $prop . ' has been given');
             }
         }
+        if (isset($input['studentId']) && isset($input['aanbiederEmployeetId'])) {
+            throw new Exception('Both studentId and aanbiederEmployeetId are given, please give one type of id');
+        }
         if (isset($input['studentId'])) {
             $id = $input['studentId'];
-        } elseif (isset($input['aanbiederEmployeeId'])) {
+        } elseif (isset($input['aanbiederEmployeetId'])) {
             $id = $input['aanbiederEmployeeId'];
+        } else {
+            throw new Exception('No studentId or aanbiederEmployeetId given');
+        }
+        if (strpos($id, '/') !== false) {
+            $idArray = explode('/', $id);
+            $id = end($idArray);
         }
 
         $contact = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
@@ -73,30 +82,74 @@ class WRCService
             throw new Exception($e->getMessage());
         }
 
-        $returnedDocument['id'] = $document['id'];
-        $returnedDocument['filename'] = $document['name'];
-        $returnedDocument['dateCreated'] = $document['dateCreated'];
+        $documentObject = new Document();
+        $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
+        $documentObject->setFilename($document['name']);
+        $documentObject->setBase64data($document['base64']);
+        $documentObject->setDateCreated($document['dateCreated']);
 
-        return $returnedDocument;
+        return $documentObject;
     }
 
     /**
      * @throws Exception
      */
-    public function downloadDocument()
+    public function downloadDocument($input): Document
     {
+        if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
+            throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
+        }
+        if (isset($input['studentDocumentId'])) {
+            $id = $input['studentDocumentId'];
+        } elseif (isset($input['aanbiederEmployeeDocumentId'])) {
+            $id = $input['aanbiederEmployeeDocumentId'];
+        } else {
+            throw new Exception('No studentDocumentId or aanbiederEmployeeDocumentId given');
+        }
+        if (strpos($id, '/') !== false) {
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+        }
+        var_dump($id);die;
 
-        return '';
+        try {
+            $document = $this->commonGroundService->saveResource($this->commonGroundService->cleanUrl(['component' => 'wrc', 'type' => 'documents', 'id' => $id]));
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        $documentObject = new Document();
+        $documentObject->setBase64data($document['base64']);
+
+        return $documentObject;
 
     }
 
     /**
      * @throws Exception
      */
-    public function deleteDocument()
+    public function removeDocument($input)
     {
-
-        return '';
+        if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
+            throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
+        }
+        if (isset($input['studentDocumentId'])) {
+            $id = $input['studentDocumentId'];
+        } elseif (isset($input['aanbiederEmployeeDocumentId'])) {
+            $id = $input['aanbiederEmployeeDocumentId'];
+        } else {
+            throw new Exception('No studentDocumentId or aanbiederEmployeeDocumentId given');
+        }
+        if (strpos($id, '/') !== false) {
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+        }
+        try {
+            $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'documents', 'id' => $id]);
+            return null;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
 
