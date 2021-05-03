@@ -153,7 +153,7 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         $employees = $this->mrcService->getEmployees(null, $providerId, $query);
 
-        $report->setBase64data($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']]));
+        $report->setBase64data(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
         $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
