@@ -30,7 +30,14 @@ class UserQueryItemResolver implements QueryItemResolverInterface
             case 'currentUser':
                 return $this->getCurrentUser();
             default:
-                return $this->getUser($context['info']->variableValues['userId']);
+                if(key_exists('userId', $context['info']->variableValues)){
+                    $userId = $context['info']->variableValues['userId'];
+                } elseif (key_exists('id', $context['args'])) {
+                    $userId = $context['args']['id'];
+                } else {
+                    throw new Exception('The userId was not specified');
+                }
+                return $this->getUser($userId);
         }
     }
 

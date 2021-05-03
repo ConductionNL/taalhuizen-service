@@ -7,8 +7,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\Group;
 use App\Service\EDUService;
-use Doctrine\Common\Collections\ArrayCollection;
-use phpDocumentor\Reflection\Types\This;
+use Exception;
 
 class GroupQueryItemResolver implements QueryItemResolverInterface
 {
@@ -22,11 +21,19 @@ class GroupQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        $groupId = explode('/',$context['info']->variableValues['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
+        if(key_exists('groupId', $context['info']->variableValues)){
+            $groupId = $context['info']->variableValues['groupId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $groupId = $context['args']['id'];
+        } else {
+            throw new Exception('The groupId / id was not specified');
         }
-        return $this->eduService->getGroup($groupId);
+
+        $id = explode('/',$groupId);
+        if (is_array($id)) {
+            $id = end($id);
+        }
+        return $this->eduService->getGroup($id);
     }
 
     public function participantsOfTheGroup()

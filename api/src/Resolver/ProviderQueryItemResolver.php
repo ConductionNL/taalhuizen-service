@@ -24,15 +24,19 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         $result['result'] = [];
 
         if(key_exists('providerId', $context['info']->variableValues)){
-            $providerId = explode('/',$context['info']->variableValues['providerId']);
-            if (is_array($providerId)) {
-                $providerId = end($providerId);
-            }
+            $providerId = $context['info']->variableValues['providerId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $providerId = $context['args']['id'];
         } else {
-            throw new Exception('The providerId was not specified');
+            throw new Exception('The providerId / id was not specified');
         }
 
-        $result = array_merge($result, $this->providerService->getProvider($providerId));
+        $id = explode('/',$providerId);
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        $result = array_merge($result, $this->providerService->getProvider($id));
 
         if (isset($result['provider'])) {
             $resourceResult = $this->providerService->createProviderObject($result['provider']);

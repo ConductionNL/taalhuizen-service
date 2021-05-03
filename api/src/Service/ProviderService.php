@@ -52,7 +52,7 @@ class ProviderService
 
         //program
         $program['name'] = 'Program of '.$provider['name'];
-        $program['provider'] = $provider['contact'];
+        $program['provider'] = $providerWrc['contact'];
 
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
 

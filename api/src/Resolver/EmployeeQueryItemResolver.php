@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\MrcService;
+use Exception;
 
 class EmployeeQueryItemResolver implements QueryItemResolverInterface
 {
@@ -19,7 +20,15 @@ class EmployeeQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        $id = explode('/',$context['info']->variableValues['employeeId']);
+        if(key_exists('employeeId', $context['info']->variableValues)){
+            $employeeId = $context['info']->variableValues['employeeId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $employeeId = $context['args']['id'];
+        } else {
+            throw new Exception('The employeeId / id was not specified');
+        }
+
+        $id = explode('/',$employeeId);
         if (is_array($id)) {
             $id = end($id);
         }
