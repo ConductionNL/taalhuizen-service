@@ -96,7 +96,6 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $collection;
     }
 
-    //todo:
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
         if(key_exists('providerId', $context['args'])){
@@ -108,33 +107,9 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        //todo: use cc/organization eav object to get all participations of this providerId
-
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-//        $students = $this->studentService->getProviderStudents($providerId, 'REFERRED');
-        $students = [];
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');;
     }
 
-    //todo:
     public function activeStudents(array $context): ?ArrayCollection
     {
         if(key_exists('providerId', $context['args'])){
@@ -146,30 +121,9 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-        $students = [];
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');;
     }
 
-    //todo:
     public function completedStudents(array $context): ?ArrayCollection
     {
         if(key_exists('providerId', $context['args'])){
@@ -181,27 +135,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-        $students = [];
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');;
     }
 
     //todo:

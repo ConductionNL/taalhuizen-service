@@ -7,6 +7,7 @@ use App\Service\EAVService;
 use App\Service\CCService;
 use App\Service\EDUService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -73,23 +74,25 @@ class StudentService
 //        return $result;
     }
 
-    public function getStudent($id): array
+    public function getStudent($id, $studentUrl = null, $skipChecks = false): array
     {
-        $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($studentUrl)) {
+        if (isset($id)) {
+            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+        }
+        if (!$skipChecks && !$this->commonGroundService->isResource($studentUrl)) {
             throw new Exception('Invalid request, studentId is not an existing student (edu/participant)!');
         }
 
         // Get the edu/participant from EAV
-        if ($this->eavService->hasEavObject($studentUrl)) {
+        if ($skipChecks || $this->eavService->hasEavObject($studentUrl)) {
             $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
             $result['participant'] = $participant;
 
-            if (!$this->commonGroundService->isResource($participant['person'])) {
+            if (!$skipChecks && !$this->commonGroundService->isResource($participant['person'])) {
                 throw new Exception('Warning, '. $participant['person'] .' the person (cc/person) of this student does not exist!');
             }
             // Get the cc/person from EAV
-            if ($this->eavService->hasEavObject($participant['person'])) {
+            if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
                 $person = $this->eavService->getObject('people', $participant['person'], 'cc');
                 $result['person'] = $person;
             } else {
@@ -129,27 +132,55 @@ class StudentService
     /**
      * @throws Exception
      */
-    public function getProviderStudents($providerId, $status): array
+    public function getStudentsWithStatus($providerId, $status): ArrayCollection
     {
-        $students = [];
-        //todo:
-//        // Get the edu/participants from EAV
-//        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-//        if ($this->commonGroundService->isResource($languageHouseUrl)) {
-//            // check if this taalhuis has an edu/program and get it
-//            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
-//            if (count($programs) > 0) {
-//                $students = [];
-//                foreach ($programs[0]['participants'] as $student) {
-//                    array_push($students, $this->getStudent($student['id']));
-//                }
-//            } else {
-//                throw new Exception('Invalid request, '. $languageHouseId .' does not have an existing program (edu/program)!');
-//            }
-//        } else {
-//            throw new Exception('Invalid request, '. $languageHouseId .' is not an existing taalhuis (cc/organization)!');
-//        }
-        return $students;
+        $collection = new ArrayCollection();
+        // Check if provider exists in eav and get it if it does
+        if ($this->eavService->hasEavObject(null, 'organizations', $providerId, 'cc')) {
+            $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
+            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
+            $studentUrls = [];
+            foreach ($provider['participations'] as $participationUrl) {
+                try {
+                    //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
+//                    if ($this->eavService->hasEavObject($participationUrl)) {
+                        // Get eav/Participation
+                        $participation = $this->eavService->getObject('participations', $participationUrl);
+                        //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
+                        if ($participation['status'] == $status && isset($participation['learningNeed'])) {
+                            //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
+                            // Get eav/LearningNeed
+                            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+                            if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
+                                // Add studentUrl to array, if it is not already in there
+                                if (!in_array($learningNeed['participants'][0], $studentUrls)) {
+                                    array_push($studentUrls, $learningNeed['participants'][0]);
+                                    // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
+                                    $student = $this->getStudent(null, $learningNeed['participants'][0], true);
+                                    // Handle Result
+                                    $resourceResult = $this->handleResult($student['person'], $student['participant']);
+                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                                    // Add to the collection
+                                    $collection->add($resourceResult);
+                                }
+                            }
+                        }
+//                        else {
+//                            $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
+//                        }
+//                    } else {
+//                        $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+//                    }
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+        } else {
+            // Do not throw an error, because we want to return an empty array in this case
+            $result['message'] = 'Warning, '. $providerId .' is not an existing eav/cc/organization!';
+        }
+        return $collection;
     }
 
     public function checkStudentValues($input, $languageHouseUrl = null) {

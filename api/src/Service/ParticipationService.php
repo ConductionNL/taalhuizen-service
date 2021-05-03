@@ -460,7 +460,7 @@ class ParticipationService
         if (isset($participation['status'])) {
             $resource->setStatus($participation['status']);
         }
-        $resource->setAanbiederId($participation['aanbiederId']);
+        $resource->setAanbiederId('/providers/'.$participation['aanbiederId']);
         $resource->setAanbiederName($participation['aanbiederName']);
         $resource->setAanbiederNote($participation['aanbiederNote']);
         $resource->setOfferName($participation['offerName']);
