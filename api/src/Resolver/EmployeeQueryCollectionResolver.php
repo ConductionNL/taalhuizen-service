@@ -23,7 +23,15 @@ class EmployeeQueryCollectionResolver implements QueryCollectionResolverInterfac
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = $this->mrcService->getEmployees();
+
+        $collection = $this->mrcService->getEmployees(
+            key_exists('languageHouseId', $context['args']) ?
+                $context['args']['languageHouseId'] :
+                null,
+            key_exists('providerId', $context['args']) ?
+                $context['args']['providerId'] :
+                null
+        );
         return $this->createPaginator($collection, $context['args']);
     }
 

@@ -28763,11 +28763,12 @@ components:
           type: string
           nullable: true
         isVOGChecked:
+          description: 'Whether the employee has submitted a police certificate'
           type: boolean
         aanbiederId:
           type: string
           nullable: true
-        taalhuisId:
+        languageHouseId:
           type: string
           nullable: true
         availability:
@@ -28914,11 +28915,12 @@ components:
           type: string
           nullable: true
         isVOGChecked:
+          description: 'Whether the employee has submitted a police certificate'
           type: boolean
         aanbiederId:
           type: string
           nullable: true
-        taalhuisId:
+        languageHouseId:
           type: string
           nullable: true
         availability:
@@ -29721,7 +29723,7 @@ components:
         id:
           readOnly: true
           type: integer
-        taalhuisId:
+        languageHouseId:
           type: string
         memo:
           type: string
@@ -29738,7 +29740,7 @@ components:
           type: string
           nullable: true
       required:
-        - taalhuisId
+        - languageHouseId
     'Registration:jsonld':
       type: object
       description: ''
@@ -29755,7 +29757,7 @@ components:
         id:
           readOnly: true
           type: integer
-        taalhuisId:
+        languageHouseId:
           type: string
         memo:
           type: string
@@ -29772,7 +29774,7 @@ components:
           type: string
           nullable: true
       required:
-        - taalhuisId
+        - languageHouseId
     Report:
       type: object
       description: ''
@@ -29782,7 +29784,7 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        taalhuisId:
+        languageHouseId:
           type: string
           nullable: true
         aanbiederId:
@@ -29813,7 +29815,7 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        taalhuisId:
+        languageHouseId:
           type: string
           nullable: true
         aanbiederId:
@@ -29847,11 +29849,6 @@ components:
             type: string
           nullable: true
         civicIntegrationDetails:
-          type: array
-          items:
-            type: string
-          nullable: true
-        personDetails:
           type: array
           items:
             type: string
@@ -29924,8 +29921,7 @@ components:
           readOnly: true
           type: string
           nullable: true
-        intakeDetails:
-          writeOnly: true
+        languageHouseId:
           type: string
           nullable: true
         languageHouseId:
@@ -29970,7 +29966,7 @@ components:
           items:
             type: string
           nullable: true
-        personDetails:
+        civicIntegrationDetails:
           type: array
           items:
             type: string
@@ -31729,12 +31725,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-26 12:17:46'
+        example: '2021-04-26 07:42:04'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-26 12:17:46'
+        example: '2021-04-26 07:42:04'
     required: []
   AuditTrail-write:
     properties:
@@ -31782,12 +31778,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-04-26 12:17:46'
+        example: '2021-04-26 07:42:04'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-04-26 12:17:46'
+        example: '2021-04-26 07:42:04'
     required: []
   ChangeLog-write:
     properties:

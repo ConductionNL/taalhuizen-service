@@ -7,44 +7,39 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
-use App\Entity\LanguageHouse;
-use App\Service\LanguageHouseService;
+use App\Service\ProviderService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
-class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
+class ProviderQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private LanguageHouseService $languageHouseService;
-    private EntityManagerInterface $entityManager;
+    private ProviderService $providerService;
 
-    public function __construct(LanguageHouseService $languageHouseService, EntityManagerInterface $entityManager){
-        $this->languageHouseService = $languageHouseService;
-        $this->entityManager = $entityManager;
+    public function __construct(ProviderService $providerService){
+        $this->providerService = $providerService;
     }
-
     /**
      * @inheritDoc
+     * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
 
-        // Get the languageHouses
-        $result = array_merge($result, $this->languageHouseService->getLanguageHouses());
-//        var_dump($result);
+        // Get the providers
+        $result = array_merge($result, $this->providerService->getProviders());
 
         $collection = new ArrayCollection();
-        if (isset($result['languageHouses'])) {
+        if (isset($result['providers'])) {
             // Now put together the expected result for Lifely:
-            foreach ($result['languageHouses'] as &$languageHouse) {
-                if (!isset($languageHouse['errorMessage'])) {
-                    $resourceResult = $this->languageHouseService->createLanguageHouseObject($languageHouse);
-                    $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
+            foreach ($result['providers'] as &$provider) {
+                if (!isset($provider['errorMessage'])) {
+                    $resourceResult = $this->providerService->createProviderObject($provider);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
                     $collection->add($resourceResult);
-                    $languageHouse = $languageHouse['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                    $provider = $provider['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }

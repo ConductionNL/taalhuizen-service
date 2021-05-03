@@ -19,6 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "item_query" = UserQueryItemResolver::class,
  *              "read" = false
  *          },
+ *          "current" = {
+ *              "item_query" = UserQueryItemResolver::class,
+ *              "args" = {},
+ *              "read" = false
+ *          },
  *          "collection_query" = {
  *              "collection_query" = UserQueryCollectionResolver::class
  *          },
@@ -110,6 +115,83 @@ class User
     private $username;
 
     /**
+     * @var string The givenName of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $givenName;
+
+    /**
+     * @var string The additionalName of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $additionalName;
+
+    /**
+     * @var string The familyName of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $familyName;
+
+    /**
+     * @var string The userEnvironment of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userEnvironment;
+
+    /**
+     * @var string The organizationId of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $organizationId;
+
+    /**
+     * @var string The organizationName of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $organizationName;
+
+    /**
+     * @var string The userRoles of this User.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userRoles;
+
+    /**
      * @var string The Password of this User.
      *
      * @Assert\Length(
@@ -162,6 +244,90 @@ class User
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getAdditionalName(): ?string
+    {
+        return $this->additionalName;
+    }
+
+    public function setAdditionalName(string $additionalName): self
+    {
+        $this->additionalName = $additionalName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getUserEnvironment(): ?string
+    {
+        return $this->userEnvironment;
+    }
+
+    public function setUserEnvironment(string $userEnvironment): self
+    {
+        $this->userEnvironment = $userEnvironment;
+
+        return $this;
+    }
+
+    public function getOrganizationId(): ?string
+    {
+        return $this->organizationId;
+    }
+
+    public function setOrganizationId(string $organizationId): self
+    {
+        $this->organizationId = $organizationId;
+
+        return $this;
+    }
+
+    public function getOrganizationName(): ?string
+    {
+        return $this->organizationName;
+    }
+
+    public function setOrganizationName(string $organizationName): self
+    {
+        $this->organizationName = $organizationName;
+
+        return $this;
+    }
+
+    public function getUserRoles(): ?string
+    {
+        return $this->userRoles;
+    }
+
+    public function setUserRoles(string $userRoles): self
+    {
+        $this->userRoles = $userRoles;
 
         return $this;
     }

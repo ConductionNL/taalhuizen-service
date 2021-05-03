@@ -3,26 +3,42 @@
 
 namespace App\Service;
 
+use App\Entity\Group;
 use App\Entity\StudentDossierEvent;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Promise\Each;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EDUService
 {
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private ParameterBagInterface $params;
+    private EAVService $eavService;
 
-    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params, EAVService $eavService)
     {
-        $this->em = $em;
+        $this->entityManager = $em;
         $this->commonGroundService = $commonGroundService;
         $this->params = $params;
+        $this->eavService = $eavService;
+    }
+
+    public function saveEavParticipant($body, $participantUrl = null) {
+        // Save the edu/participant in EAV
+        if (isset($participantUrl)) {
+            // Update
+            $person = $this->eavService->saveObject($body, 'participants', 'edu', $participantUrl);
+        } else {
+            // Create
+            $person = $this->eavService->saveObject($body, 'participants', 'edu');
+        }
+        return $person;
     }
 
     //@todo uitwerken
@@ -55,9 +71,9 @@ class EDUService
         $studentDossierEvent->setEventDescription($input['description']);
         $studentDossierEvent->setEventDate(new DateTime($input['startDate']));
         $studentDossierEvent->setStudentId($studentId);
-        $this->em->persist($studentDossierEvent);
+        $this->entityManager->persist($studentDossierEvent);
         $studentDossierEvent->setId(Uuid::fromString($input['id']));
-        $this->em->persist($studentDossierEvent);
+        $this->entityManager->persist($studentDossierEvent);
 
         return $studentDossierEvent;
     }
@@ -113,5 +129,60 @@ class EDUService
     public function deleteEducationEvent(string $id): bool
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
+    }
+
+    public function getParticipants(?string $languageHouse, ?DateTime $dateFrom, ?DateTime $dateUntil): array
+    {
+        return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['extend' => 'person'])['hydra:member'];
+    }
+
+    public function convertGroupObject(array $group): Group
+    {
+        $aanbieder = explode('/',$group['course']['organization']);
+        $resource = new Group();
+        $resource->setGroupId($group['id']);
+        $resource->setAanbiederId(end($aanbieder));
+        $resource->setName($group['name']);
+        $resource->setTypeCourse($group['course']['additionalType']);
+        $resource->setOutComesGoal($group['goal']);
+        $resource->setOutComesTopic($group['topic']);
+        $resource->setOutComesTopicOther($group['topicOther']);
+        $resource->setOutComesApplication($group['application']);
+        $resource->setOutComesApplicationOther($group['applicationOther']);
+        $resource->setOutComesLevel($group['level']);
+        $resource->setOutComesLevelOther($group['levelOther']);
+        $resource->setDetailsIsFormal($group['isFormal']);
+        $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
+        $resource->setDetailsCertificateWillBeAwarded($group['certificateWillBeAwarded']);
+        $resource->setGeneralLocation($group['location']);
+        $resource->setGeneralParticipantsMin($group['minParticipations']);
+        $resource->setGeneralParticipantsMax($group['maxParticipations']);
+        $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        $resource->setDetailsStartDate(new DateTime($group['startDate']));
+        $resource->setGeneralEvaluation($group['evaluation']);
+        $this->entityManager->persist($resource);
+        return $resource;
+    }
+
+    public function getGroup(string $id): Group
+    {
+        $group = $this->eavService->getObject('groups',$this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
+
+        $result = $this->convertGroupObject($group);
+
+        return $result;
+    }
+
+    public function getGroups(?array $query = []): array
+    {
+        $groups = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'groups'], $query)['hydra:member'];
+
+        $results = [];
+        foreach($groups as $group){
+            if($this->eavService->hasEavObject($group['@id']) && key_exists('course', $group) && $group['course']){
+                $results[] = $this->getGroup($group['id']);
+            }
+        }
+        return $results;
     }
 }

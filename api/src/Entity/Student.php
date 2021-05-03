@@ -55,25 +55,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "active" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
  *          "newReffered" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = StudentQueryCollectionResolver::class
+ *          },
+ *          "active" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
  *          "completed" = {
- *              "collection_query" = StudentQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
- *          "newReffered" = {
- *              "item_query" = StudentQueryItemResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false
+ *          "group" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -91,140 +87,160 @@ class Student
     private UuidInterface $id;
 
     /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $status;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $memo;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $registrar;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $civicIntegrationDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $personDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $contactDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $generalDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $referrerDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $backgroundDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $dutchNTDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $speakingLevel;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $educationDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $courseDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $jobDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $motivationDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $availabilityDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $readingTestResult;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $writingTestResult;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $permissionDetails;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", length=255, nullable=true)
+     */
+    private $intakeDetail;
+
+    /**
+     * @var string The id of the cc/organization of a languageHouse.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $status;
+    private $languageHouseId;
 
     /**
+     * @var string The id of the cc/organization of a provider.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $memo;
+    private $providerId;
 
+    /**
+     * @var string The id of the edu/group of a group.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $groupId;
+
+    /**
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studentId;
 
     /**
      * @Groups({"write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?array $registrar;
-
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $civicIntegrationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $personDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $contactDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $generalDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $referrerDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $backgroundDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $dutchNTDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $speakingLevel;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $educationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $courseDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $jobDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $motivationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $availabilityDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $readingTestResult;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $writingTestResult;
-
-    /**
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255)
-     */
-    private ?array $permissionDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private ?array $intakeDetail;
-
-    /**
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $languageHouseId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $studentId;
+    private $dateCreated;
 
     public function getId(): UuidInterface
     {
@@ -237,7 +253,7 @@ class Student
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
@@ -249,7 +265,7 @@ class Student
         return $this;
     }
 
-    public function getMemo(): string
+    public function getMemo(): ?string
     {
         return $this->memo;
     }
@@ -261,7 +277,7 @@ class Student
         return $this;
     }
 
-    public function getRegistrar(): array
+    public function getRegistrar(): ?array
     {
         return $this->registrar;
     }
@@ -489,6 +505,30 @@ class Student
         return $this;
     }
 
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getGroupId(): ?string
+    {
+        return $this->groupId;
+    }
+
+    public function setGroupId(?string $groupId): self
+    {
+        $this->groupId = $groupId;
+
+        return $this;
+    }
+
     public function getStudentId(): ?string
     {
         return $this->studentId;
@@ -501,4 +541,15 @@ class Student
         return $this;
     }
 
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(?\DateTimeInterface $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
 }

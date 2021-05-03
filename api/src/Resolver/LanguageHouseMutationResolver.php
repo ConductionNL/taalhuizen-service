@@ -5,19 +5,28 @@ namespace App\Resolver;
 
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
 use App\Entity\LanguageHouse;
+use App\Service\LanguageHouseService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use SensioLabs\Security\Exception\HttpException;
+
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
+    private CommonGroundService $commonGroundService;
+    private LanguageHouseService $languageHouseService;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LanguageHouseService $languageHouseService){
         $this->entityManager = $entityManager;
+        $this->commonGroundService = $commonGroundService;
+        $this->languageHouseService = $languageHouseService;
     }
     /**
      * @inheritDoc
@@ -29,7 +38,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
         switch($context['info']->operation->name->value){
             case 'createLanguageHouse':
-                return $this->createLanguageHouse($context['info']->variableValues['input']);
+                return $this->createLanguageHouse($item);
             case 'updateLanguageHouse':
                 return $this->updateLanguageHouse($context['info']->variableValues['input']);
             case 'removeLanguageHouse':
@@ -39,44 +48,127 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createLanguageHouse(array $languageHouseArray): LanguageHouse
+    public function createLanguageHouse(LanguageHouse $resource): LanguageHouse
     {
-        $languageHouse = new LanguageHouse();
-        if(key_exists('name', $languageHouseArray)){
-            $languageHouse->setName($languageHouseArray['name']);
+        $result['result'] = [];
+
+        // get all DTO info...
+        $languageHouse = $this->dtoToLanguageHouse($resource);
+
+        $result = array_merge($result, $this->languageHouseService->createLanguageHouse($languageHouse));
+
+        // Now put together the expected result in $result['result'] for Lifely:
+        $resourceResult = $this->languageHouseService->handleResult($languageHouse);
+        $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+
+        // If any error was catched throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
         }
-        if(key_exists('email', $languageHouseArray)){
-            $languageHouse->setEmail($languageHouseArray['email']);
-        }
-        if(key_exists('address', $languageHouseArray)){
-            $address = new Address();
-            var_dump($languageHouseArray['address']);
-            if(key_exists('street', $languageHouseArray['address'])) {
-                $address->setStreet($languageHouseArray['address']['street']);
-                echo 'boe!';
-            }
-            $this->entityManager->persist($address);
-            $languageHouse->setAddress($address);
-        }
-//        var_dump($languageHouse->getAddress());
-        $this->entityManager->persist($languageHouse);
-        return $languageHouse;
+        return $resourceResult;
     }
 
     public function updateLanguageHouse(array $input): LanguageHouse
     {
-        $id = explode('/',$input['id']);
-        $languageHouse = new LanguageHouse();
-        $languageHouse->setId(Uuid::getFactory()->fromString(end($id)));
-        $languageHouse->setEmail($input['email']);
-        $languageHouse->setName($input['name']);
+        $result['result'] = [];
 
-        $this->entityManager->persist($languageHouse);
+        // If LanguageHouseUrl or LanguageHouseId is set generate the id for it, needed for eav calls later
+        $languageHouseId = explode('/', $input['id']);
+        if (is_array($languageHouseId)) {
+            $languageHouseId = end($languageHouseId);
+        }
+
+        // Transform input info to LanguageHouse body...
+        $languageHouse = $this->inputToLanguageHouse($input);
+
+        if (!isset($result['errorMessage'])) {
+            // No errors so lets continue... to:
+            // Save LanguageHouse
+            $result = array_merge($result, $this->languageHouseService->updateLanguageHouse($languageHouse, $languageHouseId));
+
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->languageHouseService->handleResult($languageHouse);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
+    }
+
+    public function deleteLanguageHouse(array $input): ?LanguageHouse
+    {
+        $result['result'] = [];
+
+        $id = explode('/', $input['id']);
+        $id = end($id);
+        $result = array_merge($result, $this->languageHouseService->deleteLanguageHouse($id));
+
+        $result['result'] = False;
+        if (isset($result['languageHouse'])){
+            $result['result'] = True;
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
+        return null;
+    }
+
+    private function dtoToLanguageHouse(LanguageHouse $resource)
+    {
+        // Get all info from the dto for creating/updating a LanguageHouse and return the body for this
+        $languageHouse['address'] = $resource->getAddress();
+        $languageHouse['email'] = $resource->getEmail();
+        $languageHouse['phoneNumber'] = $resource->getPhoneNumber();
+        $languageHouse['name'] = $resource->getName();
+
         return $languageHouse;
     }
 
-    public function deleteLanguageHouse(array $languageHouse): ?LanguageHouse
+    private function inputToLanguageHouse(array $input)
     {
-        return null;
+        // Get all info from the input array for updating a LanguageHouse and return the body for this
+        $languageHouse['address'] = $input['address'];
+        $languageHouse['email'] = $input['email'];
+        $languageHouse['phoneNumber'] = $input['phoneNumber'];
+        $languageHouse['name'] = $input['name'];
+
+        return $languageHouse;
+    }
+
+    private function dtoToTaalhuis(LanguageHouse $resource)
+    {
+        if ($resource->getId()){
+            $taalhuis['id'] = $resource->getId();
+        }
+        $taalhuis['name'] = $resource->getName();
+        if ($resource->getAddress()){
+            $taalhuis['address'] = $resource->getAddress();
+        }
+        if ($resource->getEmail()) {
+            $taalhuis['email'] = $resource->getEmail();
+        }
+        if ($resource->getPhoneNumber()) {
+            $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
+        }
+        return $taalhuis;
+    }
+
+    private function handleResult($taalhuis){
+        $resource = new LanguageHouse();
+        $resource->setId($taalhuis['id']);
+        $resource->setName($taalhuis['name']);
+        $resource->setEmail($taalhuis['email']);
+        $resource->setPhoneNumber($taalhuis['phoneNumber']);
+        //@todo add address
+        $this->entityManager->persist($resource);
+        return $resource;
     }
 }

@@ -26,27 +26,23 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        $result['result'] = [];
-
         if(key_exists('studentId', $context['info']->variableValues)){
-            $studentId = explode('/',$context['info']->variableValues['studentId']);
-            if (is_array($studentId)) {
-                $studentId = end($studentId);
-            }
+            $studentId = $context['info']->variableValues['studentId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $studentId = $context['args']['id'];
         } else {
             throw new Exception('The studentId was not specified');
         }
-
-        $result = array_merge($result, $this->studentService->getStudent($studentId));
-
-        if (isset($result['student'])) {
-            $resourceResult = $this->studentService->handleResult($result['student']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['student']['id']));
+        $studentId = explode('/',$studentId);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
         }
 
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
+        $student = $this->studentService->getStudent($studentId);
+
+        if (isset($student['participant']['id'])) {
+            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
         }
 
         return $resourceResult;
