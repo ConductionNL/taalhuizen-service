@@ -149,26 +149,19 @@ class TestResultService
         ];
     }
 
-    //todo:
     public function getTestResults($participationId) {
-//        // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
-//            $result['learningNeeds'] = [];
-//            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-//            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-//                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-//                if (isset($learningNeed['learningNeed'])) {
-//                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
-//                } else {
-//                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
-//                }
-//            }
-//        } else {
-//            // Do not throw an error, because we want to return an empty array in this case
-//            $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
-//        }
-//        return $result;
+        if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
+            // Get eav/participation
+            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            // Get the edu/testResult urls for this participation and do gets on them
+            $testResults = [];
+            foreach ($participation['results'] as $result) {
+                array_push($testResults, $this->getTestResult(null, $result));
+            }
+        } else {
+            throw new Exception('Invalid request, '. $participationId .' is not an existing eav/participation !');
+        }
+        return $testResults;
     }
 
     public function checkTestResultValues($testResult, $participationId, $testResultUrl = null) {
