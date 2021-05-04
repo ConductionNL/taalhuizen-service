@@ -47,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "remove" = {
+*          "remove" = {
  *              "mutation" = DocumentMutationResolver::class,
  *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
@@ -71,7 +71,7 @@ class Document
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var string the base64 of the document
@@ -90,24 +90,25 @@ class Document
     private string $filename;
 
     /**
+     * @var string|null
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $aanbiederEmployeeId;
+    private ?string $aanbiederEmployeeId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $studentId;
+    private ?string $studentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $aanbiederEmployeeDocumentId;
+    private ?string $aanbiederEmployeeDocumentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $studentDocumentId;
+    private ?string $studentDocumentId = null;
 
     /**
      * @Groups({"write"})
