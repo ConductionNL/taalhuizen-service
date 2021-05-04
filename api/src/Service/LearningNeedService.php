@@ -157,12 +157,14 @@ class LearningNeedService
             $result['learningNeeds'] = [];
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-                if (isset($learningNeed['learningNeed'])) {
-                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
-                } else {
-                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
+            if (isset($participant['learningNeeds'])) {
+                foreach ($participant['learningNeeds'] as $learningNeedUrl) {
+                    $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
+                    if (isset($learningNeed['learningNeed'])) {
+                        array_push($result['learningNeeds'], $learningNeed['learningNeed']);
+                    } else {
+                        array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
+                    }
                 }
             }
         } else {

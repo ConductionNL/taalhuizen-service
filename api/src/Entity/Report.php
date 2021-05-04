@@ -40,7 +40,7 @@ use Ramsey\Uuid\UuidInterface;
  *          "downloadDesiredLearningOutcomes" = {
  *              "mutation" = ReportMutationResolver::class,
  *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
+ *              "args" = {"languageHouseId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
@@ -99,14 +99,14 @@ class Report
     private ?string $providerId;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private DateTime $dateFrom;
+    private ?string $dateFrom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private DateTime $dateUntil;
+    private ?string $dateUntil;
 
     /**
      * @var string|null The filename of the report
@@ -155,12 +155,12 @@ class Report
         return $this;
     }
 
-    public function getDateFrom(): ?\DateTimeInterface
+    public function getDateFrom(): ?string
     {
         return $this->dateFrom;
     }
 
-    public function setDateFrom(?\DateTimeInterface $dateFrom): self
+    public function setDateFrom(?string $dateFrom): self
     {
         $this->dateFrom = $dateFrom;
 
