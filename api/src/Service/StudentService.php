@@ -3,9 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Student;
-use App\Service\EAVService;
-use App\Service\CCService;
-use App\Service\EDUService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;

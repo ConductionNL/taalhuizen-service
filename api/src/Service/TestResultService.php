@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\TestResult;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class TestResultService
 {
@@ -21,19 +22,22 @@ class TestResultService
         $this->eduService = $eduService;
     }
 
-    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultId = null) {
+    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultUrl = null) {
         //todo:make sure this works for updating as well
 
-        // todo: connect the participation and result in eav
-        // Save the testResult
-        $testResult['resource'] = ''; // todo: the eav/participation @eav/@id
-        $testResult['participant'] = '/participants/uuid'; // todo: relation to the edu/participant of the eav/participation->eav/learningNeed
-        $this->eduService->saveEavResult($testResult);
+        // Connect the participation and result in eav and save both objects
+        $result = $this->addParticipationToTestResult($participationId, $testResult, $testResultUrl);
+        $testResult = $result['testResult'];
 
+        // Get the cc/person @id of the edu/participant of the eav/learningNeed of the eav/participation :)
+        if ($this->commonGroundService->isResource($result['learningNeed']['participants'][0])) {
+            $eduParticipant = $this->commonGroundService->getResource($result['learningNeed']['participants'][0]);
+            $memo['author'] = $eduParticipant['person'];
+            // maybe also check if this cc/person actually exist^ ?
+        }
         // Save the memo
-        $memo['author'] = ''; // todo: the cc/person @id of the edu/participant^
-        $memo['topic'] = ''; // todo: the result @id
-        // todo: save with commongroundService
+        $memo['topic'] = $testResult['@id'];
+        $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
 
         return [
             'testResult' => $testResult,
@@ -41,43 +45,45 @@ class TestResultService
         ];
     }
 
-//    public function addStudentToLearningNeed($studentUrl, $learningNeed) {
-//        $result = [];
-//        // Check if student already has an EAV object
-//        if ($this->eavService->hasEavObject($studentUrl)) {
-//            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            $participant['learningNeeds'] = $getParticipant['learningNeeds'];
-//        }
-//        if (!isset($participant['learningNeeds'])){
-//            $participant['learningNeeds'] = [];
-//        }
-//
-//        // Save the participant in EAV with the EAV/learningNeed connected to it
-//        if (!in_array($learningNeed['@id'], $participant['learningNeeds'])) {
-//            array_push($participant['learningNeeds'], $learningNeed['@id']);
-//            $participant = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
-//
-//            // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
-//            $result['participant'] = $participant;
-//
-//            // Update the learningNeed to add the EAV/edu/participant to it
-//            if (isset($learningNeed['participants'])) {
-//                $updateLearningNeed['participants'] = $learningNeed['participants'];
-//            }
-//            if (!isset($updateLearningNeed['participants'])){
-//                $updateLearningNeed['participants'] = [];
-//            }
-//            if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
-//                array_push($updateLearningNeed['participants'], $participant['@id']);
-//                $learningNeed = $this->eavService->saveObject($updateLearningNeed, 'learning_needs', 'eav', $learningNeed['@eav']);
-//
-//                // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//                $result['learningNeed'] = $learningNeed;
-//            }
-//        }
-//        return $result;
-//    }
+    public function addParticipationToTestResult($participationId, $testResult, $testResultUrl = null) {
+        // Check if participation already has testResults
+        if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
+            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+        } else {
+            throw new Exception('Invalid request, participationId is not an existing eav/participation!');
+        }
+        if ($this->eavService->hasEavObject($participation['learningNeed'], 'learning_needs')) {
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+        } else {
+            throw new Exception('Warning, participation is not connected to a learningNeed!');
+        }
+        if (count($learningNeed['participants']) == 0) {
+            throw new Exception('Warning, the (eav/)learningNeed connected to this (eav/)participation has no student (edu/participant)!');
+        }
 
+        // Save the testResult in EAV with the EAV/participation connected to it
+        $testResult['participation'] = $testResult['resource'] = $participation['@eav'];
+        $testResult['participant'] = '/participants/'.$this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
+        $testResult = $this->eduService->saveEavResult($testResult, $testResultUrl);
+
+        if (isset($participation['results'])) {
+            $updateParticipation['results'] = $participation['results'];
+        } else {
+            $updateParticipation['results'] = [];
+        }
+        // Update the eav/participation to add the EAV/edu/result to it
+        if (!in_array($testResult['@id'], $updateParticipation['results'])) {
+            array_push($updateParticipation['results'], $testResult['@id']);
+            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', null, $participationId);
+        }
+        return [
+            'testResult' => $testResult,
+            'participation' => $participation,
+            'learningNeed' => $learningNeed
+        ];
+    }
+
+    //todo:
     public function deleteTestResult($id) {
 //        if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
 //            $result['participants'] = [];
@@ -107,7 +113,8 @@ class TestResultService
 //        return $result;
     }
 
-//    public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl) {
+    //todo:
+//    public function removeTestResultFromParticipation($learningNeedUrl, $studentUrl) {
 //        $result = [];
 //        if ($this->eavService->hasEavObject($studentUrl)) {
 //            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
@@ -122,6 +129,7 @@ class TestResultService
 //        return $result;
 //    }
 
+    //todo:
     public function getTestResult($id, $url = null) {
 //        $result = [];
 //        // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -143,6 +151,7 @@ class TestResultService
 //        return $result;
     }
 
+    //todo:
     public function getTestResults($studentId) {
 //        // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
 //        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
@@ -202,7 +211,7 @@ class TestResultService
         $resource->setOutComesLevel($testResult['level']);
         $resource->setOutComesLevelOther($testResult['levelOther']);
         $resource->setExamUsedExam($testResult['name']);
-        $resource->setExamDate($testResult['completionDate ']);
+        $resource->setExamDate($testResult['completionDate']);
         $resource->setExamMemo($memo['description']);
 
         if (isset($participationId)) {

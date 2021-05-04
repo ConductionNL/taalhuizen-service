@@ -34,7 +34,7 @@ class TestResultMutationResolver implements MutationResolverInterface
             case 'updateTestResult':
                 return $this->updateTestResult($context['info']->variableValues['input']);
             case 'removeTestResult':
-                return $this->deleteTestResult($context['info']->variableValues['input']);
+                return $this->removeTestResult($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -62,11 +62,11 @@ class TestResultMutationResolver implements MutationResolverInterface
         $testResult = $this->testResultService->saveTestResult($testResult, $memo, $participationId);
 
         // Now put together the expected result for Lifely:
-        $testResult = $this->testResultService->handleResult($testResult['testResult'], $testResult['memo'], $participationId);
-        $testResult->setId(Uuid::getFactory()->fromString($testResult['id']));
+        $resourceResult = $this->testResultService->handleResult($testResult['testResult'], $testResult['memo'], $participationId);
+        $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
 
-        $this->entityManager->persist($testResult);
-        return $testResult;
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function updateTestResult(array $input): TestResult
@@ -79,7 +79,7 @@ class TestResultMutationResolver implements MutationResolverInterface
         return $testResult;
     }
 
-    public function deleteTestResult(array $testResult): ?TestResult
+    public function removeTestResult(array $testResult): ?TestResult
     {
 
         return null;
@@ -89,7 +89,7 @@ class TestResultMutationResolver implements MutationResolverInterface
         // Get all info from the input array for creating/updating a TestResult and return the body for this
         return [
             'name' => $input['examUsedExam'],
-            'completionDate' => new \DateTime($input['examDate']),
+            'completionDate' => $input['examDate'],
             'goal' => $input['outComesGoal'],
             'topic' => $input['outComesTopic'],
             'topicOther' => $input['outComesTopicOther'] ?? null,

@@ -135,12 +135,6 @@ class TestResult
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $examResult;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
     private $testResultId;
 
     public function getId(): UuidInterface
@@ -282,18 +276,6 @@ class TestResult
     public function setExamMemo(?string $examMemo): self
     {
         $this->examMemo = $examMemo;
-
-        return $this;
-    }
-
-    public function getExamResult(): ?string
-    {
-        return $this->examResult;
-    }
-
-    public function setExamResult(?string $examResult): self
-    {
-        $this->examResult = $examResult;
 
         return $this;
     }
