@@ -29924,8 +29924,6 @@ components:
         languageHouseId:
           type: string
           nullable: true
-        languageHouseId:
-          type: string
         studentId:
           type: string
           nullable: true
@@ -29957,11 +29955,6 @@ components:
           type: string
           nullable: true
         registrar:
-          type: array
-          items:
-            type: string
-          nullable: true
-        civicIntegrationDetails:
           type: array
           items:
             type: string
