@@ -52,39 +52,53 @@ class RegistrationService
         return $result;
     }
 
-    public function deleteRegistration($participant, $person)
+    public function deleteRegistration($student)
     {
+        $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
+        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+        $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
 
-        var_dump($participant);
-        var_dump($person);die();
-//        if ($this->eavService->hasEavObject(null, 'registrations', $id)) {
-//            $result['participants'] = [];
-//            // Get the learningNeed from EAV
-//            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
-//
-//
-//            foreach ($learningNeed['participations'] as $participationUrl) {
-//                $this->participationService->deleteParticipation(null, $participationUrl, True);
-//            }
-//
-//            // Delete the learningNeed in EAV
-//            $this->eavService->deleteObject($learningNeed['eavId']);
-//            // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//            $result['learningNeed'] = $learningNeed;
-//        } else {
-//            $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/learning_need!';
-//        }
+//        var_dump($registrarPerson);die();
+        $this->deleteOrganization($organization['id']);
+        $this->deleteMemo($memo['id']);
+        $this->deleteRegistrarPerson($registrarPerson['id']);
+        $this->deleteStudentPerson($student['person']['id']);
+        $participation = $this->deleteParticipant($student['participant']['id']);
+
+        $result['registration'] = $participation;
         return $result;
     }
 
-    public function acceptRegistration($id): Student
+    public function deleteOrganization(string $id): bool
     {
+        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        return false;
+    }
 
+    public function deleteMemo(string $id): bool
+    {
+        $this->commonGroundService->deleteResource(null, ['component'=>'memo', 'type' => 'memos', 'id' => $id]);
+        return false;
+    }
 
-//        $participant = $this->commonGroundService->updateResource($participant, ['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+    public function deleteRegistrarPerson(string $id): bool
+    {
+        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $id]);
+        return false;
+    }
 
-//        return $resourceResult;
+    public function deleteStudentPerson(string $id): bool
+    {
+        $this->eavService->deleteObject(null, 'people', $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'people', 'id' => $id]),'mrc');
+        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $id]);
+        return false;
+    }
 
+    public function deleteParticipant(string $id): bool
+    {
+        $this->eavService->deleteObject(null, 'participants', $this->commonGroundService->cleanUrl(['component'=>'edu', 'type' => 'participants', 'id' => $id]),'mrc');
+        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'participants', 'id' => $id]);
+        return false;
     }
 
     private function inputToPerson(array $student) {
