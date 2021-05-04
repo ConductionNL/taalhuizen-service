@@ -10,6 +10,7 @@ use App\Entity\Report;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use App\Service\EDUService;
+use App\Service\LearningNeedService;
 use App\Service\MrcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,13 +26,15 @@ class ReportMutationResolver implements MutationResolverInterface
     private EntityManagerInterface $entityManager;
     private EDUService $eduService;
     private MrcService $mrcService;
+    private LearningNeedService $learningNeedService;
     private SerializerInterface $serializer;
 
-    public function __construct(CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, EDUService $eduService, MrcService $mrcService, SerializerInterface $serializer){
+    public function __construct(CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, EDUService $eduService, MrcService $mrcService, LearningNeedService $learningNeedService, SerializerInterface $serializer){
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
+        $this->learningNeedService = $learningNeedService;
         $this->serializer = $serializer;
     }
     /**
@@ -47,13 +50,14 @@ class ReportMutationResolver implements MutationResolverInterface
                 return $this->downloadParticipantsReport($context['info']->variableValues['input']);
             case 'downloadVolunteersReport':
                 return $this->downloadVolunteersReport($context['info']->variableValues['input']);
+            case 'downloadDesiredLearningOutcomesReport':
+                return $this->downloadDesiredLearningOutcomesReport($context['info']->variableValues['input']);
             case 'createReport':
                 return $this->createReport($context['info']->variableValues['input']);
             case 'updateReport':
                 return $this->updateReport($context['info']->variableValues['input']);
             case 'removeReport':
                 return $this->deleteReport($context['info']->variableValues['input']);
-            case 'downloadDesiredLearningOutcomesReport':
             default:
                 return $item;
         }
@@ -157,6 +161,41 @@ class ReportMutationResolver implements MutationResolverInterface
         $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
+
+        return $report;
+    }
+
+    public function downloadDesiredLearningOutcomesReport(array $reportArray): Report
+    {
+        $report = new Report();
+        $time = new \DateTime();
+        $query = [];
+        if(isset($reportArray['languageHouseId'])){
+            $report->setLanguageHouseId($reportArray['languageHouseId']);
+            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $reportArray['languageHouseId']]);
+            $query['program.provider'] = $languageHouseUrl;
+        }
+        // edu/participants created after this date will not have eav/learningNeeds created before this date
+        if(isset($reportArray['dateUntil'])) {
+            $report->setDateUntil($reportArray['dateUntil']);
+            $query['dateCreated[strictly_before]'] = $reportArray['dateUntil'];
+        }
+        // Get all participants for this languageHouse created before dateUntil
+        $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
+        // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
+        $learningNeeds = [];
+        foreach ($participants as $participant) {
+            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['@id']);
+            if (isset($learningNeedsResult['learningNeeds'])) {
+                array_push($learningNeeds, $learningNeedsResult['learningNeeds']);
+            }
+        }
+        // add the 'deelnemerId' to each learningNeed, get uuid from the participant url
+
+//        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
+//        $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
+//
+//        $this->entityManager->persist($report);
 
         return $report;
     }
