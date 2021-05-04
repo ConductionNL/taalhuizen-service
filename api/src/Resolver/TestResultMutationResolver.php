@@ -7,6 +7,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\TestResult;
 use App\Service\TestResultService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 
@@ -14,10 +15,12 @@ class TestResultMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
+    private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(EntityManagerInterface $entityManager, TestResultService $testResultService){
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, TestResultService $testResultService){
         $this->entityManager = $entityManager;
+        $this->commonGroundService = $commonGroundService;
         $this->testResultService = $testResultService;
     }
     /**
@@ -71,16 +74,48 @@ class TestResultMutationResolver implements MutationResolverInterface
 
     public function updateTestResult(array $input): TestResult
     {
-        $id = explode('/',$input['id']);
-        $testResult = new TestResult();
+        $testResultId = explode('/',$input['id']);
+        if (is_array($testResultId)) {
+            $testResultId = end($testResultId);
+        }
+        $testResultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $testResultId]);
+        // Get the memo for this result
+        $memos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic'=>$testResultUrl])['hydra:member'];
+        $memo = [];
+        if (count($memos) > 0) {
+            $memo = $memos[0];
+        }
 
+        // Transform input info to testResult and memo body...
+        $testResult = $this->inputToTestResult($input);
+        $memo = array_merge($memo, $this->inputToResultMemo($input));
 
-        $this->entityManager->persist($testResult);
-        return $testResult;
+        // Do some checks and error handling
+        $testResult = $this->testResultService->checkTestResultValues($testResult, null, $testResultUrl);
+
+        // Save TestResult and its memo and connect eav/participation to TestResult
+        $testResult = $this->testResultService->saveTestResult($testResult, $memo, null, $testResultUrl);
+
+        // Now put together the expected result for Lifely:
+        $resourceResult = $this->testResultService->handleResult($testResult['testResult'], $testResult['memo']);
+        $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
+
+        $this->entityManager->persist($resourceResult);
+        return $resourceResult;
     }
 
     public function removeTestResult(array $testResult): ?TestResult
     {
+        if (isset($testResult['id'])) {
+            $testResultId = explode('/',$testResult['id']);
+            if (is_array($testResultId)) {
+                $testResultId = end($testResultId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+
+        $this->testResultService->deleteTestResult($testResultId);
 
         return null;
     }

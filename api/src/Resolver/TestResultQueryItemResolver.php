@@ -5,12 +5,23 @@ namespace App\Resolver;
 
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
+use App\Service\TestResultService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
 {
+    private CommonGroundService $commonGroundService;
+    private TestResultService $testResultService;
+
+    public function __construct(CommongroundService $commonGroundService, TestResultService $testResultService){
+        $this->commonGroundService = $commonGroundService;
+        $this->testResultService = $testResultService;
+    }
 
     /**
      * @inheritDoc
+     * @throws Exception;
      */
     public function __invoke($item, array $context)
     {
@@ -26,6 +37,15 @@ class TestResultQueryItemResolver implements QueryItemResolverInterface
             $testResultId = end($testResultId);
         }
 
-        // TODO: Implement __invoke() method.
+        $testResult = $this->testResultService->getTestResult($testResultId);
+
+        if (isset($testResult['testResult']['id'])) {
+            $resourceResult = $this->testResultService->handleResult($testResult['testResult'], $testResult['memo']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
+        } else {
+            throw new Exception('No testResult id was found!');
+        }
+
+        return $resourceResult;
     }
 }
