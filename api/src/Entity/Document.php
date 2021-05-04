@@ -39,21 +39,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "update" = {
+ *          "download" = {
  *              "mutation" = DocumentMutationResolver::class,
+ *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "remove" = {
+*          "remove" = {
  *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false
- *          }
+ *          },
  *     }
  * )
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
@@ -66,11 +67,11 @@ class Document
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\Column(type="uuid", unique=true, nullable=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var string the base64 of the document
@@ -78,7 +79,7 @@ class Document
      * @Assert\NotNull
      * @ORM\Column(type="text")
      */
-    private $base64data;
+    private string $base64data;
 
     /**
      * @var string the name of the file
@@ -86,27 +87,34 @@ class Document
      * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
-    private $filename;
+    private string $filename;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $aanbiederEmployeeId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeId;
+    private ?string $studentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentId;
+    private ?string $aanbiederEmployeeDocumentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeDocumentId;
+    private ?string $studentDocumentId = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $studentDocumentId;
+    private ?string $dateCreated;
 
     public function getId(): UuidInterface
     {
@@ -119,12 +127,12 @@ class Document
         return $this;
     }
 
-    public function getBase64Data(): ?string
+    public function getBase64data(): ?string
     {
         return $this->base64data;
     }
 
-    public function setBase64Data(string $base64data): self
+    public function setBase64data(string $base64data): self
     {
         $this->base64data = $base64data;
 
@@ -139,16 +147,6 @@ class Document
     public function setFilename(string $filename): self
     {
         $this->filename = $filename;
-    }
-
-    public function getResource(): ?string
-    {
-        return $this->resource;
-    }
-
-    public function setResource(string $resource): self
-    {
-        $this->resource = $resource;
 
         return $this;
     }
@@ -197,6 +195,18 @@ class Document
     public function setStudentDocumentId(?string $studentDocumentId): self
     {
         $this->studentDocumentId = $studentDocumentId;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?string
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(?string $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
 
         return $this;
     }

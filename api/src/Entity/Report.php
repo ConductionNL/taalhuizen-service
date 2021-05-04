@@ -37,6 +37,22 @@ use Ramsey\Uuid\UuidInterface;
  *              "validate" = false,
  *              "write" = false
  *          },
+ *          "downloadDesiredLearningOutcomes" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "read" = false,
+ *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "downloadVolunteers" = {
+ *              "mutation" = ReportMutationResolver::class,
+ *              "read" = false,
+ *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
  *          "update" = {
  *              "mutation" = ReportMutationResolver::class,
  *              "read" = false,

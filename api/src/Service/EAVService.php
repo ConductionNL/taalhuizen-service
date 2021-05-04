@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class EAVService
 {
@@ -38,7 +39,7 @@ class EAVService
         } elseif (isset($eavId)) {
             $body['objectEntityId'] = $eavId;
         } else {
-            return '[EAVService] a get to the eav component needs a @self or an eavId!';
+            throw new Exception('[EAVService] a get to the eav component needs a @self or an eavId!');
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         // Hotfix, createResource adds this to the front of an @id, but eav already returns @id with this in front:
@@ -54,7 +55,30 @@ class EAVService
         }
         $object = $this->commonGroundService->getResource(['component' => 'eav', 'type' => 'object_entities', 'id' => $object['eavId']]);
         $this->commonGroundService->deleteResource($object);
-        return True;
+        return true;
+    }
+
+    public function deleteResource($resource, $url = null, $async = false, $autowire = true, $events = true) {
+        if (!isset($url['component']) || !isset($url['type'])) {
+            throw new Exception('[EAVService] needs a component and a type in $url to delete the eav Object of a resource!');
+        }
+        if (isset($resource['@id'])) {
+            $self = $resource['@id'];
+        } elseif(isset($url['id'])) {
+            $self = $this->commonGroundService->cleanUrl($url);
+        } else {
+            throw new Exception('[EAVService] needs a $resource[\'@id\'] or $url[\'id\'] to delete the eav Object of a resource!');
+        }
+        if ($this->hasEavObject($self)) {
+            $eavResult = $this->deleteObject(null, $url['type'], $self, $url['component']);
+        } else {
+            $eavResult = true;
+        }
+        $result = $this->commonGroundService->deleteResource($resource, $url, $async, $autowire, $events);
+        if ($eavResult and $result) {
+            return true;
+        }
+        return false;
     }
 
     public function hasEavObject($uri, $entityName = null, $id = null, $componentCode = 'eav') {
@@ -63,11 +87,11 @@ class EAVService
             if (isset($id) && isset($entityName)) {
                 $uri = $componentCode.'/'.$entityName.'/'.$id;
             } else {
-                return '[EAVService] needs an uri or an entityName + id to check if an eav Object exists!';
+                throw new Exception('[EAVService] needs an uri or an entityName + id to check if an eav Object exists!');
             }
         } elseif (!str_contains($uri, 'http')){
             // Make sure the $uri contains a url^, else:
-            return '[EAVService] can not check if an eav Object exists with an uri that is not an url!';
+            throw new Exception('[EAVService] can not check if an eav Object exists with an uri that is not an url!');
         }
 
         $result = $this->commonGroundService->getResourceList(['component' => 'eav', 'type' => 'object_entities'], ['uri' => $uri])['hydra:member'];
