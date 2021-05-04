@@ -96,52 +96,46 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $collection;
     }
 
-    //todo:
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
-        $collection = new ArrayCollection();
+        if(key_exists('providerId', $context['args'])){
+            $providerId = explode('/',$context['args']['providerId']);
+            if (is_array($providerId)) {
+                $providerId = end($providerId);
+            }
+        } else {
+            throw new Exception('The providerId was not specified');
+        }
 
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');;
     }
 
-    //todo:
     public function activeStudents(array $context): ?ArrayCollection
     {
-        $collection = new ArrayCollection();
+        if(key_exists('providerId', $context['args'])){
+            $providerId = explode('/',$context['args']['providerId']);
+            if (is_array($providerId)) {
+                $providerId = end($providerId);
+            }
+        } else {
+            throw new Exception('The providerId was not specified');
+        }
 
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');;
     }
 
-    //todo:
     public function completedStudents(array $context): ?ArrayCollection
     {
-        $collection = new ArrayCollection();
+        if(key_exists('providerId', $context['args'])){
+            $providerId = explode('/',$context['args']['providerId']);
+            if (is_array($providerId)) {
+                $providerId = end($providerId);
+            }
+        } else {
+            throw new Exception('The providerId was not specified');
+        }
 
-        // Get all participations (verwijzingen! eav),
-        // filter participations on aanbiederId and status
-        // get learningNeed and its student for every participation
-        //
-        // check for duplicate students and filter them out
-
-        // use one StudentService call with different status as filter
-
-        return $collection;
+        return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');;
     }
 
     //todo:
