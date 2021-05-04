@@ -64,20 +64,27 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $registrationRegistrar = $this->inputToRegistrarPerson($input);
         $registrationRegistrar = $this->commonGroundService->saveResource($registrationRegistrar, ['component' => 'cc', 'type' => 'people']);
 
-        //Save organization
+        //Save registrar organization
         $organization = $this->inputToOrganization($input, $registrationRegistrar['id']);
         $organization = $this->commonGroundService->saveResource($organization, ['component' => 'cc', 'type' => 'organizations']);
 
         //Save participant
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
+        $participant['status'] = 'pending';
         $participant = $this->commonGroundService->saveResource($participant, ['component' => 'edu', 'type' => 'participants']);
+//        var_dump($participant);die();
+
+        //@todo: get taalhuis id from input
+        if (isset($input['languageHouseId'])) {
+            $languageHouse = $input['languageHouseId'];
+        }
 
         //Save memo
         $memo = $this->inputToMemo($input, $registrationStudent['@id'], $registrationRegistrar['@id']);
         $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
 
-        $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $organization, $participant, $memo);
+        $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -104,8 +111,24 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function acceptRegistration(array $registration): ?Registration
+    public function acceptRegistration(array $input): ?Registration
     {
+        $result['result'] = [];
+
+        $id = explode('/', $input['id']);
+        $id = end($id);
+        $result = array_merge($result, $this->registrationService->acceptRegistration($id));
+
+        $result['result'] = False;
+        if (isset($result['registration'])){
+            $result['result'] = True;
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
         return null;
     }
 

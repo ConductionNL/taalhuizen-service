@@ -27,7 +27,7 @@ class RegistrationService
         $this->parameterBag = $parameterBag;
     }
 
-    public function getLanguageHouse($languageHouseId)
+    public function get($languageHouseId)
     {
         $result['languageHouse'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         return $result;
@@ -57,12 +57,23 @@ class RegistrationService
         return $result;
     }
 
-    public function handleResult($registrationStudent, $registrationRegistrar, $organization, $participant, $memo)
+    public function acceptRegistration($id)
+    {
+        $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+
+        $participant['status'] = 'accepted';
+        $participant = $this->commonGroundService->updateResource($participant, ['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+
+        $result['registration'] = $participant;
+        return $result;
+    }
+
+    public function handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo)
     {
         $resource = new Registration();
         //@todo: setLanguageHouseId has to be set to the taalhuis where the student is referred to
         //@todo: remove address setRegistrar
-        $resource->setLanguageHouseId($organization['id']);
+        $resource->setLanguageHouseId($languageHouse);
         $resource->setStudent($registrationStudent);
         $resource->setRegistrar($registrationRegistrar);
         $resource->setMemo($memo['description']);
