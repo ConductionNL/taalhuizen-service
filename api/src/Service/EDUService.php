@@ -41,6 +41,18 @@ class EDUService
         return $person;
     }
 
+    public function saveEavResult($body, $resultUrl = null) {
+        // Save the edu/result in EAV
+        if (isset($resultUrl)) {
+            // Update
+            $result = $this->eavService->saveObject($body, 'results', 'edu', $resultUrl);
+        } else {
+            // Create
+            $result = $this->eavService->saveObject($body, 'results', 'edu');
+        }
+        return $result;
+    }
+
     //@todo uitwerken
     public function saveProgram($organization){
         $program = [];

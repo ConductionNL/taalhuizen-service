@@ -174,7 +174,7 @@ class LearningNeedService
 
     public function checkLearningNeedValues($learningNeed, $studentUrl, $learningNeedId = null) {
         $result = [];
-        if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
+        if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesTopicOther is not set!';
         } elseif($learningNeed['application'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesApplicationOther is not set!';
