@@ -41,8 +41,8 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!$item instanceof Group && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        /**@todo: remove, changeTeacher,
-         * done: create, update
+        /**@todo: changeTeacher,
+         * done: create, update, remove
          */
         switch($context['info']->operation->name->value){
             case 'createGroup':
@@ -50,7 +50,7 @@ class GroupMutationResolver implements MutationResolverInterface
             case 'updateGroup':
                 return $this->updateGroup($context['info']->variableValues['input']);
             case 'removeGroup':
-                return $this->deleteGroup($context['info']->variableValues['input']);
+                return $this->removeGroup($context['info']->variableValues['input']);
             case 'changeTeachersOfTheGroup':
                 return $this->changeTeachersOfTheGroup($context['info']->variableValues['input']);
             default:
@@ -112,8 +112,18 @@ class GroupMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function deleteGroup(array $group): ?Group
+    public function removeGroup($group): ?Group
     {
+        if (isset($group['id'])) {
+            $groupId = explode('/',$group['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+
+        $this->eduService->deleteGroup($groupId);
 
         return null;
     }
@@ -214,12 +224,12 @@ class GroupMutationResolver implements MutationResolverInterface
             //update
             $group['course'] ='/courses/'.$course['id'];
 //            $group['dateModified'] = $now;
-            var_dump($group);
+           // var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         }else{
             //create
             $group['course'] ='/courses/'.$course['id'];
-            var_dump($group);
+         //   var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
 
