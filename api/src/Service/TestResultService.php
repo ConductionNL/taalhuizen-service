@@ -124,48 +124,44 @@ class TestResultService
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
     }
 
-    //todo:
     public function getTestResult($id, $url = null) {
-//        $result = [];
-//        // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//        if (isset($id)) {
-//            if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
-//                $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
-//                $result['learningNeed'] = $learningNeed;
-//            } else {
-//                $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/learning_need!';
-//            }
-//        } elseif(isset($url)) {
-//            if ($this->eavService->hasEavObject($url)) {
-//                $learningNeed = $this->eavService->getObject('learning_needs', $url);
-//                $result['learningNeed'] = $learningNeed;
-//            } else {
-//                $result['errorMessage'] = 'Invalid request, '. $url .' is not an existing eav/learning_need!';
-//            }
-//        }
-//        return $result;
+        if (isset($id)) {
+            $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
+        } elseif (!isset($url)) {
+            throw new Exception('[TestResultService]->getTestResult, expects an id or an url!');
+        }
+
+        // Get the edu/result from EAV and its memo from memo component
+        if ($this->eavService->hasEavObject($url)) {
+            $testResult = $this->eavService->getObject('results', $url, 'edu');
+
+            $memos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic'=>$url])['hydra:member'];
+            $memo = [];
+            if (count($memos) > 0) {
+                $memo = $memos[0];
+            }
+        } else {
+            throw new Exception('Invalid request, '. $url .' is not an existing eav/edu/result!');
+        }
+        return [
+            'testResult' => $testResult,
+            'memo' => $memo
+        ];
     }
 
-    //todo:
-    public function getTestResults($studentId) {
-//        // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-//        if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
-//            $result['learningNeeds'] = [];
-//            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-//            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-//            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-//                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-//                if (isset($learningNeed['learningNeed'])) {
-//                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
-//                } else {
-//                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
-//                }
-//            }
-//        } else {
-//            // Do not throw an error, because we want to return an empty array in this case
-//            $result['message'] = 'Warning, '. $studentId .' is not an existing eav/edu/participant!';
-//        }
-//        return $result;
+    public function getTestResults($participationId) {
+        if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
+            // Get eav/participation
+            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            // Get the edu/testResult urls for this participation and do gets on them
+            $testResults = [];
+            foreach ($participation['results'] as $result) {
+                array_push($testResults, $this->getTestResult(null, $result));
+            }
+        } else {
+            throw new Exception('Invalid request, '. $participationId .' is not an existing eav/participation !');
+        }
+        return $testResults;
     }
 
     public function checkTestResultValues($testResult, $participationId, $testResultUrl = null) {
