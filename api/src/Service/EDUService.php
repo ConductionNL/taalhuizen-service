@@ -10,6 +10,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Promise\Each;
+use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -149,14 +150,24 @@ class EDUService
         return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
     }
 
-    public function convertGroupObject(array $group): Group
+    public function convertGroupObject(array $group, $aanbiederId = null): Group
     {
-        $aanbieder = explode('/',$group['course']['organization']);
         $resource = new Group();
         $resource->setGroupId($group['id']);
-        $resource->setAanbiederId(end($aanbieder));
         $resource->setName($group['name']);
-        $resource->setTypeCourse($group['course']['additionalType']);
+        if (isset($group['course'])){
+            $aanbieder = explode('/',$group['course']['organization']);
+            if(is_array($aanbieder)){
+                $aanbieder =  end($aanbieder);
+            }
+            $resource->setAanbiederId($aanbieder);
+            $resource->setTypeCourse($group['course']['additionalType']);
+            $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
+        }else{
+            if (isset($aanbiederId)) $resource->setAanbiederId($aanbiederId);
+            $resource->setTypeCourse(null);
+            $resource->setDetailsTotalClassHours(null);
+        }
         $resource->setOutComesGoal($group['goal']);
         $resource->setOutComesTopic($group['topic']);
         $resource->setOutComesTopicOther($group['topicOther']);
@@ -165,13 +176,12 @@ class EDUService
         $resource->setOutComesLevel($group['level']);
         $resource->setOutComesLevelOther($group['levelOther']);
         $resource->setDetailsIsFormal($group['isFormal']);
-        $resource->setDetailsTotalClassHours((int)$group['course']['timeRequired']);
         $resource->setDetailsCertificateWillBeAwarded($group['certificateWillBeAwarded']);
         $resource->setGeneralLocation($group['location']);
         $resource->setGeneralParticipantsMin($group['minParticipations']);
         $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        $resource->setDetailsEndDate(new DateTime($group['endDate']));
-        $resource->setDetailsStartDate(new DateTime($group['startDate']));
+        if (isset($group['endDate'])) $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $this->entityManager->persist($resource);
         return $resource;
@@ -197,5 +207,95 @@ class EDUService
             }
         }
         return $results;
+    }
+
+    public function getGroupsWithStatus($aanbiederId, $status): ArrayCollection{
+        $watanders = new ArrayCollection();
+        // Check if provider exists in eav and get it if it does
+        if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
+            //get provider
+            $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
+            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
+            $groupUrls = [];
+            //$provider['participations'] contain all participations urls
+            foreach ($provider['participations'] as $participationUrl) {
+                try {
+                    //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
+//                    if ($this->eavService->hasEavObject($participationUrl)) {
+                    // Get eav/Participation
+                    $participation = $this->eavService->getObject('participations', $participationUrl);
+                    //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
+                    //see if the status of said participation is the requested one and if the participation holds a group url
+                    if ($participation['status'] == $status && isset($participation['group'])) {
+                        if(!in_array($participation['group'],$groupUrls)){
+                            array_push($groupUrls, $participation['group']);
+                            //get group
+                            $group = $this->eavService->getObject('groups',$participation['group'],'edu');
+                            //handle result
+                            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
+                            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
+                            $watanders->add($resourceResult);
+                        }
+
+                    }
+                    //else {
+                      //  $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
+                    //}
+                    //                } else {
+                    //                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+                    //                }
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+            // Then get the actual groups and return them...
+        } else {
+            // Do not throw an error, because we want to return an empty array in this case
+            $result['message'] = 'Warning, '. $aanbiederId .' is not an existing eav/cc/organization!';
+        }
+        return $watanders;
+    }
+
+    public function deleteGroup($id){
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]);
+
+        //check if group exists
+        if (!$this->commonGroundService->isResource($groupUrl)) {
+            throw new Exception('Invalid request, groupId is not an existing edu/group!');
+        }
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            $groep = $this->eavService->getObject('groups',$groupUrl,'edu');
+            // Remove this group from the eav/participation
+            if (isset($groep['participations']) && !empty($groep['participations'])) $this->removeGroupFromParticipation($groep);
+            //remove course
+            $courseId = $groep['course']['id'];
+            $courseUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
+            if (!$this->commonGroundService->isResource($courseUrl)){
+                throw new Exception('course could not be found!');
+            }
+            $course = $this->commonGroundService->getResource($courseUrl);
+            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
+            //delete group
+            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'groups', 'id' => $id]);
+        }
+    }
+
+    public function removeGroupFromParticipation($group)
+    {
+        foreach ($group['participations'] as $participationUrl){
+            if ($this->eavService->hasEavObject($participationUrl)) {
+                $participation = $this->eavService->getObject('participations', $participationUrl);
+                if (isset($participation['group'])) {
+                    $updateParticipation['group'] = null;
+                    $updateParticipation['status'] = 'REFERRED';
+                    $updateParticipation['presenceEngagements'] = null;
+                    $updateParticipation['presenceStartDate'] = null;
+                    $updateParticipation['presenceEndDate'] = null;
+                    $updateParticipation['presenceEndParticipationReason'] = null;
+                    $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participationUrl);
+                }
+            }
+        }
     }
 }
