@@ -351,8 +351,8 @@ class StudentService
 
         // Set all subresources in response DTO body
         if (isset($participant['dateCreated'])) { $resource->setDateCreated(new \DateTime($participant['dateCreated'])); } //todo: this is currently incorrect, timezone problem
-        $resource->setStatus($participant['status']);
-        $resource->setMemo($memo['description']);
+        if (isset($participant['status'])) { $resource->setStatus($participant['status']); }
+        if (isset($memo['description'])) { $resource->setMemo($memo['description']); }
         $resource->setRegistrar($registrar);
         $resource->setCivicIntegrationDetails($civicIntegrationDetails);
         $resource->setPersonDetails($personDetails);

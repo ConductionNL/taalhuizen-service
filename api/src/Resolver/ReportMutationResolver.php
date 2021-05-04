@@ -192,10 +192,10 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         // add the 'deelnemerId' to each learningNeed, get uuid from the participant url
 
-//        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
-//        $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
-//
-//        $this->entityManager->persist($report);
+        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
+        $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
+
+        $this->entityManager->persist($report);
 
         return $report;
     }
