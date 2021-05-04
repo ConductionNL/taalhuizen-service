@@ -6,6 +6,7 @@ namespace App\Service;
 use App\Entity\LanguageHouse;
 use App\Entity\Provider;
 use App\Entity\Registration;
+use App\Entity\Student;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,23 +20,32 @@ class RegistrationService
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
+    private CCService $ccService;
+    private StudentService $studentService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParameterBagInterface $parameterBag)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        ParameterBagInterface $parameterBag,
+        CCService $ccService,
+        StudentService $studentService
+    ){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
+        $this->ccService = $ccService;
+        $this->studentService = $studentService;
     }
 
-    public function get($languageHouseId)
+    public function getRegistration($languageHouseId)
     {
-        $result['languageHouse'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        $result['registration'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         return $result;
     }
 
-    public function getLanguageHouses()
+    public function getRegistrations()
     {
-        $result['languageHouses'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])["hydra:member"];
+        $result['registrations'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])["hydra:member"];
         return $result;
     }
 
@@ -44,7 +54,7 @@ class RegistrationService
         $participant = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants', 'id' => $id]);
         $studentPerson = $this->commonGroundService->getResource($participant['person']);
         $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-        $memo = $this->commonGroundService->getResourceList(['component'=>'memo', 'type' => 'memos', 'topic' => $studentPerson['@id'], 'author' => $registrarOrganization['@id']]);
+        $memo = $this->commonGroundService->getResourceList(['component'=>'memo', 'type' => 'memos'], ['topic' => $studentPerson['@id'], 'author' => $registrarOrganization['@id']])["hydra:member"][0];
         $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
 
         $this->commonGroundService->deleteResource($memo);
@@ -57,15 +67,53 @@ class RegistrationService
         return $result;
     }
 
-    public function acceptRegistration($id)
+    public function acceptRegistration($id): Student
     {
-        $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
 
-        $participant['status'] = 'accepted';
-        $participant = $this->commonGroundService->updateResource($participant, ['component' => 'edu', 'type' => 'participants', 'id' => $id]);
 
-        $result['registration'] = $participant;
-        return $result;
+//        $participant = $this->commonGroundService->updateResource($participant, ['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+
+//        return $resourceResult;
+
+    }
+
+    private function inputToPerson(array $student) {
+        $person = [];
+
+        $person = $this->getPersonPropertiesFromPersonDetails($person, $student);
+        $person = $this->getPersonPropertiesFromReferrerDetails($person, $student);
+        $person = $this->getPersonPropertiesFromContactDetails($person, $student);
+
+        return $person;
+    }
+
+    private function getPersonPropertiesFromPersonDetails(array $person, array $student): array
+    {
+        $person['givenName'] = $student['givenName'];
+        $person['additionalName'] = $student['additionalName'];
+        $person['familyName'] = $student['familyName'];
+        $person['gender'] = null;
+        $person['birthday'] = null;
+
+        return $person;
+    }
+
+    private function getPersonPropertiesFromContactDetails(array $person, array $student): array
+    {
+        $person['addresses'][0] = $student['addresses'];
+        $person['emails'][0]['email'] = $student['emails'][0]['email'];
+        $person['telephones'][0]['telephone'] = $student['telephones'][0]['telephone'];
+
+        return $person;
+    }
+
+    private function getPersonPropertiesFromReferrerDetails(array $person, array $student): array
+    {
+        $person['referringOrganization'] = $student['givenName'];
+        $person['referringOrganizationOther'] = null;
+        $person['email'] = $student['familyName'];
+
+        return $person;
     }
 
     public function handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo)

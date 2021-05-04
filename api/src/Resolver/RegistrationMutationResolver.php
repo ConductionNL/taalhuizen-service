@@ -6,8 +6,10 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Registration;
+use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\RegistrationService;
+use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -24,20 +26,29 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private RegistrationService $registrationService;
     private CCService $ccService;
+    private StudentService $studentService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParameterBagInterface $parameterBag, RegistrationService $registrationService, CCService $ccService){
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        ParameterBagInterface $parameterBag,
+        RegistrationService $registrationService,
+        CCService $ccService,
+        StudentService $studentService
+    ){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
         $this->registrationService = $registrationService;
         $this->ccService = $ccService;
+        $this->studentService = $studentService;
     }
     /**
      * @inheritDoc
      */
     public function __invoke($item, array $context)
     {
-        if (!$item instanceof Registration && !key_exists('input', $context['info']->variableValues)) {
+        if ((!$item instanceof Registration && !key_exists('input', $context['info']->variableValues) ||  !$item instanceof Student && !key_exists('input', $context['info']->variableValues))) {
             return null;
         }
         switch($context['info']->operation->name->value){
@@ -81,7 +92,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         }
 
         //Save memo
-        $memo = $this->inputToMemo($input, $registrationStudent['@id'], $registrationRegistrar['@id']);
+        $memo = $this->inputToMemo($input, $registrationStudent['@id'], $organization['@id']);
         $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
 
         $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo);
@@ -111,32 +122,27 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function acceptRegistration(array $input): ?Registration
+    public function acceptRegistration(array $input): Student
     {
-        $result['result'] = [];
+        $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants', 'id' => $input['id']])["hydra:member"];
+        $student = $this->commonGroundService->getResource($participant['person']);
+        var_dump($student);die();
 
-        $id = explode('/', $input['id']);
-        $id = end($id);
-        $result = array_merge($result, $this->registrationService->acceptRegistration($id));
+        $person = $this->inputToPerson($student);
+        $person = $this->ccService->saveEavPerson($person, $student['@id']);
+        $participant['status'] = 'accepted';
 
-        $result['result'] = False;
-        if (isset($result['registration'])){
-            $result['result'] = True;
-        }
+        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-
-        return null;
+        return $resourceResult;
     }
 
-    private function inputToMemo(array $input, $studentUrl = null, $registrarUrl = null)
+    private function inputToMemo(array $input, $studentUrl = null, $organizationUrl = null)
     {
         $memo = [];
         if (isset($input['memo'])) {
-            $memo = $this->getMemoProperties($memo, $input['memo'], $studentUrl, $registrarUrl);
+            $memo = $this->getMemoProperties($memo, $input['memo'], $studentUrl, $organizationUrl);
         }
 
         return $memo;
@@ -164,9 +170,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return $registrar;
     }
 
-    private function getMemoProperties(array $registration, string $memoInput, $studentUrl, $registrarUrl): array
+    private function getMemoProperties(array $registration, string $memoInput, $studentUrl, $organizationUrl): array
     {
-        $registration['author'] = $registrarUrl;
+        $registration['author'] = $organizationUrl;
         $student = $this->commonGroundService->getResource($studentUrl);
         $registration['name'] = 'Memo about '.$student['givenName'];
         $registration['topic'] = $studentUrl;
