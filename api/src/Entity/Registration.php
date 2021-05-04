@@ -218,22 +218,6 @@ class Registration
     private $intakeDetail;
 
     /**
-     * @var string The id of the cc/organization of a provider.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $providerId;
-
-    /**
-     * @var string The id of the edu/group of a group.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $groupId;
-
-    /**
      * @Groups({"write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -255,7 +239,7 @@ class Registration
         return $this->languageHouseId;
     }
 
-    public function setLanguageHouseId(?string $languageHouseId): self
+    public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
 
@@ -522,30 +506,6 @@ class Registration
     public function setIntakeDetails(?string $intakeDetail): self
     {
         $this->intakeDetail = $intakeDetail;
-
-        return $this;
-    }
-
-    public function getProviderId(): ?string
-    {
-        return $this->providerId;
-    }
-
-    public function setProviderId(?string $providerId): self
-    {
-        $this->providerId = $providerId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
 
         return $this;
     }

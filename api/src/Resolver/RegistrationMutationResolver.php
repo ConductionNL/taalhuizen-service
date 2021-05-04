@@ -9,6 +9,7 @@ use App\Entity\Registration;
 use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\ParticipationService;
 use App\Service\RegistrationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -29,6 +30,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private CCService $ccService;
     private StudentService $studentService;
     private EDUService $eduService;
+    private ParticipationService $participationService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -37,7 +39,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
         RegistrationService $registrationService,
         CCService $ccService,
         StudentService $studentService,
-        EDUService $eduService
+        EDUService $eduService,
+        ParticipationService $participationService
     ){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -46,6 +49,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->ccService = $ccService;
         $this->studentService = $studentService;
         $this->eduService = $eduService;
+        $this->participationService = $participationService;
     }
     /**
      * @inheritDoc
@@ -113,7 +117,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
         }
         $student = $this->studentService->getStudent($studentId);
 
-        $result = array_merge($result, $this->registrationService->deleteRegistration($student['participant'], $student['person']));
+        $result = array_merge($result, $this->registrationService->deleteRegistration($student));
+//        var_dump($result);die();
 
         $result['result'] = False;
         if (isset($result['registration'])){

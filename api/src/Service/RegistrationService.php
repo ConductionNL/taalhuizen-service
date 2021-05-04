@@ -58,7 +58,6 @@ class RegistrationService
         $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
         $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
 
-//        var_dump($registrarPerson);die();
         $this->deleteOrganization($organization['id']);
         $this->deleteMemo($memo['id']);
         $this->deleteRegistrarPerson($registrarPerson['id']);
@@ -89,14 +88,14 @@ class RegistrationService
 
     public function deleteStudentPerson(string $id): bool
     {
-        $this->eavService->deleteObject(null, 'people', $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'people', 'id' => $id]),'mrc');
+        $this->eavService->deleteObject(null, 'people', $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'people', 'id' => $id]),'cc');
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $id]);
         return false;
     }
 
     public function deleteParticipant(string $id): bool
     {
-        $this->eavService->deleteObject(null, 'participants', $this->commonGroundService->cleanUrl(['component'=>'edu', 'type' => 'participants', 'id' => $id]),'mrc');
+        $this->eavService->deleteObject(null, 'participants', $this->commonGroundService->cleanUrl(['component'=>'edu', 'type' => 'participants', 'id' => $id]),'edu');
         $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'participants', 'id' => $id]);
         return false;
     }
