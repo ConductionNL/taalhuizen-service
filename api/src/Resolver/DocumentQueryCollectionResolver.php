@@ -44,7 +44,7 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
                 $contact = $this->cgs->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
             }
         } else {
-            throw new Exception('No studentId or aanbiederEmployeeId given');
+            $contact = null;
         }
 
         $collection = $this->wrcService->getDocuments($contact);
