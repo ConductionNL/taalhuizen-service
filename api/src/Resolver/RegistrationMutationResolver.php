@@ -92,7 +92,6 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['person'] = $registrationStudent['@id'];
         $participant['status'] = 'pending';
         $participant = $this->eduService->saveEavParticipant($participant);
-//        var_dump($participant);die();
 
         if (isset($input['languageHouseId'])) {
             $languageHouse = $input['languageHouseId'];
@@ -118,7 +117,6 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $student = $this->studentService->getStudent($studentId);
 
         $result = array_merge($result, $this->registrationService->deleteRegistration($student));
-//        var_dump($result);die();
 
         $result['result'] = False;
         if (isset($result['registration'])){
@@ -170,7 +168,6 @@ class RegistrationMutationResolver implements MutationResolverInterface
         //Get student person inputs
         if (isset($input['student'])) {
             $student = $this->getStudentProperties($student, $input['student']);
-//            var_dump($student);die();
         }
         return $student;
     }

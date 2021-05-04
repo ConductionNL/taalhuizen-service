@@ -31,39 +31,6 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        if (!key_exists('languageHouseId', $context['args'])) {
-            return null;
-        }
-        switch ($context['info']->operation->name->value) {
-            case 'registrations':
-                return $this->createPaginator($this->registrations($context), $context['args']);
-            default:
-                return $this->createPaginator(new ArrayCollection(), $context['args']);
-        }
-    }
-
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
-        if (key_exists('first', $args)) {
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif (key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if (key_exists('after', $args)) {
-            $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
-
-    public function registrations(array $context): ?ArrayCollection
-    {
         if (key_exists('languageHouseId', $context['args'])) {
             $languageHouseId = explode('/', $context['args']['languageHouseId']);
             if (is_array($languageHouseId)) {
@@ -90,7 +57,27 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
             }
         }
 
-        return $collection;
+        return $this->createPaginator($collection, $context['args']);
+    }
+
+    public function createPaginator(ArrayCollection $collection, array $args)
+    {
+        if (key_exists('first', $args)) {
+            $maxItems = $args['first'];
+            $firstItem = 0;
+        } elseif (key_exists('last', $args)) {
+            $maxItems = $args['last'];
+            $firstItem = (count($collection) - 1) - $maxItems;
+        } else {
+            $maxItems = count($collection);
+            $firstItem = 0;
+        }
+        if (key_exists('after', $args)) {
+            $firstItem = base64_decode($args['after']);
+        } elseif (key_exists('before', $args)) {
+            $firstItem = base64_decode($args['before']) - $maxItems;
+        }
+        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
     public function getStudents($languageHouseId): array
