@@ -47,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "delete" = {
+ *          "remove" = {
  *              "mutation" = DocumentMutationResolver::class,
  *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
  *              "read" = false,
