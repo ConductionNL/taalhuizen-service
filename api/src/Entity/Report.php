@@ -101,12 +101,12 @@ class Report
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private DateTime $dateFrom;
+    private ?string $dateFrom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private DateTime $dateUntil;
+    private ?string $dateUntil;
 
     /**
      * @var string|null The filename of the report
