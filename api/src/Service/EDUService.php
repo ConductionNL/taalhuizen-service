@@ -143,9 +143,10 @@ class EDUService
         return $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
     }
 
-    public function getParticipants(?string $languageHouse, ?DateTime $dateFrom, ?DateTime $dateUntil): array
+    public function getParticipants(?array $additionalQuery = []): array
     {
-        return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['extend' => 'person'])['hydra:member'];
+        $query = array_merge($additionalQuery, ['limit' => 1000]);
+        return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
     }
 
     public function convertGroupObject(array $group): Group

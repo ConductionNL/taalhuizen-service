@@ -144,3 +144,12 @@ services:
     App\Resolver\TestResultQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\DocumentMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\DocumentQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\DocumentQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }

@@ -39,13 +39,13 @@ class MrcService
         $this->eavService = $EAVService;
     }
 
-    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null): ArrayCollection
+    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null, ?array $additionalQuery = []): ArrayCollection
     {
         $employees = new ArrayCollection();
         if($languageHouseId){
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations']), 'limit' => 1000])['hydra:member'];
-        } elseif(!$languageHouseId && !$providerId) {
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['limit' => 1000])['hydra:member'];
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations']), 'limit' => 1000], $additionalQuery))['hydra:member'];
+        } elseif(!$providerId) {
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['limit' => 1000], $additionalQuery))['hydra:member'];
             foreach($results as $key=>$result){
                 if($result['organization'] !== null){
                     unset($result[$key]);
@@ -53,15 +53,17 @@ class MrcService
             }
         }
         else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['limit' => 1000])['hydra:member'];
+            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['limit' => 1000], $additionalQuery))['hydra:member'];
         }
         foreach($results as $result){
-            if($this->eavService->hasEavObject($result['@id'])){
+            try{
                 $result = $this->eavService->getObject('employees', $result['@id'], 'mrc');
                 if($providerId && strpos($result['provider'], $providerId) === false){
                     continue;
                 }
                 $employees->add($this->createEmployeeObject($result));
+            } catch(\Exception $e) {
+                continue;
             }
         }
         return $employees;
