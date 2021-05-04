@@ -7,6 +7,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
@@ -21,7 +22,7 @@ class TestResultQueryItemResolver implements QueryItemResolverInterface
 
     /**
      * @inheritDoc
-     * @throws Exception;
+     * @throws Exception
      */
     public function __invoke($item, array $context)
     {
