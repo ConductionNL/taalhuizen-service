@@ -158,7 +158,7 @@ class ReportMutationResolver implements MutationResolverInterface
         $employees = $this->mrcService->getEmployees(null, $providerId, $query);
 
         $report->setBase64data(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
-        $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
+        $report->setFilename("VolunteersReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
 
@@ -171,8 +171,12 @@ class ReportMutationResolver implements MutationResolverInterface
         $time = new \DateTime();
         $query = [];
         if(isset($reportArray['languageHouseId'])){
-            $report->setLanguageHouseId($reportArray['languageHouseId']);
-            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $reportArray['languageHouseId']]);
+            $languageHouseId = explode('/',$reportArray['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
+            }
+            $report->setLanguageHouseId($languageHouseId);
+            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
             $query['program.provider'] = $languageHouseUrl;
         }
         // edu/participants created after this date will not have eav/learningNeeds created before this date
@@ -182,20 +186,22 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         // Get all participants for this languageHouse created before dateUntil
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
+        var_dump(count($participants));
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = [];
         foreach ($participants as $participant) {
-            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['@id']);
-            if (isset($learningNeedsResult['learningNeeds'])) {
+            //todo:still need to filter on dateUntil and dateFrom compared to dateCreated, when getting these learningNeeds or use array_filter after to filter them out
+            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id']);
+            if (isset($learningNeedsResult['learningNeeds']) && count($learningNeedsResult['learningNeeds']) > 0) {
                 array_push($learningNeeds, $learningNeedsResult['learningNeeds']);
             }
         }
-        // add the 'deelnemerId' to each learningNeed, get uuid from the participant url
+        // todo: add the 'deelnemerId' to each learningNeed, get uuid from each participant url: learningNeed['participants'][0]
+        // ['attributes' => ['deelnemerId', etc, dateCreated]
+        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
+        $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
-//        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
-//        $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
-//
-//        $this->entityManager->persist($report);
+        $this->entityManager->persist($report);
 
         return $report;
     }
