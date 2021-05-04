@@ -84,12 +84,17 @@ class Registration
     private $languageHouseId;
 
     /**
+     *@var array|null The student
      *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
     private $student;
 
     /**
+     * @var array|null
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
     private $registrar;
@@ -139,24 +144,24 @@ class Registration
         return $this;
     }
 
-    public function getStudent(): ?RegisterStudent
+    public function getStudent(): ?array
     {
         return $this->student;
     }
 
-    public function setStudent(?RegisterStudent $student): self
+    public function setStudent(?array $student): self
     {
         $this->student = $student;
 
         return $this;
     }
 
-    public function getRegistrar(): ?RegisterStudentRegistrar
+    public function getRegistrar(): ?array
     {
         return $this->registrar;
     }
 
-    public function setRegistrar(?RegisterStudentRegistrar $registrar): self
+    public function setRegistrar(?array $registrar): self
     {
         $this->registrar = $registrar;
 
