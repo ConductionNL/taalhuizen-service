@@ -31,6 +31,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "item_query" = LanguageHouseQueryItemResolver::class,
  *              "read" = false
  *          },
+ *          "userRolesBy" = {
+ *              "item_query" = LanguageHouseQueryItemResolver::class,
+ *              "read" = false
+ *          },
  *          "collection_query" = {
  *              "collection_query" = LanguageHouseQueryCollectionResolver::class
  *          },
