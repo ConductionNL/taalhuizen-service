@@ -8,6 +8,7 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Registration;
 use App\Entity\Student;
 use App\Service\CCService;
+use App\Service\EDUService;
 use App\Service\RegistrationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -27,6 +28,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private RegistrationService $registrationService;
     private CCService $ccService;
     private StudentService $studentService;
+    private EDUService $eduService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -34,7 +36,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
         ParameterBagInterface $parameterBag,
         RegistrationService $registrationService,
         CCService $ccService,
-        StudentService $studentService
+        StudentService $studentService,
+        EDUService $eduService
     ){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -42,6 +45,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->registrationService = $registrationService;
         $this->ccService = $ccService;
         $this->studentService = $studentService;
+        $this->eduService = $eduService;
     }
     /**
      * @inheritDoc
@@ -69,7 +73,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         //Save student person
         $registrationStudent = $this->inputToStudentPerson($input);
-        $registrationStudent = $this->commonGroundService->saveResource($registrationStudent, ['component' => 'cc', 'type' => 'people']);
+        $registrationStudent = $this->ccService->saveEavPerson($registrationStudent);
 
         //Save registrar person
         $registrationRegistrar = $this->inputToRegistrarPerson($input);
@@ -83,14 +87,12 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
         $participant['status'] = 'pending';
-        $participant = $this->commonGroundService->saveResource($participant, ['component' => 'edu', 'type' => 'participants']);
+        $participant = $this->eduService->saveEavParticipant($participant);
 //        var_dump($participant);die();
 
-        //@todo: get taalhuis id from input
         if (isset($input['languageHouseId'])) {
             $languageHouse = $input['languageHouseId'];
         }
-
         //Save memo
         $memo = $this->inputToMemo($input, $registrationStudent['@id'], $organization['@id']);
         $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
@@ -105,9 +107,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        $id = explode('/', $input['id']);
-        $id = end($id);
-        $result = array_merge($result, $this->registrationService->deleteRegistration($id));
+        $studentId = explode('/',$input['id']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
+        }
+        $student = $this->studentService->getStudent($studentId);
+
+        $result = array_merge($result, $this->registrationService->deleteRegistration($student['participant'], $student['person']));
 
         $result['result'] = False;
         if (isset($result['registration'])){
@@ -122,17 +128,22 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function acceptRegistration(array $input): Student
+    public function acceptRegistration(array $input): Registration
     {
-        $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants', 'id' => $input['id']])["hydra:member"];
-        $student = $this->commonGroundService->getResource($participant['person']);
-        var_dump($student);die();
+        $studentId = explode('/',$input['id']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
+        }
+        $student = $this->studentService->getStudent($studentId);
 
-        $person = $this->inputToPerson($student);
-        $person = $this->ccService->saveEavPerson($person, $student['@id']);
         $participant['status'] = 'accepted';
+        $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
 
-        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $organization = $this->commonGroundService->getResource($participant['referredBy']);
+        $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
+        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo, $registration = true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;

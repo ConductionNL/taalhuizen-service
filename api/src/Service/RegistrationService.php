@@ -22,19 +22,22 @@ class RegistrationService
     private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private StudentService $studentService;
+    private EAVService $eavService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
         ParameterBagInterface $parameterBag,
         CCService $ccService,
-        StudentService $studentService
+        StudentService $studentService,
+        EAVService $eavService
     ){
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
         $this->ccService = $ccService;
         $this->studentService = $studentService;
+        $this->eavService = $eavService;
     }
 
     public function getRegistration($languageHouseId)
@@ -49,21 +52,28 @@ class RegistrationService
         return $result;
     }
 
-    public function deleteRegistration($id)
+    public function deleteRegistration($participant, $person)
     {
-        $participant = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants', 'id' => $id]);
-        $studentPerson = $this->commonGroundService->getResource($participant['person']);
-        $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-        $memo = $this->commonGroundService->getResourceList(['component'=>'memo', 'type' => 'memos'], ['topic' => $studentPerson['@id'], 'author' => $registrarOrganization['@id']])["hydra:member"][0];
-        $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
 
-        $this->commonGroundService->deleteResource($memo);
-        $this->commonGroundService->deleteResource($registrarPerson);
-        $this->commonGroundService->deleteResource($studentPerson);
-        $this->commonGroundService->deleteResource($registrarOrganization);
-        $this->commonGroundService->deleteResource($participant);
-
-        $result['registration'] = $participant;
+        var_dump($participant);
+        var_dump($person);die();
+//        if ($this->eavService->hasEavObject(null, 'registrations', $id)) {
+//            $result['participants'] = [];
+//            // Get the learningNeed from EAV
+//            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+//
+//
+//            foreach ($learningNeed['participations'] as $participationUrl) {
+//                $this->participationService->deleteParticipation(null, $participationUrl, True);
+//            }
+//
+//            // Delete the learningNeed in EAV
+//            $this->eavService->deleteObject($learningNeed['eavId']);
+//            // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
+//            $result['learningNeed'] = $learningNeed;
+//        } else {
+//            $result['errorMessage'] = 'Invalid request, '. $id .' is not an existing eav/learning_need!';
+//        }
         return $result;
     }
 
