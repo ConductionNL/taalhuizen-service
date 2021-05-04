@@ -41,6 +41,9 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!$item instanceof Group && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
+        /**@todo: remove, changeTeacher,
+         * done: create, update
+         */
         switch($context['info']->operation->name->value){
             case 'createGroup':
                 return $this->createGroup($item);
@@ -83,6 +86,8 @@ class GroupMutationResolver implements MutationResolverInterface
     {
         $id = explode('/',$groupArray['id']);
         $id = end($id);
+        $aanbiederId = explode('/',$groupArray['aanbiederId']);
+        $groupArray['aanbiederId'] = end($aanbiederId);
         $result['result'] = [];
 
         $groupArray = array_merge(
@@ -145,6 +150,12 @@ class GroupMutationResolver implements MutationResolverInterface
                 case 'outComesGoal':
                     $group['goal'] = $value;
                     break;
+                case 'aanbiederId':
+                    $group['aanbiederId'] = $value;
+                    break;
+                case 'id':
+                    $group['groupId'] = $value;
+                    break;
                 case 'outComesTopic':
                     $group['topic'] = $value;
                     break;
@@ -203,12 +214,12 @@ class GroupMutationResolver implements MutationResolverInterface
             //update
             $group['course'] ='/courses/'.$course['id'];
 //            $group['dateModified'] = $now;
-//            var_dump($group);
+            var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         }else{
             //create
             $group['course'] ='/courses/'.$course['id'];
-//            var_dump($group);
+            var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
 
@@ -220,7 +231,9 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGroupId()){
             $group['GroupId'] = $resource->getGroupId();
         }
-        $group['aanbiederId'] = $resource->getAanbiederId();
+        $aanbieder = explode('/', $resource->getAanbiederId());
+        if (is_array($aanbieder)) $aanbieder = end($aanbieder);
+        $group['aanbiederId'] = $aanbieder;
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
         $group['outComesGoal'] = $resource->getOutComesGoal();
@@ -261,7 +274,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGeneralEvaluation()){
             $group['generalEvaluation'] = $resource->getGeneralEvaluation();
         }
-        $group['mentors'] = $resource->getAanbiederEmployeeIds();
+        $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
 
         return $group;
     }

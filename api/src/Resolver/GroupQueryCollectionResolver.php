@@ -42,7 +42,7 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
                 return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'ACTIVE'), $context['args']);
                 break;
             case 'futureGroups':
-                $collection = $this->futureGroups(['course.organization' => $aanbiederId]);
+                return $this->createPaginator($this->futureGroups(['course.organization' => $aanbiederId]), $context['args']);
                 break;
 //            case 'completedGroups':
 //                $collection = $this->participantsOfTheGroup($context['info']->variableValues['input']);
@@ -51,9 +51,8 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
                 return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'COMPLETED'),$context['args']);
                 break;
             default:
-                $collection = $this->getGroups(['course.organization' => $aanbiederId]);
+                return $this->createPaginator($this->getGroups(['course.organization' => $aanbiederId]), $context['args']);
         }
-        return $this->createPaginator(new ArrayCollection(), $context['args']);
     }
 
     public function getGroups(?array $query = []): ArrayCollection
