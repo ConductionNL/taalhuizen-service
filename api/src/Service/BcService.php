@@ -24,13 +24,14 @@ class BcService
         $message = [
             'content'   => "Beste $email,\n\nU heeft een wachtwoord-reset link aangevraagd voor de Taalhuizen applicatie.\n\nKlik op de volgende link om het wachtwoord te resetten:\n $link\n\nMet vriendelijke groet,\n\nBiSC Taalhuizen",
             'subject'   => 'Wachtwoord reset op Taalhuizen',
-            'sender'    => '',
+            'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $email,
-            'service'      => '/services/',
+            'status'    => 'queued',
+            'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
 
         ];
 
-        $this->commonGroundService->createResource($message, ['component' => 'bc', 'type' => 'messages']);
+        $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
     }
 
     public function sendPasswordChangedEmail(string $username, array $contact)
@@ -39,12 +40,14 @@ class BcService
         $message = [
             'content' => "Beste {$contact['givenName']},\n\nUw wachtwoord is succesvol gewijzigd.\n\nAls u dit niet zelf gedaan hebt, vraag dan een nieuw wachtwoord aan op de volgende link: $link",
             'subject'   => 'Uw wachtwoord op Taalhuizen werd veranderd',
-            'sender'    => '',
+            'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $username,
-            'service'      => '/services/',
+            'status'    => 'queued',
+            'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+
         ];
 
-        $this->commonGroundService->createResource($message, ['component' => 'bc', 'type' => 'messages']);
+        $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
     }
 
     public function sendInvitation(string $email, string $token, array $contact)
@@ -53,12 +56,13 @@ class BcService
         $message = [
             'content'   => "Beste {$contact['givenName']},\n\nU bent uitgenodigd als vrijwilliger voor de taalhuizen applicatie.\n\nKlik op de volgende link om het wachtwoord in te stellen:\n $link\n\nMet vriendelijke groet,\n\nBiSC Taalhuizen",
             'subject'   => 'Wachtwoord reset op Taalhuizen',
-            'sender'    => '',
+            'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $email,
-            'service'      => '/services/',
+            'status'    => 'queued',
+            'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
 
         ];
 
-        $this->commonGroundService->createResource($message, ['component' => 'bc', 'type' => 'messages']);
+        $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
     }
 }
