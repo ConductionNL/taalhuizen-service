@@ -184,7 +184,6 @@ class EDUService
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $resource->setAanbiederEmployeeIds($group['mentors']);
-//        var_dump($group['mentors']);die();
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -302,7 +301,6 @@ class EDUService
     }
     public function changeGroupTeachers($input)
     {
-        var_dump($input);die();
         if (isset($input['id'])) {
             $groupId = explode('/',$input['id']);
             if (is_array($groupId)) {
@@ -311,7 +309,13 @@ class EDUService
         } else {
             throw new Exception('No id was specified!');
         }
-        $group = $this->getGroup($groupId);
-
+        if (isset($input['aanbiederEmployeeIds'])){
+            $employeeIds = $input['aanbiederEmployeeIds'];
+        }else{
+            throw new Exception('No EmployeeIds were specified!');
+        }
+        $group = $this->dtoToGroup($this->getGroup($groupId));
+        $group['mentors'] = $employeeIds;
+        $this->eavService->saveObject($group,'groups','edu',null,$groupId);
     }
 }

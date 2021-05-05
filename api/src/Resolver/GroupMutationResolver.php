@@ -128,10 +128,10 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function changeTeachersOfTheGroup($group): ?Group
+    public function changeTeachersOfTheGroup($input): ?Group
     {
-        $this->eduService->changeGroupTeachers($group);
-
+        var_dump($input);die();
+        $this->eduService->changeGroupTeachers($input);
         return null;
     }
 
