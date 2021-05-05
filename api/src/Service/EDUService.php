@@ -305,7 +305,7 @@ class EDUService
         if ($this->eavService->hasEavObject($groupUrl)) {
             $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
             $groep['mentors'] = $employeeids;
-            $this->eavService->saveObject($groep,'groups','edu',$this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
+            $this->eavService->saveObject($groep,'groups','edu',$groupUrl);
         }
     }
 }
