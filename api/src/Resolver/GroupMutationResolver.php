@@ -130,8 +130,20 @@ class GroupMutationResolver implements MutationResolverInterface
 
     public function changeTeachersOfTheGroup($input): ?Group
     {
-        var_dump($input);die();
-        $this->eduService->changeGroupTeachers($input);
+        if (isset($input['id'])) {
+            $groupId = explode('/',$input['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+        if (isset($input['aanbiederEmployeeIds'])){
+            $employeeIds = $input['aanbiederEmployeeIds'];
+        }else{
+            throw new Exception('No EmployeeIds were specified!');
+        }
+        $this->eduService->changeGroupTeachers($groupId,$employeeIds);
         return null;
     }
 

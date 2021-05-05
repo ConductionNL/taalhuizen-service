@@ -299,23 +299,13 @@ class EDUService
             }
         }
     }
-    public function changeGroupTeachers($input)
+    public function changeGroupTeachers($groupId,$employeeids)
     {
-        if (isset($input['id'])) {
-            $groupId = explode('/',$input['id']);
-            if (is_array($groupId)) {
-                $groupId = end($groupId);
-            }
-        } else {
-            throw new Exception('No id was specified!');
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $groep['mentors'] = $employeeids;
+            $this->eavService->saveObject($groep,'groups','edu',$this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         }
-        if (isset($input['aanbiederEmployeeIds'])){
-            $employeeIds = $input['aanbiederEmployeeIds'];
-        }else{
-            throw new Exception('No EmployeeIds were specified!');
-        }
-        $group = $this->dtoToGroup($this->getGroup($groupId));
-        $group['mentors'] = $employeeIds;
-        $this->eavService->saveObject($group,'groups','edu',null,$groupId);
     }
 }
