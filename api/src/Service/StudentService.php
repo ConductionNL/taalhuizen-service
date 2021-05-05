@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Registration;
 use App\Entity\Student;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -205,9 +206,13 @@ class StudentService
 //        }
     }
 
-    public function handleResult($person, $participant) {
-        // Put together the expected result for Lifely:
-        $resource = new Student();
+    public function handleResult($person, $participant, $registrarPerson = null, $organization = null, $memo = null,  $registration = null) {
+        if (isset($registration)) {
+            // Put together the expected result for Lifely:
+            $resource = new Registration();
+        } else {
+            $resource = new Student();
+        }
 
         //todo:make sure to get all data from the correct places
         // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
@@ -249,11 +254,29 @@ class StudentService
             'childrenDatesOfBirth' => $person['dependents'] ?? null,
         ];
 
-        $referrerDetails = [
-            'referringOrganization' => $person['referringOrganization'] ?? null,
-            'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
-            'email' => $person['email'] ?? null,
+        $registrar = [
+            'id' => $organization['id'] ?? null,
+            'organisationName' => $organization['name'] ?? null,
+            'givenName' => $registrarPerson['givenName'] ?? null,
+            'additionalName' => $registrarPerson['additionalName'] ?? null,
+            'familyName' => $registrarPerson['familyName'] ?? null,
+            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
+            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
         ];
+
+        if (isset($registration)) {
+            $referrerDetails = [
+                'referringOrganization' => $organization['name'] ?? null,
+                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
+                'email' => $registrarPerson['emails'][0]['email'] ?? null,
+            ];
+        } else {
+            $referrerDetails = [
+                'referringOrganization' => $person['referringOrganization'] ?? null,
+                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
+                'email' => $person['email'] ?? null,
+            ];
+        }
 
         $backgroundDetails = [
             'foundVia' => $person['foundVia'] ?? null,
@@ -328,9 +351,9 @@ class StudentService
 
         // Set all subresources in response DTO body
         if (isset($participant['dateCreated'])) { $resource->setDateCreated(new \DateTime($participant['dateCreated'])); } //todo: this is currently incorrect, timezone problem
-        $resource->setStatus(null);
-        $resource->setMemo(null);
-        $resource->setRegistrar([]);
+        if (isset($participant['status'])) { $resource->setStatus($participant['status']); }
+        if (isset($memo['description'])) { $resource->setMemo($memo['description']); }
+        $resource->setRegistrar($registrar);
         $resource->setCivicIntegrationDetails($civicIntegrationDetails);
         $resource->setPersonDetails($personDetails);
         $resource->setContactDetails($contactDetails);

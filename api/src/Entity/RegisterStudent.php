@@ -72,17 +72,12 @@ class RegisterStudent
     private $telephone;
 
     /**
+     * @var array|null The address of this Taalhuis.
      *
-     * @MaxDepth(1)
      * @Groups({"read", "write"})
-     * @ORM\ManyToMany(targetEntity="App\Entity\Address")
+     * @ORM\Column(type="json", nullable=true)
      */
-    private $address;
-
-    public function __construct()
-    {
-        $this->address = new ArrayCollection();
-    }
+    private ?array $address;
 
     public function getId(): UuidInterface
     {
@@ -95,26 +90,14 @@ class RegisterStudent
         return $this;
     }
 
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddress(): Collection
+    public function getAddress(): ?array
     {
         return $this->address;
     }
 
-    public function addAddress(Address $address): self
+    public function setAddress(?array $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        $this->address->removeElement($address);
+        $this->address = $address;
 
         return $this;
     }

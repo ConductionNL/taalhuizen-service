@@ -21,6 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "item_query" = ProviderQueryItemResolver::class,
  *              "read" = false
  *          },
+ *          "userRolesBy" = {
+ *              "item_query" = ProviderQueryItemResolver::class,
+ *              "read" = false
+ *          },
  *          "collection_query" = {
  *              "collection_query" = ProviderQueryCollectionResolver::class
  *          },
