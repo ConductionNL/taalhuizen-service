@@ -72,7 +72,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "deserialize" = false,
  *              "validate" = false,
  *              "write" = false,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
+ *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}, "aanbiederEmployeeIds"={"type" = "Array", "description" =  "the identifier"}}
  *          }
  *     }
  * )
