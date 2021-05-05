@@ -128,8 +128,9 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function changeTeachersOfTheGroup(array $group): ?Group
+    public function changeTeachersOfTheGroup($group): ?Group
     {
+        $this->eduService->changeGroupTeachers($group);
 
         return null;
     }
@@ -215,14 +216,17 @@ class GroupMutationResolver implements MutationResolverInterface
                 case 'generalEvaluation':
                     $group['evaluation'] = $value;
                     break;
+                case 'aanbiederEmployeeIds':
+                    $group['mentors'] = $value;
+                    break;
                 default:
                     break;
             }
         }
-
         if (isset($groupId)){
             //update
             $group['course'] ='/courses/'.$course['id'];
+
 //            $group['dateModified'] = $now;
            // var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
@@ -232,7 +236,6 @@ class GroupMutationResolver implements MutationResolverInterface
          //   var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
-
         $result['group'] = $group;
         return $result;
     }
@@ -284,8 +287,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGeneralEvaluation()){
             $group['generalEvaluation'] = $resource->getGeneralEvaluation();
         }
-        $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
-
+        $group['mentors'] = $resource->getAanbiederEmployeeIds();
         return $group;
     }
 

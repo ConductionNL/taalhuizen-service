@@ -183,6 +183,8 @@ class EDUService
         if (isset($group['endDate'])) $resource->setDetailsEndDate(new DateTime($group['endDate']));
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
+        $resource->setAanbiederEmployeeIds($group['mentors']);
+//        var_dump($group['mentors']);die();
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -297,5 +299,19 @@ class EDUService
                 }
             }
         }
+    }
+    public function changeGroupTeachers($input)
+    {
+        var_dump($input);die();
+        if (isset($input['id'])) {
+            $groupId = explode('/',$input['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+        $group = $this->getGroup($groupId);
+
     }
 }
