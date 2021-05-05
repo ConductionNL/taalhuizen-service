@@ -21,8 +21,10 @@ class MrcService
     private CCService $ccService;
     private UcService $ucService;
     private EAVService $eavService;
+    private BcService $bcService;
 
     public function __construct(
+        BcService $bcService,
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         CommonGroundService $commonGroundService,
@@ -31,6 +33,7 @@ class MrcService
         EAVService $EAVService
     )
     {
+        $this->bcService = $bcService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
         $this->commonGroundService = $commonGroundService;
@@ -409,6 +412,9 @@ class MrcService
             }
         }
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
+
+        $token = $this->ucService->requestPasswordReset($resource['username']);
+        $this->bcService->sendInvitation($resource['username'], $token, $contact);
 
         return $result['id'];
     }

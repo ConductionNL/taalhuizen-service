@@ -21,12 +21,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UcService
 {
+    private BcService $bcService;
     private CCService $ccService;
     private CommonGroundService $commonGroundService;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
 
-    public function __construct(CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
+    public function __construct(BcService $bcService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
+        $this->bcService = $bcService;
         $this->ccService = $ccService;
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
@@ -131,15 +133,35 @@ class UcService
     public function requestPasswordReset(string $email): string
     {
         $time = new DateTime();
-        $expiry = new DateTime('+10 minutes');
+        $expiry = new DateTime('+4 hours');
+
+        $users = $this->getUsers();
+
+        $found = false;
+        foreach($users as $user){
+            if($user['username'] == $email){
+                $found = true;
+                $userId = $user['id'];
+            }
+        }
+        if(!$found){
+            return '';
+        }
 
         $jwtBody = [
+            'userId' => $userId,
             'email' => $email,
+            'type' => 'passwordReset',
+            'iss' => $this->parameterBag->get('app_url'),
             'ias' => $time->getTimestamp(),
             'exp' => $expiry->getTimestamp(),
         ];
 
-        return $this->createJWTToken($jwtBody);
+        $token = $this->createJWTToken($jwtBody);
+
+        $this->bcService->sendPasswordResetMail($email, $token);
+
+        return $token;
     }
 
     public function login(string $username, string $password): string
@@ -155,6 +177,8 @@ class UcService
 
         $jwtBody = [
             'userId' => $resource['id'],
+            'type' => 'login',
+            'iss' => $this->parameterBag->get('app_url'),
             'ias' => $time->getTimestamp(),
             'exp' => $expiry->getTimestamp(),
         ];
@@ -165,18 +189,11 @@ class UcService
     public function updatePasswordWithToken(string $email, string $token, string $password): User
     {
         $tokenEmail = $this->validateJWTAndGetPayload($token);
-        $users = $this->getUsers();
+        if($tokenEmail['email'] != $email){
+            throw new AccessDeniedHttpException('Provided email does not match email from token');
+        }
+        $userId = $tokenEmail['userId'];
 
-        $found = false;
-        foreach($users as $user){
-            if($user['username'] == $email){
-                $found = true;
-                $userId = $user['id'];
-            }
-        }
-        if(!$found){
-            throw new AccessDeniedHttpException('User ID does not match email address provided');
-        }
         return $this->updateUser($userId, ['password' => $password]);
     }
 
@@ -212,6 +229,10 @@ class UcService
         }
 
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
+
+        if(isset($resource['password'])){
+            $this->bcService->sendPasswordChangedEmail($result['username'], $contact);
+        }
 
         return $this->createUserObject($result, $contact);
     }
