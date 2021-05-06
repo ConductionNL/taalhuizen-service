@@ -86,7 +86,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
 
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        $query = ['program.provider' => $languageHouseUrl];
+        $query = [
+            'program.provider' => $languageHouseUrl,
+            'status' => 'accepted'
+        ];
 
         $students = $this->studentService->getStudents($query);
 
@@ -156,7 +159,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The groupId was not specified');
         }
 
-        $query = ['participantGroups.id' => $groupId];
+        $query = [
+            'participantGroups.id' => $groupId,
+            'status' => 'accepted'
+        ];
 
         $students = $this->studentService->getStudents($query);
 
@@ -185,7 +191,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
 
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
-        $query = ['mentor' => $mentorUrl];
+        $query = [
+            'mentor' => $mentorUrl,
+            'status' => 'accepted'
+        ];
 
         $students = $this->studentService->getStudents($query);
 
