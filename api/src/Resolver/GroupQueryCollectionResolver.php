@@ -29,24 +29,30 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $providerId = isset($context['args']['aanbiederId']) ? $context['args']['aanbiederId'] : null;
+        if(key_exists('aanbiederId', $context['args'])){
+            $aanbiederId = explode('/',$context['args']['aanbiederId']);
+            if (is_array($aanbiederId)) {
+                $aanbiederId = end($aanbiederId);
+            }
+        } else {
+            throw new Exception('The languageHouseId was not specified');
+        }
         switch($context['info']->operation->name->value){
             case 'activeGroups':
-                $collection = $this->activeGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'ACTIVE'), $context['args']);
                 break;
             case 'futureGroups':
-                $collection = $this->futureGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->futureGroups(['course.organization' => $aanbiederId]), $context['args']);
                 break;
 //            case 'completedGroups':
 //                $collection = $this->participantsOfTheGroup($context['info']->variableValues['input']);
 //                break;
             case 'completedGroups':
-                $collection = $this->completedGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'COMPLETED'),$context['args']);
                 break;
             default:
-                $collection = $this->getGroups(['course.organization' => $providerId]);
+                return $this->createPaginator($this->getGroups(['course.organization' => $aanbiederId]), $context['args']);
         }
-        return $this->createPaginator($collection, $context['args']);
     }
 
     public function getGroups(?array $query = []): ArrayCollection
@@ -87,12 +93,6 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
         $now = $now->format("Ymd");
         $query = array_merge($query, ['startDate[strictly_after]' => $now]);
         return $this->getGroups($query);
-    }
-
-    public function participantsOfTheGroup(): ?ArrayCollection
-    {
-
-        return null;
     }
 
     public function completedGroups(?array $query = []): ?ArrayCollection

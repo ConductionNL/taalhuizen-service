@@ -236,7 +236,7 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $volunteeringPreference;
+    private ?string $volunteeringPreference = null;
 
 
     /**
@@ -264,7 +264,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private ?array $currentEducationYes;
+    private ?array $currentEducationYes = [];
 
     /**
      *
