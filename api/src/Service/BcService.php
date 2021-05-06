@@ -22,7 +22,7 @@ class BcService
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
         $message = [
-            'content'   => "Beste $email,\n\nU heeft een wachtwoord-reset link aangevraagd voor de Taalhuizen applicatie.\n\nKlik op de volgende link om het wachtwoord te resetten:\n $link\n\nMet vriendelijke groet,\n\nBiSC Taalhuizen",
+            'content'   => "Beste $email,<p>U heeft een wachtwoord-reset link aangevraagd voor de Taalhuizen applicatie.</p><p><a href='$link'>Klik hier om het wachtwoord te resetten</a></p><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
             'subject'   => 'Wachtwoord reset op Taalhuizen',
             'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $email,
@@ -38,7 +38,7 @@ class BcService
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/forgotpassword";
         $message = [
-            'content' => "Beste {$contact['givenName']},\n\nUw wachtwoord is succesvol gewijzigd.\n\nAls u dit niet zelf gedaan hebt, vraag dan een nieuw wachtwoord aan op de volgende link: $link",
+            'content' => "Beste {$contact['givenName']},<p>Uw wachtwoord is succesvol gewijzigd.</p><p>Als u dit niet zelf gedaan hebt, vraag dan <a href='$link'>een nieuw wachtwoord aan</a><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
             'subject'   => 'Uw wachtwoord op Taalhuizen werd veranderd',
             'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $username,
@@ -54,7 +54,7 @@ class BcService
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
         $message = [
-            'content'   => "Beste {$contact['givenName']},\n\nU bent uitgenodigd als vrijwilliger voor de taalhuizen applicatie.\n\nKlik op de volgende link om het wachtwoord in te stellen:\n $link\n\nMet vriendelijke groet,\n\nBiSC Taalhuizen",
+            'content'   => "Beste {$contact['givenName']},<p>U bent uitgenodigd als vrijwilliger voor de taalhuizen applicatie.</p><p><a href='$link'>Klik hier om het wachtwoord in te stellen</a></p><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
             'subject'   => 'Wachtwoord reset op Taalhuizen',
             'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $email,
