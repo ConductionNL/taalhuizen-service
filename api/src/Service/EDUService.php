@@ -299,12 +299,10 @@ class EDUService
             }
         }
     }
-    public function changeGroupTeachers($groupId,$employeeids)
+    public function changeGroupTeachers($groupId,$employeeids): Group
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
-        if ($this->eavService->hasEavObject($groupUrl)) {
-            $groep['mentors'] = $employeeids;
-            $this->eavService->saveObject($groep,'groups','edu',$groupUrl);
-        }
+        $groep['mentors'] = $employeeids;
+        return $this->convertGroupObject($this->eavService->saveObject($groep,'groups','edu',$groupUrl));
     }
 }

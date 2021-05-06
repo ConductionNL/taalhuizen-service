@@ -7,7 +7,7 @@ namespace App\Service;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class BcService
+class BsService
 {
     private CommonGroundService $commonGroundService;
     private ParameterBagInterface $parameterBag;

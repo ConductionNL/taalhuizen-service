@@ -21,14 +21,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UcService
 {
-    private BcService $bcService;
+    private BsService $bsService;
     private CCService $ccService;
     private CommonGroundService $commonGroundService;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
 
-    public function __construct(BcService $bcService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
-        $this->bcService = $bcService;
+    public function __construct(BsService $bsService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
+        $this->bsService = $bsService;
         $this->ccService = $ccService;
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
@@ -159,7 +159,7 @@ class UcService
 
         $token = $this->createJWTToken($jwtBody);
 
-        $this->bcService->sendPasswordResetMail($email, $token);
+        $this->bsService->sendPasswordResetMail($email, $token);
 
         return $token;
     }
@@ -231,7 +231,7 @@ class UcService
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
 
         if(isset($resource['password'])){
-            $this->bcService->sendPasswordChangedEmail($result['username'], $contact);
+            $this->bsService->sendPasswordChangedEmail($result['username'], $contact);
         }
 
         return $this->createUserObject($result, $contact);
