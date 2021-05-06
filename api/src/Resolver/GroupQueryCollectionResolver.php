@@ -10,6 +10,7 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Entity\Group;
 use App\Entity\LearningNeed;
 use App\Service\EDUService;
+use App\Service\StudentService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -19,10 +20,12 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 {
 
     private EDUService $eduService;
+    private StudentService $studentService;
 
-    public function __construct(EDUService $eduService)
+    public function __construct(EDUService $eduService, StudentService $studentService)
     {
         $this->eduService = $eduService;
+        $this->studentService = $studentService;
     }
 
     /**
@@ -35,25 +38,29 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
             if (is_array($aanbiederId)) {
                 $aanbiederId = end($aanbiederId);
             }
-        } else {
-            throw new Exception('The aanbiederId was not specified');
+        }else{
+            $aanbiederId = null;
         }
+
         switch($context['info']->operation->name->value){
             case 'activeGroups':
                 return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'ACTIVE'), $context['args']);
-                break;
             case 'futureGroups':
                 return $this->createPaginator($this->futureGroups(['course.organization' => $aanbiederId]), $context['args']);
-                break;
-//            case 'completedGroups':
-//                $collection = $this->participantsOfTheGroup($context['info']->variableValues['input']);
-//                break;
             case 'completedGroups':
                 return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId,'COMPLETED'),$context['args']);
-                break;
             default:
                 return $this->createPaginator($this->getGroups(['course.organization' => $aanbiederId]), $context['args']);
         }
+    }
+
+    public function participantsOfGroup(?string $groupId = null): ArrayCollection
+    {
+        if(!$groupId){
+            throw new Exception('Cannot retrieve participants of null');
+        }
+
+        return new ArrayCollection($this->studentService->getStudents(['participantGroup.id' => $groupId]));
     }
 
     public function getGroups(?array $query = []): ArrayCollection
@@ -82,6 +89,7 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function activeGroups(?array $query = []): ArrayCollection
     {
+
         $now = new DateTime('now');
         $now = $now->format("Ymd");
         $query = array_merge($query, ['endDate[strictly_after]' => $now, 'startDate[before]' => $now]);
