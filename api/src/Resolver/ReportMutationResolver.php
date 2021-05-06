@@ -186,12 +186,12 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         // Get all participants for this languageHouse created before dateUntil
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
-        var_dump(count($participants));
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = [];
         foreach ($participants as $participant) {
             //todo:still need to filter on dateUntil and dateFrom compared to dateCreated, when getting these learningNeeds or use array_filter after to filter them out
-            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id']);
+            //todo make sure learningneeds are the dto learningNeed objects...
+            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id'], true);
             if (isset($learningNeedsResult['learningNeeds']) && count($learningNeedsResult['learningNeeds']) > 0) {
                 array_push($learningNeeds, $learningNeedsResult['learningNeeds']);
             }

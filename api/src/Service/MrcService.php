@@ -21,10 +21,10 @@ class MrcService
     private CCService $ccService;
     private UcService $ucService;
     private EAVService $eavService;
-    private BcService $bcService;
+    private BsService $bcService;
 
     public function __construct(
-        BcService $bcService,
+        BsService $bcService,
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         CommonGroundService $commonGroundService,
