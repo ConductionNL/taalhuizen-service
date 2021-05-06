@@ -347,14 +347,19 @@ class ParticipationService
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
             $group['participations'] = $getGroup['participations'];
+            $group['participants'] = $getGroup['participants'];
         }
         if (!isset($group['participations'])){
             $group['participations'] = [];
+            $group['participants'] = $this->commonGroundService->getResource($groupUrl)['participants'];
         }
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
-            array_push($group['participations'], $participation['@id']);
+            $group['participations'][] = $participation['@id'];
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
+            $group['participants'][] = '/participants/'.$participantId;
             $group = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
 
             // Add $group to the $result['group'] because this is convenient when testing or debugging (mostly for us)
@@ -388,6 +393,11 @@ class ParticipationService
         if (isset($getGroup['participations'])) {
             $group['participations'] = array_values(array_filter($getGroup['participations'], function($groupParticipation) use($participation) {
                 return $groupParticipation != $participation['@eav'];
+            }));
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
+            $group['participants'] = array_values(array_filter($getGroup['participants'], function($groupParticipant) use($participantId) {
+                return $groupParticipant['id'] != $participantId;
             }));
             $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
         }
