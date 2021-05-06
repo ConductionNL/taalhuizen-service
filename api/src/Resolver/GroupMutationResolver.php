@@ -15,7 +15,7 @@ use App\Entity\User;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -128,10 +128,22 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function changeTeachersOfTheGroup(array $group): ?Group
+    public function changeTeachersOfTheGroup($input): ?Group
     {
-
-        return null;
+        if (isset($input['id'])) {
+            $groupId = explode('/',$input['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+        if (isset($input['aanbiederEmployeeIds'])){
+            $employeeIds = $input['aanbiederEmployeeIds'];
+        }else{
+            throw new Exception('No EmployeeIds were specified!');
+        }
+        return $this->eduService->changeGroupTeachers($groupId,$employeeIds);
     }
 
     public function createCourse($group){
@@ -215,14 +227,17 @@ class GroupMutationResolver implements MutationResolverInterface
                 case 'generalEvaluation':
                     $group['evaluation'] = $value;
                     break;
+                case 'aanbiederEmployeeIds':
+                    $group['mentors'] = $value;
+                    break;
                 default:
                     break;
             }
         }
-
         if (isset($groupId)){
             //update
             $group['course'] ='/courses/'.$course['id'];
+
 //            $group['dateModified'] = $now;
            // var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
@@ -232,7 +247,6 @@ class GroupMutationResolver implements MutationResolverInterface
          //   var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
-
         $result['group'] = $group;
         return $result;
     }
@@ -284,8 +298,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGeneralEvaluation()){
             $group['generalEvaluation'] = $resource->getGeneralEvaluation();
         }
-        $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
-
+        $group['mentors'] = $resource->getAanbiederEmployeeIds();
         return $group;
     }
 

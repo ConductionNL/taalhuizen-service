@@ -11,6 +11,7 @@ use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
