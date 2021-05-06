@@ -41,13 +41,16 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!$item instanceof Group && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
+        /**@todo: changeTeacher,
+         * done: create, update, remove
+         */
         switch($context['info']->operation->name->value){
             case 'createGroup':
                 return $this->createGroup($item);
             case 'updateGroup':
                 return $this->updateGroup($context['info']->variableValues['input']);
             case 'removeGroup':
-                return $this->deleteGroup($context['info']->variableValues['input']);
+                return $this->removeGroup($context['info']->variableValues['input']);
             case 'changeTeachersOfTheGroup':
                 return $this->changeTeachersOfTheGroup($context['info']->variableValues['input']);
             default:
@@ -83,6 +86,8 @@ class GroupMutationResolver implements MutationResolverInterface
     {
         $id = explode('/',$groupArray['id']);
         $id = end($id);
+        $aanbiederId = explode('/',$groupArray['aanbiederId']);
+        $groupArray['aanbiederId'] = end($aanbiederId);
         $result['result'] = [];
 
         $groupArray = array_merge(
@@ -107,15 +112,38 @@ class GroupMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function deleteGroup(array $group): ?Group
+    public function removeGroup($group): ?Group
     {
+        if (isset($group['id'])) {
+            $groupId = explode('/',$group['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+
+        $this->eduService->deleteGroup($groupId);
 
         return null;
     }
 
-    public function changeTeachersOfTheGroup(array $group): ?Group
+    public function changeTeachersOfTheGroup($input): ?Group
     {
-
+        if (isset($input['id'])) {
+            $groupId = explode('/',$input['id']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('No id was specified!');
+        }
+        if (isset($input['aanbiederEmployeeIds'])){
+            $employeeIds = $input['aanbiederEmployeeIds'];
+        }else{
+            throw new Exception('No EmployeeIds were specified!');
+        }
+        $this->eduService->changeGroupTeachers($groupId,$employeeIds);
         return null;
     }
 
@@ -144,6 +172,12 @@ class GroupMutationResolver implements MutationResolverInterface
             switch($key){
                 case 'outComesGoal':
                     $group['goal'] = $value;
+                    break;
+                case 'aanbiederId':
+                    $group['aanbiederId'] = $value;
+                    break;
+                case 'id':
+                    $group['groupId'] = $value;
                     break;
                 case 'outComesTopic':
                     $group['topic'] = $value;
@@ -194,24 +228,26 @@ class GroupMutationResolver implements MutationResolverInterface
                 case 'generalEvaluation':
                     $group['evaluation'] = $value;
                     break;
+                case 'aanbiederEmployeeIds':
+                    $group['mentors'] = $value;
+                    break;
                 default:
                     break;
             }
         }
-
         if (isset($groupId)){
             //update
             $group['course'] ='/courses/'.$course['id'];
+
 //            $group['dateModified'] = $now;
-//            var_dump($group);
+           // var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         }else{
             //create
             $group['course'] ='/courses/'.$course['id'];
-//            var_dump($group);
+         //   var_dump($group);
             $group = $this->eavService->saveObject($group,'groups','edu');
         }
-
         $result['group'] = $group;
         return $result;
     }
@@ -220,7 +256,9 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGroupId()){
             $group['GroupId'] = $resource->getGroupId();
         }
-        $group['aanbiederId'] = $resource->getAanbiederId();
+        $aanbieder = explode('/', $resource->getAanbiederId());
+        if (is_array($aanbieder)) $aanbieder = end($aanbieder);
+        $group['aanbiederId'] = $aanbieder;
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
         $group['outComesGoal'] = $resource->getOutComesGoal();
@@ -261,8 +299,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getGeneralEvaluation()){
             $group['generalEvaluation'] = $resource->getGeneralEvaluation();
         }
-        $group['aanbiederEmployeeIds'] = $resource->getAanbiederEmployeeIds();
-
+        $group['mentors'] = $resource->getAanbiederEmployeeIds();
         return $group;
     }
 

@@ -7,20 +7,45 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\TestResultService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Ramsey\Uuid\Uuid;
 
 class TestResultQueryCollectionResolver implements QueryCollectionResolverInterface
 {
+    private TestResultService $testResultService;
+
+    public function __construct(TestResultService $testResultService){
+        $this->testResultService = $testResultService;
+    }
 
     /**
      * @inheritDoc
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $collection = new ArrayCollection();
+        if(key_exists('participationId', $context['args'])){
+            $participationId = explode('/',$context['args']['participationId']);
+            if (is_array($participationId)) {
+                $participationId = end($participationId);
+            }
+        } else {
+            throw new Exception('The participationId was not specified');
+        }
 
-        //@TODO implement logic to find stuff and put it in the iterator
+        $testResults = $this->testResultService->getTestResults($participationId);
+
+        $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
+        foreach ($testResults as $testResult) {
+            if (isset($testResult['testResult']['id'])) {
+                $resourceResult = $this->testResultService->handleResult($testResult['testResult'], $testResult['memo']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
+                $collection->add($resourceResult);
+            }
+        }
+
         return $this->createPaginator($collection, $context['args']);
     }
 

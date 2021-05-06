@@ -68,7 +68,7 @@ class StudentMutationResolver implements MutationResolverInterface
         // Do some checks and error handling
         $this->studentService->checkStudentValues($input, $languageHouseUrl);
 
-        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent...
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
 
         // Transform DTO info to cc/person body
         $person = $this->inputToPerson($input, $languageHouseId);
@@ -105,7 +105,7 @@ class StudentMutationResolver implements MutationResolverInterface
         // Do some checks and error handling
         $this->studentService->checkStudentValues($input);
 
-        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
 
         // Transform DTO info to cc/person body
         $person = $this->inputToPerson($input);
@@ -164,7 +164,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    //todo: should be done in StudentService
+    //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
     private function saveMRCObjects(array $input, string $ccPersonId)
     {
 //        MRC
@@ -179,7 +179,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     }
 
-    //todo: should be done in StudentService
+    //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
     private function saveMemos(array $input, string $ccPersonId)
     {
         if (isset($input['id'])) {
