@@ -102,8 +102,13 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         if ($languageHouse) {
             // check if this taalhuis has an edu/program and get it
             $students = [];
-            foreach ($languageHouse['persons'] as $student) {
-                array_push($students, $this->studentService->getStudent($student['id']));
+            foreach ($languageHouse['persons'] as $person) {
+                $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
+                $resultFromEdu = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $personUrl])['hydra:member'];
+                if (isset($resultFromEdu[0])) {
+                    $student = $resultFromEdu[0];
+                    array_push($students, $this->studentService->getStudent($student['id']));
+                }
             }
         } else {
             throw new Exception('Invalid request, ' . $languageHouseId . ' is not an existing taalhuis (cc/organization)!');
