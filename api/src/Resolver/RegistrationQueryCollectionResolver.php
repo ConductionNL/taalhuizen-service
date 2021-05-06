@@ -73,18 +73,19 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
             throw new Exception('The languageHouseId was not specified');
         }
 
-        $students = $this->getStudents($languageHouseId);
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        $query = ['program.provider' => $languageHouseUrl];
+
+        $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
         // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
                 $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
-                var_dump($organization);die();
                 $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
                 $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
 
-                var_dump($student['person']);die();
                 $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $registrarPerson, $organization, $memo, $registration = true);
                 $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                 $collection->add($resourceResult);
@@ -94,27 +95,29 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         return $collection;
     }
 
-    public function getStudents($languageHouseId): array
-    {
-        // Get the edu/participants from EAV
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        $languageHouse = $this->commonGroundService->isResource($languageHouseUrl);
-        if ($languageHouse) {
-            // check if this taalhuis has an edu/program and get it
-            $students = [];
-            foreach ($languageHouse['persons'] as $person) {
-                $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
-                $resultFromEdu = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $personUrl])['hydra:member'];
-                if (isset($resultFromEdu[0])) {
-                    $student = $resultFromEdu[0];
-                    array_push($students, $this->studentService->getStudent($student['id']));
-                }
-            }
-        } else {
-            throw new Exception('Invalid request, ' . $languageHouseId . ' is not an existing taalhuis (cc/organization)!');
-        }
-        return $students;
-    }
+//    public function getStudents($languageHouseId): array
+//    {
+//        // Get the edu/participants from EAV
+//        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+//        $languageHouse = $this->commonGroundService->isResource($languageHouseUrl);
+//        if ($languageHouse) {
+//            // check if this taalhuis has an edu/program and get it
+//            $students = [];
+//            foreach ($languageHouse['persons'] as $person) {
+//                $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
+////                $resultFromEdu = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $personUrl])['hydra:member'];
+////                var_dump($resultFromEdu);die();
+//
+//                if (isset($resultFromEdu[0])) {
+//                    $student = $resultFromEdu[0];
+//                    array_push($students, $this->studentService->getStudent($student['id']));
+//                }
+//            }
+//        } else {
+//            throw new Exception('Invalid request, ' . $languageHouseId . ' is not an existing taalhuis (cc/organization)!');
+//        }
+//        return $students;
+//    }
 
 
 
