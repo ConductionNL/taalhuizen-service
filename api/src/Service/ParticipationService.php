@@ -298,6 +298,10 @@ class ParticipationService
 
             // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
+
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participant['mentor'] = $mentorUrl;
+            $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
         }
         return $result;
     }
@@ -313,6 +317,10 @@ class ParticipationService
         if (!$this->eavService->hasEavObject($mentorUrl)) {
             return ['errorMessage'=>'Invalid request, '. $mentorUrl .' is not an existing eav/mrc/employee!'];
         }
+
+        $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+        $participant['mentor'] = '';
+        $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
 
         // Update eav/mrc/employee to remove the participation from it
         $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
