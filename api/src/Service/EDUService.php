@@ -183,6 +183,7 @@ class EDUService
         if (isset($group['endDate'])) $resource->setDetailsEndDate(new DateTime($group['endDate']));
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
+        $resource->setAanbiederEmployeeIds($group['mentors']);
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -296,6 +297,15 @@ class EDUService
                     $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participationUrl);
                 }
             }
+        }
+    }
+    public function changeGroupTeachers($groupId,$employeeids)
+    {
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $groep['mentors'] = $employeeids;
+            $this->eavService->saveObject($groep,'groups','edu',$groupUrl);
         }
     }
 }
