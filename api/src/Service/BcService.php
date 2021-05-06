@@ -28,7 +28,6 @@ class BcService
             'reciever'  => $email,
             'status'    => 'queued',
             'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
-
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -44,7 +43,6 @@ class BcService
             'reciever'  => $username,
             'status'    => 'queued',
             'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
-
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -60,7 +58,6 @@ class BcService
             'reciever'  => $email,
             'status'    => 'queued',
             'service'      => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
-
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
