@@ -242,6 +242,7 @@ class LearningNeedService
         if (isset($studentId)) {
             $resource->setStudentId($studentId);
         }
+        $resource->setDateCreated($learningNeed['dateCreated']);
         $this->entityManager->persist($resource);
         return $resource;
     }

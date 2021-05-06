@@ -198,24 +198,20 @@ class ReportMutationResolver implements MutationResolverInterface
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = [];
         foreach ($participants as $participant) {
-            //todo make sure learningneeds are the dto learningNeed objects...
             $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id'], $dateFrom, $dateUntil);
             if (isset($learningNeedsResult['learningNeeds']) && count($learningNeedsResult['learningNeeds']) > 0) {
                 $learningNeeds = array_merge($learningNeeds, $learningNeedsResult['learningNeeds']);
             }
         }
-        var_dump(count($learningNeeds));
         $learningNeedsCollection = new ArrayCollection();
         foreach ($learningNeeds as $learningNeed) {
             if (!isset($learningNeed['errorMessage'])) {
-                $resourceResult = $this->learningNeedService->handleResult($learningNeed, null, true);
+                $resourceResult = $this->learningNeedService->handleResult($learningNeed, $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]), true);
                 $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                 $learningNeedsCollection->add($resourceResult);
             }
         }
-        // todo: add the 'deelnemerId' to each learningNeed, get uuid from each participant url: learningNeed['participants'][0]
-        // ['attributes' => ['deelnemerId', etc, dateCreated]
-        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['id']])));
+        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
