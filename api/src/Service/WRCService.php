@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Entity\Document;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -30,9 +31,7 @@ class WRCService
         if (isset($body['email'])) unset($body['email']);
         if (isset($body['phoneNumber'])) unset($body['phoneNumber']);
         if (isset($contact)) $body['contact'] = $contact;
-        $result = $this->commonGroundService->saveResource($body, ['component' => 'wrc', 'type' => 'organizations']);
-
-        return $result;
+        return $this->commonGroundService->saveResource($body, ['component' => 'wrc', 'type' => 'organizations']);
     }
 
     public function getOrganization($id)
@@ -41,9 +40,11 @@ class WRCService
     }
 
     /**
+     * @param array $input
+     * @return Document
      * @throws Exception
      */
-    public function createDocument($input): Document
+    public function createDocument(array $input): Document
     {
         $requiredProps = ['base64data', 'filename'];
         foreach ($requiredProps as $prop) {
@@ -56,18 +57,15 @@ class WRCService
         }
         if (isset($input['studentId'])) {
             $id = $input['studentId'];
-            if (strpos($id, '/') !== false) {
-                $idArray = explode('/', $id);
-                $id = end($idArray);
-                $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-            }
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+            $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+
         } elseif (isset($input['aanbiederEmployeeId'])) {
             $id = $input['aanbiederEmployeeId'];
-            if (strpos($id, '/') !== false) {
-                $idArray = explode('/', $id);
-                $id = end($idArray);
-                $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-            }
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+            $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
         } else {
             throw new Exception('No studentId or aanbiederEmployeetId given');
         }
@@ -86,13 +84,7 @@ class WRCService
             throw new Exception($e->getMessage());
         }
 
-        $documentObject = new Document();
-        $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
-        $documentObject->setFilename($document['name']);
-        $documentObject->setBase64data($document['base64']);
-        $documentObject->setDateCreated($document['dateCreated']);
-
-        return $documentObject;
+        return $this->createDocumentObject($document);
     }
 
     /**
@@ -121,18 +113,16 @@ class WRCService
             throw new Exception($e->getMessage());
         }
 
-        $documentObject = new Document();
-        $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
-        $documentObject->setBase64data($document['base64']);
-
-        return $documentObject;
+        return $this->createDocumentObject($document);
 
     }
 
     /**
+     * @param array $input
+     * @return Document|null
      * @throws Exception
      */
-    public function removeDocument($input): ?Document
+    public function removeDocument(array $input): ?Document
     {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
             throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
@@ -157,28 +147,50 @@ class WRCService
     }
 
     /**
-     * @throws Exception
+     * @param array $document
+     * @return Document
      */
-    public function getDocument(string $id)
+    public function createDocumentObject(array $document): Document
     {
-        try {
-            $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id])['hydra:member'];
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-
         $documentObject = new Document();
+        $documentObject->setFilename(isset($document['name']) ? $document['name'] : null);
+        $documentObject->setBase64data(isset($document['base64']) ? $document['base64'] : null);
+        $documentObject->setDateCreated(isset($document['dateCreated']) ? $document['dateCreated'] : null);
+        if(isset($document['contact'])){
+            $contactArray = explode('/', $document['contact']);
+            $contact = end($contactArray);
+            strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentId($contact) : $documentObject->setAanbiederEmployeeId($contact);
+            strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentDocumentId('/documents/'.$document['id']) : $documentObject->setAanbiederEmployeeDocumentId('/documents/'.$document['id']);
+        }
+        $this->em->persist($documentObject);
         $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
-        $documentObject->setFilename($document['name']);
-        $documentObject->setDateCreated($document['dateCreated']);
+        $this->em->persist($documentObject);
 
         return $documentObject;
     }
 
     /**
+     * @param string $id
+     * @return Document
      * @throws Exception
      */
-    public function getDocuments(string $contact)
+    public function getDocument(string $id): Document
+    {
+        try {
+            $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id]);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        return $this->createDocumentObject($document);
+    }
+
+    /**
+     * @param string|null $contact
+     * @return ArrayCollection
+     * @throws Exception
+     */
+    public function getDocuments(?string $contact = null): ArrayCollection
     {
         try {
             $documents = $this->commonGroundService->getResourceList(['component' => 'wrc', 'type' => 'documents'], ['contact' => $contact])['hydra:member'];
@@ -186,15 +198,11 @@ class WRCService
             throw new Exception($e->getMessage());
         }
 
-        $documentObjects = [];
+        $documentObjects = new ArrayCollection();
 
         foreach ($documents as $document) {
-            $actualDocument['id'] = $document['id'];
-            $actualDocument['filename'] = $document['name'];
-            $actualDocument['dateCreated'] = $document['dateCreated'];
-            $documentObjects[] = $actualDocument;
+            $documentObjects->add($this->createDocumentObject($document));
         }
-
         return $documentObjects;
     }
 
