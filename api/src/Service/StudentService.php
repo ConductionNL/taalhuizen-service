@@ -137,25 +137,14 @@ class StudentService
     }
 
     /**
-     * @throws Exception
+     * @param array $query
+     * @return array
      */
-    public function getStudents($languageHouseId): array
+    public function getStudents(array $query): array
     {
-        // Get the edu/participants from EAV
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        if ($this->commonGroundService->isResource($languageHouseUrl)) {
-            // check if this taalhuis has an edu/program and get it
-            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
-            if (count($programs) > 0) {
-                $students = [];
-                foreach ($programs[0]['participants'] as $student) {
-                    array_push($students, $this->getStudent($student['id']));
-                }
-            } else {
-                throw new Exception('Invalid request, '. $languageHouseId .' does not have an existing program (edu/program)!');
-            }
-        } else {
-            throw new Exception('Invalid request, '. $languageHouseId .' is not an existing taalhuis (cc/organization)!');
+        $students = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
+        foreach ($students as $key => $student) {
+            $students[$key] = $this->getStudent($student['id']);
         }
         return $students;
     }

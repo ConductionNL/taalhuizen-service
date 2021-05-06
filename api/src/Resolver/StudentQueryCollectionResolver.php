@@ -81,7 +81,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The languageHouseId was not specified');
         }
 
-        $students = $this->studentService->getStudents($languageHouseId);
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        $query = ['program.provider' => $languageHouseUrl];
+
+        $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
         // Now put together the expected result for Lifely:

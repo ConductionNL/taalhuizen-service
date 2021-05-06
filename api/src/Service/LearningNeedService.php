@@ -151,7 +151,9 @@ class LearningNeedService
         return $result;
     }
 
-    public function getLearningNeeds($studentId) {
+    public function getLearningNeeds($studentId, $setDeelnemerId = False, $dateFrom = null, $dateUntil = null) {
+        if (isset($dateFrom)) $dateFrom = new \DateTime($dateFrom); $dateFrom->format('Y-m-d H:i:s');
+        if (isset($dateUntil)) $dateUntil = new \DateTime($dateUntil); $dateUntil->format('Y-m-d H:i:s');
         // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['learningNeeds'] = [];
@@ -161,6 +163,9 @@ class LearningNeedService
                 foreach ($participant['learningNeeds'] as $learningNeedUrl) {
                     $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
                     if (isset($learningNeed['learningNeed'])) {
+                        if ($setDeelnemerId) {
+//                            $learningNeed['learningNeed']['']
+                        }
                         array_push($result['learningNeeds'], $learningNeed['learningNeed']);
                     } else {
                         array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
