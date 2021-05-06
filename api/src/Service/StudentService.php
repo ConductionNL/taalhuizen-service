@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentService
 {
@@ -17,14 +19,27 @@ class StudentService
     private EAVService $eavService;
     private CCService $ccService;
     private EDUService $eduService;
+    private MrcService $mrcService;
+    private SerializerInterface $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService, CCService $ccService, EDUService $eduService)
+    public function __construct
+    (
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        EAVService $eavService,
+        CCService $ccService,
+        EDUService $eduService,
+        MrcService $mrcService,
+        SerializerInterface $serializer
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
         $this->ccService = $ccService;
         $this->eduService = $eduService;
+        $this->mrcService = $mrcService;
+        $this->serializer = $serializer;
     }
 
     public function saveStudent(array $person, array $participant, $languageHouseId = null, $languageHouseUrl = null) {
@@ -72,6 +87,9 @@ class StudentService
 //        return $result;
     }
 
+    /**
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
     public function getStudent($id, $studentUrl = null, $skipChecks = false): array
     {
         if (isset($id)) {
@@ -96,6 +114,21 @@ class StudentService
             } else {
                 throw new Exception('Warning, '. $participant['person'] .' does not have an eav object (eav/cc/people)!');
             }
+
+            // Get students data from eav
+            $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $result['person']['@id']])['hydra:member'];
+            if (isset($employees[0])); {
+                $employee = $this->serializer->normalize($this->mrcService->getEmployee($employees[0]['id']));
+                foreach ($employee['interests'] as $interest) {
+                    if ($interest['name'] == 'dayTimeActivity') {
+                        $result['person']['jobDetails']['dayTimeActivities'][] = $interest['description'];
+                    }
+                }
+                if (isset($employee['jobFunctions'])) {
+                    $result['person']['jobDetails']['lastJob'] = end($employee['jobFunctions'])['name'];
+                }
+            }
+
         } else {
             throw new Exception('Invalid request, '. $id .' is not an existing student (eav/edu/participant)!');
         }

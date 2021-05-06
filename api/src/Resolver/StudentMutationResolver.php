@@ -7,6 +7,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Student;
@@ -14,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -22,14 +24,27 @@ class StudentMutationResolver implements MutationResolverInterface
     private StudentService $studentService;
     private CCService $ccService;
     private EDUService $eduService;
+    private MrcService $mrcService;
+    private SerializerInterface $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, StudentService $studentService, CCService $ccService, EDUService $eduService)
+    public function __construct
+    (
+        EntityManagerInterface $entityManager,
+        CommongroundService $commonGroundService,
+        StudentService $studentService,
+        CCService $ccService,
+        EDUService $eduService,
+        MrcService $mrcService,
+        SerializerInterface $serializer
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
         $this->ccService = $ccService;
         $this->eduService = $eduService;
+        $this->mrcService = $mrcService;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -82,7 +97,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         // todo: w.i.p...
 //        // Then save mrc/employee / mrc objects
-//        $this->saveMRCObjects($input, $ccPersonUrl);
+        $this->saveMRCObjects($input, $person['@id']);
 //
 //        // Then save memo('s)
 //        $this->saveMemos($input, $ccPersonUrl);
@@ -165,18 +180,30 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
     //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
-    private function saveMRCObjects(array $input, string $ccPersonId)
+
+    /**
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    private function saveMRCObjects(array $input, string $personUrl)
     {
-//        MRC
-//        if (isset($input['jobDetails'])) {
-//            $person = $this->getPersonPropertiesFromJobDetails($person, $input);
-//        }
+        $employee = $this->mrcService->getEmployee($personUrl);
+        if (!isset($employee)) {
+            $employee = [];
+            $employee['contact'] = $personUrl;
+            $employee = $this->mrcService->createEmployee($employee);
+//            var_dump($employee);die;
+        }
+//      MRC
+        if (isset($input['jobDetails'])) {
+            $employee = $this->getEmployeePropertiesFromJobDetails($input['jobDetails']);
+        }
 //        EDU
 //        if (isset($input['motivationDetails'])) {
 //            $person = $this->getPersonPropertiesFromMotivationDetails($person, $input);
 //        }
 //        $person = $this->studentService->saveStudentResource($person, 'persons');
 
+        $employee = $this->mrcService->updateEmployee($employee->getId(),  $this->serializer->normalize($employee, null));
     }
 
     //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
@@ -485,5 +512,23 @@ class StudentMutationResolver implements MutationResolverInterface
         $participant['referredBy'] = $referringOrganization['@id'];
 
         return $participant;
+    }
+
+    private function getEmployeePropertiesFromJobDetails($jobDetails): array
+    {
+        if (isset($jobDetails['trainedForJob'])) {
+            $employee['trainedForJob'] = $jobDetails['trainedForJob'];
+        }
+        if (isset($jobDetails['lastJob'])) {
+            $employee['lastJob'] = $jobDetails['lastJob'];
+        }
+        if (isset($jobDetails['dayTimeActivities'])) {
+            $employee['dayTimeActivities'] = $jobDetails['dayTimeActivities'];
+        }
+        if (isset($jobDetails['dayTimeActivitiesOther'])) {
+            $employee['dayTimeActivitiesOther'] = $jobDetails['dayTimeActivitiesOther'];
+        }
+
+        return $employee;
     }
 }
