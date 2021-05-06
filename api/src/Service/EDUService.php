@@ -303,7 +303,6 @@ class EDUService
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
         if ($this->eavService->hasEavObject($groupUrl)) {
-            $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
             $groep['mentors'] = $employeeids;
             $this->eavService->saveObject($groep,'groups','edu',$groupUrl);
         }

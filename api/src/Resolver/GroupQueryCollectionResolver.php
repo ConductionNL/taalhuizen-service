@@ -13,6 +13,7 @@ use App\Service\EDUService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 
 class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 {
@@ -35,7 +36,7 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
                 $aanbiederId = end($aanbiederId);
             }
         } else {
-            throw new Exception('The languageHouseId was not specified');
+            throw new Exception('The aanbiederId was not specified');
         }
         switch($context['info']->operation->name->value){
             case 'activeGroups':
