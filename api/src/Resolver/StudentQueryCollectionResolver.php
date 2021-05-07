@@ -32,8 +32,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
     public function __invoke(iterable $collection, array $context): iterable
     {
         if (!key_exists('languageHouseId', $context['args']) &&
-            !key_exists('providerId', $context['args'])) {
-            return null;
+            !key_exists('providerId', $context['args']) &&
+            !key_exists('groupId', $context['args']) &&
+            !key_exists('aanbiederEmployeeId', $context['args'])) {
+            throw new Exception('Invalid request, please provide an id to filter students by');
         }
         switch ($context['info']->operation->name->value) {
             case 'students':
@@ -46,6 +48,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
                 return $this->createPaginator($this->completedStudents($context), $context['args']);
             case 'groupStudents':
                 return $this->createPaginator($this->groupStudents($context), $context['args']);
+            case 'aanbiederEmployeeMenteesStudents':
+                return $this->createPaginator($this->aanbiederEmployeeMenteesStudents($context), $context['args']);
             default:
                 return $this->createPaginator(new ArrayCollection(), $context['args']);
         }
@@ -82,7 +86,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
 
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        $query = ['program.provider' => $languageHouseUrl];
+        $query = [
+            'program.provider' => $languageHouseUrl,
+            'status' => 'accepted'
+        ];
 
         $students = $this->studentService->getStudents($query);
 
@@ -110,7 +117,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');;
+        return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');
     }
 
     public function activeStudents(array $context): ?ArrayCollection
@@ -124,7 +131,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');;
+        return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');
     }
 
     public function completedStudents(array $context): ?ArrayCollection
@@ -138,13 +145,68 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             throw new Exception('The providerId was not specified');
         }
 
-        return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');;
+        return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');
     }
 
-    //todo:
     public function groupStudents(array $context): ?ArrayCollection
     {
+        if(key_exists('groupId', $context['args'])){
+            $groupId = explode('/',$context['args']['groupId']);
+            if (is_array($groupId)) {
+                $groupId = end($groupId);
+            }
+        } else {
+            throw new Exception('The groupId was not specified');
+        }
+
+        $query = [
+            'participantGroups.id' => $groupId,
+            'status' => 'accepted'
+        ];
+
+        $students = $this->studentService->getStudents($query);
+
         $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
+        foreach ($students as $student) {
+            if (isset($student['participant']['id'])) {
+                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                $collection->add($resourceResult);
+            }
+        }
+
+        return $collection;
+    }
+
+    public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
+    {
+        if(key_exists('aanbiederEmployeeId', $context['args'])){
+            $aanbiederEmployeeId = explode('/',$context['args']['aanbiederEmployeeId']);
+            if (is_array($aanbiederEmployeeId)) {
+                $aanbiederEmployeeId = end($aanbiederEmployeeId);
+            }
+        } else {
+            throw new Exception('The aanbiederEmployeeId was not specified');
+        }
+
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+        $query = [
+            'mentor' => $mentorUrl,
+            'status' => 'accepted'
+        ];
+
+        $students = $this->studentService->getStudents($query);
+
+        $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
+        foreach ($students as $student) {
+            if (isset($student['participant']['id'])) {
+                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                $collection->add($resourceResult);
+            }
+        }
 
         return $collection;
     }

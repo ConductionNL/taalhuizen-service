@@ -40,7 +40,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
             throw new Exception('The languageHouseId was not specified');
         }
 
-        $students = $this->getStudents($languageHouseId);
+        $students = $this->getStudents([$languageHouseId]);
 
         $collection = new ArrayCollection();
         // Now put together the expected result for Lifely:
@@ -82,11 +82,10 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
 
     public function getStudents($languageHouseId): array
     {
-        // Get the edu/participants from EAV
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         $languageHouse = $this->commonGroundService->isResource($languageHouseUrl);
         if ($languageHouse) {
-            // check if this taalhuis has an edu/program and get it
+            // Get the edu/participants
             $students = [];
             foreach ($languageHouse['person'] as $student) {
                 array_push($students, $this->studentService->getStudent($student['id']));
