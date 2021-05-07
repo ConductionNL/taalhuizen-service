@@ -179,26 +179,39 @@ class ReportMutationResolver implements MutationResolverInterface
             $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
             $query['program.provider'] = $languageHouseUrl;
         }
-        // edu/participants created after this date will not have eav/learningNeeds created before this date
+        if(isset($reportArray['dateFrom'])) {
+            $report->setDateFrom($reportArray['dateFrom']);
+            $dateFrom = $reportArray['dateFrom'];
+        } else {
+            $dateFrom = null;
+        }
         if(isset($reportArray['dateUntil'])) {
             $report->setDateUntil($reportArray['dateUntil']);
+            // edu/participants created after this date will not have eav/learningNeeds created before this date
             $query['dateCreated[strictly_before]'] = $reportArray['dateUntil'];
+            $dateUntil = $reportArray['dateUntil'];
+        } else {
+            $dateUntil = null;
         }
         // Get all participants for this languageHouse created before dateUntil
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
-        var_dump(count($participants));
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = [];
         foreach ($participants as $participant) {
-            //todo:still need to filter on dateUntil and dateFrom compared to dateCreated, when getting these learningNeeds or use array_filter after to filter them out
-            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id']);
+            $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id'], $dateFrom, $dateUntil);
             if (isset($learningNeedsResult['learningNeeds']) && count($learningNeedsResult['learningNeeds']) > 0) {
-                array_push($learningNeeds, $learningNeedsResult['learningNeeds']);
+                $learningNeeds = array_merge($learningNeeds, $learningNeedsResult['learningNeeds']);
             }
         }
-        // todo: add the 'deelnemerId' to each learningNeed, get uuid from each participant url: learningNeed['participants'][0]
-        // ['attributes' => ['deelnemerId', etc, dateCreated]
-        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeeds, 'csv', ['attributes' => ['dateCreated']])));
+        $learningNeedsCollection = new ArrayCollection();
+        foreach ($learningNeeds as $learningNeed) {
+            if (!isset($learningNeed['errorMessage'])) {
+                $resourceResult = $this->learningNeedService->handleResult($learningNeed, $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]), true);
+                $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
+                $learningNeedsCollection->add($resourceResult);
+            }
+        }
+        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);

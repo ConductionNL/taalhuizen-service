@@ -104,25 +104,14 @@ class StudentService
     }
 
     /**
-     * @throws Exception
+     * @param array $query
+     * @return array
      */
-    public function getStudents($languageHouseId): array
+    public function getStudents(array $query): array
     {
-        // Get the edu/participants from EAV
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        if ($this->commonGroundService->isResource($languageHouseUrl)) {
-            // check if this taalhuis has an edu/program and get it
-            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
-            if (count($programs) > 0) {
-                $students = [];
-                foreach ($programs[0]['participants'] as $student) {
-                    array_push($students, $this->getStudent($student['id']));
-                }
-            } else {
-                throw new Exception('Invalid request, '. $languageHouseId .' does not have an existing program (edu/program)!');
-            }
-        } else {
-            throw new Exception('Invalid request, '. $languageHouseId .' is not an existing taalhuis (cc/organization)!');
+        $students = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
+        foreach ($students as $key => $student) {
+            $students[$key] = $this->getStudent($student['id']);
         }
         return $students;
     }
@@ -153,14 +142,16 @@ class StudentService
                             if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
                                 // Add studentUrl to array, if it is not already in there
                                 if (!in_array($learningNeed['participants'][0], $studentUrls)) {
-                                    array_push($studentUrls, $learningNeed['participants'][0]);
+                                    $studentUrls[] = $learningNeed['participants'][0];
                                     // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
                                     $student = $this->getStudent(null, $learningNeed['participants'][0], true);
-                                    // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant']);
-                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                                    // Add to the collection
-                                    $collection->add($resourceResult);
+                                    if ($student['participant']['status'] == 'accepted') {
+                                        // Handle Result
+                                        $resourceResult = $this->handleResult($student['person'], $student['participant']);
+                                        $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                                        // Add to the collection
+                                        $collection->add($resourceResult);
+                                    }
                                 }
                             }
                         }
@@ -216,6 +207,15 @@ class StudentService
 
         //todo:make sure to get all data from the correct places
         // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
+        $registrar = [
+            'id' => $organization['id'] ?? null,
+            'organisationName' => $organization['name'] ?? null,
+            'givenName' => $registrarPerson['givenName'] ?? null,
+            'additionalName' => $registrarPerson['additionalName'] ?? null,
+            'familyName' => $registrarPerson['familyName'] ?? null,
+            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
+            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
+        ];
 
         // Create all subresources
         $civicIntegrationDetails = [
@@ -252,16 +252,6 @@ class StudentService
             'otherLanguages' => $person['speakingLanguages'] ?? null,
             'familyComposition' => $person['maritalStatus'] ?? null,
             'childrenDatesOfBirth' => $person['dependents'] ?? null,
-        ];
-
-        $registrar = [
-            'id' => $organization['id'] ?? null,
-            'organisationName' => $organization['name'] ?? null,
-            'givenName' => $registrarPerson['givenName'] ?? null,
-            'additionalName' => $registrarPerson['additionalName'] ?? null,
-            'familyName' => $registrarPerson['familyName'] ?? null,
-            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
-            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
         ];
 
         if (isset($registration)) {

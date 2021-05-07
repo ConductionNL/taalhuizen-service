@@ -65,6 +65,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
 class Registration
@@ -78,8 +79,7 @@ class Registration
 
     /**
      *
-     * @Assert\NotNull
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $languageHouseId;
 

@@ -65,7 +65,7 @@ class EDUService
     }
 
     public function getProgram($organization){
-        return $result = $this->commonGroundService->getResource(['component' => 'edu','type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'];
+         return $result = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $organization['@id']])["hydra:member"][0];
     }
 
     public function hasProgram($organization){
@@ -183,6 +183,7 @@ class EDUService
         if (isset($group['endDate'])) $resource->setDetailsEndDate(new DateTime($group['endDate']));
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
+        $resource->setAanbiederEmployeeIds($group['mentors']);
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -297,5 +298,11 @@ class EDUService
                 }
             }
         }
+    }
+    public function changeGroupTeachers($groupId,$employeeids): Group
+    {
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+        $groep['mentors'] = $employeeids;
+        return $this->convertGroupObject($this->eavService->saveObject($groep,'groups','edu',$groupUrl));
     }
 }
