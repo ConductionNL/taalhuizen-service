@@ -100,13 +100,17 @@ class RegistrationMutationResolver implements MutationResolverInterface
         if (isset($input['languageHouseId'])) {
             $languageHouseId = $input['languageHouseId'];
         }
-        $languageHouse = $this->commonGroundService->getResourceList(['component' => 'cc','type'=>'organizations', 'id' => $languageHouseId]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $languageHouse['@id']])["hydra:member"][0];
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc','type'=>'organizations', 'id' => $languageHouseId]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $languageHouseUrl])["hydra:member"][0];
 
+        foreach ($program['participants'] as &$programParticipant) {
+            $programParticipant = '/participants/'.$programParticipant['id'];
+        }
         $program['participants'][] = '/participants/'.$participant['id'];
         $this->commonGroundService->saveResource($program, ['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
 
         $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouseId, $participant, $memo);
+//        $resourceResult = $this->studentService->handleResult($registrationStudent, $participant, $registrationRegistrar, $organization, $memo, true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -153,7 +157,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
         $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
 
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo,  $registration = true);
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo,  true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
