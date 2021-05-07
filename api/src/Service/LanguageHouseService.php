@@ -151,5 +151,18 @@ class LanguageHouseService
         $this->entityManager->persist($resource);
         return $resource;
     }
+    public function getLanguageHouseUserGroups($id)
+    {
+        //get provider url
+        $LanguageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organization', 'id' => $id]);
+        //get provider groups
+        $userGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'],['organization' => $LanguageHouseUrl])['hydra:member'];
+        $userRoles = [];
+        foreach ($userGroups as $userGroup){
+            $userRoles['id'] = $userGroup['id'];
+            $userRoles['name'] = $userGroup['name'];
+        }
+        return $userRoles;
+    }
 
 }
