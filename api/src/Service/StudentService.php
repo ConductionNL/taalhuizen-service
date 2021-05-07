@@ -142,14 +142,16 @@ class StudentService
                             if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
                                 // Add studentUrl to array, if it is not already in there
                                 if (!in_array($learningNeed['participants'][0], $studentUrls)) {
-                                    array_push($studentUrls, $learningNeed['participants'][0]);
+                                    $studentUrls[] = $learningNeed['participants'][0];
                                     // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
                                     $student = $this->getStudent(null, $learningNeed['participants'][0], true);
-                                    // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant']);
-                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                                    // Add to the collection
-                                    $collection->add($resourceResult);
+                                    if ($student['participant']['status'] == 'accepted') {
+                                        // Handle Result
+                                        $resourceResult = $this->handleResult($student['person'], $student['participant']);
+                                        $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                                        // Add to the collection
+                                        $collection->add($resourceResult);
+                                    }
                                 }
                             }
                         }
