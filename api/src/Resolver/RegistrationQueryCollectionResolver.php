@@ -81,7 +81,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         $collection = new ArrayCollection();
         // Now put together the expected result for Lifely:
         foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
+            if (isset($student['participant']['id']) && $student['participant']['referredBy']) {
                 $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
                 $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
                 $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
