@@ -163,6 +163,7 @@ class LanguageHouseService
         $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
         $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
         $resource->setName($languageHouse['name']);
+        $resource->setType($languageHouse['type'] ?? null);
         $this->entityManager->persist($resource);
         return $resource;
     }
