@@ -167,18 +167,6 @@ class LanguageHouseService
         return $resource;
     }
 
-    public function createLanguageHouseObject($languageHouse)
-    {
-        $resource = new LanguageHouse();
-        $resource->setAddress($languageHouse['addresses']);
-        $resource->setEmail($languageHouse['emails'][0]['email']);
-        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone']);
-        $resource->setName($languageHouse['name']);
-        $resource->setType($languageHouse['type']);
-        $this->entityManager->persist($resource);
-        return $resource;
-    }
-
     public function deleteEmployees($employees): bool
     {
         if ($employees > 0) {
