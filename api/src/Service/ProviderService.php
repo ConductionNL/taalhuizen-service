@@ -118,7 +118,7 @@ class ProviderService
         $providerCC = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
         $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $providerCC['@id']])["hydra:member"][0];
         $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $providerCC['@id']])["hydra:member"];
-        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program' => $program['id']])["hydra:member"];
+        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
 
         //delete employees
         if ($employees > 0) {
@@ -127,11 +127,8 @@ class ProviderService
                 $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
                 $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
             }
-        } elseif ($employees == 0) {
-            $person = $this->commonGroundService->getResource($employees['person']);
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-            $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employees['id']]);
         }
+
         //delete participants
         if ($participants > 0) {
             foreach ($participants as $participant) {
@@ -139,11 +136,7 @@ class ProviderService
                 $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
                 $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
             }
-        } elseif ($participants == 0) {
-            $person = $this->commonGroundService->getResource($participants['person']);
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-            $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participants['id']]);
-        }
+        } 
 
         //delete program
         $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $program['id']]);
