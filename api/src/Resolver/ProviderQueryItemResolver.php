@@ -56,7 +56,7 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         $result = array_merge($result, $this->providerService->getProvider($id));
 
         if (isset($result['provider'])) {
-            $resourceResult = $this->providerService->createProviderObject($result['provider']);
+            $resourceResult = $this->providerService->handleResult($result['provider']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
         }
 
