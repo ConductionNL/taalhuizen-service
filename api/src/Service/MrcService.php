@@ -21,8 +21,10 @@ class MrcService
     private CCService $ccService;
     private UcService $ucService;
     private EAVService $eavService;
+    private BsService $bcService;
 
     public function __construct(
+        BsService $bcService,
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         CommonGroundService $commonGroundService,
@@ -31,6 +33,7 @@ class MrcService
         EAVService $EAVService
     )
     {
+        $this->bcService = $bcService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
         $this->commonGroundService = $commonGroundService;
@@ -379,8 +382,8 @@ class MrcService
             }
         }
         $employee = $this->getUser($employee, $contact['@id']);
-        $aanbiederIdArray = explode('/', parse_url($result['provider'])['path']);
-        $employee->setProviderId(end($aanbiederIdArray));
+        $providerIdArray = explode('/', parse_url($result['provider'])['path']);
+        $employee->setProviderId(end($providerIdArray));
         $languageHouseIdArray = explode('/', parse_url($result['organization'])['path']);
         $employee->setLanguageHouseId(end($languageHouseIdArray));
 
@@ -410,6 +413,9 @@ class MrcService
         }
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
+        $token = $this->ucService->requestPasswordReset($resource['username']);
+        $this->bcService->sendInvitation($resource['username'], $token, $contact);
+
         return $result['id'];
     }
 
@@ -431,7 +437,7 @@ class MrcService
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
             'person'                => $contact['@id'],
-            'provider'              => key_exists('aanbiederId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['aanbiederId']]) : null,
+            'provider'              => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : null,
             'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
             'referrer'              => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : null,
             'relevantCertificates'  => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : null,
@@ -468,7 +474,7 @@ class MrcService
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
             'person'                => $contact['@id'],
-            'provider'              => key_exists('aanbiederId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['aanbiederId']]) : null,
+            'provider'              => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : null,
             'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
             'referrer'              => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : null,
             'relevantCertificates'  => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : null,

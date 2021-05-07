@@ -15,7 +15,7 @@ use App\Entity\User;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -143,8 +143,7 @@ class GroupMutationResolver implements MutationResolverInterface
         }else{
             throw new Exception('No EmployeeIds were specified!');
         }
-        $this->eduService->changeGroupTeachers($groupId,$employeeIds);
-        return null;
+        return $this->eduService->changeGroupTeachers($groupId,$employeeIds);
     }
 
     public function createCourse($group){
