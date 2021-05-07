@@ -144,22 +144,18 @@ class ProviderService
     public function handleResult($provider)
     {
         $resource = new Provider();
-        $resource->setAddress($provider['address']);
-        $resource->setEmail($provider['email']);
-        $resource->setPhoneNumber($provider['phoneNumber']);
+        $address = [
+            'street' => $provider['addresses'][0]['street'] ?? null,
+            'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
+            'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
+            'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
+            'locality' => $provider['addresses'][0]['locality'] ?? null,
+        ];
+        $resource->setAddress($address);
+        $resource->setEmail($provider['emails'][0]['email'] ?? null);
+        $resource->setPhoneNumber($provider['telephones'][0]['telephone'] ?? null);
         $resource->setName($provider['name']);
-        $this->entityManager->persist($resource);
-        return $resource;
-    }
-
-    public function createProviderObject($provider)
-    {
-        $resource = new Provider();
-        $resource->setAddress($provider['addresses']);
-        $resource->setEmail($provider['emails'][0]['email']);
-        $resource->setPhoneNumber($provider['telephones'][0]['telephone']);
-        $resource->setName($provider['name']);
-        $resource->setType($provider['type']);
+        $resource->setType($provider['type'] ?? null);
         $this->entityManager->persist($resource);
         return $resource;
     }
