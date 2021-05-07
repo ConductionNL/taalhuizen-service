@@ -57,9 +57,11 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
         $result = array_merge($result, $this->languageHouseService->createLanguageHouse($languageHouse));
 
-        // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->languageHouseService->handleResult($languageHouse);
-        $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+        if (isset($result['languageHouse'])) {
+            // Now put together the expected result in $result['result'] for Lifely:
+            $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+        }
 
         // If any error was catched throw it
         if (isset($result['errorMessage'])) {
@@ -86,9 +88,11 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
             // Save LanguageHouse
             $result = array_merge($result, $this->languageHouseService->updateLanguageHouse($languageHouse, $languageHouseId));
 
-            // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->languageHouseService->handleResult($languageHouse);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+            if (isset($result['languageHouse'])) {
+                // Now put together the expected result in $result['result'] for Lifely:
+                $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
+            }
         }
 
         // If any error was caught throw it
