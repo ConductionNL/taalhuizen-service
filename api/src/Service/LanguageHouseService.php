@@ -57,6 +57,19 @@ class LanguageHouseService
 
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
 
+        //make Usergroups for roles
+        //coordinator
+        $coordinator['organization'] = $languageHouseWrc['contact'];
+        $coordinator['name'] = 'TAALHUIS_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+
+        //employee
+        $employee['organization'] = $languageHouseWrc['contact'];
+        $employee['name'] = 'TAALHUIS_EMPLOYEE';
+        $employee['description'] = 'userGroup employee of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($employee,['component' => 'uc', 'type' => 'groups']);
+
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['languageHouse'] = $languageHouseCC;
 

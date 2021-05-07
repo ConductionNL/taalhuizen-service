@@ -53,8 +53,23 @@ class ProviderService
         //program
         $program['name'] = 'Program of '.$provider['name'];
         $program['provider'] = $providerWrc['contact'];
-
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+
+        //coordinator
+        $coordinator['organization'] = $providerWrc['contact'];
+        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
+        $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+        //mentor
+        $mentor['organization'] = $providerWrc['contact'];
+        $mentor['name'] = 'AANBIEDER_MENTOR';
+        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($mentor,['component' => 'uc', 'type' => 'groups']);
+        //volunteer
+        $volunteer['organization'] = $providerWrc['contact'];
+        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
+        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($volunteer,['component' => 'uc', 'type' => 'groups']);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
