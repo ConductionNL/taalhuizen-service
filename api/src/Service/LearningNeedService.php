@@ -93,16 +93,20 @@ class LearningNeedService
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
 
             // Remove this learningNeed from all EAV/edu/participants
-            foreach ($learningNeed['participants'] as $studentUrl) {
-                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
-                if (isset($studentResult['participant'])) {
-                    // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
-                    array_push($result['participants'], $studentResult['participant']['@id']);
+            if (isset($learningNeed['participants'])) {
+                foreach ($learningNeed['participants'] as $studentUrl) {
+                    $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+                    if (isset($studentResult['participant'])) {
+                        // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
+                        array_push($result['participants'], $studentResult['participant']['@id']);
+                    }
                 }
             }
 
-            foreach ($learningNeed['participations'] as $participationUrl) {
-                $this->participationService->deleteParticipation(null, $participationUrl, True);
+            if (isset($learningNeed['participations'])) {
+                foreach ($learningNeed['participations'] as $participationUrl) {
+                    $this->participationService->deleteParticipation(null, $participationUrl, True);
+                }
             }
 
             // Delete the learningNeed in EAV
