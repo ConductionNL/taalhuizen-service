@@ -110,7 +110,6 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->commonGroundService->saveResource($program, ['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
 
         $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouseId, $participant, $memo);
-//        $resourceResult = $this->studentService->handleResult($registrationStudent, $participant, $registrationRegistrar, $organization, $memo, true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
