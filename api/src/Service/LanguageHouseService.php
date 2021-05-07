@@ -128,22 +128,10 @@ class LanguageHouseService
         $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
 
         //delete employees
-        if ($employees > 0) {
-            foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
-            }
-        }
+        $this->deleteEmployees($employees);
 
         //delete participants
-        if ($participants > 0) {
-            foreach ($participants as $participant) {
-                $person = $this->commonGroundService->getResource($participant['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
-            }
-        }
+        $this->deleteParticipants($participants);
 
         //delete program
         $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $program['id']]);
@@ -184,4 +172,39 @@ class LanguageHouseService
         return $resource;
     }
 
+    public function deleteEmployees($employees): bool
+    {
+        if ($employees > 0) {
+            foreach ($employees as $employee) {
+                $person = $this->commonGroundService->getResource($employee['person']);
+                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
+            }
+        }
+        return false;
+    }
+
+    public function deleteParticipants($participants): bool
+    {
+        if ($participants > 0) {
+            foreach ($participants as $participant) {
+                $person = $this->commonGroundService->getResource($participant['person']);
+                $educationEvents = $this->commonGroundService->getResource($participant['educationEvents']);
+                $results = $this->commonGroundService->getResource($participant['results']);
+                $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
+                foreach ($educationEvents as $educationEvent) {
+                    $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
+                }
+                foreach ($results as $result) {
+                    $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
+                }
+                foreach ($participantGroups as $participantGroup) {
+                    $this->eduService->deleteGroup($participantGroup['id']);
+                }
+                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+                $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
+            }
+        }
+        return false;
+    }
 }
