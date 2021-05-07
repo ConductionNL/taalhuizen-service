@@ -130,7 +130,7 @@ class UcService
         return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'])['hydra:member'];
     }
 
-    public function requestPasswordReset(string $email): string
+    public function requestPasswordReset(string $email, bool $sendEmail = true): string
     {
         $time = new DateTime();
         $expiry = new DateTime('+4 hours');
@@ -159,7 +159,9 @@ class UcService
 
         $token = $this->createJWTToken($jwtBody);
 
-        $this->bsService->sendPasswordResetMail($email, $token);
+        if($sendEmail){
+            $this->bsService->sendPasswordResetMail($email, $token);
+        }
 
         return $token;
     }

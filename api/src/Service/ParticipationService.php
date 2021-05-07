@@ -361,6 +361,11 @@ class ParticipationService
             $group['participations'] = [];
             $group['participants'] = $this->commonGroundService->getResource($groupUrl)['participants'];
         }
+        if (isset($group['participants'])) {
+            foreach ($group['participants'] as &$participant) {
+                $participant = '/participants/'.$participant['id'];
+            }
+        }
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
@@ -407,6 +412,11 @@ class ParticipationService
             $group['participants'] = array_values(array_filter($getGroup['participants'], function($groupParticipant) use($participantId) {
                 return $groupParticipant['id'] != $participantId;
             }));
+            if (isset($group['participants'])) {
+                foreach ($group['participants'] as &$participant) {
+                    $participant = '/participants/'.$participant['id'];
+                }
+            }
             $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
         }
         // Update eav/participation to remove the EAV/edu/group from it

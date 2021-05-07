@@ -377,11 +377,11 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
         // Make sure this participation actually has a mentor/group connected to it
         $checkParticipation = $this->participationService->getParticipation($participationId);
-        if (!isset($checkParticipation['participation'][$type])) {
-            throw new Exception('Warning, this participation has no '.$type.'!');
-        }
 
         if (!isset($result['errorMessage'])) {
+            if (!isset($checkParticipation['participation'][$type])) {
+                throw new Exception('Warning, this participation has no '.$type.'!');
+            }
             // No errors so lets continue... to:
             // update participation
             $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], null, $participationId));
