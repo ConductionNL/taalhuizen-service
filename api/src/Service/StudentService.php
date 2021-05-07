@@ -207,6 +207,15 @@ class StudentService
 
         //todo:make sure to get all data from the correct places
         // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
+        $registrar = [
+            'id' => $organization['id'] ?? null,
+            'organisationName' => $organization['name'] ?? null,
+            'givenName' => $registrarPerson['givenName'] ?? null,
+            'additionalName' => $registrarPerson['additionalName'] ?? null,
+            'familyName' => $registrarPerson['familyName'] ?? null,
+            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
+            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
+        ];
 
         // Create all subresources
         $civicIntegrationDetails = [
@@ -243,16 +252,6 @@ class StudentService
             'otherLanguages' => $person['speakingLanguages'] ?? null,
             'familyComposition' => $person['maritalStatus'] ?? null,
             'childrenDatesOfBirth' => $person['dependents'] ?? null,
-        ];
-
-        $registrar = [
-            'id' => $organization['id'] ?? null,
-            'organisationName' => $organization['name'] ?? null,
-            'givenName' => $registrarPerson['givenName'] ?? null,
-            'additionalName' => $registrarPerson['additionalName'] ?? null,
-            'familyName' => $registrarPerson['familyName'] ?? null,
-            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
-            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
         ];
 
         if (isset($registration)) {

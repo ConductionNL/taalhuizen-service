@@ -31,33 +31,15 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        if (key_exists('languageHouseId', $context['args'])) {
-            $languageHouseId = explode('/', $context['args']['languageHouseId']);
-            if (is_array($languageHouseId)) {
-                $languageHouseId = end($languageHouseId);
-            }
-        } else {
-            throw new Exception('The languageHouseId was not specified');
+        if (!key_exists('languageHouseId', $context['args'])) {
+            return null;
         }
-
-        $students = $this->getStudents([$languageHouseId]);
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
-                $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
-                $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
-
-
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $registrarPerson, $organization, $memo, $registration = true);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
+        switch ($context['info']->operation->name->value) {
+            case 'registrations':
+                return $this->createPaginator($this->students($context), $context['args']);
+            default:
+                return $this->createPaginator(new ArrayCollection(), $context['args']);
         }
-
-        return $this->createPaginator($collection, $context['args']);
     }
 
     public function createPaginator(ArrayCollection $collection, array $args)
@@ -80,19 +62,64 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
-    public function getStudents($languageHouseId): array
+    public function students(array $context): ?ArrayCollection
     {
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        $languageHouse = $this->commonGroundService->isResource($languageHouseUrl);
-        if ($languageHouse) {
-            // Get the edu/participants
-            $students = [];
-            foreach ($languageHouse['person'] as $student) {
-                array_push($students, $this->studentService->getStudent($student['id']));
+        if (key_exists('languageHouseId', $context['args'])) {
+            $languageHouseId = explode('/', $context['args']['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
             }
         } else {
-            throw new Exception('Invalid request, ' . $languageHouseId . ' is not an existing taalhuis (cc/organization)!');
+            throw new Exception('The languageHouseId was not specified');
         }
-        return $students;
+
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        $query = ['program.provider' => $languageHouseUrl];
+
+        $students = $this->studentService->getStudents($query);
+
+        $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
+        foreach ($students as $student) {
+            if (isset($student['participant']['id'])) {
+                $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
+                $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
+                $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+
+                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $registrarPerson, $organization, $memo, $registration = true);
+                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                $collection->add($resourceResult);
+            }
+        }
+
+        return $collection;
     }
+
+//    public function getStudents($languageHouseId): array
+//    {
+//        // Get the edu/participants from EAV
+//        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+//        $languageHouse = $this->commonGroundService->isResource($languageHouseUrl);
+//        if ($languageHouse) {
+//            // check if this taalhuis has an edu/program and get it
+//            $students = [];
+//            foreach ($languageHouse['persons'] as $person) {
+//                $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
+////                $resultFromEdu = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $personUrl])['hydra:member'];
+////                var_dump($resultFromEdu);die();
+//
+//                if (isset($resultFromEdu[0])) {
+//                    $student = $resultFromEdu[0];
+//                    array_push($students, $this->studentService->getStudent($student['id']));
+//                }
+//            }
+//        } else {
+//            throw new Exception('Invalid request, ' . $languageHouseId . ' is not an existing taalhuis (cc/organization)!');
+//        }
+//        return $students;
+//    }
+
+
+
+
 }

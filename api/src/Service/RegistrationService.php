@@ -139,12 +139,12 @@ class RegistrationService
         return $person;
     }
 
-    public function handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo)
+    public function handleResult($registrationStudent, $registrationRegistrar, $languageHouseId, $participant, $memo)
     {
         $resource = new Registration();
         //@todo: setLanguageHouseId has to be set to the taalhuis where the student is referred to
         //@todo: remove address setRegistrar
-        $resource->setLanguageHouseId($languageHouse);
+        $resource->setLanguageHouseId($languageHouseId);
         $resource->setStudent($registrationStudent);
         $resource->setRegistrar($registrationRegistrar);
         $resource->setMemo($memo['description']);
