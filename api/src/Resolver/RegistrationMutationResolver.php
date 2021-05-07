@@ -87,6 +87,10 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $organization = $this->inputToOrganization($input, $registrationRegistrar['id']);
         $organization = $this->commonGroundService->saveResource($organization, ['component' => 'cc', 'type' => 'organizations']);
 
+        //Save memo
+        $memo = $this->inputToMemo($input, $registrationStudent['@id'], $organization['@id']);
+        $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
+
         //Save participant
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
@@ -94,13 +98,15 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant = $this->eduService->saveEavParticipant($participant);
 
         if (isset($input['languageHouseId'])) {
-            $languageHouse = $input['languageHouseId'];
+            $languageHouseId = $input['languageHouseId'];
         }
-        //Save memo
-        $memo = $this->inputToMemo($input, $registrationStudent['@id'], $organization['@id']);
-        $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
+        $languageHouse = $this->commonGroundService->getResourceList(['component' => 'cc','type'=>'organizations', 'id' => $languageHouseId]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $languageHouse['@id']])["hydra:member"][0];
 
-        $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouse, $participant, $memo);
+        $program['participants'][] = '/participants/'.$participant['id'];
+        $this->commonGroundService->saveResource($program, ['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
+
+        $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouseId, $participant, $memo);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -143,10 +149,11 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
 
         $organization = $this->commonGroundService->getResource($participant['referredBy']);
+
         $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
         $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
 
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo, $registration = true);
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo,  $registration = true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
