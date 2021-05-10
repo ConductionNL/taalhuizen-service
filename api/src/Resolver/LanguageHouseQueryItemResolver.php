@@ -57,7 +57,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         $result = array_merge($result, $this->languageHouseService->getLanguageHouse($id));
 
         if (isset($result['languageHouse'])) {
-            $resourceResult = $this->languageHouseService->createLanguageHouseObject($result['languageHouse']);
+            $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
         }
 

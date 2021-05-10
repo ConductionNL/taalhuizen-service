@@ -152,22 +152,18 @@ class LanguageHouseService
     public function handleResult($languageHouse)
     {
         $resource = new LanguageHouse();
-        $resource->setAddress($languageHouse['address']);
-        $resource->setEmail($languageHouse['email']);
-        $resource->setPhoneNumber($languageHouse['phoneNumber']);
+        $address = [
+            'street' => $languageHouse['addresses'][0]['street'] ?? null,
+            'houseNumber' => $languageHouse['addresses'][0]['houseNumber'] ?? null,
+            'houseNumberSuffix' => $languageHouse['addresses'][0]['houseNumberSuffix'] ?? null,
+            'postalCode' => $languageHouse['addresses'][0]['postalCode'] ?? null,
+            'locality' => $languageHouse['addresses'][0]['locality'] ?? null,
+        ];
+        $resource->setAddress($address);
+        $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
+        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
         $resource->setName($languageHouse['name']);
-        $this->entityManager->persist($resource);
-        return $resource;
-    }
-
-    public function createLanguageHouseObject($languageHouse)
-    {
-        $resource = new LanguageHouse();
-        $resource->setAddress($languageHouse['addresses']);
-        $resource->setEmail($languageHouse['emails'][0]['email']);
-        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone']);
-        $resource->setName($languageHouse['name']);
-        $resource->setType($languageHouse['type']);
+        $resource->setType($languageHouse['type'] ?? null);
         $this->entityManager->persist($resource);
         return $resource;
     }
