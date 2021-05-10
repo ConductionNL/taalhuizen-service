@@ -129,11 +129,6 @@ class StudentService
                 $employee = $employees[0];
                 if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
                     $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
-                    if (isset($employee['educations'])) {
-                        foreach ($employee['educations'] as &$education) {
-                            $education = $this->eavService->getObject('education', $education['@id'], 'mrc');
-                        }
-                    }
                 }
                 $employeeDTO = $this->serializer->normalize($this->mrcService->getEmployee($employee['id']));
                 if (isset($employeeDTO['interests'])) {
@@ -208,7 +203,7 @@ class StudentService
                                     $student = $this->getStudent(null, $learningNeed['participants'][0], true);
                                     if ($student['participant']['status'] == 'accepted') {
                                         // Handle Result
-                                        $resourceResult = $this->handleResult($student['person'], $student['participant']);
+                                        $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee']);
                                         $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                                         // Add to the collection
                                         $collection->add($resourceResult);
@@ -348,39 +343,61 @@ class StudentService
             'lastKnownLevel' => $person['lastKnownLevel'] ?? null,
         ];
 
-        //todo get this from $employee:
+        $lastEducation = $followingEducationNo = $followingEducationYes = $course = [];
+        if (isset($employee['educations'])) {
+            foreach ($employee['educations'] as $education) {
+                switch ($education['description']) {
+                    case 'lastEducation':
+                        if (!isset($lastEducation)) {
+                            $lastEducation = $education;
+                        }
+                        break;
+                    case 'followingEducationNo':
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
+                            $followingEducationNo = $education;
+                        }
+                        break;
+                    case 'followingEducationYes':
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
+                            $followingEducationYes = $this->eavService->getObject('education', $education['@id'], 'mrc');
+                        }
+                        break;
+                    case 'course':
+                        if(!isset($course)) {
+                            $course = $this->eavService->getObject('education', $education['@id'], 'mrc');
+                        }
+                        break;
+                }
+            }
+        }
         $educationDetails = [
-            //todo: (educations where description = lastEducation)
-            'lastFollowedEducation' => $person['lastFollowedEducation'] ?? null,
-            'didGraduate' => $person['didGraduate'] ?? null,
-            //todo: (educations where description = followingEducation)
-            'followingEducationRightNow' => $person['followingEducationRightNow'] ?? null,
-            'followingEducationRightNowYesStartDate' => $person['followingEducationRightNowYesStartDate'] ?? null,
-            'followingEducationRightNowYesEndDate' => $person['followingEducationRightNowYesEndDate'] ?? null,
-            'followingEducationRightNowYesLevel' => $person['followingEducationRightNowYesLevel'] ?? null,
-            'followingEducationRightNowYesInstitute' => $person['followingEducationRightNowYesInstitute'] ?? null,
-            'followingEducationRightNowYesProvidesCertificate' => $person['followingEducationRightNowYesProvidesCertificate'] ?? null,
-            'followingEducationRightNowNoEndDate' => $person['followingEducationRightNowNoEndDate'] ?? null,
-            'followingEducationRightNowNoLevel' => $person['followingEducationRightNowNoLevel'] ?? null,
-            'followingEducationRightNowNoGotCertificate' => $person['followingEducationRightNowNoGotCertificate'] ?? null,
+            'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
+            'didGraduate' => $lastEducation['degreeGrantedStatus'] ?? null,
+            'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
+            'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
+            'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
+            'followingEducationRightNowYesLevel' => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
+            'followingEducationRightNowYesInstitute' => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
+            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool)$followingEducationYes['providesCertificate'] : null) : null,
+            'followingEducationRightNowNoEndDate' => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
+            'followingEducationRightNowNoLevel' => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
+            'followingEducationRightNowNoGotCertificate' => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
         ];
 
-        //todo get this from $employee: (educations where description = course)
         $courseDetails = [
-            'isFollowingCourseRightNow' => $person['isFollowingCourseRightNow'] ?? null,
-            'courseName' => $person['courseName'] ?? null,
-            'courseTeacher' => $person['courseTeacher'] ?? null,
-            'courseGroup' => $person['courseGroup'] ?? null,
-            'amountOfHours' => $person['amountOfHours'] ?? null,
-            'doesCourseProvideCertificate' => $person['doesCourseProvideCertificate'] ?? null,
+            'isFollowingCourseRightNow' => isset($course),
+            'courseName' => $course['name'] ?? null,
+            'courseTeacher' => $course['teacherProfessionalism'] ?? null,
+            'courseGroup' => $course['groupFormation'] ?? null,
+            'amountOfHours' => $course['amountOfHours'] ?? null,
+            'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool)$course['providesCertificate'] : null,
         ];
 
-        //todo get this from $employee (eav values should be available in $employee):
         $jobDetails = [
-            'trainedForJob' => $person['trainedForJob'] ?? null,
-            'lastJob' => $person['lastJob'] ?? null,
-            'dayTimeActivities' => $person['dayTimeActivities'] ?? null,
-            'dayTimeActivitiesOther' => $person['dayTimeActivitiesOther'] ?? null,
+            'trainedForJob' => $employee['trainedForJob'] ?? null,
+            'lastJob' => $employee['lastJob'] ?? null,
+            'dayTimeActivities' => $employee['dayTimeActivities'] ?? null,
+            'dayTimeActivitiesOther' => $employee['dayTimeActivitiesOther'] ?? null,
         ];
 
         $motivationDetails = [

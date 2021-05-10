@@ -101,11 +101,6 @@ class StudentMutationResolver implements MutationResolverInterface
         $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee
         $employee = $this->mrcService->createEmployee($employee, true);
-        if (isset($employee['educations'])) {
-            foreach ($employee['educations'] as &$education) {
-                $education = $this->eavService->getObject('education', $education['@id'], 'mrc');
-            }
-        }
 
 //        // Then save memo('s)
 //        $this->saveMemos($input, $ccPersonUrl);
@@ -520,13 +515,10 @@ class StudentMutationResolver implements MutationResolverInterface
 
     private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails): array
     {
-        $newEducation = [
-            'name' => 'lastEducation',
-            'description' => 'lastEducation'
-        ];
         if (isset($educationDetails['lastFollowedEducation'])) {
             $newEducation = [
                 'name' => $educationDetails['lastFollowedEducation'],
+                'description' => 'lastEducation',
                 'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation']
             ];
             if (isset($educationDetails['didGraduate'])) {
@@ -536,15 +528,13 @@ class StudentMutationResolver implements MutationResolverInterface
                     $newEducation['degreeGrantedStatus'] = 'notGranted';
                 }
             }
+            $employee['educations'][] = $newEducation;
         }
-        $employee['educations'][] = $newEducation;
 
-        $newEducation = [
-            'name' => 'followingEducation',
-            'description' => 'followingEducation'
-        ];
         if (isset($educationDetails['followingEducationRightNow'])) {
+            $newEducation = [];
             if ($educationDetails['followingEducationRightNow'] == 'YES') {
+                $newEducation['description'] = 'followingEducationYes';
                 if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
                     $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
                 }
@@ -566,6 +556,7 @@ class StudentMutationResolver implements MutationResolverInterface
                     }
                 }
             } else {
+                $newEducation['description'] = 'followingEducationNo';
                 if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
                     $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
                 }
@@ -581,19 +572,16 @@ class StudentMutationResolver implements MutationResolverInterface
                     }
                 }
             }
+            $employee['educations'][] = $newEducation;
         }
-        $employee['educations'][] = $newEducation;
 
         return $employee;
     }
 
     private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails): array
     {
-        $newEducation = [
-            'name' => 'course',
-            'description' => 'course'
-        ];
         if (isset($courseDetails['isFollowingCourseRightNow'])) {
+            $newEducation['description'] = 'course';
             if ($courseDetails['isFollowingCourseRightNow'] == true) {
                 if (isset($courseDetails['courseName'])) {
                     $newEducation['name'] = $courseDetails['courseName'];
@@ -615,14 +603,15 @@ class StudentMutationResolver implements MutationResolverInterface
                     }
                 }
             }
+            $employee['educations'][] = $newEducation;
         }
-        $employee['educations'][] = $newEducation;
 
         return $employee;
     }
 
     private function getEmployeePropertiesFromJobDetails($employee, $jobDetails): array
     {
+        //todo make sure these attributes exist in eav! fixtures and online!
         if (isset($jobDetails['trainedForJob'])) {
             $employee['trainedForJob'] = $jobDetails['trainedForJob'];
         }
