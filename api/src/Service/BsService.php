@@ -53,7 +53,7 @@ class BsService
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
         $message = [
             'content'   => "Beste {$contact['givenName']},<p>U bent uitgenodigd als vrijwilliger voor de taalhuizen applicatie.</p><p><a href='$link'>Klik hier om het wachtwoord in te stellen</a></p><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
-            'subject'   => 'Wachtwoord reset op Taalhuizen',
+            'subject'   => 'U bent uitgenodigd als Taalhuis-vrijwilliger',
             'sender'    => 'info@taalhuizen-bisc.commonground.nu',
             'reciever'  => $email,
             'status'    => 'queued',

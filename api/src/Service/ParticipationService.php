@@ -298,6 +298,10 @@ class ParticipationService
 
             // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
+
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participant['mentor'] = $mentorUrl;
+            $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
         }
         return $result;
     }
@@ -313,6 +317,10 @@ class ParticipationService
         if (!$this->eavService->hasEavObject($mentorUrl)) {
             return ['errorMessage'=>'Invalid request, '. $mentorUrl .' is not an existing eav/mrc/employee!'];
         }
+
+        $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+        $participant['mentor'] = '';
+        $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
 
         // Update eav/mrc/employee to remove the participation from it
         $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
@@ -347,14 +355,24 @@ class ParticipationService
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
             $group['participations'] = $getGroup['participations'];
+            $group['participants'] = $getGroup['participants'];
         }
         if (!isset($group['participations'])){
             $group['participations'] = [];
+            $group['participants'] = $this->commonGroundService->getResource($groupUrl)['participants'];
+        }
+        if (isset($group['participants'])) {
+            foreach ($group['participants'] as &$participant) {
+                $participant = '/participants/'.$participant['id'];
+            }
         }
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
-            array_push($group['participations'], $participation['@id']);
+            $group['participations'][] = $participation['@id'];
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
+            $group['participants'][] = '/participants/'.$participantId;
             $group = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
 
             // Add $group to the $result['group'] because this is convenient when testing or debugging (mostly for us)
@@ -389,6 +407,16 @@ class ParticipationService
             $group['participations'] = array_values(array_filter($getGroup['participations'], function($groupParticipation) use($participation) {
                 return $groupParticipation != $participation['@eav'];
             }));
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
+            $group['participants'] = array_values(array_filter($getGroup['participants'], function($groupParticipant) use($participantId) {
+                return $groupParticipant['id'] != $participantId;
+            }));
+            if (isset($group['participants'])) {
+                foreach ($group['participants'] as &$participant) {
+                    $participant = '/participants/'.$participant['id'];
+                }
+            }
             $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
         }
         // Update eav/participation to remove the EAV/edu/group from it

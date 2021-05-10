@@ -41,7 +41,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
             // Now put together the expected result for Lifely:
             foreach ($result['languageHouses'] as &$languageHouse) {
                 if (!isset($languageHouse['errorMessage'])) {
-                    $resourceResult = $this->languageHouseService->createLanguageHouseObject($languageHouse);
+                    $resourceResult = $this->languageHouseService->handleResult($languageHouse);
                     $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
                     $collection->add($resourceResult);
                     $languageHouse = $languageHouse['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
