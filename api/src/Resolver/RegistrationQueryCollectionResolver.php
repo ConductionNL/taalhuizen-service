@@ -82,6 +82,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id']) && $student['participant']['referredBy']) {
+                // this registrarPerson and memo should be moved to studentservice->getstudent
                 $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
                 $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
                 $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
