@@ -36,7 +36,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
             // Now put together the expected result for Lifely:
             foreach ($result['providers'] as &$provider) {
                 if (!isset($provider['errorMessage'])) {
-                    $resourceResult = $this->providerService->createProviderObject($provider);
+                    $resourceResult = $this->providerService->handleResult($provider);
                     $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
                     $collection->add($resourceResult);
                     $provider = $provider['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result

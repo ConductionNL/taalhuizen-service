@@ -66,7 +66,7 @@ class EDUService
     }
 
     public function getProgram($organization){
-        return $result = $this->commonGroundService->getResource(['component' => 'edu','type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'];
+         return $result = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $organization['@id']])["hydra:member"][0];
     }
 
     public function hasProgram($organization){

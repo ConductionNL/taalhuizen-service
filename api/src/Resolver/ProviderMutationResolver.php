@@ -57,9 +57,11 @@ class ProviderMutationResolver implements MutationResolverInterface
 
         $result = array_merge($result, $this->providerService->createProvider($provider));
 
-        // Now put together the expected result in $provider for Lifely:
-        $resourceResult = $this->providerService->handleResult($provider);
-        $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
+        if (isset($result['provider'])) {
+            // Now put together the expected result in $provider for Lifely:
+            $resourceResult = $this->providerService->handleResult($result['provider']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
+        }
 
         // If any error was catched throw it
         if (isset($result['errorMessage'])) {
@@ -85,9 +87,11 @@ class ProviderMutationResolver implements MutationResolverInterface
             // Save Provider
             $result = array_merge($result, $this->providerService->updateProvider($provider, $providerId));
 
-            // Now put together the expected result in $provider for Lifely:
-            $resourceResult = $this->providerService->handleResult($provider);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
+            if (isset($result['provider'])) {
+                // Now put together the expected result in $provider for Lifely:
+                $resourceResult = $this->providerService->handleResult($result['provider']);
+                $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
+            }
         }
 
         // If any error was caught throw it

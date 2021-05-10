@@ -183,6 +183,14 @@ class LearningNeed
     private $studentId;
 
     /**
+     * @var string The dateCreated of a learningNeed, used for reports.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $dateCreated;
+
+    /**
      * @var string The id of the objectEntity of an eav/learning_need.
      *
      * @Groups({"write"})
@@ -398,6 +406,18 @@ class LearningNeed
     public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?string
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(?string $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
 
         return $this;
     }

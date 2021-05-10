@@ -175,14 +175,16 @@ class StudentService
                             if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
                                 // Add studentUrl to array, if it is not already in there
                                 if (!in_array($learningNeed['participants'][0], $studentUrls)) {
-                                    array_push($studentUrls, $learningNeed['participants'][0]);
+                                    $studentUrls[] = $learningNeed['participants'][0];
                                     // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
                                     $student = $this->getStudent(null, $learningNeed['participants'][0], true);
-                                    // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant']);
-                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                                    // Add to the collection
-                                    $collection->add($resourceResult);
+                                    if ($student['participant']['status'] == 'accepted') {
+                                        // Handle Result
+                                        $resourceResult = $this->handleResult($student['person'], $student['participant']);
+                                        $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                                        // Add to the collection
+                                        $collection->add($resourceResult);
+                                    }
                                 }
                             }
                         }
@@ -238,6 +240,15 @@ class StudentService
 
         //todo:make sure to get all data from the correct places
         // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
+        $registrar = [
+            'id' => $organization['id'] ?? null,
+            'organisationName' => $organization['name'] ?? null,
+            'givenName' => $registrarPerson['givenName'] ?? null,
+            'additionalName' => $registrarPerson['additionalName'] ?? null,
+            'familyName' => $registrarPerson['familyName'] ?? null,
+            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
+            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
+        ];
 
         // Create all subresources
         $civicIntegrationDetails = [
@@ -274,16 +285,6 @@ class StudentService
             'otherLanguages' => $person['speakingLanguages'] ?? null,
             'familyComposition' => $person['maritalStatus'] ?? null,
             'childrenDatesOfBirth' => $person['dependents'] ?? null,
-        ];
-
-        $registrar = [
-            'id' => $organization['id'] ?? null,
-            'organisationName' => $organization['name'] ?? null,
-            'givenName' => $registrarPerson['givenName'] ?? null,
-            'additionalName' => $registrarPerson['additionalName'] ?? null,
-            'familyName' => $registrarPerson['familyName'] ?? null,
-            'email' => $registrarPerson['telephones'][0]['telephone'] ?? null,
-            'telephone' => $registrarPerson['emails'][0]['email'] ?? null,
         ];
 
         if (isset($registration)) {
