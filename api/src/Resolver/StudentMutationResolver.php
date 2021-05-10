@@ -98,18 +98,20 @@ class StudentMutationResolver implements MutationResolverInterface
         // Save edu/participant
         $participant = $this->eduService->saveEavParticipant($participant);
 
-        $employee = $this->inputToEmployee($input, $person['@id'], $languageHouseUrl);
+        $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee
-        $employee = $this->mrcService->createEmployee($employee);
-        // todo: w.i.p...
-//        // Then save mrc/employee / mrc objects
-        $this->saveMRCObjects($input, $person['@id']);
-//
+        $employee = $this->mrcService->createEmployee($employee, true);
+        if (isset($employee['educations'])) {
+            foreach ($employee['educations'] as &$education) {
+                $education = $this->eavService->getObject('education', $education['@id'], 'mrc');
+            }
+        }
+
 //        // Then save memo('s)
 //        $this->saveMemos($input, $ccPersonUrl);
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -146,7 +148,7 @@ class StudentMutationResolver implements MutationResolverInterface
 //        $this->saveMemos($input, $ccPersonUrl);
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult = $this->studentService->handleResult($person, $participant, null);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         $this->entityManager->persist($resourceResult);
@@ -183,33 +185,6 @@ class StudentMutationResolver implements MutationResolverInterface
 //            throw new Exception($result['errorMessage']);
 //        }
         return null;
-    }
-
-    //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
-
-    /**
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
-     */
-    private function saveMRCObjects(array $input, string $personUrl)
-    {
-        $employee = $this->mrcService->getEmployee($personUrl);
-        if (!isset($employee)) {
-            $employee = [];
-            $employee['contact'] = $personUrl;
-            $employee = $this->mrcService->createEmployee($employee);
-//            var_dump($employee);die;
-        }
-//      MRC
-        if (isset($input['jobDetails'])) {
-            $employee = $this->getEmployeePropertiesFromJobDetails($input['jobDetails']);
-        }
-//        EDU
-//        if (isset($input['motivationDetails'])) {
-//            $person = $this->getPersonPropertiesFromMotivationDetails($person, $input);
-//        }
-//        $person = $this->studentService->saveStudentResource($person, 'persons');
-
-        $employee = $this->mrcService->updateEmployee($employee->getId(),  $this->serializer->normalize($employee, null));
     }
 
     //todo: should be done in StudentService, for examples see StudentService->saveStudent or TestResultService->saveTestResult
@@ -525,25 +500,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
-    private function getEmployeePropertiesFromJobDetails($jobDetails): array
-    {
-        if (isset($jobDetails['trainedForJob'])) {
-            $employee['trainedForJob'] = $jobDetails['trainedForJob'];
-        }
-        if (isset($jobDetails['lastJob'])) {
-            $employee['lastJob'] = $jobDetails['lastJob'];
-        }
-        if (isset($jobDetails['dayTimeActivities'])) {
-            $employee['dayTimeActivities'] = $jobDetails['dayTimeActivities'];
-        }
-        if (isset($jobDetails['dayTimeActivitiesOther'])) {
-            $employee['dayTimeActivitiesOther'] = $jobDetails['dayTimeActivitiesOther'];
-        }
-
-        return $employee;
-    }
-
-    private function inputToEmployee($input, $personUrl, $languageHouseUrl): array
+    private function inputToEmployee($input, $personUrl): array
     {
         $employee = [
             'person' => $personUrl
@@ -551,27 +508,43 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($input['educationDetails'])) {
             $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails']);
         }
+        if (isset($input['courseDetails'])) {
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails']);
+        }
+        if (isset($input['jobDetails'])) {
+            $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
+        }
 
         return $employee;
     }
 
     private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails): array
     {
+        $newEducation = [
+            'name' => 'lastEducation',
+            'description' => 'lastEducation'
+        ];
         if (isset($educationDetails['lastFollowedEducation'])) {
             $newEducation = [
                 'name' => $educationDetails['lastFollowedEducation'],
-                'description' => 'lastEducation',
-                'didGraduate' => true
+                'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation']
             ];
-            $employee['educations'][] = $newEducation;
+            if (isset($educationDetails['didGraduate'])) {
+                if ($educationDetails['didGraduate'] == true) {
+                    $newEducation['degreeGrantedStatus'] = 'Granted';
+                } else {
+                    $newEducation['degreeGrantedStatus'] = 'notGranted';
+                }
+            }
         }
+        $employee['educations'][] = $newEducation;
 
-        $newEducation = [];
+        $newEducation = [
+            'name' => 'followingEducation',
+            'description' => 'followingEducation'
+        ];
         if (isset($educationDetails['followingEducationRightNow'])) {
             if ($educationDetails['followingEducationRightNow'] == 'YES') {
-                $newEducation = [
-                    'description' => 'followingEducation'
-                ];
                 if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
                     $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
                 }
@@ -593,9 +566,6 @@ class StudentMutationResolver implements MutationResolverInterface
                     }
                 }
             } else {
-                $newEducation = [
-                    'description' => 'course'
-                ];
                 if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
                     $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
                 }
@@ -611,7 +581,59 @@ class StudentMutationResolver implements MutationResolverInterface
                     }
                 }
             }
-            $employee['educations'][] = $newEducation;
+        }
+        $employee['educations'][] = $newEducation;
+
+        return $employee;
+    }
+
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails): array
+    {
+        $newEducation = [
+            'name' => 'course',
+            'description' => 'course'
+        ];
+        if (isset($courseDetails['isFollowingCourseRightNow'])) {
+            if ($courseDetails['isFollowingCourseRightNow'] == true) {
+                if (isset($courseDetails['courseName'])) {
+                    $newEducation['name'] = $courseDetails['courseName'];
+                }
+                if (isset($courseDetails['courseTeacher'])) {
+                    $newEducation['teacherProfessionalism'] = $courseDetails['courseTeacher'];
+                }
+                if (isset($courseDetails['courseGroup'])) {
+                    $newEducation['groupFormation'] = $courseDetails['courseGroup'];
+                }
+                if (isset($courseDetails['amountOfHours'])) {
+                    $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
+                }
+                if (isset($courseDetails['doesCourseProvideCertificate'])) {
+                    if ($courseDetails['doesCourseProvideCertificate'] == true) {
+                        $newEducation['providesCertificate'] = true;
+                    } else {
+                        $newEducation['providesCertificate'] = false;
+                    }
+                }
+            }
+        }
+        $employee['educations'][] = $newEducation;
+
+        return $employee;
+    }
+
+    private function getEmployeePropertiesFromJobDetails($employee, $jobDetails): array
+    {
+        if (isset($jobDetails['trainedForJob'])) {
+            $employee['trainedForJob'] = $jobDetails['trainedForJob'];
+        }
+        if (isset($jobDetails['lastJob'])) {
+            $employee['lastJob'] = $jobDetails['lastJob'];
+        }
+        if (isset($jobDetails['dayTimeActivities'])) {
+            $employee['dayTimeActivities'] = $jobDetails['dayTimeActivities'];
+        }
+        if (isset($jobDetails['dayTimeActivitiesOther'])) {
+            $employee['dayTimeActivitiesOther'] = $jobDetails['dayTimeActivitiesOther'];
         }
 
         return $employee;

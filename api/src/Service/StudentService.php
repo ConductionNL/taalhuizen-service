@@ -102,7 +102,6 @@ class StudentService
         // Get the edu/participant from EAV
         if ($skipChecks || $this->eavService->hasEavObject($studentUrl)) {
             $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            $result['participant'] = $participant;
 
             if (!$skipChecks && !$this->commonGroundService->isResource($participant['person'])) {
                 throw new Exception('Warning, '. $participant['person'] .' the person (cc/person) of this student does not exist!');
@@ -110,40 +109,69 @@ class StudentService
             // Get the cc/person from EAV
             if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
                 $person = $this->eavService->getObject('people', $participant['person'], 'cc');
-                $result['person'] = $person;
             } else {
                 throw new Exception('Warning, '. $participant['person'] .' does not have an eav object (eav/cc/people)!');
             }
 
-            // Get students data from eav
-            $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $result['person']['@id']])['hydra:member'];
-            if (isset($employees[0])); {
-                $employee = $this->serializer->normalize($this->mrcService->getEmployee($employees[0]['id']));
-                foreach ($employee['interests'] as $interest) {
-                    if ($interest['name'] == 'dayTimeActivity') {
-                        $result['person']['jobDetails']['dayTimeActivities'][] = $interest['description'];
-                    }
-                }
-                if (isset($employee['jobFunctions'])) {
-                    $result['person']['jobDetails']['lastJob'] = end($employee['jobFunctions'])['name'];
+            // get the registrarOrganization, registrarPerson and its memo
+            if (isset($participant['referredBy'])) {
+                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+                $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+                $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])["hydra:member"];
+                if (count($registrarMemos) > 0) {
+                    $registrarMemo = $registrarMemos[0];
                 }
             }
 
+            // Get students data from mrc
+            $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $person['@id']])['hydra:member'];
+            if (count($employees) > 0) {
+                $employee = $employees[0];
+                if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
+                    $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
+                    if (isset($employee['educations'])) {
+                        foreach ($employee['educations'] as &$education) {
+                            $education = $this->eavService->getObject('education', $education['@id'], 'mrc');
+                        }
+                    }
+                }
+                $employeeDTO = $this->serializer->normalize($this->mrcService->getEmployee($employee['id']));
+                if (isset($employeeDTO['interests'])) {
+                    foreach ($employeeDTO['interests'] as $interest) {
+                        if ($interest['name'] == 'dayTimeActivity') {
+                            $person['jobDetails']['dayTimeActivities'][] = $interest['description'];
+                        }
+                    }
+                }
+                if (isset($employeeDTO['jobFunctions'])) {
+                    $person['jobDetails']['lastJob'] = end($employeeDTO['jobFunctions'])['name'];
+                }
+            }
         } else {
             throw new Exception('Invalid request, '. $id .' is not an existing student (eav/edu/participant)!');
         }
 
-        return $result;
+        return [
+            'participant' => $participant ?? null,
+            'person' => $person ?? null,
+            'employee' => $employee ?? null,
+            'registrarOrganization' => $registrarOrganization ?? null,
+            'registrarPerson' => $registrarPerson ?? null,
+            'registrarMemo' => $registrarMemo ?? null,
+        ];
     }
 
     /**
      * @param array $query
      * @return array
      */
-    public function getStudents(array $query): array
+    public function getStudents(array $query, bool $registrations = false): array
     {
         $students = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
         foreach ($students as $key => $student) {
+            if ($registrations and !isset($student['referredBy'])) {
+                continue;
+            }
             $students[$key] = $this->getStudent($student['id']);
         }
         return $students;
@@ -230,7 +258,7 @@ class StudentService
 //        }
     }
 
-    public function handleResult($person, $participant, $registrarPerson = null, $organization = null, $memo = null,  $registration = null) {
+    public function handleResult($person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registrarMemo = null,  $registration = null) {
         if (isset($registration)) {
             // Put together the expected result for Lifely:
             $resource = new Registration();
@@ -241,8 +269,8 @@ class StudentService
         //todo:make sure to get all data from the correct places
         // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
         $registrar = [
-            'id' => $organization['id'] ?? null,
-            'organisationName' => $organization['name'] ?? null,
+            'id' => $registrarOrganization['id'] ?? null,
+            'organisationName' => $registrarOrganization['name'] ?? null,
             'givenName' => $registrarPerson['givenName'] ?? null,
             'additionalName' => $registrarPerson['additionalName'] ?? null,
             'familyName' => $registrarPerson['familyName'] ?? null,
@@ -289,7 +317,7 @@ class StudentService
 
         if (isset($registration)) {
             $referrerDetails = [
-                'referringOrganization' => $organization['name'] ?? null,
+                'referringOrganization' => $registrarOrganization['name'] ?? null,
                 'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
                 'email' => $registrarPerson['emails'][0]['email'] ?? null,
             ];
@@ -320,9 +348,12 @@ class StudentService
             'lastKnownLevel' => $person['lastKnownLevel'] ?? null,
         ];
 
+        //todo get this from $employee:
         $educationDetails = [
+            //todo: (educations where description = lastEducation)
             'lastFollowedEducation' => $person['lastFollowedEducation'] ?? null,
             'didGraduate' => $person['didGraduate'] ?? null,
+            //todo: (educations where description = followingEducation)
             'followingEducationRightNow' => $person['followingEducationRightNow'] ?? null,
             'followingEducationRightNowYesStartDate' => $person['followingEducationRightNowYesStartDate'] ?? null,
             'followingEducationRightNowYesEndDate' => $person['followingEducationRightNowYesEndDate'] ?? null,
@@ -334,6 +365,7 @@ class StudentService
             'followingEducationRightNowNoGotCertificate' => $person['followingEducationRightNowNoGotCertificate'] ?? null,
         ];
 
+        //todo get this from $employee: (educations where description = course)
         $courseDetails = [
             'isFollowingCourseRightNow' => $person['isFollowingCourseRightNow'] ?? null,
             'courseName' => $person['courseName'] ?? null,
@@ -343,6 +375,7 @@ class StudentService
             'doesCourseProvideCertificate' => $person['doesCourseProvideCertificate'] ?? null,
         ];
 
+        //todo get this from $employee (eav values should be available in $employee):
         $jobDetails = [
             'trainedForJob' => $person['trainedForJob'] ?? null,
             'lastJob' => $person['lastJob'] ?? null,
@@ -375,7 +408,7 @@ class StudentService
         // Set all subresources in response DTO body
         if (isset($participant['dateCreated'])) { $resource->setDateCreated(new \DateTime($participant['dateCreated'])); } //todo: this is currently incorrect, timezone problem
         if (isset($participant['status'])) { $resource->setStatus($participant['status']); }
-        if (isset($memo['description'])) { $resource->setMemo($memo['description']); }
+        if (isset($registrarMemo['description'])) { $resource->setMemo($registrarMemo['description']); }
         $resource->setRegistrar($registrar);
         $resource->setCivicIntegrationDetails($civicIntegrationDetails);
         $resource->setPersonDetails($personDetails);

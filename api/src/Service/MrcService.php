@@ -437,7 +437,7 @@ class MrcService
         return $array;
     }
 
-    public function createEmployee(array $employeeArray): Employee
+    public function createEmployee(array $employeeArray, $returnMrcObject = false)
     {
         if (isset($employeeArray['person'])) {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
@@ -477,9 +477,12 @@ class MrcService
         }
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)){
-            $this->createEmployeeEducations($employeeArray, $result['id']);
+            $this->createEmployeeEducations($employeeArray['educations'], $result['id']);
         }
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
+        if ($returnMrcObject) {
+            return $result;
+        }
         return $this->createEmployeeObject($result);
     }
 
@@ -557,7 +560,7 @@ class MrcService
         $employeeUri = '/employees/' . $employeeId;
         foreach ($educations as $education) {
             $education['employee'] = $employeeUri;
-            $education = $this->eavService->saveObject($education, 'educations', 'mrc');
+            $education = $this->eavService->saveObject($education, 'education', 'mrc');
         }
     }
 

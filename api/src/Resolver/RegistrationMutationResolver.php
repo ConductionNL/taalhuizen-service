@@ -151,12 +151,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['status'] = 'accepted';
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
 
-        $organization = $this->commonGroundService->getResource($participant['referredBy']);
-
-        $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
-        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
-
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $registrarPerson, $organization, $memo,  true);
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
