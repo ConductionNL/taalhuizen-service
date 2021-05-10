@@ -71,7 +71,6 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
 
     public function userRolesByLanguageHouse(string $id): LanguageHouse
     {
-        //@todo: get userRoles
         $result['result'] = [];
 
         $id = explode('/', $id);
@@ -80,6 +79,18 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         }
 
         $userGroup = $this->languageHouseService->getLanguageHouseUserGroups($id);
+
+        $result = array_merge($result, $this->languageHouseService->getUserRolesByLanguageHouse($id));
+
+        if (isset($result['userRolesByLanguageHouse'])) {
+            $resourceResult = $this->languageHouseService->handleResult($result['userRolesByLanguageHouse']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['userRolesByLanguageHouse']['id']));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
 
         return $result;
     }

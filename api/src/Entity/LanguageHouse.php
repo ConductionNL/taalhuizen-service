@@ -131,6 +131,14 @@ class LanguageHouse
      */
     private $type;
 
+    /**
+     * @var array|null The userRoles of this Taalhuis.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $userRoles;
+
     public function getId(): ?UuidInterface
     {
         return $this->id;
@@ -201,4 +209,17 @@ class LanguageHouse
 
         return $this;
     }
+
+    public function getUserRoleType(): ?array
+    {
+        return $this->userRoles;
+    }
+
+    public function setUserRoleType(array $userRoles): self
+    {
+        $this->userRoles = $userRoles;
+
+        return $this;
+    }
+
 }

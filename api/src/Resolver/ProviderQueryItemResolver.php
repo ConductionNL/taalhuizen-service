@@ -82,6 +82,18 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         var_dump($userGroups);
 
 
+        $result = array_merge($result, $this->providerService->getUserRolesByProvider($id));
+
+        if (isset($result['userRolesByProvider'])) {
+            $resourceResult = $this->providerService->handleResult($result['userRolesByProvider']);
+            $resourceResult->setId(Uuid::getFactory()->fromString($result['userRolesByProvider']['id']));
+        }
+
+        // If any error was caught throw it
+        if (isset($result['errorMessage'])) {
+            throw new Exception($result['errorMessage']);
+        }
+
         return $result;
     }
 

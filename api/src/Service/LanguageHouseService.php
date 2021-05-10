@@ -229,4 +229,11 @@ class LanguageHouseService
         }
         return false;
     }
+
+    public function getUserRolesByLanguageHouse($id)
+    {
+        $organization = $this->commonGroundService->getResource(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        return $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organization['@id']]);
+
+    }
 }

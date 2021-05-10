@@ -91,7 +91,6 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
                 $collection->add($resourceResult);
             }
         }
-
         return $collection;
     }
 }
