@@ -5,7 +5,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-05-07T12:05:32.6434196Z"
+    created: "2021-05-07T09:15:49.7170312Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -37,7 +37,7 @@ entries:
   taalhuizen-service:
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-05-07T12:05:32.6302166Z"
+    created: "2021-05-07T09:15:49.698619Z"
     description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql)
       interface beschikbaar.&amp;#039;'
     digest: 5756c5c1ca4afed83e5409939da968eabac64808859500c00593b5f8b4ee9130
@@ -60,4 +60,4 @@ entries:
     urls:
     - taalhuizen-service-0.1.0.tgz
     version: 0.1.0
-generated: "2021-05-07T12:05:32.61371Z"
+generated: "2021-05-07T09:15:49.6719975Z"

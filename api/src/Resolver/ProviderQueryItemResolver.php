@@ -68,15 +68,19 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         return $resourceResult;
     }
 
-    public function userRolesByProvider(string $id): Provider
+    public function userRolesByProvider(string $providerId): Provider
     {
 
         $result['result'] = [];
 
-        $id = explode('/', $id);
-        if (is_array($id)) {
-            $id = end($id);
+        $providerId = explode('/', $providerId);
+        if (is_array($providerId)) {
+            $providerId = end($providerId);
         }
+
+        $userGroups = $this->providerService->getProviderUserGroups($providerId);
+        var_dump($userGroups);
+
 
         return $result;
     }

@@ -79,6 +79,8 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
             $id = end($id);
         }
 
+        $userGroup = $this->languageHouseService->getLanguageHouseUserGroups($id);
+
         return $result;
     }
 }
