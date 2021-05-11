@@ -61,10 +61,10 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     public function providers(array $context): ?ArrayCollection
     {
         // Get the providers
-        $providers = $this->providerService->getProviders();
+        $result = $this->providerService->getProviders();
 
         $collection = new ArrayCollection();
-        foreach ($providers as $provider) {
+        foreach ($result['providers'] as $provider) {
             $resourceResult = $this->providerService->handleResult($provider);
             $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
             $collection->add($resourceResult);

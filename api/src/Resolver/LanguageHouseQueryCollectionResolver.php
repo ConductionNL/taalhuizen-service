@@ -64,10 +64,10 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
     public function languageHouses(?array $context): ?ArrayCollection
     {
         // Get the languageHouses
-        $languageHouses = $this->languageHouseService->getLanguageHouses();
+        $result = $this->languageHouseService->getLanguageHouses();
 
         $collection = new ArrayCollection();
-        foreach ($languageHouses as $languageHouse) {
+        foreach ($result['languageHouses'] as $languageHouse) {
             $resourceResult = $this->languageHouseService->handleResult($languageHouse);
             $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
             $collection->add($resourceResult);
