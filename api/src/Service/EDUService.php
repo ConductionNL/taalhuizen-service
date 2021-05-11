@@ -55,12 +55,13 @@ class EDUService
     }
 
     //@todo uitwerken
-    public function saveProgram($organization){
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider', $organization['@id']])['hydra:member'][0];
+    public function saveProgram($organization, $update = false){
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
         $program['provider'] = $organization['@id'];
 
-        if ($program) {
+        if ($update) {
+            $program = $program[0];
             $program = $this->commonGroundService->updateResource($program,['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
         } else {
             $program = $this->commonGroundService->saveResource($program,['component' => 'edu','type'=>'programs']);

@@ -44,17 +44,9 @@ class CCService
         $this->mrcService = $mrcService;
     }
 
-    public function createOrganization(array $organizationArray): Provider
+    public function createOrganization(array $organizationArray, $type)
     {
         $wrcOrganization = $this->wrcService->createOrganization($organizationArray);
-        $email = [
-            'name' => 'Email of '.$organizationArray['name'],
-            'email' => $organizationArray['email'],
-        ];
-        $telephone = [
-            'name' => 'Telephone of '.$organizationArray['name'],
-            'telephone' => $organizationArray['phoneNumber'],
-        ];
         $address = [
             'name' => 'Address of '.$organizationArray['name'],
             'street' => $organizationArray['address']['street'],
@@ -65,10 +57,10 @@ class CCService
         ];
         $resource = [
             'name' => $organizationArray['name'],
-            'type' => 'Aanbieder',
-            'addresses' => [$address],
-            'emails' => [$email],
-            'telephones' => [$telephone],
+            'type' => $type,
+            'telephones'        => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
+            'emails'            => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
+            'addresses'         => [$address],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
@@ -76,22 +68,14 @@ class CCService
         $this->commonGroundService->saveResource($wrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganization['id']]);
 
         $this->eduService->saveProgram($result);
-        $this->ucService->createUserGroups($result);
-        return $this->createOrganizationObject($result);
+        $this->ucService->createUserGroups($result, $type);
+        return $this->createOrganizationObject($result, $type);
     }
 
-    public function updateOrganization(string $id, array $organizationArray, $languageHouse = null): Provider
+    public function updateOrganization(string $id, array $organizationArray, $type)
     {
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);
-        $email = [
-            'name' => 'Email of '.$organizationArray['name'],
-            'email' => $organizationArray['email'],
-        ];
-        $telephone = [
-            'name' => 'Telephone of '.$organizationArray['name'],
-            'telephone' => $organizationArray['phoneNumber'],
-        ];
         $address = [
             'name' => 'Address of '.$organizationArray['name'],
             'street' => $organizationArray['address']['street'],
@@ -101,23 +85,22 @@ class CCService
             'locality' => $organizationArray['address']['locality'],
         ];
         $resource = [
-            'name' => $organizationArray['name'],
-            'type' => 'Aanbieder',
-            'addresses' => [$address],
-            'emails' => [$email],
-            'telephones' => [$telephone],
+            'name'              => $organizationArray['name'],
+            'telephones'        => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
+            'emails'            => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
+            'addresses'         => [$address],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
 
         $this->eduService->saveProgram($result);
-        $this->ucService->createUserGroups($result);
-        return $this->createOrganizationObject($result);
+        $this->ucService->createUserGroups($result, $type);
+        return $this->createOrganizationObject($result, $type);
     }
 
-    public function createOrganizationObject(array $result, $languageHouse = null): Provider
+    public function createOrganizationObject(array $result, $type)
     {
-        if (isset($languageHouse)) {
+        if ($type == 'Taalhuis') {
             $organization = new LanguageHouse();
         } else {
             $organization = new Provider();

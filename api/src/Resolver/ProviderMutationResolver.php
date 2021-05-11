@@ -62,13 +62,15 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     public function createProvider(array $providerArray): Provider
     {
-        return $this->ccService->createOrganization($providerArray);
+        $type = 'Aanbieder';
+        return $this->ccService->createOrganization($providerArray, $type);
     }
 
     public function updateProvider(array $input): Provider
     {
+        $type = 'Aanbieder';
         $id = explode('/',$input['id']);
-        return $this->ccService->updateOrganization(end($id), $input);
+        return $this->ccService->updateOrganization(end($id), $input, $type);
     }
 
     public function deleteProvider(array $input): ?Provider
