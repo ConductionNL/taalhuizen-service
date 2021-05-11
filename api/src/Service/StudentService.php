@@ -343,7 +343,7 @@ class StudentService
             'lastKnownLevel' => $person['lastKnownLevel'] ?? null,
         ];
 
-        $lastEducation = $followingEducationNo = $followingEducationYes = $course = [];
+        $lastEducation = $followingEducationNo = $followingEducationYes = $course = null;
         if (isset($employee['educations'])) {
             foreach ($employee['educations'] as $education) {
                 switch ($education['description']) {
@@ -359,12 +359,12 @@ class StudentService
                         break;
                     case 'followingEducationYes':
                         if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
-                            $followingEducationYes = $this->eavService->getObject('education', $education['@id'], 'mrc');
+                            $followingEducationYes = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
                         }
                         break;
                     case 'course':
                         if(!isset($course)) {
-                            $course = $this->eavService->getObject('education', $education['@id'], 'mrc');
+                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
                         }
                         break;
                 }
