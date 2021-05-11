@@ -210,8 +210,10 @@ class CCService
         return $userRolesByLanguageHouse;
     }
 
-    public function getOrganization($id){
-        return $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+    public function getOrganization(string $id, $type)
+    {
+        $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        return $this->createOrganizationObject($result, $type);
     }
 
     public function convertAddress(array $addressArray): array
