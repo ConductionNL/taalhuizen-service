@@ -372,7 +372,7 @@ class StudentService
         }
         $educationDetails = [
             'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
-            'didGraduate' => $lastEducation['degreeGrantedStatus'] ?? null,
+            'didGraduate' => $lastEducation['degreeGrantedStatus'] ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
             'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
             'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
             'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
