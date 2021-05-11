@@ -32,8 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "userRolesBy" = {
- *              "item_query" = LanguageHouseQueryItemResolver::class,
- *              "read" = false
+ *              "collection_query" = LanguageHouseQueryCollectionResolver::class
  *          },
  *          "collection_query" = {
  *              "collection_query" = LanguageHouseQueryCollectionResolver::class
@@ -62,6 +61,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "validation_groups" = {"Default", "remove"}
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=LanguageHouseRepository::class)
  */
 class LanguageHouse
@@ -132,12 +132,12 @@ class LanguageHouse
     private $type;
 
     /**
-     * @var array|null The userRoles of this Taalhuis.
+     * @var string The id of the cc/organization of a languageHouse.
      *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?array $userRoles;
+    private $languageHouseId;
 
     public function getId(): ?UuidInterface
     {
@@ -210,14 +210,14 @@ class LanguageHouse
         return $this;
     }
 
-    public function getUserRoleType(): ?array
+    public function getLanguageHouseId(): ?string
     {
-        return $this->userRoles;
+        return $this->languageHouseId;
     }
 
-    public function setUserRoleType(array $userRoles): self
+    public function setLanguageHouseId(string $languageHouseId): self
     {
-        $this->userRoles = $userRoles;
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }

@@ -156,21 +156,25 @@ class ProviderService
         return $result;
     }
 
-    public function handleResult($provider)
+    public function handleResult($provider, $userRoles = null)
     {
         $resource = new Provider();
-        $address = [
-            'street' => $provider['addresses'][0]['street'] ?? null,
-            'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
-            'locality' => $provider['addresses'][0]['locality'] ?? null,
-        ];
-        $resource->setAddress($address);
-        $resource->setEmail($provider['emails'][0]['email'] ?? null);
-        $resource->setPhoneNumber($provider['telephones'][0]['telephone'] ?? null);
-        $resource->setName($provider['name']);
-        $resource->setType($provider['type'] ?? null);
+        if (isset($userRoles)) {
+            $resource->setName($userRoles['name']);
+        } else {
+            $address = [
+                'street' => $provider['addresses'][0]['street'] ?? null,
+                'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
+                'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
+                'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
+                'locality' => $provider['addresses'][0]['locality'] ?? null,
+            ];
+            $resource->setAddress($address);
+            $resource->setEmail($provider['emails'][0]['email'] ?? null);
+            $resource->setPhoneNumber($provider['telephones'][0]['telephone'] ?? null);
+            $resource->setName($provider['name']);
+            $resource->setType($provider['type'] ?? null);
+        }
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -225,11 +229,12 @@ class ProviderService
         return $userRoles;
     }
 
-    public function getUserRolesByProvider($id)
+    public function getUserRolesByProvider($id): array
     {
-        $organization = $this->commonGroundService->getResource(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        return $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organization['@id']]);
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        $userRolesByProvider =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
 
+        return $userRolesByProvider;
     }
 
 }

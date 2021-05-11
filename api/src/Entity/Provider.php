@@ -22,8 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "userRolesBy" = {
- *              "item_query" = ProviderQueryItemResolver::class,
- *              "read" = false
+ *              "collection_query" = ProviderQueryCollectionResolver::class
  *          },
  *          "collection_query" = {
  *              "collection_query" = ProviderQueryCollectionResolver::class
@@ -48,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     },
  * )
- *
+ * @ApiFilter(SearchFilter::class, properties={"providerId": "exact"})
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
 class Provider
@@ -118,12 +117,12 @@ class Provider
     private $type;
 
     /**
-     * @var array|null The userRoles of this Taalhuis.
+     * @var string The id of the cc/organization of a provider.
      *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?array $userRoles;
+    private $providerId;
 
     public function getId(): ?UuidInterface
     {
@@ -196,17 +195,15 @@ class Provider
         return $this;
     }
 
-    public function getUserRoleType(): ?array
+    public function getProviderId(): ?string
     {
-        return $this->userRoles;
+        return $this->providerId;
     }
 
-    public function setUserRoleType(array $userRoles): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->userRoles = $userRoles;
+        $this->providerId = $providerId;
 
         return $this;
     }
-
-
 }

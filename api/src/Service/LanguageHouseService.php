@@ -97,7 +97,7 @@ class LanguageHouseService
         return $result;
     }
 
-    public function getLanguageHouses()
+    public function getLanguageHouses(): array
     {
         $result['languageHouses'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis'])["hydra:member"];
         return $result;
@@ -162,21 +162,25 @@ class LanguageHouseService
         return $result;
     }
 
-    public function handleResult($languageHouse)
+    public function handleResult($languageHouse, $userRoles = null)
     {
         $resource = new LanguageHouse();
-        $address = [
-            'street' => $languageHouse['addresses'][0]['street'] ?? null,
-            'houseNumber' => $languageHouse['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $languageHouse['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode' => $languageHouse['addresses'][0]['postalCode'] ?? null,
-            'locality' => $languageHouse['addresses'][0]['locality'] ?? null,
-        ];
-        $resource->setAddress($address);
-        $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
-        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
-        $resource->setName($languageHouse['name']);
-        $resource->setType($languageHouse['type'] ?? null);
+        if (isset($userRoles)) {
+            $resource->setName($userRoles['name']);
+        } else {
+            $address = [
+                'street' => $languageHouse['addresses'][0]['street'] ?? null,
+                'houseNumber' => $languageHouse['addresses'][0]['houseNumber'] ?? null,
+                'houseNumberSuffix' => $languageHouse['addresses'][0]['houseNumberSuffix'] ?? null,
+                'postalCode' => $languageHouse['addresses'][0]['postalCode'] ?? null,
+                'locality' => $languageHouse['addresses'][0]['locality'] ?? null,
+            ];
+            $resource->setAddress($address);
+            $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
+            $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
+            $resource->setName($languageHouse['name']);
+            $resource->setType($languageHouse['type'] ?? null);
+        }
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -230,10 +234,11 @@ class LanguageHouseService
         return false;
     }
 
-    public function getUserRolesByLanguageHouse($id)
+    public function getUserRolesByLanguageHouse($id): array
     {
-        $organization = $this->commonGroundService->getResource(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        return $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organization['@id']]);
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
 
+        return $userRolesByLanguageHouse;
     }
 }
