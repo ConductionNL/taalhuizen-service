@@ -34,6 +34,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         if (!key_exists('languageHouseId', $context['args'])) {
             return null;
         }
+
         switch ($context['info']->operation->name->value) {
             case 'registrations':
                 return $this->createPaginator($this->students($context), $context['args']);
@@ -87,7 +88,6 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
                 $collection->add($resourceResult);
             }
         }
-
         return $collection;
     }
 }

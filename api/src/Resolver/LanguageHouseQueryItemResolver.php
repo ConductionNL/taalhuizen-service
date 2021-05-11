@@ -23,26 +23,12 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        switch($context['info']->operation->name->value){
-            case 'userRolesByLanguageHouse':
-                if(key_exists('languageHouseId', $context['info']->variableValues)){
-                    $languageHouseId = $context['info']->variableValues['languageHouseId'];
-                } elseif (key_exists('id', $context['args'])) {
-                    $languageHouseId = $context['args']['id'];
-                } else {
-                    throw new Exception('The languageHouseId / id was not specified');
-                }
-                return $this->userRolesByLanguageHouse($languageHouseId);
-            default:
-                if(key_exists('languageHouseId', $context['info']->variableValues)){
-                    $languageHouseId = $context['info']->variableValues['languageHouseId'];
-                } elseif (key_exists('id', $context['args'])) {
-                    $languageHouseId = $context['args']['id'];
-                } else {
-                    throw new Exception('The languageHouseId / id was not specified');
-                }
-                return $this->getLanguageHouse($languageHouseId);
+        if (isset($context['info']->variableValues['languageHouseId'])) {
+            $id = $context['info']->variableValues['languageHouseId'];
+            $idArray = explode('/', $id);
+            $id = end($idArray);
         }
+            return $this->getLanguageHouse($id);
     }
 
     public function getLanguageHouse(string $id): LanguageHouse
@@ -67,18 +53,5 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         }
 
         return $resourceResult;
-    }
-
-    public function userRolesByLanguageHouse(string $id): LanguageHouse
-    {
-        //@todo: get userRoles
-        $result['result'] = [];
-
-        $id = explode('/', $id);
-        if (is_array($id)) {
-            $id = end($id);
-        }
-
-        return $result;
     }
 }

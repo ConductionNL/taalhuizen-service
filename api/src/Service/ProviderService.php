@@ -62,8 +62,23 @@ class ProviderService
         //program
         $program['name'] = 'Program of '.$provider['name'];
         $program['provider'] = $providerWrc['contact'];
-
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+
+        //coordinator
+        $coordinator['organization'] = $providerWrc['contact'];
+        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
+        $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+        //mentor
+        $mentor['organization'] = $providerWrc['contact'];
+        $mentor['name'] = 'AANBIEDER_MENTOR';
+        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($mentor,['component' => 'uc', 'type' => 'groups']);
+        //volunteer
+        $volunteer['organization'] = $providerWrc['contact'];
+        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
+        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($volunteer,['component' => 'uc', 'type' => 'groups']);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
@@ -141,21 +156,25 @@ class ProviderService
         return $result;
     }
 
-    public function handleResult($provider)
+    public function handleResult($provider, $userRoles = null)
     {
         $resource = new Provider();
-        $address = [
-            'street' => $provider['addresses'][0]['street'] ?? null,
-            'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
-            'locality' => $provider['addresses'][0]['locality'] ?? null,
-        ];
-        $resource->setAddress($address);
-        $resource->setEmail($provider['emails'][0]['email'] ?? null);
-        $resource->setPhoneNumber($provider['telephones'][0]['telephone'] ?? null);
-        $resource->setName($provider['name']);
-        $resource->setType($provider['type'] ?? null);
+        if (isset($userRoles)) {
+            $resource->setName($userRoles['name']);
+        } else {
+            $address = [
+                'street' => $provider['addresses'][0]['street'] ?? null,
+                'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
+                'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
+                'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
+                'locality' => $provider['addresses'][0]['locality'] ?? null,
+            ];
+            $resource->setAddress($address);
+            $resource->setEmail($provider['emails'][0]['email'] ?? null);
+            $resource->setPhoneNumber($provider['telephones'][0]['telephone'] ?? null);
+            $resource->setName($provider['name']);
+            $resource->setType($provider['type'] ?? null);
+        }
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -194,6 +213,28 @@ class ProviderService
             }
         }
         return false;
+    }
+
+    public function getProviderUserGroups($id)
+    {
+        //get provider url
+        $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organization', 'id' => $id]);
+        //get provider groups
+        $userGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'],['organization' => $providerUrl])['hydra:member'];
+        $userRoles = [];
+        foreach ($userGroups as $userGroup){
+            $userRoles['id'] = $userGroup['id'];
+            $userRoles['name'] = $userGroup['name'];
+        }
+        return $userRoles;
+    }
+
+    public function getUserRolesByProvider($id): array
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        $userRolesByProvider =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+
+        return $userRolesByProvider;
     }
 
 }
