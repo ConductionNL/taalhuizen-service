@@ -6,6 +6,7 @@ use App\Entity\Example;
 use App\Entity\LanguageHouse;
 use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Jose\Component\Signature\Algorithm\EdDSA;
 use phpDocumentor\Reflection\Types\This;
@@ -98,6 +99,21 @@ class CCService
         return $this->createOrganizationObject($result, $type);
     }
 
+    public function createUserRoleObject(array $result, $type)
+    {
+        if ($type == 'Taalhuis') {
+            $organization = new LanguageHouse();
+        } else {
+            $organization = new Provider();
+        }
+
+        $organization->setName($result['name']);
+        $this->entityManager->persist($organization);
+        $organization->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($organization);
+        return $organization;
+    }
+
     public function createOrganizationObject(array $result, $type)
     {
         if ($type == 'Taalhuis') {
@@ -153,6 +169,45 @@ class CCService
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
 
         return false;
+    }
+
+    public function getOrganizations($type): ArrayCollection
+    {
+        $organizations = new ArrayCollection();
+
+        if ($type == 'Taalhuis') {
+            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis'])["hydra:member"];
+        } else {
+            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Aanbieder'])["hydra:member"];
+        }
+
+        foreach ($results as $result) {
+            $organizations->add($this->createOrganizationObject($result, $type));
+        }
+
+        return $organizations;
+    }
+
+    public function getUserRolesByOrganization($organizationId, $type): ArrayCollection
+    {
+        $id = explode('/', $organizationId);
+        $userRoles = new ArrayCollection();
+
+        $results = $this->getUserRoles(end($id));
+
+        foreach ($results as $result) {
+            $userRoles->add($this->createUserRoleObject($result, $type));
+        }
+
+        return $userRoles;
+    }
+
+    public function getUserRoles($id): array
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+
+        return $userRolesByLanguageHouse;
     }
 
     public function getOrganization($id){
