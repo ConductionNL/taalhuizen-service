@@ -69,10 +69,10 @@ class CCService
                         $employee['contactPreferenceOther'] :
                         null
                     ),
-            'telephones'        => key_exists('telephone', $employee) ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
-            'emails'            => key_exists('email', $employee) ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
-            'addresses'         => key_exists('address', $employee) ? [$this->convertAddress($employee['address'])] : [],
-            'availability'      => key_exists('availability', $employee) ? $employee['availability'] : [],
+            'telephones'        => key_exists('telephone', $employee) && $employee['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
+            'emails'            => key_exists('email', $employee) && $employee['email'] ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
+            'addresses'         => key_exists('address', $employee) && $employee['address'] ? [$this->convertAddress($employee['address'])] : [],
+            'availability'      => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
         ];
         $person['telephones'][] = key_exists('contactTelephone', $employee) ? ['name' => 'contact telephone', 'telephone' => $employee['contactTelephone']] : null;
 
