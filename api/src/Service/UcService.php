@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Entity\Employee;
 use App\Entity\User;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
@@ -66,10 +67,11 @@ class UcService
         return $user;
     }
 
-    public function updateUserContactForEmployee(string $id, array $employee): array
+    public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
     {
-        $personId = $this->getUserArray($id)['person'];
-        $person = $this->ccService->employeeToPerson($employee);
+        $personId = explode('/', $this->getUserArray($id)['person']);
+        $personId = end($personId);
+        $person = $this->ccService->employeeToPerson($employeeArray, $employee);
         $result = $this->ccService->updatePerson($personId, $person);
 
         return $result;

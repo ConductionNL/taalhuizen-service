@@ -472,7 +472,7 @@ class MrcService
         $employee = $this->getEmployee($id);
         $userId = $employee->getUserId();
 
-        $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
+        $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
             'person'                => $contact['@id'],
@@ -493,11 +493,13 @@ class MrcService
         if(key_exists('volunteeringPreference', $employeeArray)){
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
-        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || $user = $this->checkIfUserExists(null, $employeeArray['email'])){
-            if(isset($user)){
-                $employeeArray['userId'] = $user['id'];
-            }
-            $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray)?$employeeArray['userGroupIds']:[]);
+        if(
+            (
+                $userId
+            ) ||
+            $userId = key_exists('email', $employeeArray) ? $this->checkIfUserExists(null, $employeeArray['email'])['id'] : $this->checkIfUserExists(null, $employee->getEmail())['id']
+        ) {
+            $this->updateUser($userId, $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : ($employee->getUserGroupIds() ?? []));
         } else {
             $this->createUser($employeeArray, $contact);
         }
