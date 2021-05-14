@@ -469,15 +469,17 @@ class MrcService
 
     public function updateEmployee(string $id, array $employeeArray): Employee
     {
-        //@TODO: keep CC Database clean
-        $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
+        $employee = $this->getEmployee($id);
+        $userId = $employee->getUserId();
+
+        $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         $resource = [
-            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
+            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
             'person'                => $contact['@id'],
-            'provider'              => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : null,
-            'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
-            'referrer'              => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : null,
-            'relevantCertificates'  => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : null,
+            'provider'              => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId(),
+            'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked(),
+            'referrer'              => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia(),
+            'relevantCertificates'  => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates(),
         ];
         $resource = $this->cleanResource($resource);
 
