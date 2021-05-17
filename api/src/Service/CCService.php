@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Employee;
 use App\Entity\Example;
 use App\Entity\LanguageHouse;
 use App\Entity\Provider;
@@ -239,26 +240,30 @@ class CCService
         return $array;
     }
 
-    public function employeeToPerson(array $employee): array {
+    public function employeeToPerson(array $employeeArray, ?Employee $employee = null): array {
         $person = [
-            'givenName' => $employee['givenName'],
-            'additionalName'    => key_exists('additionalName', $employee) ? $employee['additionalName'] : null,
-            'familyName'        => key_exists('familyName', $employee) ? $employee['familyName'] : null,
-            'birthday'          => key_exists('dateOfBirth', $employee) ? $employee['dateOfBirth'] : null,
-            'gender'            => key_exists('gender', $employee) ? ($employee['gender'] == "X" ? null: strtolower($employee['gender'])): null,
+            'givenName' => key_exists('givenName', $employeeArray) ? $employeeArray['givenName'] : ($employee ? $employee->getGivenName() : new \Exception('givenName must be provided')),
+            'additionalName'    => key_exists('additionalName', $employeeArray) ? $employeeArray['additionalName'] : null,
+            'familyName'        => key_exists('familyName', $employeeArray) ? $employeeArray['familyName'] : null,
+            'birthday'          => key_exists('dateOfBirth', $employeeArray) ? $employeeArray['dateOfBirth'] : null,
+            'gender'            => key_exists('gender', $employeeArray) ? ($employeeArray['gender'] == "X" ? null: strtolower($employeeArray['gender'])): null,
             'contactPreference' =>
-                key_exists('contactPreference', $employee) ?
-                    $employee['contactPreference'] :
-                    (key_exists('contactPreferenceOther', $employee) ?
-                        $employee['contactPreferenceOther'] :
+                key_exists('contactPreference', $employeeArray) ?
+                    $employeeArray['contactPreference'] :
+                    (key_exists('contactPreferenceOther', $employeeArray) ?
+                        $employeeArray['contactPreferenceOther'] :
                         null
                     ),
-            'telephones'        => key_exists('telephone', $employee) ? [['name' => 'telephone 1', 'telephone' => $employee['telephone']]] : [],
-            'emails'            => key_exists('email', $employee) ? [['name' => 'email 1', 'email' => $employee['email']]] : [],
-            'addresses'         => key_exists('address', $employee) ? [$this->convertAddress($employee['address'])] : [],
-            'availability'      => key_exists('availability', $employee) ? $employee['availability'] : [],
+            'telephones'        => key_exists('telephone', $employeeArray) && $employeeArray['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeeArray['telephone']]] : [],
+            'emails'            => key_exists('email', $employeeArray) && $employeeArray['email'] ? [['name' => 'email 1', 'email' => $employeeArray['email']]] : ($employee && $employee->getEmail() ? [['name' => 'email 1', 'email' => $employee->getEmail()]] : []),
+            'addresses'         => key_exists('address', $employeeArray) && $employeeArray['address'] ? [$this->convertAddress($employeeArray['address'])] : [],
+            'availability'      => key_exists('availability', $employeeArray) && $employeeArray['availability'] ? $employeeArray['availability'] : [],
         ];
-        $person['telephones'][] = key_exists('contactTelephone', $employee) ? ['name' => 'contact telephone', 'telephone' => $employee['contactTelephone']] : null;
+        $person['telephones'][] = key_exists('contactTelephone', $employeeArray) ? ['name' => 'contact telephone', 'telephone' => $employeeArray['contactTelephone']] : null;
+
+        if($person['givenName'] instanceof \Exception){
+            throw $person['givenName'];
+        }
 
         $person = $this->cleanResource($person);
         return $person;
