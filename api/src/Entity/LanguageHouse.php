@@ -32,7 +32,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "userRolesBy" = {
- *              "collection_query" = LanguageHouseQueryCollectionResolver::class
+ *              "item_query" = LanguageHouseQueryItemResolver::class,
+ *              "read" = false
  *          },
  *          "collection_query" = {
  *              "collection_query" = LanguageHouseQueryCollectionResolver::class
@@ -61,7 +62,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "validation_groups" = {"Default", "remove"}
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=LanguageHouseRepository::class)
  */
 class LanguageHouse
@@ -130,14 +130,6 @@ class LanguageHouse
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $type;
-
-    /**
-     * @var string The id of the cc/organization of a languageHouse.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $languageHouseId;
 
     public function getId(): ?UuidInterface
     {
@@ -209,17 +201,4 @@ class LanguageHouse
 
         return $this;
     }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
 }
