@@ -113,6 +113,16 @@ class StudentService
                 throw new Exception('Warning, '. $participant['person'] .' does not have an eav object (eav/cc/people)!');
             }
 
+            // get the memo for availabilityNotes and add it to the $person
+            if (isset($person)) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes','topic' => $person['@id']])['hydra:member'];
+                if (count($availabilityMemos) > 0) {
+                    $availabilityMemo = $availabilityMemos[0];
+                    $person['availabilityNotes'] = $availabilityMemo['description'];
+                }
+            }
+
             // get the registrarOrganization, registrarPerson and its memo
             if (isset($participant['referredBy'])) {
                 $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
@@ -413,7 +423,7 @@ class StudentService
 
         $availabilityDetails = [
             'availability' => $person['availability'] ?? null,
-            'availabilityNotes' => $memo['availabilityNotes'] ?? null //todo:not saved yet
+            'availabilityNotes' => $person['availabilityNotes'] ?? null
         ];
 
         $permissionDetails = [
