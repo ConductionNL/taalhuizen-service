@@ -245,7 +245,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
         }
         if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input);
+            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
         }
 
         return $person;
@@ -401,6 +401,17 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $participant['status'] = 'accepted';
 
+        // EAV or Result objects?
+        if (isset($input['speakingLevel'])) {
+            $participant['speakingLevel'] = $input['speakingLevel'];
+        }
+        if (isset($input['readingTestResult'])) {
+            $participant['readingTestResult'] = $input['readingTestResult'];
+        }
+        if (isset($input['writingTestResult'])) {
+            $participant['writingTestResult'] = $input['writingTestResult'];
+        }
+
         if (isset($languageHouseUrl)) {
             $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
             if (count($programs) > 0) {
@@ -419,6 +430,8 @@ class StudentMutationResolver implements MutationResolverInterface
     //todo: replace to other function ^ inputToParticipant saving resources should be done in createStudent, updateStudent or actually even in StudentService
     private function saveParticipant(array $input, string $ccPersonUrl, string $languageHouseUrl)
     {
+        //this function is not currently used
+
         if (isset($ccPersonUrl)) {
             $participant = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['person' => $ccPersonUrl])['hydra:member'][0];
             $participant = $this->EAVService->getObject('participants', null, 'edu', $participant['id']);
@@ -441,14 +454,6 @@ class StudentMutationResolver implements MutationResolverInterface
             $participant['writingTestResult'] = $input['writingTestResult'];
         }
 
-//        if (isset($input['educationDetails'])) {
-//            $participant = $this->getParticipantPropertiesFromEducationDetails($participant, $input['educationDetails']);
-//        }
-
-//        if (isset($input['courseDetails'])) {
-//            $participant = $this->getParticipantPropertiesFromCourseDetails($participant, $input['courseDetails']);
-//        }
-
         //todo: this not here?:
 //        $participant = $this->studentService->saveStudentResource($participant, 'participants');
 
@@ -456,8 +461,11 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
     //todo: replace to other function ^ inputToParticipant saving resources should be done in createStudent, updateStudent or actually even in StudentService
+    //todo: see how this is done for registrations with the ReferrerDetails?
     private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
     {
+        //this function is not currently used
+
         if (isset($participant['referredBy'])) {
             $referringOrganization = $this->commonGroundService->getResource($participant['referredBy']);
         } else {

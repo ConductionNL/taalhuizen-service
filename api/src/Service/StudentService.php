@@ -413,6 +413,7 @@ class StudentService
 
         $availabilityDetails = [
             'availability' => $person['availability'] ?? null,
+            'availabilityNotes' => $memo['availabilityNotes'] ?? null //todo:not saved yet
         ];
 
         $permissionDetails = [
