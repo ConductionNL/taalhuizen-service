@@ -752,18 +752,6 @@ class Employee
         return $this;
     }
 
-    public function getUserGroupId(): ?string
-    {
-        return $this->userGroupId;
-    }
-
-    public function setUserGroupId(?string $userGroupId): self
-    {
-        $this->userGroupId = $userGroupId;
-
-        return $this;
-    }
-
     public function getUserId(): ?string
     {
         return $this->userId;
