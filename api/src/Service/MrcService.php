@@ -465,7 +465,7 @@ class MrcService
         if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
         if(key_exists('userGroupIds', $employeeArray)) $employeeArray['userGroupIds'] = $this->ucService->validateUserGroups($employeeArray['userGroupIds']);
 
-        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || $user = $this->checkIfUserExists(null, $employeeArray['email'])){
+        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))){
             if(isset($user)){
                 $employeeArray['userId'] = $user['id'];
             }
