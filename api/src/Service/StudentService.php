@@ -126,7 +126,9 @@ class StudentService
             // get the registrarOrganization, registrarPerson and its memo
             if (isset($participant['referredBy'])) {
                 $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-                $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+                if (isset($registrarOrganization['persons'][0]['@id'])) {
+                    $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+                }
                 $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])["hydra:member"];
                 if (count($registrarMemos) > 0) {
                     $registrarMemo = $registrarMemos[0];
@@ -323,14 +325,18 @@ class StudentService
         if (isset($registration)) {
             $referrerDetails = [
                 'referringOrganization' => $registrarOrganization['name'] ?? null,
-                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
+                'referringOrganizationOther' => null,
                 'email' => $registrarPerson['emails'][0]['email'] ?? null,
             ];
         } else {
+            if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
+                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+            }
             $referrerDetails = [
-                'referringOrganization' => $person['referringOrganization'] ?? null,
-                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
-                'email' => $person['email'] ?? null,
+                'referringOrganization' => $registrarOrganization['name'] ?? null,
+                'referringOrganizationOther' => $registrarOrganization['name'] ?? null,
+                //todo does not check for referringOrganizationOther isn't saved separately right now
+                'email' => $registrarOrganization['emails'][0]['email'] ?? null,
             ];
         }
 
