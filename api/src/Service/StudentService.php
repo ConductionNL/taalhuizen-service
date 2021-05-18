@@ -152,17 +152,6 @@ class StudentService
                 if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
                     $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
                 }
-                $employeeDTO = $this->serializer->normalize($this->mrcService->getEmployee($employee['id']));
-                if (isset($employeeDTO['interests'])) {
-                    foreach ($employeeDTO['interests'] as $interest) {
-                        if ($interest['name'] == 'dayTimeActivity') {
-                            $person['jobDetails']['dayTimeActivities'][] = $interest['description'];
-                        }
-                    }
-                }
-                if (isset($employeeDTO['jobFunctions'])) {
-                    $person['jobDetails']['lastJob'] = end($employeeDTO['jobFunctions'])['name'];
-                }
             }
         } else {
             throw new Exception('Invalid request, '. $id .' is not an existing student (eav/edu/participant)!');
@@ -447,7 +436,7 @@ class StudentService
             'desiredSkillsOther' => $participant['desiredSkillsOther'] ?? null,
             'hasTriedThisBefore' => $participant['hasTriedThisBefore'] ?? null,
             'hasTriedThisBeforeExplanation' => $participant['hasTriedThisBeforeExplanation'] ?? null,
-            'whyWantTheseskills' => $participant['whyWantTheseskills'] ?? null,
+            'whyWantTheseSkills' => $participant['whyWantTheseSkills'] ?? null,
             'whyWantThisNow' => $participant['whyWantThisNow'] ?? null,
             'desiredLearningMethod' => $participant['desiredLearningMethod'] ?? null,
             'remarks' => $participant['remarks'] ?? null,
