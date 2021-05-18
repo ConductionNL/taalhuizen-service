@@ -6,6 +6,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Service\CCService;
+use App\Service\EAVService;
 use App\Service\EDUService;
 use App\Service\MrcService;
 use App\Service\StudentService;
@@ -25,6 +26,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private CCService $ccService;
     private EDUService $eduService;
     private MrcService $mrcService;
+    private EAVService $eavService;
     private SerializerInterface $serializer;
 
     public function __construct
@@ -35,6 +37,7 @@ class StudentMutationResolver implements MutationResolverInterface
         CCService $ccService,
         EDUService $eduService,
         MrcService $mrcService,
+        EAVService $eavService,
         SerializerInterface $serializer
     )
     {
@@ -44,6 +47,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->ccService = $ccService;
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
+        $this->eavService = $eavService;
         $this->serializer = $serializer;
     }
 
@@ -141,12 +145,12 @@ class StudentMutationResolver implements MutationResolverInterface
         // Save edu/participant
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
 
-        // todo: w.i.p...
-//        // Then save mrc/employee / mrc objects
-//        $this->saveMRCObjects($input, $ccPersonUrl);
+        $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
+        // Save mrc/employee
+        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true, true);
 
-        // Then save memos
-        $memos = $this->saveMemos($input, $person['@id']);
+        //Then save memos
+        $memos = $this->saveMemos($input, $student['person']['@id']);
         if (isset($memos['availabilityMemo']['description'])) {
             $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
         }
@@ -155,7 +159,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant, null);
+        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         $this->entityManager->persist($resourceResult);
@@ -204,7 +208,7 @@ class StudentMutationResolver implements MutationResolverInterface
             if (isset($input['id'])) {
                 //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
                 $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes','topic' => $ccPersonUrl])['hydra:member'];
-                if (count($availabilityMemo) > 0) {
+                if (count($availabilityMemos) > 0) {
                     $availabilityMemo = $availabilityMemos[0];
                 }
             }
@@ -595,16 +599,45 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
-    private function inputToEmployee($input, $personUrl): array
+    private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
     {
         $employee = [
             'person' => $personUrl
         ];
+
+        $lastEducation = $followingEducation = $course = null;
+        if (isset($updateEmployee['educations'])) {
+            foreach ($updateEmployee['educations'] as $education) {
+                switch ($education['description']) {
+                    case 'lastEducation':
+                        if (!isset($lastEducation)) {
+                            $lastEducation = $education;
+                        }
+                        break;
+                    case 'followingEducationNo':
+                        if (!isset($followingEducation)) {
+                            $followingEducation = $education;
+                        }
+                        break;
+                    case 'followingEducationYes':
+                        if (!isset($followingEducation)) {
+                            $followingEducation = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                        }
+                        break;
+                    case 'course':
+                        if(!isset($course)) {
+                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                        }
+                        break;
+                }
+            }
+        }
+
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails']);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $lastEducation, $followingEducation);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails']);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $course);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
@@ -616,7 +649,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $employee;
     }
 
-    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails): array
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
     {
         if (isset($educationDetails['lastFollowedEducation'])) {
             $newEducation = [
@@ -624,6 +657,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 'description' => 'lastEducation',
                 'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation']
             ];
+            if (isset($lastEducation['id'])) {
+                $newEducation['id'] = $lastEducation['id'];
+            }
             if (isset($educationDetails['didGraduate'])) {
                 if ($educationDetails['didGraduate'] == true) {
                     $newEducation['degreeGrantedStatus'] = 'Granted';
@@ -636,6 +672,9 @@ class StudentMutationResolver implements MutationResolverInterface
 
         if (isset($educationDetails['followingEducationRightNow'])) {
             $newEducation = [];
+            if (isset($followingEducation['id'])) {
+                $newEducation['id'] = $followingEducation['id'];
+            }
             if ($educationDetails['followingEducationRightNow'] == 'YES') {
                 $newEducation['description'] = 'followingEducationYes';
                 if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
@@ -681,9 +720,12 @@ class StudentMutationResolver implements MutationResolverInterface
         return $employee;
     }
 
-    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails): array
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
     {
         if (isset($courseDetails['isFollowingCourseRightNow'])) {
+            if (isset($course['id'])) {
+                $newEducation['id'] = $course['id'];
+            }
             $newEducation['description'] = 'course';
             if ($courseDetails['isFollowingCourseRightNow'] == true) {
                 if (isset($courseDetails['courseName'])) {
