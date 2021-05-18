@@ -96,6 +96,47 @@ class StudentService
             } else {
                 throw new Exception('Warning, '. $participant['person'] .' does not have an eav object (eav/cc/people)!');
             }
+
+            // get the memo for availabilityNotes and add it to the $person
+            if (isset($person)) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes','topic' => $person['@id']])['hydra:member'];
+                if (count($availabilityMemos) > 0) {
+                    $availabilityMemo = $availabilityMemos[0];
+                    $person['availabilityNotes'] = $availabilityMemo['description'];
+                }
+            }
+
+            // get the memo for remarks (motivationDetails) and add it to the $participant
+            if (isset($participant)) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $person['@id']])['hydra:member'];
+                if (count($motivationMemos) > 0) {
+                    $motivationMemo = $motivationMemos[0];
+                    $participant['remarks'] = $motivationMemo['description'];
+                }
+            }
+
+            // get the registrarOrganization, registrarPerson and its memo
+            if (isset($participant['referredBy'])) {
+                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+                if (isset($registrarOrganization['persons'][0]['@id'])) {
+                    $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+                }
+                $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])["hydra:member"];
+                if (count($registrarMemos) > 0) {
+                    $registrarMemo = $registrarMemos[0];
+                }
+            }
+
+            // Get students data from mrc
+            $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $person['@id']])['hydra:member'];
+            if (count($employees) > 0) {
+                $employee = $employees[0];
+                if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
+                    $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
+                }
+            }
         } else {
             throw new Exception('Invalid request, '. $id .' is not an existing student (eav/edu/participant)!');
         }
@@ -246,25 +287,44 @@ class StudentService
             //todo does not check for contactPreferenceOther isn't saved separately right now
         ];
 
+        if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
+            $childrenCount = count($person['ownedContactLists'][0]['people']);
+            $childrenDatesOfBirth = [];
+            foreach ($person['ownedContactLists'][0]['people'] as $child) {
+                if (isset($child['birthday'])) {
+                    try {
+                        $birthday = new \DateTime($child['birthday']);
+                        $childrenDatesOfBirth[] = $birthday->format('d-m-Y');
+                    } catch (Exception $e) {
+                        $childrenDatesOfBirth[] = $child['birthday'];
+                    }
+                }
+            }
+        }
         $generalDetails = [
-            'birthplace' => $person['birthplace'] ?? null,
+            'countryOfOrigin' => $person['birthplace']['country'] ?? null,
             'nativeLanguage' => $person['primaryLanguage'] ?? null,
-            'otherLanguages' => $person['speakingLanguages'] ?? null,
+            'otherLanguages' => $person['speakingLanguages'] ? implode(",", $person['speakingLanguages']) : null,
             'familyComposition' => $person['maritalStatus'] ?? null,
-            'childrenDatesOfBirth' => $person['dependents'] ?? null,
+            'childrenCount' => $childrenCount ?? null,
+            'childrenDatesOfBirth' => isset($childrenDatesOfBirth) ? implode(",", $childrenDatesOfBirth) : null,
         ];
 
         if (isset($registration)) {
             $referrerDetails = [
-                'referringOrganization' => $organization['name'] ?? null,
-                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
+                'referringOrganization' => $registrarOrganization['name'] ?? null,
+                'referringOrganizationOther' => null,
                 'email' => $registrarPerson['emails'][0]['email'] ?? null,
             ];
         } else {
+            if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
+                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+            }
             $referrerDetails = [
-                'referringOrganization' => $person['referringOrganization'] ?? null,
-                'referringOrganizationOther' => $person['referringOrganizationOther'] ?? null,
-                'email' => $person['email'] ?? null,
+                'referringOrganization' => $registrarOrganization['name'] ?? null,
+                'referringOrganizationOther' => $registrarOrganization['name'] ?? null,
+                //todo does not check for referringOrganizationOther isn't saved separately right now
+                'email' => $registrarOrganization['emails'][0]['email'] ?? null,
             ];
         }
 
@@ -287,18 +347,46 @@ class StudentService
             'lastKnownLevel' => $person['lastKnownLevel'] ?? null,
         ];
 
+        $lastEducation = $followingEducationNo = $followingEducationYes = $course = null;
+        if (isset($employee['educations'])) {
+            foreach ($employee['educations'] as $education) {
+                switch ($education['description']) {
+                    case 'lastEducation':
+                        if (!isset($lastEducation)) {
+                            $lastEducation = $education;
+                        }
+                        break;
+                    case 'followingEducationNo':
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
+                            $followingEducationNo = $education;
+                        }
+                        break;
+                    case 'followingEducationYes':
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
+                            $followingEducationYes = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                        }
+                        break;
+                    case 'course':
+                        if(!isset($course)) {
+                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                        }
+                        break;
+                }
+            }
+        }
+
         $educationDetails = [
-            'lastFollowedEducation' => $person['lastFollowedEducation'] ?? null,
-            'didGraduate' => $person['didGraduate'] ?? null,
-            'followingEducationRightNow' => $person['followingEducationRightNow'] ?? null,
-            'followingEducationRightNowYesStartDate' => $person['followingEducationRightNowYesStartDate'] ?? null,
-            'followingEducationRightNowYesEndDate' => $person['followingEducationRightNowYesEndDate'] ?? null,
-            'followingEducationRightNowYesLevel' => $person['followingEducationRightNowYesLevel'] ?? null,
-            'followingEducationRightNowYesInstitute' => $person['followingEducationRightNowYesInstitute'] ?? null,
-            'followingEducationRightNowYesProvidesCertificate' => $person['followingEducationRightNowYesProvidesCertificate'] ?? null,
-            'followingEducationRightNowNoEndDate' => $person['followingEducationRightNowNoEndDate'] ?? null,
-            'followingEducationRightNowNoLevel' => $person['followingEducationRightNowNoLevel'] ?? null,
-            'followingEducationRightNowNoGotCertificate' => $person['followingEducationRightNowNoGotCertificate'] ?? null,
+            'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
+            'didGraduate' => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
+            'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
+            'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
+            'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
+            'followingEducationRightNowYesLevel' => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
+            'followingEducationRightNowYesInstitute' => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
+            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool)$followingEducationYes['providesCertificate'] : null) : null,
+            'followingEducationRightNowNoEndDate' => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
+            'followingEducationRightNowNoLevel' => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
+            'followingEducationRightNowNoGotCertificate' => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
         ];
 
         $courseDetails = [
@@ -318,18 +406,19 @@ class StudentService
         ];
 
         $motivationDetails = [
-            'desiredSkills' => $person['desiredSkills'] ?? null,
-            'desiredSkillsOther' => $person['desiredSkillsOther'] ?? null,
-            'hasTriedThisBefore' => $person['hasTriedThisBefore'] ?? null,
-            'hasTriedThisBeforeExplanation' => $person['hasTriedThisBeforeExplanation'] ?? null,
-            'whyWantTheseskills' => $person['whyWantTheseskills'] ?? null,
-            'whyWantThisNow' => $person['whyWantThisNow'] ?? null,
-            'desiredLearningMethod' => $person['desiredLearningMethod'] ?? null,
-            'remarks' => $person['remarks'] ?? null,
+            'desiredSkills' => $participant['desiredSkills'] ?? null,
+            'desiredSkillsOther' => $participant['desiredSkillsOther'] ?? null,
+            'hasTriedThisBefore' => $participant['hasTriedThisBefore'] ?? null,
+            'hasTriedThisBeforeExplanation' => $participant['hasTriedThisBeforeExplanation'] ?? null,
+            'whyWantTheseSkills' => $participant['whyWantTheseSkills'] ?? null,
+            'whyWantThisNow' => $participant['whyWantThisNow'] ?? null,
+            'desiredLearningMethod' => $participant['desiredLearningMethod'] ?? null,
+            'remarks' => $participant['remarks'] ?? null,
         ];
 
         $availabilityDetails = [
             'availability' => $person['availability'] ?? null,
+            'availabilityNotes' => $person['availabilityNotes'] ?? null
         ];
 
         $permissionDetails = [
@@ -351,14 +440,14 @@ class StudentService
         $resource->setReferrerDetails($referrerDetails);
         $resource->setBackgroundDetails($backgroundDetails);
         $resource->setDutchNTDetails($dutchNTDetails);
-        if (isset($person['speakingLevel'])) { $resource->setSpeakingLevel($person['speakingLevel']); }
+        if (isset($employee['speakingLevel'])) { $resource->setSpeakingLevel($employee['speakingLevel']); }
         $resource->setEducationDetails($educationDetails);
         $resource->setCourseDetails($courseDetails);
         $resource->setJobDetails($jobDetails);
         $resource->setMotivationDetails($motivationDetails);
         $resource->setAvailabilityDetails($availabilityDetails);
-        if (isset($person['readingTestResult'])) { $resource->setReadingTestResult($person['readingTestResult']); }
-        if (isset($person['writingTestResult'])) { $resource->setWritingTestResult($person['writingTestResult']); }
+        if (isset($participant['readingTestResult'])) { $resource->setReadingTestResult($participant['readingTestResult']); }
+        if (isset($participant['writingTestResult'])) { $resource->setWritingTestResult($participant['writingTestResult']); }
         $resource->setPermissionDetails($permissionDetails);
 
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
