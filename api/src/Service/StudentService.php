@@ -126,7 +126,7 @@ class StudentService
             // get the memo for remarks (motivationDetails) and add it to the $participant
             if (isset($participant)) {
                 //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $ccPersonUrl])['hydra:member'];
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $person['@id']])['hydra:member'];
                 if (count($motivationMemos) > 0) {
                     $motivationMemo = $motivationMemos[0];
                     $participant['remarks'] = $motivationMemo['description'];
@@ -324,12 +324,27 @@ class StudentService
             //todo does not check for contactPreferenceOther isn't saved separately right now
         ];
 
+        if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
+            $childrenCount = count($person['ownedContactLists'][0]['people']);
+            $childrenDatesOfBirth = [];
+            foreach ($person['ownedContactLists'][0]['people'] as $child) {
+                if (isset($child['birthday'])) {
+                    try {
+                        $birthday = new \DateTime($child['birthday']);
+                        $childrenDatesOfBirth[] = $birthday->format('d-m-Y');
+                    } catch (Exception $e) {
+                        $childrenDatesOfBirth[] = $child['birthday'];
+                    }
+                }
+            }
+        }
         $generalDetails = [
-            'birthplace' => $person['birthplace'] ?? null,
+            'countryOfOrigin' => $person['birthplace']['country'] ?? null,
             'nativeLanguage' => $person['primaryLanguage'] ?? null,
-            'otherLanguages' => $person['speakingLanguages'] ?? null,
+            'otherLanguages' => $person['speakingLanguages'] ? implode(",", $person['speakingLanguages']) : null,
             'familyComposition' => $person['maritalStatus'] ?? null,
-            'childrenDatesOfBirth' => $person['dependents'] ?? null,
+            'childrenCount' => $childrenCount ?? null,
+            'childrenDatesOfBirth' => isset($childrenDatesOfBirth) ? implode(",", $childrenDatesOfBirth) : null,
         ];
 
         if (isset($registration)) {

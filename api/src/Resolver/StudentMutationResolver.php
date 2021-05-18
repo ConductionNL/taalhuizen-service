@@ -102,7 +102,7 @@ class StudentMutationResolver implements MutationResolverInterface
         // Save mrc/employee
         $employee = $this->mrcService->createEmployee($employee, true);
 
-        // Then save memo
+        // Then save memos
         $memos = $this->saveMemos($input, $person['@id'], $languageHouseUrl);
         if (isset($memos['availabilityMemo']['description'])) {
             $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
@@ -144,9 +144,15 @@ class StudentMutationResolver implements MutationResolverInterface
         // todo: w.i.p...
 //        // Then save mrc/employee / mrc objects
 //        $this->saveMRCObjects($input, $ccPersonUrl);
-//
-//        // Then save memo
-//        $this->saveAvailabilityMemo($input, $ccPersonUrl);
+
+        // Then save memos
+        $memos = $this->saveMemos($input, $person['@id']);
+        if (isset($memos['availabilityMemo']['description'])) {
+            $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
+        }
+        if (isset($memos['motivationMemo']['description'])) {
+            $participant['remarks'] = $memos['motivationMemo']['description'];
+        }
 
         // Now put together the expected result in $result['result'] for Lifely:
         $resourceResult = $this->studentService->handleResult($person, $participant, null);
@@ -359,29 +365,56 @@ class StudentMutationResolver implements MutationResolverInterface
 
     private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails): array
     {
-        // todo:birthplace is an cc/address not an string!
-//        if (isset($generalDetails['countryOfOrigin'])) {
-//            $person['birthplace'] = $generalDetails['countryOfOrigin'];
-//        }
+        if (isset($generalDetails['countryOfOrigin'])) {
+            $person['birthplace'] = [
+                'country' => $generalDetails['countryOfOrigin']
+            ];
+        }
         //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
         if (isset($generalDetails['nativeLanguage'])) {
             $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
         }
-        // todo:must be an array, convert string to an array
-//        if (isset($generalDetails['otherLanguages'])) {
-//            $person['speakingLanguages'] = $generalDetails['otherLanguages'];
-//        }
+        if (isset($generalDetails['otherLanguages'])) {
+            $person['speakingLanguages'] = explode(",", $generalDetails['otherLanguages']);
+        }
         //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
-        //todo: needs to update taalhuizen CC for update enum options to match these options ^
-//        if (isset($generalDetails['familyComposition'])) {
-//            $person['maritalStatus'] = $generalDetails['familyComposition'];
-//        }
-        //todo: loop through dates in a string, not an array!
-//        if (isset($generalDetails['childrenDatesOfBirth'])) {
-//            foreach ($generalDetails['childrenDatesOfBirth'] as $child) {
-//                $person['dependents'][] = $child;
-//            }
-//        }
+        if (isset($generalDetails['familyComposition'])) {
+            $person['maritalStatus'] = $generalDetails['familyComposition'];
+        }
+        // Create the children of this person
+        if (isset($generalDetails['childrenCount'])) {
+            $childrenCount = (int)$generalDetails['childrenCount'];
+        }
+        if (isset($generalDetails['childrenDatesOfBirth'])) {
+            $childrenDatesOfBirth = explode(",", $generalDetails['childrenDatesOfBirth']);
+            foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
+                try {
+                    new \DateTime($childrenDateOfBirth);
+                } catch (Exception $e) {
+                    unset($childrenDatesOfBirth[$key]);
+                }
+            }
+            if (!isset($childrenCount)) {
+                $childrenCount = count($childrenDatesOfBirth);
+            }
+        }
+        if (isset($childrenCount)) {
+            $children = [];
+            for ($i=0; $i<$childrenCount; $i++) {
+                $child = [
+                    'givenName' => 'Child ' . $i . ' of ' . $person['givenName'] ?? ''
+                ];
+                if (isset($childrenDatesOfBirth[$i])) {
+                    $child['birthday'] = $childrenDatesOfBirth[$i];
+                }
+                $children[] = $child;
+            }
+            $person['ownedContactLists'][0] = [
+                'name' => 'Children',
+                'description' => 'The children of '. $person['givenName'] ?? 'this owner',
+                'people' => $children
+            ];
+        }
 
         return $person;
     }
