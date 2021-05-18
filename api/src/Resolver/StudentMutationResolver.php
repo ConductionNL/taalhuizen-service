@@ -103,9 +103,12 @@ class StudentMutationResolver implements MutationResolverInterface
         $employee = $this->mrcService->createEmployee($employee, true);
 
         // Then save memo
-        $availabilityMemo = $this->saveAvailabilityMemo($input, $person['@id'], $languageHouseUrl);
-        if (isset($availabilityMemo['description'])) {
-            $person['availabilityNotes'] = $availabilityMemo['description'];
+        $memos = $this->saveMemos($input, $person['@id'], $languageHouseUrl);
+        if (isset($memos['availabilityMemo']['description'])) {
+            $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
+        }
+        if (isset($memos['motivationMemo']['description'])) {
+            $participant['remarks'] = $memos['motivationMemo']['description'];
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
@@ -186,9 +189,10 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
     //todo: should be done in StudentService, for examples how to do this: see StudentService->saveStudent or TestResultService->saveTestResult
-    private function saveAvailabilityMemo(array $input, string $ccPersonUrl, string $languageHouseUrl = null)
+    private function saveMemos(array $input, string $ccPersonUrl, string $languageHouseUrl = null)
     {
         $availabilityMemo = [];
+        $motivationMemo = [];
 
         if (isset($input['availabilityDetails'])) {
             if (isset($input['id'])) {
@@ -201,14 +205,40 @@ class StudentMutationResolver implements MutationResolverInterface
             $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $languageHouseUrl));
             $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
         }
-        return $availabilityMemo;
+
+        if (isset($input['motivationDetails'])) {
+            if (isset($input['id'])) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $ccPersonUrl])['hydra:member'];
+                if (count($motivationMemos) > 0) {
+                    $motivationMemo = $motivationMemos[0];
+                }
+            }
+            $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $languageHouseUrl));
+            $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
+        }
+        return [
+            'availabilityMemo' => $availabilityMemo,
+            'motivationMemo' => $motivationMemo
+        ];
     }
 
-    //todo: should be done in StudentService
     private function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null)
     {
         $memo['name'] = 'Availability notes';
         $memo['description'] = $availabilityDetails['availabilityNotes'];
+        $memo['topic'] = $ccPersonUrl;
+        if (isset($languageHouseUrl)) {
+            $memo['author'] = $languageHouseUrl;
+        }
+
+        return $memo;
+    }
+
+    private function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null)
+    {
+        $memo['name'] = 'Remarks';
+        $memo['description'] = $motivationDetails['remarks'];
         $memo['topic'] = $ccPersonUrl;
         if (isset($languageHouseUrl)) {
             $memo['author'] = $languageHouseUrl;
@@ -446,9 +476,6 @@ class StudentMutationResolver implements MutationResolverInterface
         $participant['status'] = 'accepted';
 
         // EAV or Result objects?
-        if (isset($input['speakingLevel'])) {
-            $participant['speakingLevel'] = $input['speakingLevel'];
-        }
         if (isset($input['readingTestResult'])) {
             $participant['readingTestResult'] = $input['readingTestResult'];
         }
@@ -467,6 +494,9 @@ class StudentMutationResolver implements MutationResolverInterface
 
         if (isset($input['referrerDetails'])) {
             $participant = $this->getParticipantPropertiesFromReferrerDetails($participant, $input['referrerDetails']);
+        }
+        if (isset($input['motivationDetails'])) {
+            $participant = $this->getParticipantPropertiesFromMotivationDetails($participant, $input['motivationDetails']);
         }
 
         return $participant;
@@ -505,6 +535,33 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
+    private function getParticipantPropertiesFromMotivationDetails(array $participant, array $motivationDetails): array
+    {
+        if (isset($motivationDetails['desiredSkills'])) {
+            $participant['desiredSkills'] = $motivationDetails['desiredSkills'];
+        }
+        if (isset($motivationDetails['desiredSkillsOther'])) {
+            $participant['desiredSkillsOther'] = $motivationDetails['desiredSkillsOther'];
+        }
+        if (isset($motivationDetails['hasTriedThisBefore'])) {
+            $participant['hasTriedThisBefore'] = $motivationDetails['hasTriedThisBefore'];
+        }
+        if (isset($motivationDetails['hasTriedThisBeforeExplanation'])) {
+            $participant['hasTriedThisBeforeExplanation'] = $motivationDetails['hasTriedThisBeforeExplanation'];
+        }
+        if (isset($motivationDetails['whyWantTheseSkills'])) {
+            $participant['whyWantTheseSkills'] = $motivationDetails['whyWantTheseSkills'];
+        }
+        if (isset($motivationDetails['whyWantThisNow'])) {
+            $participant['whyWantThisNow'] = $motivationDetails['whyWantThisNow'];
+        }
+        if (isset($motivationDetails['desiredLearningMethod'])) {
+            $participant['desiredLearningMethod'] = $motivationDetails['desiredLearningMethod'];
+        }
+
+        return $participant;
+    }
+
     private function inputToEmployee($input, $personUrl): array
     {
         $employee = [
@@ -518,6 +575,9 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
+        }
+        if (isset($input['speakingLevel'])) {
+            $employee['speakingLevel'] = $input['speakingLevel'];
         }
 
         return $employee;

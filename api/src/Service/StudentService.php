@@ -123,6 +123,16 @@ class StudentService
                 }
             }
 
+            // get the memo for remarks (motivationDetails) and add it to the $participant
+            if (isset($participant)) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $ccPersonUrl])['hydra:member'];
+                if (count($motivationMemos) > 0) {
+                    $motivationMemo = $motivationMemos[0];
+                    $participant['remarks'] = $motivationMemo['description'];
+                }
+            }
+
             // get the registrarOrganization, registrarPerson and its memo
             if (isset($participant['referredBy'])) {
                 $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
@@ -386,9 +396,10 @@ class StudentService
                 }
             }
         }
+
         $educationDetails = [
             'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
-            'didGraduate' => $lastEducation['degreeGrantedStatus'] ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
+            'didGraduate' => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
             'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
             'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
             'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
@@ -417,14 +428,14 @@ class StudentService
         ];
 
         $motivationDetails = [
-            'desiredSkills' => $person['desiredSkills'] ?? null,
-            'desiredSkillsOther' => $person['desiredSkillsOther'] ?? null,
-            'hasTriedThisBefore' => $person['hasTriedThisBefore'] ?? null,
-            'hasTriedThisBeforeExplanation' => $person['hasTriedThisBeforeExplanation'] ?? null,
-            'whyWantTheseskills' => $person['whyWantTheseskills'] ?? null,
-            'whyWantThisNow' => $person['whyWantThisNow'] ?? null,
-            'desiredLearningMethod' => $person['desiredLearningMethod'] ?? null,
-            'remarks' => $person['remarks'] ?? null,
+            'desiredSkills' => $participant['desiredSkills'] ?? null,
+            'desiredSkillsOther' => $participant['desiredSkillsOther'] ?? null,
+            'hasTriedThisBefore' => $participant['hasTriedThisBefore'] ?? null,
+            'hasTriedThisBeforeExplanation' => $participant['hasTriedThisBeforeExplanation'] ?? null,
+            'whyWantTheseskills' => $participant['whyWantTheseskills'] ?? null,
+            'whyWantThisNow' => $participant['whyWantThisNow'] ?? null,
+            'desiredLearningMethod' => $participant['desiredLearningMethod'] ?? null,
+            'remarks' => $participant['remarks'] ?? null,
         ];
 
         $availabilityDetails = [
@@ -451,14 +462,14 @@ class StudentService
         $resource->setReferrerDetails($referrerDetails);
         $resource->setBackgroundDetails($backgroundDetails);
         $resource->setDutchNTDetails($dutchNTDetails);
-        if (isset($person['speakingLevel'])) { $resource->setSpeakingLevel($person['speakingLevel']); }
+        if (isset($employee['speakingLevel'])) { $resource->setSpeakingLevel($employee['speakingLevel']); }
         $resource->setEducationDetails($educationDetails);
         $resource->setCourseDetails($courseDetails);
         $resource->setJobDetails($jobDetails);
         $resource->setMotivationDetails($motivationDetails);
         $resource->setAvailabilityDetails($availabilityDetails);
-        if (isset($person['readingTestResult'])) { $resource->setReadingTestResult($person['readingTestResult']); }
-        if (isset($person['writingTestResult'])) { $resource->setWritingTestResult($person['writingTestResult']); }
+        if (isset($participant['readingTestResult'])) { $resource->setReadingTestResult($participant['readingTestResult']); }
+        if (isset($participant['writingTestResult'])) { $resource->setWritingTestResult($participant['writingTestResult']); }
         $resource->setPermissionDetails($permissionDetails);
 
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
