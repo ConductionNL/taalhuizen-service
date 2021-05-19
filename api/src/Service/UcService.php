@@ -60,6 +60,13 @@ class UcService
         );
         $user->setPassword('');
         $user->setUsername($raw['username']);
+        $user->setGivenName($contact['givenName']);
+        $user->setAdditionalName($contact['additionalName']);
+        $user->setFamilyName($contact['familyName']);
+        $user->setOrganizationId($raw['organization']);
+//        $user->setUserRoles();
+//        $user->setOrganizationName($this->commonGroundService->getResource($raw['organization']));
+//        $user->setUserEnvironment();
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
@@ -244,5 +251,20 @@ class UcService
     public function deleteUser(string $id): bool
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
+    }
+
+    public function validateUserGroups(array $usergroupIds): array
+    {
+        $vaildGroups = [];
+        //check if groups exist
+        foreach ($usergroupIds as $userGroupId){
+            $userGroupId = explode('/',$userGroupId);
+            if (is_array($userGroupId)) $userGroupId = end($userGroupId);
+
+            $userGroupUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'groups', 'id' => $userGroupId]);
+            if ($this->commonGroundService->isResource($userGroupUrl)) array_push($vaildGroups,$userGroupId);
+        }
+        $usergroupIds = $vaildGroups;
+        return $usergroupIds;
     }
 }
