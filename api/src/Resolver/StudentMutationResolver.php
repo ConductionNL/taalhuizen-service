@@ -8,13 +8,14 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Service\CCService;
 use App\Service\EAVService;
 use App\Service\EDUService;
+use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Student;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -111,7 +112,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant);
+        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -281,7 +282,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
         }
         if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input);
+            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
         }
 
         return $person;
@@ -496,7 +497,8 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null) {
+    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null): array
+    {
         // Add cc/person to this edu/participant
         if (isset($ccPersonUrl)) {
             $participant['person'] = $ccPersonUrl;

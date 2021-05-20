@@ -249,6 +249,20 @@ class UcService
         return $this->createUserObject($result, $contact);
     }
 
+    public function validateUserGroups(array $usergroupIds){
+        $vaildGroups = [];
+        //check if groups exist
+        foreach ($usergroupIds as $userGroupId){
+            $userGroupId = explode('/',$userGroupId);
+            if (is_array($userGroupId)) $userGroupId = end($userGroupId);
+
+            $userGroupUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'groups', 'id' => $userGroupId]);
+            if ($this->commonGroundService->isResource($userGroupUrl)) array_push($vaildGroups,$userGroupId);
+        }
+        $usergroupIds = $vaildGroups;
+        return $usergroupIds;
+    }
+
     public function deleteUser(string $id): bool
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
