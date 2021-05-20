@@ -39,8 +39,12 @@ class RegistrationQueryItemResolver implements QueryItemResolverInterface
 
         $student = $this->studentService->getStudent($studentId);
 
+        $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
+        $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
+        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+
         if (isset($student['participant']['id'])) {
-            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
+            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $registrarPerson, $organization, $memo, $registration = true);
             $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
         }
 

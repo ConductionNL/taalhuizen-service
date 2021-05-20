@@ -22,12 +22,26 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        if (isset($context['info']->variableValues['providerId'])) {
-            $id = $context['info']->variableValues['providerId'];
-            $idArray = explode('/', $id);
-            $id = end($idArray);
+        switch($context['info']->operation->name->value){
+            case 'userRolesByProvider':
+                if(key_exists('providerId', $context['info']->variableValues)){
+                    $providerId = $context['info']->variableValues['providerId'];
+                } elseif (key_exists('id', $context['args'])) {
+                    $providerId = $context['args']['id'];
+                } else {
+                    throw new Exception('The providerId / id was not specified');
+                }
+                return $this->userRolesByProvider($providerId);
+            default:
+                if(key_exists('providerId', $context['info']->variableValues)){
+                    $providerId = $context['info']->variableValues['providerId'];
+                } elseif (key_exists('id', $context['args'])) {
+                    $providerId = $context['args']['id'];
+                } else {
+                    throw new Exception('The providerId / id was not specified');
+                }
+                return $this->getProvider($providerId);
         }
-        return $this->getProvider($id);
     }
 
     public function getProvider(string $id): Provider
@@ -53,4 +67,18 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
 
         return $resourceResult;
     }
+
+    public function userRolesByProvider(string $id): Provider
+    {
+
+        $result['result'] = [];
+
+        $id = explode('/', $id);
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        return $result;
+    }
+
 }

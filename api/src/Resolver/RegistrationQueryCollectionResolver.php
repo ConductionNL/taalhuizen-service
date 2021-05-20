@@ -34,7 +34,6 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         if (!key_exists('languageHouseId', $context['args'])) {
             return null;
         }
-
         switch ($context['info']->operation->name->value) {
             case 'registrations':
                 return $this->createPaginator($this->students($context), $context['args']);
@@ -77,17 +76,23 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         $query = ['program.provider' => $languageHouseUrl];
 
-        $students = $this->studentService->getStudents($query, true);
+        $students = $this->studentService->getStudents($query);
 
-        // Now put together the expected result for Lifely:
         $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
         foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
+            if (isset($student['participant']['id']) && $student['participant']['referredBy']) {
+                // this registrarPerson and memo should be moved to studentservice->getstudent
+                $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
+                $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
+                $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+
+                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $registrarPerson, $organization, $memo, $registration = true);
                 $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                 $collection->add($resourceResult);
             }
         }
+
         return $collection;
     }
 }
