@@ -34,6 +34,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         if (!key_exists('languageHouseId', $context['args'])) {
             return null;
         }
+
         switch ($context['info']->operation->name->value) {
             case 'registrations':
                 return $this->createPaginator($this->students($context), $context['args']);
@@ -76,7 +77,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         $query = ['program.provider' => $languageHouseUrl];
 
-        $students = $this->studentService->getStudents($query);
+        $students = $this->studentService->getStudents($query, true);
 
         $collection = new ArrayCollection();
         // Now put together the expected result for Lifely:
