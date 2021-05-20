@@ -515,6 +515,7 @@ class MrcService
     {
         $employee = $this->getEmployee($id);
 
+        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         if (isset($studentEmployee)) {
             if (isset($employeeArray['person'])) {
                 $contact = $this->commonGroundService->getResource($employeeArray['person']);
