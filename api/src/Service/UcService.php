@@ -64,6 +64,7 @@ class UcService
         $user->setGivenName($contact['givenName']);
         $user->setAdditionalName($contact['additionalName']);
         $user->setFamilyName($contact['familyName']);
+        $user->setOrganizationId($raw['organization']);
 //        $user->setOrganizationId($org['id']);
 //        $user->setUserRoles();
 //        $user->setOrganizationName($org['name']);

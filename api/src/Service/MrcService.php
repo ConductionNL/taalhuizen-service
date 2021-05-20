@@ -450,6 +450,33 @@ class MrcService
         return $array;
     }
 
+    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
+    {
+        if (isset($studentEmployee) && isset($employeeArray['person'])) {
+            $contact = $this->commonGroundService->getResource($employeeArray['person']);
+            // if this person does not exist we should not create it here, but before we update the student employee object!
+        } else {
+            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+        }
+
+        return $contact;
+    }
+
+    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?string
+    {
+        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))){
+            if(isset($user)){
+                $employeeArray['userId'] = $user['id'];
+            } elseif (isset($userId)) {
+                $employeeArray['userId'] = $userId;
+            }
+            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : [])['id'];
+        } elseif (!$studentEmployee) {
+            return $this->createUser($employeeArray, $contact);
+        }
+        return null;
+    }
+
     public function createEmployee(array $employeeArray, $returnMrcObject = false)
     {
         if (isset($employeeArray['person'])) {
@@ -457,7 +484,10 @@ class MrcService
         } else {
             $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         }
-        $employeeArray['userId'] = $this->saveUser($employeeArray, $contact);
+        // TODO fix that a student has a email for creating a user so this if statement can be removed:
+        if (!$returnMrcObject) {
+            $this->saveUser($employeeArray, $contact);
+        }
 
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
@@ -498,9 +528,17 @@ class MrcService
             $userId = $employeeArray['userId'];
         }
 
-        $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-        $employeeArray['userId'] = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
-
+        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
+        if (isset($studentEmployee)) {
+            if (isset($employeeArray['person'])) {
+                $contact = $this->commonGroundService->getResource($employeeArray['person']);
+            }
+            // if this person does not exist we should not create it here, but before we update the student employee object!
+        } else {
+            $userId = $employee->getUserId();
+            $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
+            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+        }
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
             'person'                => $contact['@id'],
@@ -519,7 +557,6 @@ class MrcService
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
         if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result);
         if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
-        if(key_exists('userGroupIds', $employeeArray)) $employeeArray['userGroupIds'] = $this->ucService->validateUserGroups($employeeArray['userGroupIds']);
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)){
@@ -546,9 +583,9 @@ class MrcService
         foreach ($educations as $education) {
             $education['employee'] = $employeeUri;
             if (isset($education['id'])) {
-                $education = $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
+                $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
             } else {
-                $education = $this->eavService->saveObject($education, 'education', 'mrc');
+                $this->eavService->saveObject($education, 'education', 'mrc');
             }
         }
     }
