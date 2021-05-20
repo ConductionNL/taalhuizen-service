@@ -268,4 +268,5 @@ class UcService
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
+
 }
