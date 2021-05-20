@@ -8,7 +8,6 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Service\CCService;
 use App\Service\EAVService;
 use App\Service\EDUService;
-use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Student;
@@ -16,7 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -72,13 +70,10 @@ class StudentMutationResolver implements MutationResolverInterface
         }
     }
 
-    /**
-     * @throws Exception
-     */
     public function createStudent(array $input): Student
     {
         if (isset($input['languageHouseId'])) {
-            $languageHouseId = explode('/', $input['languageHouseId']);
+            $languageHouseId = explode('/',$input['languageHouseId']);
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
@@ -116,7 +111,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
+        $resourceResult = $this->studentService->handleResult($person, $participant);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -124,7 +119,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     public function updateStudent(array $input): Student
     {
-        $studentId = explode('/', $input['id']);
+        $studentId = explode('/',$input['id']);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }
@@ -286,7 +281,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
         }
         if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
+            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input);
         }
 
         return $person;
@@ -433,7 +428,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['foundVia'] = $backgroundDetails['foundViaOther'];
         }
         if (isset($backgroundDetails['wentToTaalhuisBefore'])) {
-            $person['wentToTaalhuisBefore'] = (bool)$backgroundDetails['wentToTaalhuisBefore'];
+            $person['wentToTaalhuisBefore'] = (bool) $backgroundDetails['wentToTaalhuisBefore'];
         }
         if (isset($backgroundDetails['wentToTaalhuisBeforeReason'])) {
             $person['wentToTaalhuisBeforeReason'] = $backgroundDetails['wentToTaalhuisBeforeReason'];
@@ -447,7 +442,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['network'] = $backgroundDetails['network'];
         }
         if (isset($backgroundDetails['participationLadder'])) {
-            $person['participationLadder'] = (int)$backgroundDetails['participationLadder'];
+            $person['participationLadder'] = (int) $backgroundDetails['participationLadder'];
         }
 
         return $person;
@@ -465,7 +460,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'];
         }
         if (isset($dutchNTDetails['knowsLatinAlphabet'])) {
-            $person['knowsLatinAlphabet'] = (bool)$dutchNTDetails['knowsLatinAlphabet'];
+            $person['knowsLatinAlphabet'] = (bool) $dutchNTDetails['knowsLatinAlphabet'];
         }
         if (isset($dutchNTDetails['lastKnownLevel'])) {
             $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'];
@@ -501,8 +496,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null): array
-    {
+    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null) {
         // Add cc/person to this edu/participant
         if (isset($ccPersonUrl)) {
             $participant['person'] = $ccPersonUrl;
@@ -523,9 +517,9 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($languageHouseUrl)) {
             $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
             if (count($programs) > 0) {
-                $participant['program'] = '/programs/' . $programs[0]['id'];
+                $participant['program'] = '/programs/'.$programs[0]['id'];
             } else {
-                throw new Exception('Invalid request, ' . $languageHouseUrl . ' does not have an existing program (edu/program)!');
+                throw new Exception('Invalid request, '. $languageHouseUrl .' does not have an existing program (edu/program)!');
             }
         }
 
