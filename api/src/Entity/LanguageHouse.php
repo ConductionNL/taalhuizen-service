@@ -61,6 +61,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "validation_groups" = {"Default", "remove"}
  *     }
  * )
+ *
  * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=LanguageHouseRepository::class)
  */
@@ -221,5 +222,4 @@ class LanguageHouse
 
         return $this;
     }
-
 }

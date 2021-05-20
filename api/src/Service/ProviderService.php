@@ -215,20 +215,6 @@ class ProviderService
         return false;
     }
 
-    public function getProviderUserGroups($id)
-    {
-        //get provider url
-        $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organization', 'id' => $id]);
-        //get provider groups
-        $userGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'],['organization' => $providerUrl])['hydra:member'];
-        $userRoles = [];
-        foreach ($userGroups as $userGroup){
-            $userRoles['id'] = $userGroup['id'];
-            $userRoles['name'] = $userGroup['name'];
-        }
-        return $userRoles;
-    }
-
     public function getUserRolesByProvider($id): array
     {
         $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
@@ -236,5 +222,4 @@ class ProviderService
 
         return $userRolesByProvider;
     }
-
 }

@@ -20,8 +20,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
     private LanguageHouseService $languageHouseService;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(LanguageHouseService $languageHouseService, EntityManagerInterface $entityManager)
-    {
+    public function __construct(LanguageHouseService $languageHouseService, EntityManagerInterface $entityManager) {
         $this->languageHouseService = $languageHouseService;
         $this->entityManager = $entityManager;
     }
@@ -41,8 +40,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
+    public function createPaginator(ArrayCollection $collection, array $args) {
         if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
@@ -55,7 +53,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         }
         if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
+        } elseif (key_exists('before', $args)){
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);

@@ -28,7 +28,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
-            return $this->getLanguageHouse($id);
+        return $this->getLanguageHouse($id);
     }
 
     public function getLanguageHouse(string $id): LanguageHouse

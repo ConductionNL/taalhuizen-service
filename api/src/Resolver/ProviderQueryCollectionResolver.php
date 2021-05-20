@@ -17,8 +17,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
 {
     private ProviderService $providerService;
 
-    public function __construct(ProviderService $providerService)
-    {
+    public function __construct(ProviderService $providerService) {
         $this->providerService = $providerService;
     }
 
@@ -38,8 +37,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
+    public function createPaginator(ArrayCollection $collection, array $args) {
         if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
@@ -52,7 +50,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         }
         if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
+        } elseif (key_exists('before', $args)){
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);

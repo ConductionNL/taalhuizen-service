@@ -34,7 +34,6 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         if (!key_exists('languageHouseId', $context['args'])) {
             return null;
         }
-
         switch ($context['info']->operation->name->value) {
             case 'registrations':
                 return $this->createPaginator($this->students($context), $context['args']);
@@ -79,8 +78,8 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
 
         $students = $this->studentService->getStudents($query, true);
 
-        // Now put together the expected result for Lifely:
         $collection = new ArrayCollection();
+        // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
                 $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);

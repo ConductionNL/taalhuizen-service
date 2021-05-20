@@ -85,6 +85,7 @@ class LanguageHouseService
         $employee['description'] = 'userGroup employee of '.$languageHouse['name'];
         $this->commonGroundService->saveResource($employee,['component' => 'uc', 'type' => 'groups']);
 
+
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['languageHouse'] = $languageHouseCC;
 
@@ -97,13 +98,13 @@ class LanguageHouseService
         return $result;
     }
 
-    public function getLanguageHouses(): array
+    public function getLanguageHouses()
     {
         $result['languageHouses'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis'])["hydra:member"];
         return $result;
     }
 
-    public function updateLanguageHouse($languageHouse, $languageHouseId = null)
+    public function updateLanguageHouse($languageHouse, $languageHouseId = null): array
     {
         if (isset($languageHouseId)) {
             // Update
@@ -195,19 +196,6 @@ class LanguageHouseService
             }
         }
         return false;
-    }
-    public function getLanguageHouseUserGroups($id)
-    {
-        //get provider url
-        $LanguageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organization', 'id' => $id]);
-        //get provider groups
-        $userGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'],['organization' => $LanguageHouseUrl])['hydra:member'];
-        $userRoles = [];
-        foreach ($userGroups as $userGroup){
-            $userRoles['id'] = $userGroup['id'];
-            $userRoles['name'] = $userGroup['name'];
-        }
-        return $userRoles;
     }
 
     public function deleteParticipants($participants): bool

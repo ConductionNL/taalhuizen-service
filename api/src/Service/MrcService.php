@@ -187,6 +187,10 @@ class MrcService
         return null;
     }
 
+    // not currently used for a student
+    // (see studentMutationResolver->inputToEmployee,
+    // studentMutationResolver->getEmployeePropertiesFromEducationDetails &
+    // studentMutationResolver->getEmployeePropertiesFromCourseDetails)
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
     {
         $educations = [];
@@ -461,8 +465,7 @@ class MrcService
         $resource = $this->cleanResource($resource);
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
-        if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result['educations']);
-        if(key_exists('currentEducation', $employeeArray)) $this->createEducations($employeeArray, $result['id'], $result['educations']);
+        if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result);
         if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
         if(key_exists('userGroupIds', $employeeArray)) $employeeArray['userGroupIds'] = $this->ucService->validateUserGroups($employeeArray['userGroupIds']);
 
@@ -512,7 +515,6 @@ class MrcService
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
         if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result);
-        if(key_exists('currentEducation', $employeeArray)) $this->createEducations($employeeArray, $result['id'], $result['educations']);
         if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
         if(key_exists('userGroupIds', $employeeArray)) $employeeArray['userGroupIds'] = $this->ucService->validateUserGroups($employeeArray['userGroupIds']);
 

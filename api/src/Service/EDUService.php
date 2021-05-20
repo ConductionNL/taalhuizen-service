@@ -39,7 +39,6 @@ class EDUService
             // Create
             $person = $this->eavService->saveObject($body, 'participants', 'edu');
         }
-
         return $person;
     }
 
