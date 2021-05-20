@@ -344,6 +344,8 @@ class MrcService
         $employee->setIsVOGChecked($result['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($result['relevantCertificates']);
         $employee->setGotHereVia($result['referrer']);
+        $employee->setDateCreated(new \DateTime($result['dateCreated']));
+        $employee->setDateModified(new \DateTime($result['dateModified']));
 
         if ($contact['contactPreference'] == "PHONECALL" || $contact['contactPreference'] == "WHATSAPP" || $contact['contactPreference'] == "EMAIL") {
             $employee->setContactPreference($contact['contactPreference']);
@@ -409,22 +411,29 @@ class MrcService
         return $employee;
     }
 
-    public function createUser(array $employeeArray, array $contact)
+    public function createUser(array $employeeArray, array $contact): string
     {
+        if (key_exists('languageHouseId', $employeeArray)) {
+            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
+        } elseif (key_exists('providerId', $employeeArray)) {
+            $organizationUrl =$this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]);
+        }
         $resource = [
             'username' => $employeeArray['email'],
             'person' => $contact['@id'],
             'password' => 'ThisIsATemporaryPassword',
+            'organization' => $organizationUrl,
         ];
         if (key_exists('userGroupIds', $employeeArray)) {
             foreach ($employeeArray['userGroupIds'] as $userGroupId) {
                 $user['userGroups'][] = "/groups/$userGroupId";
             }
         }
+
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->requestPasswordReset($resource['username'], false);
-        $this->bcService->sendInvitation($resource['username'], $token, $contact);
+        $this->bcService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
 
         return $result['id'];
     }
@@ -516,7 +525,7 @@ class MrcService
         $employee = $this->getEmployee($id);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
-        if (isset($studentEmployee)) {
+        if ($studentEmployee) {
             if (isset($employeeArray['person'])) {
                 $contact = $this->commonGroundService->getResource($employeeArray['person']);
             }
@@ -549,6 +558,7 @@ class MrcService
         if (key_exists('educations', $employeeArray)){
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
+
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
