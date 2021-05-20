@@ -72,7 +72,7 @@ class Provider
      *     max = 255
      * )
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
