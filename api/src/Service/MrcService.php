@@ -187,6 +187,10 @@ class MrcService
         return null;
     }
 
+    // not currently used for a student
+    // (see studentMutationResolver->inputToEmployee,
+    // studentMutationResolver->getEmployeePropertiesFromEducationDetails &
+    // studentMutationResolver->getEmployeePropertiesFromCourseDetails)
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
     {
         $educations = [];
