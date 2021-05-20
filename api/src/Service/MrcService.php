@@ -544,4 +544,32 @@ class MrcService
             }
         }
     }
+
+    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
+    {
+        if (isset($studentEmployee) && isset($employeeArray['person'])) {
+            $contact = $this->commonGroundService->getResource($employeeArray['person']);
+            // if this person does not exist we should not create it here, but before we update the student employee object!
+        } else {
+            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+        }
+
+        return $contact;
+    }
+
+    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?string
+    {
+        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))){
+            if(isset($user)){
+                $employeeArray['userId'] = $user['id'];
+            } elseif (isset($userId)) {
+                $employeeArray['userId'] = $userId;
+            }
+            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : [])['id'];
+        } elseif (!$studentEmployee) {
+            return $this->createUser($employeeArray, $contact);
+        }
+        return null;
+    }
+
 }
