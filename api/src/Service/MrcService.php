@@ -520,16 +520,12 @@ class MrcService
         return $this->createEmployeeObject($result);
     }
 
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
+    public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
     {
         $employee = $this->getEmployee($id);
-        $userId = $employee->getUserId();
-        if (empty($userId)) {
-            $userId = $employeeArray['userId'];
-        }
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
-        if (isset($studentEmployee)) {
+        if ($studentEmployee) {
             if (isset($employeeArray['person'])) {
                 $contact = $this->commonGroundService->getResource($employeeArray['person']);
             }
