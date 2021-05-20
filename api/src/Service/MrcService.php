@@ -344,6 +344,8 @@ class MrcService
         $employee->setIsVOGChecked($result['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($result['relevantCertificates']);
         $employee->setGotHereVia($result['referrer']);
+        $employee->setDateCreated(new \DateTime($result['dateCreated']));
+        $employee->setDateModified(new \DateTime($result['dateModified']));
 
         if ($contact['contactPreference'] == "PHONECALL" || $contact['contactPreference'] == "WHATSAPP" || $contact['contactPreference'] == "EMAIL") {
             $employee->setContactPreference($contact['contactPreference']);
@@ -473,7 +475,10 @@ class MrcService
             if(isset($user)){
                 $employeeArray['userId'] = $user['id'];
             }
+        } else {
+            $employeeArray['userId'] = $this->saveUser($employeeArray, $contact);
         }
+
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)){
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
@@ -489,6 +494,9 @@ class MrcService
     {
         $employee = $this->getEmployee($id);
         $userId = $employee->getUserId();
+        if (empty($userId)) {
+            $userId = $employeeArray['userId'];
+        }
 
         $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
         $employeeArray['userId'] = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
