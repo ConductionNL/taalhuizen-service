@@ -96,13 +96,16 @@ class CCService
     public function createPerson(array $person): array
     {
         return $this->eavService->saveObject($person, 'people', 'cc');
+        // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
-
     }
 
     public function updatePerson(string $id, array $person): array
     {
-        return $this->commonGroundService->updateResource($person, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
+        $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
+        return $this->eavService->saveObject($person, 'people', 'cc', $personUrl);
+        // This will not trigger notifications in nrc:
+//        return $this->commonGroundService->updateResource($person, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
     }
 
     public function saveEavPerson($body, $personUrl = null) {
