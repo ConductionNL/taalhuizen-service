@@ -72,6 +72,20 @@ class LanguageHouseService
 
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
 
+        //make Usergroups for roles
+        //coordinator
+        $coordinator['organization'] = $languageHouseWrc['contact'];
+        $coordinator['name'] = 'TAALHUIS_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+
+        //employee
+        $employee['organization'] = $languageHouseWrc['contact'];
+        $employee['name'] = 'TAALHUIS_EMPLOYEE';
+        $employee['description'] = 'userGroup employee of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($employee,['component' => 'uc', 'type' => 'groups']);
+
+
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['languageHouse'] = $languageHouseCC;
 
@@ -90,7 +104,7 @@ class LanguageHouseService
         return $result;
     }
 
-    public function updateLanguageHouse($languageHouse, $languageHouseId = null)
+    public function updateLanguageHouse($languageHouse, $languageHouseId = null): array
     {
         if (isset($languageHouseId)) {
             // Update
@@ -149,21 +163,25 @@ class LanguageHouseService
         return $result;
     }
 
-    public function handleResult($languageHouse)
+    public function handleResult($languageHouse, $userRoles = null)
     {
         $resource = new LanguageHouse();
-        $address = [
-            'street' => $languageHouse['addresses'][0]['street'] ?? null,
-            'houseNumber' => $languageHouse['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $languageHouse['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode' => $languageHouse['addresses'][0]['postalCode'] ?? null,
-            'locality' => $languageHouse['addresses'][0]['locality'] ?? null,
-        ];
-        $resource->setAddress($address);
-        $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
-        $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
-        $resource->setName($languageHouse['name']);
-        $resource->setType($languageHouse['type'] ?? null);
+        if (isset($userRoles)) {
+            $resource->setName($userRoles['name']);
+        } else {
+            $address = [
+                'street' => $languageHouse['addresses'][0]['street'] ?? null,
+                'houseNumber' => $languageHouse['addresses'][0]['houseNumber'] ?? null,
+                'houseNumberSuffix' => $languageHouse['addresses'][0]['houseNumberSuffix'] ?? null,
+                'postalCode' => $languageHouse['addresses'][0]['postalCode'] ?? null,
+                'locality' => $languageHouse['addresses'][0]['locality'] ?? null,
+            ];
+            $resource->setAddress($address);
+            $resource->setEmail($languageHouse['emails'][0]['email'] ?? null);
+            $resource->setPhoneNumber($languageHouse['telephones'][0]['telephone'] ?? null);
+            $resource->setName($languageHouse['name']);
+            $resource->setType($languageHouse['type'] ?? null);
+        }
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -202,5 +220,13 @@ class LanguageHouseService
             }
         }
         return false;
+    }
+
+    public function getUserRolesByLanguageHouse($id): array
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
+        $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+
+        return $userRolesByLanguageHouse;
     }
 }
