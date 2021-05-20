@@ -477,7 +477,7 @@ class MrcService
         }
         // TODO fix that a student has a email for creating a user so this if statement can be removed:
         if (!$returnMrcObject) {
-            $employeeArray['userId'] = $this->saveUser($employeeArray, $contact);
+            $this->saveUser($employeeArray, $contact);
         }
 
         $resource = [
@@ -523,7 +523,7 @@ class MrcService
         } else {
             $userId = $employee->getUserId();
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $employeeArray['userId'] = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
@@ -562,14 +562,15 @@ class MrcService
         return false;
     }
 
-    public function saveEmployeeEducations($educations, $employeeId) {
+    public function saveEmployeeEducations($educations, $employeeId): void
+    {
         $employeeUri = '/employees/' . $employeeId;
         foreach ($educations as $education) {
             $education['employee'] = $employeeUri;
             if (isset($education['id'])) {
-                $education = $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
+                $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
             } else {
-                $education = $this->eavService->saveObject($education, 'education', 'mrc');
+                $this->eavService->saveObject($education, 'education', 'mrc');
             }
         }
     }
