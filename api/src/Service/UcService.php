@@ -58,8 +58,17 @@ class UcService
             key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
                 $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
         );
+        $org = $this->commonGroundService->getResource($raw['organization']);
         $user->setPassword('');
         $user->setUsername($raw['username']);
+        $user->setGivenName($contact['givenName']);
+        $user->setAdditionalName($contact['additionalName']);
+        $user->setFamilyName($contact['familyName']);
+        $user->setOrganizationId($raw['organization']);
+//        $user->setOrganizationId($org['id']);
+//        $user->setUserRoles();
+//        $user->setOrganizationName($org['name']);
+//        $user->setUserEnvironment();
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
