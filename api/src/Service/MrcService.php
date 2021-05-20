@@ -413,20 +413,27 @@ class MrcService
 
     public function createUser(array $employeeArray, array $contact): string
     {
+        if (key_exists('languageHouseId', $employeeArray)) {
+            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
+        } elseif (key_exists('providerId', $employeeArray)) {
+            $organizationUrl =$this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]);
+        }
         $resource = [
             'username' => $employeeArray['email'],
             'person' => $contact['@id'],
             'password' => 'ThisIsATemporaryPassword',
+            'organization' => $organizationUrl,
         ];
         if (key_exists('userGroupIds', $employeeArray)) {
             foreach ($employeeArray['userGroupIds'] as $userGroupId) {
                 $user['userGroups'][] = "/groups/$userGroupId";
             }
         }
+
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->requestPasswordReset($resource['username'], false);
-        $this->bcService->sendInvitation($resource['username'], $token, $contact);
+        $this->bcService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
 
         return $result['id'];
     }
@@ -450,6 +457,8 @@ class MrcService
         } else {
             $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         }
+        $employeeArray['userId'] = $this->saveUser($employeeArray, $contact);
+
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
             'person'                => $contact['@id'],
@@ -469,15 +478,6 @@ class MrcService
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
         if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result);
         if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
-        if(key_exists('userGroupIds', $employeeArray)) $employeeArray['userGroupIds'] = $this->ucService->validateUserGroups($employeeArray['userGroupIds']);
-
-        if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))){
-            if(isset($user)){
-                $employeeArray['userId'] = $user['id'];
-            }
-        } else {
-            $employeeArray['userId'] = $this->saveUser($employeeArray, $contact);
-        }
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)){
