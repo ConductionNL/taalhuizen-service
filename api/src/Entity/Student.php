@@ -248,7 +248,7 @@ class Student
     private $studentId;
 
     /**
-     * @Groups({"write"})
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateCreated;
