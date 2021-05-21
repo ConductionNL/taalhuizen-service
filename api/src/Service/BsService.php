@@ -50,13 +50,17 @@ class BsService
 
     public function sendInvitation(string $email, string $token, array $contact, string $organizationUrl = null)
     {
-        if (!empty($organizationUrl)) {
-            $organization = $this->commonGroundService->getResource($organizationUrl);
-        }
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
 
+        if (!empty($organizationUrl)) {
+            $organization = $this->commonGroundService->getResource($organizationUrl);
+            $content = "Beste {$contact['givenName']},<p>Wij hebben een account voor je aangemaakt zodat je gebruik kunt maken van TOP voor {$organization['name']}. </p><p>Via de link in deze mail kan je een wachtwoord instellen en hiermee inloggen om de applicatie te gaan gebruiken. </p><p><a href='$link'>Klik hier om het wachtwoord in te stellen</a></p><p>Met vriendelijke groet,</p><p>TOP</p>";
+        } else {
+            $content = "Beste {$contact['givenName']},<p>Wij hebben een account voor je aangemaakt zodat je gebruik kunt maken van TOP. </p><p>Via de link in deze mail kan je een wachtwoord instellen en hiermee inloggen om de applicatie te gaan gebruiken. </p><p><a href='$link'>Klik hier om het wachtwoord in te stellen</a></p><p>Met vriendelijke groet,</p><p>TOP</p>";
+        }
+
         $message = [
-            'content' => "Beste {$contact['givenName']},<p>Wij hebben een account voor je aangemaakt zodat je gebruik kunt maken van TOP voor {$organization['name']}. </p><p>Via de link in deze mail kan je een wachtwoord instellen en hiermee inloggen om de applicatie te gaan gebruiken. </p><p><a href='$link'>Klik hier om het wachtwoord in te stellen</a></p><p>Met vriendelijke groet,</p><p>TOP</p>",
+            'content' => $content,
             'subject' => 'U bent uitgenodigd, welkom!',
             'sender' => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $email,

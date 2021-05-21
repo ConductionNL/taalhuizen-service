@@ -53,6 +53,5 @@ class UserQueryItemResolver implements QueryItemResolverInterface
         $token = str_replace("Bearer ","", $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token);
         return $this->getUser($payload['userId']);
-//        return $this->getUser('a8703d4a-f0f4-41fa-9bd0-10e6aaefe4da');
     }
 }
