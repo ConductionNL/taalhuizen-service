@@ -64,17 +64,26 @@ class UcService
         $user->setGivenName($contact['givenName']);
         $user->setAdditionalName($contact['additionalName']);
         $user->setFamilyName($contact['familyName']);
-        $user->setOrganizationId($raw['organization']);
-//        $user->setOrganizationId($org['id']);
+        $user->setOrganizationId($org['id'] ?? null);
+//        $userEnvironment = $this->userEnvironmentEnum($org['type']);
 //        $user->setUserRoles();
-//        $user->setOrganizationName($org['name']);
-//        $user->setUserEnvironment();
+        $user->setOrganizationName($org['name'] ?? null);
+//        $user->setUserEnvironment($userEnvironment);
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
 
         return $user;
     }
+
+//    public function userEnvironmentEnum($type): string
+//    {
+//      if ($type == 'Taalhuis') {
+//          $result = 'TAALHUIS';
+//      } elseif ($type == 'Aanbieder')
+//          $result = 'AANBIEDER';
+//        return $result;
+//    }
 
     public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
     {
