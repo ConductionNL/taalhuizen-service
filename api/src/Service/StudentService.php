@@ -474,6 +474,7 @@ class StudentService
         if (isset($participant['readingTestResult'])) { $resource->setReadingTestResult($participant['readingTestResult']); }
         if (isset($participant['writingTestResult'])) { $resource->setWritingTestResult($participant['writingTestResult']); }
         $resource->setPermissionDetails($permissionDetails);
+        $resource->setDateCreated(new \DateTime($participant['dateCreated']));
 
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
 //        $resource->setId(Uuid::getFactory()->fromString($participant['id']));

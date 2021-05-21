@@ -76,7 +76,7 @@ class EDUService
         return false;
     }
 
-    public function convertEducationEvent(array $input, ?string $studentId = null): StudentDossierEvent
+    public function convertEducationEvent(array $input, string $employeeName = null, ?string $studentId = null): StudentDossierEvent
     {
         $studentDossierEvent = new StudentDossierEvent();
         $studentDossierEvent->setStudentDossierEventId($input['id']);
@@ -84,6 +84,7 @@ class EDUService
         $studentDossierEvent->setEventDescription($input['description']);
         $studentDossierEvent->setEventDate(new DateTime($input['startDate']));
         $studentDossierEvent->setStudentId($studentId);
+        $studentDossierEvent->setCreatorGivenName($employeeName);
         $this->entityManager->persist($studentDossierEvent);
         $studentDossierEvent->setId(Uuid::fromString($input['id']));
         $this->entityManager->persist($studentDossierEvent);
@@ -114,29 +115,34 @@ class EDUService
 
     public function createEducationEvent(array $studentDossierEventArray): StudentDossierEvent
     {
+        $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']]);
         $event = [
             'name'          => $studentDossierEventArray['event'],
             'description'   => $studentDossierEventArray['eventDescription'],
             'startDate'     => $studentDossierEventArray['eventDate'],
-            'participants' => ["/participants/{$studentDossierEventArray['studentId']}"]
-
+            'participants' => ["/participants/{$studentDossierEventArray['studentId']}"],
+            'organizer'     => $employee['@id'],
         ];
+        $contact = $this->commonGroundService->getResource($employee['person']);
         $result = $this->commonGroundService->createResource($event, ['component' => 'edu', 'type' => 'education_events']);
 
-        return $this->convertEducationEvent($result, $studentDossierEventArray['studentId']);
+        return $this->convertEducationEvent($result, $contact['givenName'], $studentDossierEventArray['studentId']);
     }
 
     public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
     {
+        $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']]);
         $event = [
             'name'          => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : null,
             'description'   => key_exists('eventDescription', $studentDossierEventArray) ? $studentDossierEventArray['eventDescription'] : null,
             'startDate'     => key_exists('eventDate', $studentDossierEventArray) ? $studentDossierEventArray['eventDate'] : null,
             'participants'  => key_exists('studentId', $studentDossierEventArray) ? ["/participants/{$studentDossierEventArray['studentId']}"] : null,
+            'organizer'     => key_exists('employeeId', $studentDossierEventArray) ? $employee['@id'] : null,
         ];
+        $contact = $this->commonGroundService->getResource($employee['person']);
         $result = $this->commonGroundService->updateResource($event, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
         $studentId = count($result['participants']) > 0 ? $result['participants'][array_key_first($result['participants'])]['id'] : null;
-        return $this->convertEducationEvent($result, $studentId);
+        return $this->convertEducationEvent($result, $contact['givenName'], $studentId);
     }
 
     public function deleteEducationEvent(string $id): bool

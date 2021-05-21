@@ -45,7 +45,7 @@ class UcService
 
     public function getUserArray(string $id): array
     {
-        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => 'a8703d4a-f0f4-41fa-9bd0-10e6aaefe4da']);
     }
 
     public function createUserObject(array $raw, array $contact): User
@@ -65,10 +65,9 @@ class UcService
         $user->setAdditionalName($contact['additionalName']);
         $user->setFamilyName($contact['familyName']);
         $user->setOrganizationId($org['id'] ?? null);
-//        $userEnvironment = $this->userEnvironmentEnum($org['type']);
-//        $user->setUserRoles();
+        $user->setUserEnvironment($this->userEnvironmentEnum($org['type']));
+        $user->setUserRoles($raw['roles']);
         $user->setOrganizationName($org['name'] ?? null);
-//        $user->setUserEnvironment($userEnvironment);
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
@@ -76,14 +75,17 @@ class UcService
         return $user;
     }
 
-//    public function userEnvironmentEnum($type): string
-//    {
-//      if ($type == 'Taalhuis') {
-//          $result = 'TAALHUIS';
-//      } elseif ($type == 'Aanbieder')
-//          $result = 'AANBIEDER';
-//        return $result;
-//    }
+    public function userEnvironmentEnum($type): string
+    {
+      if ($type == 'Taalhuis') {
+          $result = 'TAALHUIS';
+      } elseif ($type == 'Aanbieder') {
+          $result = 'AANBIEDER';
+      } else {
+          $result = 'BISC';
+      }
+        return $result;
+    }
 
     public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
     {
