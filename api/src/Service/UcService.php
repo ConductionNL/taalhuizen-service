@@ -58,14 +58,14 @@ class UcService
             key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
                 $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
         );
-        $org = $this->commonGroundService->getResource($raw['organization']);
+        $raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
         $user->setPassword('');
         $user->setUsername($raw['username']);
         $user->setGivenName($contact['givenName']);
         $user->setAdditionalName($contact['additionalName']);
         $user->setFamilyName($contact['familyName']);
-        $user->setOrganizationId($org['id'] ?? null);
-        $user->setUserEnvironment($this->userEnvironmentEnum($org['type']));
+        $user->setOrganizationId(isset($org) && $org['id'] ? $org['id'] : null);
+        $user->setUserEnvironment($this->userEnvironmentEnum(isset($org) ? $org['type'] : null));
         $user->setUserRoles($raw['roles']);
         $user->setOrganizationName($org['name'] ?? null);
         $this->entityManager->persist($user);
@@ -229,6 +229,7 @@ class UcService
             'password' => key_exists('password', $userArray) ? $userArray['password'] : null,
             'locale' => 'nl',
             'person' => $contact['@id'],
+            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
         ];
 
         if(!$resource['username'] || !$resource['password']){
