@@ -417,12 +417,15 @@ class MrcService
             $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
         } elseif (key_exists('providerId', $employeeArray)) {
             $organizationUrl =$this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]);
+        } else {
+            $organizationUrl = null;
         }
+
         $resource = [
             'username' => $employeeArray['email'],
             'person' => $contact['@id'],
             'password' => 'ThisIsATemporaryPassword',
-            'organization' => $organizationUrl,
+            'organization' => $organizationUrl ?? null,
         ];
         if (key_exists('userGroupIds', $employeeArray)) {
             foreach ($employeeArray['userGroupIds'] as $userGroupId) {
