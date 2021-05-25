@@ -190,6 +190,9 @@ class EDUService
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $resource->setAanbiederEmployeeIds($group['mentors']);
+        
+        $this->entityManager->persist($resource);
+        $resource->setId(Uuid::fromString($group['id']));
         $this->entityManager->persist($resource);
         return $resource;
     }
