@@ -45,7 +45,7 @@ class UcService
 
     public function getUserArray(string $id): array
     {
-        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => 'a8703d4a-f0f4-41fa-9bd0-10e6aaefe4da']);
+        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
 
     public function createUserObject(array $raw, array $contact): User
@@ -58,16 +58,16 @@ class UcService
             key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
                 $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
         );
-        $org = $this->commonGroundService->getResource($raw['organization']);
+        !$raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
         $user->setPassword('');
         $user->setUsername($raw['username']);
         $user->setGivenName($contact['givenName']);
-        $user->setAdditionalName($contact['additionalName']);
+        $contact['additionalName'] ? $user->setAdditionalName($contact['additionalName']) : null;
         $user->setFamilyName($contact['familyName']);
-        $user->setOrganizationId($org['id'] ?? null);
-        $user->setUserEnvironment($this->userEnvironmentEnum($org['type']));
+        isset($org) && $org['id'] ? $user->setOrganizationId( $org['id'])  : null;
+        $user->setUserEnvironment($this->userEnvironmentEnum(isset($org) ? $org['type'] : null));
         $user->setUserRoles($raw['roles']);
-        $user->setOrganizationName($org['name'] ?? null);
+        isset($org) && $org['name'] ? $user->setOrganizationName($org['name']): null;
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
@@ -147,9 +147,9 @@ class UcService
         throw new \Exception('Token could not be verified');
     }
 
-    public function getUsers(): array
+    public function getUsers(?array $query = []): array
     {
-        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'])['hydra:member'];
+        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'],$query)['hydra:member'];
     }
 
     public function requestPasswordReset(string $email, bool $sendEmail = true): string
@@ -157,7 +157,7 @@ class UcService
         $time = new DateTime();
         $expiry = new DateTime('+4 hours');
 
-        $users = $this->getUsers();
+        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
 
         $found = false;
         foreach($users as $user){
@@ -223,12 +223,13 @@ class UcService
 
     public function createUser(array $userArray): User
     {
-        $contact = $this->ccService->createPerson(['givenName' => $userArray['username'], 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
+        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
         $resource = [
             'username' => key_exists('username', $userArray) ? $userArray['username'] : null,
             'password' => key_exists('password', $userArray) ? $userArray['password'] : null,
             'locale' => 'nl',
             'person' => $contact['@id'],
+            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
         ];
 
         if(!$resource['username'] || !$resource['password']){
