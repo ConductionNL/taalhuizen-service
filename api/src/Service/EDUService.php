@@ -129,17 +129,34 @@ class EDUService
         return $this->convertEducationEvent($result, $contact['givenName'], $studentDossierEventArray['studentId']);
     }
 
+    public function updateParticipants(array $event, ?string $studentId = null, ?array $participants = []): array
+    {
+        if($studentId){
+            $event['participants'][] = "/participants/{$studentId}";
+        }
+        foreach($participants as $participant){
+            key_exists('id', $participant) ? $event['participants'][] = "/participants/{$participant['id']}" : null;
+        }
+        foreach($event['participants'] as $key=>$value){
+            if(!$value){
+                unset($event['participants'][$key]);
+            }
+        }
+        return $event;
+    }
+
     public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
     {
         $resource = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
-        $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => isset($studentDossierEventArray['employeeId']) ? $studentDossierEventArray['employeeId'] : $resource['organizer']]);
+        $employee = $this->commonGroundService->getResource(isset($studentDossierEventArray['employeeId']) ? ['component' => 'mrc', 'type' => 'employees', 'id' =>  $studentDossierEventArray['employeeId']] : $resource['organizer']);
         $event = [
-            'name'          => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : $resource['event'],
+            'name'          => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : $resource['name'],
             'description'   => key_exists('eventDescription', $studentDossierEventArray) ? $studentDossierEventArray['eventDescription'] : $resource['description'],
             'startDate'     => key_exists('eventDate', $studentDossierEventArray) ? $studentDossierEventArray['eventDate'] : $resource['startDate'],
-            'participants'  => key_exists('studentId', $studentDossierEventArray) ? ["/participants/{$studentDossierEventArray['studentId']}"] : $resource['participants'],
             'organizer'     => key_exists('employeeId', $studentDossierEventArray) ? $employee['@id'] : $resource['organizer'],
         ];
+        $event = $this->updateParticipants($event, $studentDossierEventArray['studentId'] ?? null, $resource['participants']);
+
         $contact = $this->commonGroundService->getResource($employee['person']);
         $resource = $this->commonGroundService->updateResource($event, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
         $studentId = count($resource['participants']) > 0 ? $resource['participants'][array_key_first($resource['participants'])]['id'] : null;
