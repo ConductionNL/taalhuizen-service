@@ -320,7 +320,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result, $userRoleArray = false): Employee
+    public function createEmployeeObject(array $result, array $userRoleArray = []): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -521,12 +521,14 @@ class MrcService
         if (key_exists('userGroupIds', $employeeArray)) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray =  $this->convertUserRole($userRole);
+        } else {
+            $userRoleArray = [];
         }
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
         }
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $this->createEmployeeObject($result, isset($userRoleArray) ? $userRoleArray : []);
     }
 
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
