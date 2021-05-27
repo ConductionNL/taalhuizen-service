@@ -30,6 +30,19 @@ class EAVService
         return $result;
     }
 
+    public function getObjectList($entityName, $componentCode = 'eav', array $query = []): array
+    {
+        $body['doGet'] = true;
+        $body['componentCode'] = $componentCode;
+        $body['entityName'] = $entityName;
+        $body['query'] = $query;
+
+        $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
+        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
+
+        return $result;
+    }
+
     public function getObject($entityName, $self = null, $componentCode = 'eav', $eavId = null) {
         $body['doGet'] = true;
         $body['componentCode'] = $componentCode;
