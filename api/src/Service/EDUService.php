@@ -299,10 +299,11 @@ class EDUService
             if (!$this->commonGroundService->isResource($courseUrl)){
                 throw new Exception('course could not be found!');
             }
-            $course = $this->commonGroundService->getResource($courseUrl);
-            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
             //delete group
             $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'groups', 'id' => $id]);
+
+            $course = $this->commonGroundService->getResource($courseUrl);
+            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
         }
     }
 
