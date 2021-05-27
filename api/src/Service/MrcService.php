@@ -46,16 +46,16 @@ class MrcService
     {
         $employees = new ArrayCollection();
         if ($languageHouseId) {
-            $results = $this->eavService->getObjectList('employees', 'mrc', ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations'])]);
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations'])])['hydra:member'];
         } elseif (!$providerId) {
-            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => null]);
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => null])['hydra:member'];
             foreach ($results as $key => $result) {
                 if ($result['organization'] !== null) {
                     unset($result[$key]);
                 }
             }
         } else {
-            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => $this->commonGroundService->cleanUrl(['id' => $providerId, 'component' => 'cc', 'type' => 'organizations'])]);
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => $this->commonGroundService->cleanUrl(['id' => $providerId, 'component' => 'cc', 'type' => 'organizations'])])['hydra:member'];
         }
         foreach ($results as $result) {
             $employees->add($this->createEmployeeObject($result));
