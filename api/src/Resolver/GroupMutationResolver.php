@@ -86,8 +86,6 @@ class GroupMutationResolver implements MutationResolverInterface
     {
         $id = explode('/',$groupArray['id']);
         $id = end($id);
-        $aanbiederId = explode('/',$groupArray['aanbiederId']);
-        $groupArray['aanbiederId'] = end($aanbiederId);
         $result['result'] = [];
 
         $groupArray = array_merge(

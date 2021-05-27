@@ -208,6 +208,9 @@ class EDUService
         if (isset($group['startDate'])) $resource->setDetailsStartDate(new DateTime($group['startDate']));
         $resource->setGeneralEvaluation($group['evaluation']);
         $resource->setAanbiederEmployeeIds($group['mentors']);
+        
+        $this->entityManager->persist($resource);
+        $resource->setId(Uuid::fromString($group['id']));
         $this->entityManager->persist($resource);
         return $resource;
     }
@@ -299,10 +302,11 @@ class EDUService
             if (!$this->commonGroundService->isResource($courseUrl)){
                 throw new Exception('course could not be found!');
             }
-            $course = $this->commonGroundService->getResource($courseUrl);
-            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
             //delete group
             $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'groups', 'id' => $id]);
+
+            $course = $this->commonGroundService->getResource($courseUrl);
+            $this->eavService->deleteResource(null,['component' => 'edu', 'type' => 'courses', 'id' => $courseId]);
         }
     }
 

@@ -57,6 +57,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"studentId": "exact", "aanbiederEmployeeId": "exact"})
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document
