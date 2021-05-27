@@ -361,6 +361,14 @@ class Employee
     private $userId;
 
     /**
+     * @var string|null The user roles of this employee
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $userRoles;
+
+    /**
      * @var Datetime The moment this resource was created
      *
      * @Groups({"read", "write"})
@@ -793,6 +801,18 @@ class Employee
     public function setUserId(?string $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUserRoles(): ?string
+    {
+        return $this->userRoles;
+    }
+
+    public function setUserRoles(?string $userRoles): self
+    {
+        $this->userRoles = $userRoles;
 
         return $this;
     }

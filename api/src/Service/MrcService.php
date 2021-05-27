@@ -328,7 +328,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result): Employee
+    public function createEmployeeObject(array $result, $userRole = false): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -346,6 +346,7 @@ class MrcService
         $employee->setGotHereVia($result['referrer']);
         $employee->setDateCreated(new \DateTime($result['dateCreated']));
         $employee->setDateModified(new \DateTime($result['dateModified']));
+        if ($userRole){$employee->setUserRoles($userRole['name']);}
 
         if ($contact['contactPreference'] == "PHONECALL" || $contact['contactPreference'] == "WHATSAPP" || $contact['contactPreference'] == "EMAIL") {
             $employee->setContactPreference($contact['contactPreference']);
@@ -516,11 +517,14 @@ class MrcService
         if (key_exists('educations', $employeeArray)){
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
+        if (key_exists('userGroupIds', $employeeArray)) {
+            $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
+        }
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
         }
-        return $this->createEmployeeObject($result);
+        return $this->createEmployeeObject($result, $userRole);
     }
 
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
@@ -535,6 +539,9 @@ class MrcService
             // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
             $userId = $employee->getUserId();
+            if (empty($userId)) {
+                $userId = $employeeArray['userId'];
+            }
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
             $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
