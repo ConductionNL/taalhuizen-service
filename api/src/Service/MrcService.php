@@ -46,27 +46,19 @@ class MrcService
     {
         $employees = new ArrayCollection();
         if ($languageHouseId) {
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations']), 'limit' => 1000], $additionalQuery))['hydra:member'];
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['organization' => $this->commonGroundService->cleanUrl(['id' => $languageHouseId, 'component' => 'cc', 'type' => 'organizations'])]);
         } elseif (!$providerId) {
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['limit' => 1000], $additionalQuery))['hydra:member'];
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => null]);
             foreach ($results as $key => $result) {
                 if ($result['organization'] !== null) {
                     unset($result[$key]);
                 }
             }
         } else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], array_merge(['limit' => 1000], $additionalQuery))['hydra:member'];
+            $results = $this->eavService->getObjectList('employees', 'mrc', ['provider' => $this->commonGroundService->cleanUrl(['id' => $providerId, 'component' => 'cc', 'type' => 'organizations'])]);
         }
         foreach ($results as $result) {
-            try {
-                $result = $this->eavService->getObject('employees', $result['@id'], 'mrc');
-                if ($providerId && strpos($result['provider'], $providerId) === false) {
-                    continue;
-                }
-                $employees->add($this->createEmployeeObject($result));
-            } catch (\Exception $e) {
-                continue;
-            }
+            $employees->add($this->createEmployeeObject($result));
         }
         return $employees;
     }
