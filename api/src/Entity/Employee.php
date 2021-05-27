@@ -361,12 +361,12 @@ class Employee
     private $userId;
 
     /**
-     * @var string|null The user roles of this employee
+     * @var array|null The user roles of this employee
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      */
-    private ?string $userRoles;
+    private ?array $userRoles = [];
 
     /**
      * @var Datetime The moment this resource was created
@@ -805,12 +805,12 @@ class Employee
         return $this;
     }
 
-    public function getUserRoles(): ?string
+    public function getUserRoles(): ?array
     {
         return $this->userRoles;
     }
 
-    public function setUserRoles(?string $userRoles): self
+    public function setUserRoles(?array $userRoles): self
     {
         $this->userRoles = $userRoles;
 

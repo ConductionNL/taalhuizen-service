@@ -320,7 +320,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result, $userRole = false): Employee
+    public function createEmployeeObject(array $result, $userRoleArray = false): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -338,7 +338,7 @@ class MrcService
         $employee->setGotHereVia($result['referrer']);
         $employee->setDateCreated(new \DateTime($result['dateCreated']));
         $employee->setDateModified(new \DateTime($result['dateModified']));
-        if ($userRole){$employee->setUserRoles($userRole['name']);}
+        if ($userRoleArray){$employee->setUserRoles($userRoleArray);}
 
         if ($contact['contactPreference'] == "PHONECALL" || $contact['contactPreference'] == "WHATSAPP" || $contact['contactPreference'] == "EMAIL") {
             $employee->setContactPreference($contact['contactPreference']);
@@ -402,6 +402,15 @@ class MrcService
         $employee->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($employee);
         return $employee;
+    }
+
+
+    public function convertUserRole(array $userRoleArray): array
+    {
+        return [
+            'id' => $userRoleArray['id'],
+            'name' => $userRoleArray['name'],
+        ];
     }
 
     public function createUser(array $employeeArray, array $contact): string
@@ -511,12 +520,13 @@ class MrcService
         }
         if (key_exists('userGroupIds', $employeeArray)) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
+            $userRoleArray =  $this->convertUserRole($userRole);
         }
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
         }
-        return $this->createEmployeeObject($result, $userRole);
+        return $this->createEmployeeObject($result, $userRoleArray);
     }
 
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
