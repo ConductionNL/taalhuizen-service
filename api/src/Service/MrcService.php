@@ -559,10 +559,10 @@ class MrcService
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
             $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
-        if(!isset($user)) {
-            $userId = $employee->getUserId();
-            $user = $this->ucService->getUserArray($userId);
-        }
+//        elseif(!isset($user)) {
+//            $userId = $employee->getUserId();
+//            $user = $this->ucService->getUserArray($userId);
+//        }
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'],
             'person'                => $contact['@id'],
