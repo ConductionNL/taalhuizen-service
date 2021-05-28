@@ -100,7 +100,7 @@ class LanguageHouse
     private ?array $address;
 
     /**
-     * @var string The Telephone of this Provider.
+     * @var string|null The Telephone of this Provider.
      *
      * @Assert\Length(
      *     max = 255
@@ -108,10 +108,10 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $phoneNumber;
+    private ?string $phoneNumber;
 
     /**
-     * @var string The Email of this Provider.
+     * @var string|null The Email of this Provider.
      *
      * @Assert\Length(
      *     max = 2550
@@ -119,7 +119,7 @@ class LanguageHouse
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $email;
+    private ?string $email;
 
     /**
      * @var string Type LanguageHouse

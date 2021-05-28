@@ -38,7 +38,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
         switch($context['info']->operation->name->value){
             case 'createLanguageHouse':
-                return $this->createLanguageHouse($item);
+                return $this->createLanguageHouse($context['info']->variableValues['input']);
             case 'updateLanguageHouse':
                 return $this->updateLanguageHouse($context['info']->variableValues['input']);
             case 'removeLanguageHouse':
@@ -48,12 +48,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createLanguageHouse(LanguageHouse $resource): LanguageHouse
+    public function createLanguageHouse(array $resource): LanguageHouse
     {
         $result['result'] = [];
 
-        // get all DTO info...
-        $languageHouse = $this->dtoToLanguageHouse($resource);
+        // Transform input info to LanguageHouse body...
+        $languageHouse = $this->inputToLanguageHouse($resource);
 
         $result = array_merge($result, $this->languageHouseService->createLanguageHouse($languageHouse));
 
@@ -125,54 +125,20 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function dtoToLanguageHouse(LanguageHouse $resource)
-    {
-        // Get all info from the dto for creating/updating a LanguageHouse and return the body for this
-        $languageHouse['address'] = $resource->getAddress();
-        $languageHouse['email'] = $resource->getEmail();
-        $languageHouse['phoneNumber'] = $resource->getPhoneNumber();
-        $languageHouse['name'] = $resource->getName();
-
-        return $languageHouse;
-    }
-
     private function inputToLanguageHouse(array $input)
     {
         // Get all info from the input array for updating a LanguageHouse and return the body for this
-        $languageHouse['address'] = $input['address'];
-        $languageHouse['email'] = $input['email'];
-        $languageHouse['phoneNumber'] = $input['phoneNumber'];
+        if (isset($input['address'])) {
+            $languageHouse['address'] = $input['address'];
+        }
+        if (isset($input['email'])) {
+            $languageHouse['email'] = $input['email'];
+        }
+        if (isset($input['phoneNumber'])) {
+            $languageHouse['phoneNumber'] = $input['phoneNumber'];
+        }
         $languageHouse['name'] = $input['name'];
 
         return $languageHouse;
-    }
-
-    private function dtoToTaalhuis(LanguageHouse $resource)
-    {
-        if ($resource->getId()){
-            $taalhuis['id'] = $resource->getId();
-        }
-        $taalhuis['name'] = $resource->getName();
-        if ($resource->getAddress()){
-            $taalhuis['address'] = $resource->getAddress();
-        }
-        if ($resource->getEmail()) {
-            $taalhuis['email'] = $resource->getEmail();
-        }
-        if ($resource->getPhoneNumber()) {
-            $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
-        }
-        return $taalhuis;
-    }
-
-    private function handleResult($taalhuis){
-        $resource = new LanguageHouse();
-        $resource->setId($taalhuis['id']);
-        $resource->setName($taalhuis['name']);
-        $resource->setEmail($taalhuis['email']);
-        $resource->setPhoneNumber($taalhuis['phoneNumber']);
-        //@todo add address
-        $this->entityManager->persist($resource);
-        return $resource;
     }
 }

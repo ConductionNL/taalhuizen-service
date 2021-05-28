@@ -38,7 +38,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         }
         switch ($context['info']->operation->name->value) {
             case 'createProvider':
-                return $this->createProvider($item);
+                return $this->createProvider($context['info']->variableValues['input']);
             case 'updateProvider':
                 return $this->updateProvider($context['info']->variableValues['input']);
             case 'removeProvider':
@@ -48,12 +48,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createProvider(Provider $resource): Provider
+    public function createProvider(array $resource): Provider
     {
         $result['result'] = [];
 
-        // get all DTO info...
-        $provider = $this->dtoToProvider($resource);
+        // Transform input info to Provider body...
+        $provider = $this->inputToProvider($resource);
 
         $result = array_merge($result, $this->providerService->createProvider($provider));
 
@@ -123,24 +123,18 @@ class ProviderMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function dtoToProvider(Provider $resource)
-    {
-        // Get all info from the dto for creating/updating a Provider and return the body for this
-        $provider['address'] = $resource->getAddress();
-        $provider['email'] = $resource->getEmail();
-        $provider['phoneNumber'] = $resource->getPhoneNumber();
-        $provider['name'] = $resource->getName();
-
-        return $provider;
-    }
-
-
     private function inputToProvider(array $input)
     {
         // Get all info from the input array for updating a LearningNeed and return the body for this
-        $provider['address'] = $input['address'];
-        $provider['email'] = $input['email'];
-        $provider['phoneNumber'] = $input['phoneNumber'];
+        if (isset($input['address'])){
+            $provider['address'] = $input['address'];
+        }
+        if (isset($input['email'])){
+            $provider['email'] = $input['email'];
+        }
+        if (isset($input['phoneNumber'])){
+            $provider['phoneNumber'] = $input['phoneNumber'];
+        }
         $provider['name'] = $input['name'];
 
         return $provider;
