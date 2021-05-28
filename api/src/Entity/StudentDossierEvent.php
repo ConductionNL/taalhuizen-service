@@ -118,6 +118,22 @@ class StudentDossierEvent
      */
     private $studentDossierEventId;
 
+    /**
+     * @var string|null creator of this student Dossier.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $creatorGivenName;
+
+    /**
+     * @var string|null employeeId of this student Dossier.
+     *
+     * @Groups({"read"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $employeeId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -188,4 +204,29 @@ class StudentDossierEvent
 
         return $this;
     }
+
+    public function getCreatorGivenName(): ?string
+    {
+        return $this->creatorGivenName;
+    }
+
+    public function setCreatorGivenName(?string $creatorGivenName): self
+    {
+        $this->creatorGivenName = $creatorGivenName;
+
+        return $this;
+    }
+
+    public function getEmployeeId(): ?string
+    {
+        return $this->employeeId;
+    }
+
+    public function setEmployeeId(?string $employeeId): self
+    {
+        $this->employeeId = $employeeId;
+
+        return $this;
+    }
+
 }

@@ -21,6 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "item_query" = ProviderQueryItemResolver::class,
  *              "read" = false
  *          },
+ *          "userRolesBy" = {
+ *              "collection_query" = ProviderQueryCollectionResolver::class
+ *          },
  *          "collection_query" = {
  *              "collection_query" = ProviderQueryCollectionResolver::class
  *          },
@@ -45,6 +48,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  * )
  *
+ * @ApiFilter(SearchFilter::class, properties={"providerId": "exact"})
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
 class Provider
@@ -68,7 +72,7 @@ class Provider
      *     max = 255
      * )
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
@@ -112,6 +116,14 @@ class Provider
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $type;
+
+    /**
+     * @var string The id of the cc/organization of a provider.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $providerId;
 
     public function getId(): ?UuidInterface
     {
@@ -184,4 +196,15 @@ class Provider
         return $this;
     }
 
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
 }

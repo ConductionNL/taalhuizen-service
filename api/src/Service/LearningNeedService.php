@@ -93,16 +93,20 @@ class LearningNeedService
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
 
             // Remove this learningNeed from all EAV/edu/participants
-            foreach ($learningNeed['participants'] as $studentUrl) {
-                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
-                if (isset($studentResult['participant'])) {
-                    // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
-                    array_push($result['participants'], $studentResult['participant']['@id']);
+            if (isset($learningNeed['participants'])) {
+                foreach ($learningNeed['participants'] as $studentUrl) {
+                    $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+                    if (isset($studentResult['participant'])) {
+                        // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
+                        array_push($result['participants'], $studentResult['participant']['@id']);
+                    }
                 }
             }
 
-            foreach ($learningNeed['participations'] as $participationUrl) {
-                $this->participationService->deleteParticipation(null, $participationUrl, True);
+            if (isset($learningNeed['participations'])) {
+                foreach ($learningNeed['participations'] as $participationUrl) {
+                    $this->participationService->deleteParticipation(null, $participationUrl, True);
+                }
             }
 
             // Delete the learningNeed in EAV
@@ -151,18 +155,32 @@ class LearningNeedService
         return $result;
     }
 
-    public function getLearningNeeds($studentId) {
+    public function getLearningNeeds($studentId, $dateFrom = null, $dateUntil = null) {
         // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['learningNeeds'] = [];
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-            foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-                $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-                if (isset($learningNeed['learningNeed'])) {
-                    array_push($result['learningNeeds'], $learningNeed['learningNeed']);
-                } else {
-                    array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
+            if (isset($participant['learningNeeds'])) {
+                if (isset($dateFrom)) { $dateFrom = new \DateTime($dateFrom); $dateFrom->format('Y-m-d H:i:s'); }
+                if (isset($dateUntil)) { $dateUntil = new \DateTime($dateUntil); $dateUntil->format('Y-m-d H:i:s'); }
+                foreach ($participant['learningNeeds'] as $learningNeedUrl) {
+                    $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
+                    if (isset($learningNeed['learningNeed'])) {
+                        // if dateFrom and/or dateUntill are set filter out the learningNeeds
+                        if (isset($dateFrom) || isset($dateUntil)) {
+                            $dateCreated = new \DateTime($learningNeed['learningNeed']['dateCreated']); $dateCreated->format('Y-m-d H:i:s');
+                            if ((isset($dateFrom) && isset($dateUntil) && $dateCreated > $dateFrom && $dateCreated < $dateUntil)
+                                || (isset($dateFrom) && !isset($dateUntil) && $dateCreated > $dateFrom)
+                                || (isset($dateUntil) && !isset($dateFrom) && $dateCreated < $dateUntil)) {
+                                $result['learningNeeds'][] = $learningNeed['learningNeed'];
+                            }
+                        } else {
+                            $result['learningNeeds'][] = $learningNeed['learningNeed'];
+                        }
+                    } else {
+                        $result['learningNeeds'][] = ['errorMessage' => $learningNeed['errorMessage']];
+                    }
                 }
             }
         } else {
@@ -174,7 +192,7 @@ class LearningNeedService
 
     public function checkLearningNeedValues($learningNeed, $studentUrl, $learningNeedId = null) {
         $result = [];
-        if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
+        if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesTopicOther is not set!';
         } elseif($learningNeed['application'] == 'OTHER' && !isset($learningNeed['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, desiredOutComesApplicationOther is not set!';
@@ -194,7 +212,7 @@ class LearningNeedService
         return $result;
     }
 
-    public function handleResult($learningNeed, $studentId = null) {
+    public function handleResult($learningNeed, $studentId = null, $skipParticipations = False) {
         // Put together the expected result for Lifely:
         $resource = new LearningNeed();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
@@ -213,7 +231,7 @@ class LearningNeedService
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
-        if (isset($learningNeed['participations'])) {
+        if (!$skipParticipations && isset($learningNeed['participations'])) {
             foreach ($learningNeed['participations'] as &$participation) {
                 $result = $this->participationService->getParticipation(null, $participation);
                 if (!isset($result['errorMessage'])) {
@@ -228,6 +246,7 @@ class LearningNeedService
         if (isset($studentId)) {
             $resource->setStudentId($studentId);
         }
+        $resource->setDateCreated($learningNeed['dateCreated']);
         $this->entityManager->persist($resource);
         return $resource;
     }

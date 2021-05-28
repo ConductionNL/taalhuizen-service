@@ -135,6 +135,24 @@ services:
     App\Resolver\GroupQueryItemResolver:
         tags:
             - { name: api_platform.graphql.query_resolver }
+    App\Resolver\RegistrationMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\RegistrationQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\RegistrationQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\TestResultMutationResolver:
+        tags:
+            - { name: api_platform.graphql.mutation_resolver }
+    App\Resolver\TestResultQueryCollectionResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
+    App\Resolver\TestResultQueryItemResolver:
+        tags:
+            - { name: api_platform.graphql.query_resolver }
     App\Resolver\DocumentMutationResolver:
         tags:
             - { name: api_platform.graphql.mutation_resolver }

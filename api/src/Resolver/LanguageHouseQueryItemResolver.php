@@ -5,6 +5,7 @@ namespace App\Resolver;
 
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
+use App\Entity\LanguageHouse;
 use App\Service\LanguageHouseService;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -22,17 +23,19 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
+        if (isset($context['info']->variableValues['languageHouseId'])) {
+            $id = $context['info']->variableValues['languageHouseId'];
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+        }
+        return $this->getLanguageHouse($id);
+    }
+
+    public function getLanguageHouse(string $id): LanguageHouse
+    {
         $result['result'] = [];
 
-        if(key_exists('languageHouseId', $context['info']->variableValues)){
-            $languageHouseId = $context['info']->variableValues['languageHouseId'];
-        } elseif (key_exists('id', $context['args'])) {
-            $languageHouseId = $context['args']['id'];
-        } else {
-            throw new Exception('The languageHouseId / id was not specified');
-        }
-
-        $id = explode('/',$languageHouseId);
+        $id = explode('/', $id);
         if (is_array($id)) {
             $id = end($id);
         }
@@ -40,7 +43,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         $result = array_merge($result, $this->languageHouseService->getLanguageHouse($id));
 
         if (isset($result['languageHouse'])) {
-            $resourceResult = $this->languageHouseService->createLanguageHouseObject($result['languageHouse']);
+            $resourceResult = $this->languageHouseService->handleResult($result['languageHouse']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['languageHouse']['id']));
         }
 

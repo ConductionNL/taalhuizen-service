@@ -83,7 +83,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
 
         // Transform DTO info to participation body...
-        $participation = $this->dtoToParticipation($resource);
+        $participation = $this->dtoToParticipation($resource, $aanbiederId);
 
         // Do some checks and error handling
         $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, $learningNeedId));
@@ -377,11 +377,11 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
         // Make sure this participation actually has a mentor/group connected to it
         $checkParticipation = $this->participationService->getParticipation($participationId);
-        if (!isset($checkParticipation['participation'][$type])) {
-            throw new Exception('Warning, this participation has no '.$type.'!');
-        }
 
         if (!isset($result['errorMessage'])) {
+            if (!isset($checkParticipation['participation'][$type])) {
+                throw new Exception('Warning, this participation has no '.$type.'!');
+            }
             // No errors so lets continue... to:
             // update participation
             $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], null, $participationId));
@@ -399,10 +399,10 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    private function dtoToParticipation(Participation $resource) {
+    private function dtoToParticipation(Participation $resource, $aanbiederId) {
         // Get all info from the dto for creating a Participation and return the body for this
         // note: everything is nullabel in the dto, but eav doesn't like values set to null
-        if ($resource->getAanbiederId()) { $participation['aanbiederId'] = $resource->getAanbiederId(); }
+        if ($resource->getAanbiederId()) { $participation['aanbiederId'] = $aanbiederId; }
         if ($resource->getAanbiederName()) { $participation['aanbiederName'] = $resource->getAanbiederName(); }
         if ($resource->getAanbiederNote()) { $participation['aanbiederNote'] = $resource->getAanbiederNote(); }
         if ($resource->getOfferName()) { $participation['offerName'] = $resource->getOfferName(); }

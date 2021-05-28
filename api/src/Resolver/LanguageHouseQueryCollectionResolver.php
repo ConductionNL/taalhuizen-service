@@ -20,7 +20,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
     private LanguageHouseService $languageHouseService;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(LanguageHouseService $languageHouseService, EntityManagerInterface $entityManager){
+    public function __construct(LanguageHouseService $languageHouseService, EntityManagerInterface $entityManager) {
         $this->languageHouseService = $languageHouseService;
         $this->entityManager = $entityManager;
     }
@@ -30,49 +30,68 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
-        $result['result'] = [];
-
-        // Get the languageHouses
-        $result = array_merge($result, $this->languageHouseService->getLanguageHouses());
-//        var_dump($result);
-
-        $collection = new ArrayCollection();
-        if (isset($result['languageHouses'])) {
-            // Now put together the expected result for Lifely:
-            foreach ($result['languageHouses'] as &$languageHouse) {
-                if (!isset($languageHouse['errorMessage'])) {
-                    $resourceResult = $this->languageHouseService->createLanguageHouseObject($languageHouse);
-                    $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
-                    $collection->add($resourceResult);
-                    $languageHouse = $languageHouse['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
-                }
-            }
+        switch ($context['info']->operation->name->value) {
+            case 'languageHouses':
+                return $this->createPaginator($this->languageHouses($context), $context['args']);
+            case 'userRolesByLanguageHouses':
+                return $this->createPaginator($this->userRolesByLanguageHouses($context), $context['args']);
+            default:
+                return $this->createPaginator(new ArrayCollection(), $context['args']);
         }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-
-        return $this->createPaginator($collection, $context['args']);
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args){
-        if(key_exists('first', $args)){
+    public function createPaginator(ArrayCollection $collection, array $args) {
+        if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
-        } elseif(key_exists('last', $args)) {
+        } elseif (key_exists('last', $args)) {
             $maxItems = $args['last'];
             $firstItem = (count($collection) - 1) - $maxItems;
         } else {
             $maxItems = count($collection);
             $firstItem = 0;
         }
-        if(key_exists('after', $args)){
+        if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif(key_exists('before', $args)){
+        } elseif (key_exists('before', $args)){
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
+    }
+
+    public function languageHouses(?array $context): ?ArrayCollection
+    {
+        // Get the languageHouses
+        $result = $this->languageHouseService->getLanguageHouses();
+
+        $collection = new ArrayCollection();
+        foreach ($result['languageHouses'] as $languageHouse) {
+            $resourceResult = $this->languageHouseService->handleResult($languageHouse);
+            $resourceResult->setId(Uuid::getFactory()->fromString($languageHouse['id']));
+            $collection->add($resourceResult);
+        }
+        return $collection;
+    }
+
+    public function userRolesByLanguageHouses(array $context): ?ArrayCollection
+    {
+        if(key_exists('languageHouseId', $context['args'])){
+            $languageHouseId = explode('/',$context['args']['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
+            }
+        } else {
+            throw new Exception('The languageHouseId was not specified');
+        }
+
+        $userRoles = $this->languageHouseService->getUserRolesByLanguageHouse($languageHouseId);
+
+        $collection = new ArrayCollection();
+        foreach ($userRoles as $userRole) {
+            $resourceResult = $this->languageHouseService->handleResult(null, $userRole);
+            $resourceResult->setId(Uuid::getFactory()->fromString($userRole['id']));
+            $collection->add($resourceResult);
+        }
+        return $collection;
     }
 }

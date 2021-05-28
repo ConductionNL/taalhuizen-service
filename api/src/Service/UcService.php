@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Entity\Employee;
 use App\Entity\User;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
@@ -21,14 +22,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UcService
 {
-    private BcService $bcService;
+    private BsService $bsService;
     private CCService $ccService;
     private CommonGroundService $commonGroundService;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
 
-    public function __construct(BcService $bcService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
-        $this->bcService = $bcService;
+    public function __construct(BsService $bsService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
+        $this->bsService = $bsService;
         $this->ccService = $ccService;
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
@@ -57,8 +58,16 @@ class UcService
             key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
                 $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
         );
+        !$raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
         $user->setPassword('');
         $user->setUsername($raw['username']);
+        $user->setGivenName($contact['givenName']);
+        $contact['additionalName'] ? $user->setAdditionalName($contact['additionalName']) : null;
+        $user->setFamilyName($contact['familyName']);
+        isset($org) && $org['id'] ? $user->setOrganizationId( $org['id'])  : null;
+        $user->setUserEnvironment($this->userEnvironmentEnum(isset($org) ? $org['type'] : null));
+        $user->setUserRoles($raw['roles']);
+        isset($org) && $org['name'] ? $user->setOrganizationName($org['name']): null;
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
@@ -66,10 +75,23 @@ class UcService
         return $user;
     }
 
-    public function updateUserContactForEmployee(string $id, array $employee): array
+    public function userEnvironmentEnum($type): string
     {
-        $personId = $this->getUserArray($id)['person'];
-        $person = $this->ccService->employeeToPerson($employee);
+      if ($type == 'Taalhuis') {
+          $result = 'TAALHUIS';
+      } elseif ($type == 'Aanbieder') {
+          $result = 'AANBIEDER';
+      } else {
+          $result = 'BISC';
+      }
+        return $result;
+    }
+
+    public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
+    {
+        $personId = explode('/', $this->getUserArray($id)['person']);
+        $personId = end($personId);
+        $person = $this->ccService->employeeToPerson($employeeArray, $employee);
         $result = $this->ccService->updatePerson($personId, $person);
 
         return $result;
@@ -125,17 +147,17 @@ class UcService
         throw new \Exception('Token could not be verified');
     }
 
-    public function getUsers(): array
+    public function getUsers(?array $query = []): array
     {
-        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'])['hydra:member'];
+        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'],$query)['hydra:member'];
     }
 
-    public function requestPasswordReset(string $email): string
+    public function requestPasswordReset(string $email, bool $sendEmail = true): string
     {
         $time = new DateTime();
         $expiry = new DateTime('+4 hours');
 
-        $users = $this->getUsers();
+        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
 
         $found = false;
         foreach($users as $user){
@@ -159,7 +181,9 @@ class UcService
 
         $token = $this->createJWTToken($jwtBody);
 
-        $this->bcService->sendPasswordResetMail($email, $token);
+        if($sendEmail){
+            $this->bsService->sendPasswordResetMail($email, $token);
+        }
 
         return $token;
     }
@@ -199,12 +223,13 @@ class UcService
 
     public function createUser(array $userArray): User
     {
-        $contact = $this->ccService->createPerson(['givenName' => $userArray['username'], 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
+        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
         $resource = [
             'username' => key_exists('username', $userArray) ? $userArray['username'] : null,
             'password' => key_exists('password', $userArray) ? $userArray['password'] : null,
             'locale' => 'nl',
             'person' => $contact['@id'],
+            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
         ];
 
         if(!$resource['username'] || !$resource['password']){
@@ -231,14 +256,29 @@ class UcService
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
 
         if(isset($resource['password'])){
-            $this->bcService->sendPasswordChangedEmail($result['username'], $contact);
+            $this->bsService->sendPasswordChangedEmail($result['username'], $contact);
         }
 
         return $this->createUserObject($result, $contact);
+    }
+
+    public function validateUserGroups(array $usergroupIds){
+        $vaildGroups = [];
+        //check if groups exist
+        foreach ($usergroupIds as $userGroupId){
+            $userGroupId = explode('/',$userGroupId);
+            if (is_array($userGroupId)) $userGroupId = end($userGroupId);
+
+            $userGroupUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'groups', 'id' => $userGroupId]);
+            if ($this->commonGroundService->isResource($userGroupUrl)) array_push($vaildGroups,$userGroupId);
+        }
+        $usergroupIds = $vaildGroups;
+        return $usergroupIds;
     }
 
     public function deleteUser(string $id): bool
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
+
 }

@@ -18,10 +18,12 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
     private WRCService $wrcService;
     private CommonGroundService $cgs;
 
-    public function __construct(WRCService $wrcService, CommonGroundService $cgs){
+    public function __construct(WRCService $wrcService, CommonGroundService $cgs)
+    {
         $this->wrcService = $wrcService;
         $this->cgs = $cgs;
     }
+
     /**
      * @inheritDoc
      */
@@ -30,19 +32,17 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
         if (isset($context['info']->variableValues['studentId']) && isset($context['info']->variableValues['aanbiederEmployeeId'])) {
             throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
         }
-        if (isset($context['info']->variableValues['studentId'])) {
-            $id = $context['info']->variableValues['studentId'];
-            if (strpos($id, '/') !== false) {
-                $idArray = explode('/', $id);
-                $id = end($idArray);
-                $contact = $this->cgs->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+        if (key_exists('studentId', $context['args'])) {
+            $studentId = explode('/', $context['args']['studentId']);
+            if (is_array($studentId)) {
+                $studentId = end($studentId);
+                $contact = $this->cgs->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             }
-        } elseif (isset($context['info']->variableValues['aanbiederEmployeeId'])) {
-            $id = $context['info']->variableValues['aanbiederEmployeeId'];
-            if (strpos($id, '/') !== false) {
-                $idArray = explode('/', $id);
-                $id = end($idArray);
-                $contact = $this->cgs->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        } elseif (key_exists('aanbiederEmployeeId', $context['args'])) {
+            $aanbiederEmployeeId = explode('/', $context['args']['aanbiederEmployeeId']);
+            if (is_array($aanbiederEmployeeId)) {
+                $aanbiederEmployeeId = end($aanbiederEmployeeId);
+                $contact = $this->cgs->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
             }
         } else {
             $contact = null;
@@ -52,20 +52,21 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
         return $this->createPaginator($collection, $context['args']);
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args){
-        if(key_exists('first', $args)){
+    public function createPaginator(ArrayCollection $collection, array $args)
+    {
+        if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
-        } elseif(key_exists('last', $args)) {
+        } elseif (key_exists('last', $args)) {
             $maxItems = $args['last'];
             $firstItem = (count($collection) - 1) - $maxItems;
         } else {
             $maxItems = count($collection);
             $firstItem = 0;
         }
-        if(key_exists('after', $args)){
+        if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif(key_exists('before', $args)){
+        } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);

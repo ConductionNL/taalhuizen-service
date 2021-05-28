@@ -236,26 +236,30 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $volunteeringPreference;
-
+    private ?string $volunteeringPreference = null;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $gotHereVia;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasExperienceWithTargetGroup;
 
     /**
      * @var bool Shouldn't this be a string to provide the reason for the experience with the target group?
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $experienceWithTargetGroupYesReason;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentEducation;
@@ -264,7 +268,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
-    private ?array $currentEducationYes;
+    private ?array $currentEducationYes = [];
 
     /**
      *
@@ -274,16 +278,19 @@ class Employee
     private ?array $currentEducationNoButDidFollow = [];
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $doesCurrentlyFollowCourse;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseName;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseInstitute;
@@ -307,11 +314,13 @@ class Employee
     private $currentlyFollowingCourseCourseProfessionalism;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $doesCurrentlyFollowingCourseProvideCertificate;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $otherRelevantCertificates;
@@ -325,25 +334,57 @@ class Employee
 
     /**
      * @var string|null The provider this employee works for
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $providerId;
 
     /**
      * @var string|null The language house this employee works for
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $biscEmployeeId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $userId;
+
+    /**
+     * @var array|null The user roles of this employee
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $userRoles = [];
+
+    /**
+     * @var Datetime The moment this resource was created
+     *
+     * @Groups({"read", "write"})
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateCreated;
+
+    /**
+     * @var Datetime The moment this resource last Modified
+     *
+     * @Groups({"read", "write"})
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateModified;
 
     public function getId(): UuidInterface
     {
@@ -752,18 +793,6 @@ class Employee
         return $this;
     }
 
-    public function getUserGroupId(): ?string
-    {
-        return $this->userGroupId;
-    }
-
-    public function setUserGroupId(?string $userGroupId): self
-    {
-        $this->userGroupId = $userGroupId;
-
-        return $this;
-    }
-
     public function getUserId(): ?string
     {
         return $this->userId;
@@ -772,6 +801,42 @@ class Employee
     public function setUserId(?string $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUserRoles(): ?array
+    {
+        return $this->userRoles;
+    }
+
+    public function setUserRoles(?array $userRoles): self
+    {
+        $this->userRoles = $userRoles;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
+
+    public function getDateModified(): ?\DateTimeInterface
+    {
+        return $this->dateModified;
+    }
+
+    public function setDateModified(\DateTimeInterface $dateModified): self
+    {
+        $this->dateModified = $dateModified;
 
         return $this;
     }

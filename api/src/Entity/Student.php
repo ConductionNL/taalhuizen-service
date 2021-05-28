@@ -66,10 +66,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "group" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
+ *          },
+ *          "aanbiederEmployeeMentees" = {
+ *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact", "aanbiederEmployeeId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -231,13 +234,21 @@ class Student
     private $groupId;
 
     /**
+     * @var string The id of the mrc/employee of a mentor.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeId;
+
+    /**
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $studentId;
 
     /**
-     * @Groups({"write"})
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateCreated;
@@ -525,6 +536,18 @@ class Student
     public function setGroupId(?string $groupId): self
     {
         $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    public function getAanbiederEmployeeId(): ?string
+    {
+        return $this->aanbiederEmployeeId;
+    }
+
+    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    {
+        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
 
         return $this;
     }
