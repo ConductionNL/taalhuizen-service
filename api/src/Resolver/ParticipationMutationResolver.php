@@ -43,8 +43,6 @@ class ParticipationMutationResolver implements MutationResolverInterface
                 return $this->updateParticipation($context['info']->variableValues['input']);
             case 'removeParticipation':
                 return $this->removeParticipation($context['info']->variableValues['input']);
-            case 'addMentorToParticipation':
-                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             case 'updateMentorParticipation':
                 return $this->updateMentorGroupParticipation($context['info']->variableValues['input'], 'mentor');
             case 'removeMentorFromParticipation':
@@ -171,48 +169,6 @@ class ParticipationMutationResolver implements MutationResolverInterface
             throw new Exception($result['errorMessage']);
         }
         return null;
-    }
-
-    public function addMentorToParticipation(array $input): Participation
-    {
-        $result['result'] = [];
-
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $mentorId = explode('/',$input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
-        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
-
-        // Do check if mentorUrl exists
-        // todo: Maybe also check if this employee is an aanbieder employee?
-        if (!$this->commonGroundService->isResource($mentorUrl)) {
-            throw new Exception('Invalid request, aanbiederEmployeeId is not an existing mrc/employee!');
-        }
-
-        // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Add Mentor to Participation
-            $result = array_merge($result, $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            if (!isset($result['errorMessage'])) {
-                $resourceResult = $this->participationService->handleResult($result['participation']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
     }
 
     public function removeMentorFromParticipation(array $input): Participation

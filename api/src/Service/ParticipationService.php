@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Employee;
 use App\Entity\LearningNeed;
 use App\Entity\Participation;
 use App\Service\EAVService;
@@ -13,14 +14,21 @@ use Ramsey\Uuid\Uuid;
 class ParticipationService
 {
     private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private MrcService $mrcService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        EAVService $eavService,
+        MrcService $mrcService
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
+        $this->mrcService = $mrcService;
     }
 
     public function saveParticipation($participation, $learningNeedId = null, $participationId = null) {
@@ -267,6 +275,17 @@ class ParticipationService
         return $result;
     }
 
+    public function addMentoredParticipationToEmployee($participationId, $aanbiederEmployeeId): Employee
+    {
+        $result = [];
+        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+        $result = array_merge($result, $this->getParticipation($participationId));
+
+        array_merge($result, $this->addMentorToParticipation($employeeUrl, $result['participation']));
+
+        return $this->mrcService->getEmployee($aanbiederEmployeeId);
+    }
+
     public function addMentorToParticipation($mentorUrl, $participation) {
         $result = [];
         // Make sure this participation has no mentor or group set
@@ -480,7 +499,8 @@ class ParticipationService
         return $result;
     }
 
-    public function handleResult($participation, $learningNeedId = null) {
+    public function handleResult($participation, $learningNeedId = null)
+    {
         // Put together the expected result for Lifely:
         $resource = new Participation();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
@@ -523,6 +543,8 @@ class ParticipationService
         if (isset($learningNeedId)) {
             $resource->setLearningNeedId($learningNeedId);
         }
+        $this->entityManager->persist($resource);
+        $resource->setId(Uuid::fromString($participation['id']));
         $this->entityManager->persist($resource);
         return $resource;
     }

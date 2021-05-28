@@ -11,6 +11,7 @@ use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\User;
 use App\Service\MrcService;
+use App\Service\ParticipationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -20,10 +21,12 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     private EntityManagerInterface $entityManager;
     private MrcService $mrcService;
+    private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService){
+    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService, ParticipationService $participationService){
         $this->entityManager = $entityManager;
         $this->mrcService = $mrcService;
+        $this->participationService = $participationService;
     }
     /**
      * @inheritDoc
@@ -40,6 +43,8 @@ class EmployeeMutationResolver implements MutationResolverInterface
                 return $this->updateEmployee($context['info']->variableValues['input']);
             case 'removeEmployee':
                 return $this->deleteEmployee($context['info']->variableValues['input']);
+            case 'addMentoredParticipationToEmployee':
+                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             default:
                 return $item;
         }
@@ -62,4 +67,13 @@ class EmployeeMutationResolver implements MutationResolverInterface
         $this->mrcService->deleteEmployee(end($id));
         return null;
     }
+
+    public function addMentorToParticipation(array $input): Employee
+    {
+        $participationId = explode('/',$input['participationId']);
+        $aanbiederEmployeeId = explode('/',$input['aanbiederEmployeeId']);
+
+        return $this->participationService->addMentoredParticipationToEmployee(end($participationId), end($aanbiederEmployeeId));
+    }
+
 }
