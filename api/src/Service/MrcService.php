@@ -63,9 +63,14 @@ class MrcService
         return $employees;
     }
 
+    public function getEmployeeRaw(string $id): array
+    {
+        return $this->eavService->getObject('employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+    }
+
     public function getEmployee(string $id): Employee
     {
-        $result = $this->eavService->getObject('employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        $result = $this->getEmployeeRaw($id);
         return $this->createEmployeeObject($result);
     }
 
@@ -317,6 +322,10 @@ class MrcService
         foreach ($userGroupIds as $userGroupId) {
             $user['userGroups'][] = "/groups/$userGroupId";
         }
+        if($user['userGroups'] == []){
+            unset ($user['userGroups']);
+        }
+
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
@@ -431,7 +440,7 @@ class MrcService
         ];
         if (key_exists('userGroupIds', $employeeArray)) {
             foreach ($employeeArray['userGroupIds'] as $userGroupId) {
-                $user['userGroups'][] = "/groups/$userGroupId";
+                $resource['userGroups'][] = "/groups/$userGroupId";
             }
         }
 
@@ -533,7 +542,8 @@ class MrcService
 
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
     {
-        $employee = $this->getEmployee($id);
+        $employeeRaw = $this->getEmployeeRaw($id);
+        $employee = $this->createEmployeeObject($employeeRaw);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         if ($studentEmployee) {
@@ -549,8 +559,12 @@ class MrcService
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
             $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
+        if(!isset($user)) {
+            $userId = $employee->getUserId();
+            $user = $this->ucService->getUserArray($userId);
+        }
         $resource = [
-            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
+            'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'],
             'person'                => $contact['@id'],
             'provider'              => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId(),
             'hasPoliceCertificate'  => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked(),
@@ -565,8 +579,8 @@ class MrcService
         $resource = $this->cleanResource($resource);
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
-        if(key_exists('targetGroupPreferences', $employeeArray)) $this->createCompetences($employeeArray, $result['id'], $result);
-        if(key_exists('volunteeringPreference', $employeeArray)) $this->createInterests($employeeArray, $result['id'], $result['interests']);
+        key_exists('targetGroupPreferences', $employeeArray) ? $this->createCompetences($employeeArray, $result['id'], $result) : null;
+        key_exists('volunteeringPreference', $employeeArray) ? $this->createInterests($employeeArray, $result['id'], $result['interests']) : null;
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)){
@@ -590,10 +604,30 @@ class MrcService
         return $this->createEmployeeObject($result, $userRoleArray);
     }
 
+    public function deleteSubObjects($employee): bool
+    {
+        foreach($employee['interests'] as $interest){
+            $this->commonGroundService->deleteResource(null,  str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $interest['@id']));
+        }
+        foreach($employee['competencies'] as $competence){
+            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $competence['@id']));
+        }
+        foreach ($employee['educations'] as $education){
+            $this->commonGroundService->deleteResource(null,  str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $education['@id']));
+        }
+        foreach ($employee['skills'] as $skill){
+            $this->commonGroundService->deleteResource(null,  str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $skill['@id']));
+        }
+        return true;
+    }
+
     public function deleteEmployee(string $id): bool
     {
+        $employeeArray = $this->getEmployeeRaw($id);
+        $this->deleteSubObjects($employeeArray);
+        $employee = $this->createEmployeeObject($employeeArray);
+        $this->ucService->deleteUser($employee->getUserId());
         $this->eavService->deleteObject(null, 'employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
-        $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
         return false;
     }
 
