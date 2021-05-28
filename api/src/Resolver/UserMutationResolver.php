@@ -10,6 +10,7 @@ use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserMutationResolver implements MutationResolverInterface
 {
@@ -38,6 +39,8 @@ class UserMutationResolver implements MutationResolverInterface
                 return $this->deleteUser($context['info']->variableValues['input']);
             case 'loginUser':
                 return $this->login($context['info']->variableValues['input']);
+            case 'logoutUser':
+                return $this->logout();
             case 'requestPasswordResetUser':
                 return $this->requestPasswordReset($context['info']->variableValues['input']);
             case 'resetPasswordUser':
@@ -88,5 +91,12 @@ class UserMutationResolver implements MutationResolverInterface
         $this->entityManager->persist($userObject);
 
         return $userObject;
+    }
+
+    public function logout(): ?User
+    {
+        $this->ucService->logout();
+
+        return null;
     }
 }

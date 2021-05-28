@@ -62,6 +62,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "write" = false,
  *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
  *          },
+ *          "logout" = {
+ *              "mutation"=UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {}
+ *          },
  *          "requestPasswordReset" = {
  *              "mutation" = UserMutationResolver::class,
  *              "read" = false,
