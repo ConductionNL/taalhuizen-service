@@ -320,7 +320,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result, $userRoleArray = false): Employee
+    public function createEmployeeObject(array $result, array $userRoleArray = []): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -413,7 +413,7 @@ class MrcService
         ];
     }
 
-    public function createUser(array $employeeArray, array $contact): string
+    public function createUser(array $employeeArray, array $contact): array
     {
         if (key_exists('languageHouseId', $employeeArray)) {
             $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
@@ -440,7 +440,7 @@ class MrcService
         $token = $this->ucService->requestPasswordReset($resource['username'], false);
         $this->bcService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
 
-        return $result['id'];
+        return $result;
     }
 
     public function cleanResource(array $array): array
@@ -467,7 +467,7 @@ class MrcService
         return $contact;
     }
 
-    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?string
+    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?array
     {
         if((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))){
             if(isset($user)){
@@ -475,7 +475,7 @@ class MrcService
             } elseif (isset($userId)) {
                 $employeeArray['userId'] = $userId;
             }
-            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : [])['id'];
+            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
         } elseif (!$studentEmployee) {
             return $this->createUser($employeeArray, $contact);
         }
@@ -521,12 +521,14 @@ class MrcService
         if (key_exists('userGroupIds', $employeeArray)) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray =  $this->convertUserRole($userRole);
+        } else {
+            $userRoleArray = [];
         }
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
         }
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $this->createEmployeeObject($result, isset($userRoleArray) ? $userRoleArray : []);
     }
 
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
@@ -545,7 +547,7 @@ class MrcService
                 $userId = $employeeArray['userId'];
             }
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+            $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employee->getLanguageHouseId(),
@@ -571,11 +573,21 @@ class MrcService
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
 
+        if (key_exists('userGroupIds', $employeeArray)) {
+            $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
+            $userRoleArray =  $this->convertUserRole($userRole);
+        } elseif(isset($user) && key_exists('userGroups', $user) && count($user['userGroups']) > 0) {
+            $userRoleArray = $this->convertUserRole($user['userGroups'][0]);
+        } else {
+            $userRoleArray = [];
+        }
+
+
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
         }
-        return $this->createEmployeeObject($result);
+        return $this->createEmployeeObject($result, $userRoleArray);
     }
 
     public function deleteEmployee(string $id): bool
