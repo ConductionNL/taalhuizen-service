@@ -46,7 +46,6 @@ class UserQueryItemResolver implements QueryItemResolverInterface
         $id = explode('/', $id);
         $id = end($id);
         return $this->ucService->getUser($id);
-//        return new User;
     }
 
     public function getCurrentUser(): User

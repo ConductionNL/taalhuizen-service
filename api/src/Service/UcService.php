@@ -18,7 +18,9 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Cache\Adapter\AdapterInterface as CacheInterface;
 
 class UcService
 {
@@ -27,13 +29,25 @@ class UcService
     private CommonGroundService $commonGroundService;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
+    private RequestStack $requestStack;
+    private CacheInterface $cache;
 
-    public function __construct(BsService $bsService, CCService $ccService, CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag){
+    public function __construct(
+        BsService $bsService,
+        CCService $ccService,
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager,
+        ParameterBagInterface $parameterBag,
+        RequestStack $requestStack,
+        CacheInterface $cache
+    ){
         $this->bsService = $bsService;
         $this->ccService = $ccService;
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
+        $this->requestStack = $requestStack;
+        $this->cache = $cache;
     }
 
     public function getUser(string $id): User
@@ -58,22 +72,33 @@ class UcService
             key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
                 $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
         );
-        $org = $this->commonGroundService->getResource($raw['organization']);
+        !$raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
         $user->setPassword('');
         $user->setUsername($raw['username']);
         $user->setGivenName($contact['givenName']);
-        $user->setAdditionalName($contact['additionalName']);
+        $contact['additionalName'] ? $user->setAdditionalName($contact['additionalName']) : null;
         $user->setFamilyName($contact['familyName']);
-        $user->setOrganizationId($raw['organization']);
-//        $user->setOrganizationId($org['id']);
-//        $user->setUserRoles();
-//        $user->setOrganizationName($org['name']);
-//        $user->setUserEnvironment();
+        isset($org) && $org['id'] ? $user->setOrganizationId( $org['id'])  : null;
+        $user->setUserEnvironment($this->userEnvironmentEnum(isset($org) ? $org['type'] : null));
+        $user->setUserRoles($raw['roles']);
+        isset($org) && $org['name'] ? $user->setOrganizationName($org['name']): null;
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
         $this->entityManager->persist($user);
 
         return $user;
+    }
+
+    public function userEnvironmentEnum($type): string
+    {
+      if ($type == 'Taalhuis') {
+          $result = 'TAALHUIS';
+      } elseif ($type == 'Aanbieder') {
+          $result = 'AANBIEDER';
+      } else {
+          $result = 'BISC';
+      }
+        return $result;
     }
 
     public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
@@ -136,9 +161,9 @@ class UcService
         throw new \Exception('Token could not be verified');
     }
 
-    public function getUsers(): array
+    public function getUsers(?array $query = []): array
     {
-        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'])['hydra:member'];
+        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'],$query)['hydra:member'];
     }
 
     public function requestPasswordReset(string $email, bool $sendEmail = true): string
@@ -146,7 +171,7 @@ class UcService
         $time = new DateTime();
         $expiry = new DateTime('+4 hours');
 
-        $users = $this->getUsers();
+        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
 
         $found = false;
         foreach($users as $user){
@@ -199,6 +224,23 @@ class UcService
         return $this->createJWTToken($jwtBody);
     }
 
+    public function logout(): bool
+    {
+        $token = $this->requestStack->getCurrentRequest()->headers->get('Authorization');
+
+        $item = $this->cache->getItem('invalidToken_'.md5($token));
+        if($item->isHit()) {
+            $value = $item->get();
+            if($value == $token){return true;}
+        }
+        $value = $token;
+        $item->set($value);
+        $item->expiresAt(new DateTime('+10 days'));
+        $this->cache->save($item);
+
+        return true;
+    }
+
     public function updatePasswordWithToken(string $email, string $token, string $password): User
     {
         $tokenEmail = $this->validateJWTAndGetPayload($token);
@@ -212,12 +254,13 @@ class UcService
 
     public function createUser(array $userArray): User
     {
-        $contact = $this->ccService->createPerson(['givenName' => $userArray['username'], 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
+        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
         $resource = [
             'username' => key_exists('username', $userArray) ? $userArray['username'] : null,
             'password' => key_exists('password', $userArray) ? $userArray['password'] : null,
             'locale' => 'nl',
             'person' => $contact['@id'],
+            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
         ];
 
         if(!$resource['username'] || !$resource['password']){
