@@ -267,19 +267,46 @@ class StudentService
 //        }
     }
 
-    //w.i.p.
     public function handleResult($person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registrarMemo = null, $registration = null)
     {
+        // Put together the expected result for Lifely:
         if (isset($registration)) {
-            // Put together the expected result for Lifely:
             $resource = new Registration();
         } else {
             $resource = new Student();
         }
 
-        //todo:make sure to get all data from the correct places
-        // all variables are checked from the $person right now, this should and could be $participant or $employee in some places!
-        $registrar = [
+        // Set all subresources in response DTO body
+        if (isset($participant['dateCreated'])) $resource->setDateCreated(new \DateTime($participant['dateCreated'])); //todo: this is currently incorrect, timezone problem
+        if (isset($participant['status'])) $resource->setStatus($participant['status']);
+        if (isset($registrarMemo['description'])) $resource->setMemo($registrarMemo['description']);
+        $resource->setRegistrar($this->handleRegistrar($registrarPerson, $registrarOrganization));
+        $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
+        $resource->setPersonDetails($this->handlePersonDetails($person));
+        $resource->setContactDetails($this->handleContactDetails($person));
+        $resource->setGeneralDetails($this->handleGeneralDetails($person));
+        $resource->setReferrerDetails($this->handleReferrerDetails($registration, $participant, $registrarPerson, $registrarOrganization));
+        $resource->setBackgroundDetails($this->handleBackgroundDetails($person));
+        $resource->setDutchNTDetails($this->handleDutchNTDetails($person));
+        if (isset($employee['speakingLevel'])) $resource->setSpeakingLevel($employee['speakingLevel']);
+        $mrcEducations = $this->getEducationsFromEmployee($employee);
+        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
+        $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+        $resource->setJobDetails($this->handleJobDetails($employee));
+        $resource->setMotivationDetails($this->handleMotivationDetails($participant));
+        $resource->setAvailabilityDetails($this->handleAvailabilityDetails($person));
+        if (isset($participant['readingTestResult'])) $resource->setReadingTestResult($participant['readingTestResult']);
+        if (isset($participant['writingTestResult'])) $resource->setWritingTestResult($participant['writingTestResult']);
+        $resource->setPermissionDetails($this->handlePermissionDetails($person));
+
+        $this->entityManager->persist($resource);
+
+        return $resource;
+    }
+
+    public function handleRegistrar($registrarPerson = null, $registrarOrganization = null): array
+    {
+        return [
             'id'               => $registrarOrganization['id'] ?? null,
             'organisationName' => $registrarOrganization['name'] ?? null,
             'givenName'        => $registrarPerson['givenName'] ?? null,
@@ -288,23 +315,31 @@ class StudentService
             'email'            => $registrarPerson['telephones'][0]['telephone'] ?? null,
             'telephone'        => $registrarPerson['emails'][0]['email'] ?? null,
         ];
+    }
 
-        // Create all subresources
-        $civicIntegrationDetails = [
+    public function handleCivicIntegrationDetails($person): array
+    {
+        return [
             'civicIntegrationRequirement'           => $person['civicIntegrationRequirement'] ?? null,
             'civicIntegrationRequirementReason'     => $person['civicIntegrationRequirementReason'] ?? null,
             'civicIntegrationRequirementFinishDate' => $person['civicIntegrationRequirementFinishDate'] ?? null,
         ];
+    }
 
-        $personDetails = [
+    public function handlePersonDetails($person): array
+    {
+        return [
             'givenName'      => $person['givenName'] ?? null,
             'additionalName' => $person['additionalName'] ?? null,
             'familyName'     => $person['familyName'] ?? null,
             'gender'         => $person['gender'] ?? null,
             'birthday'       => $person['birthday'] ?? null,
         ];
+    }
 
-        $contactDetails = [
+    public function handleContactDetails($person): array
+    {
+        return [
             'street'                 => $person['addresses'][0]['street'] ?? null,
             'postalCode'             => $person['addresses'][0]['postalCode'] ?? null,
             'locality'               => $person['addresses'][0]['locality'] ?? null,
@@ -317,7 +352,11 @@ class StudentService
             'contactPreferenceOther' => $person['contactPreference'] ?? null,
             //todo does not check for contactPreferenceOther isn't saved separately right now
         ];
+    }
 
+    // todo: might need another split in 2 functions:
+    public function handleGeneralDetails($person): array
+    {
         if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
             $childrenCount = count($person['ownedContactLists'][0]['people']);
             $childrenDatesOfBirth = [];
@@ -332,7 +371,8 @@ class StudentService
                 }
             }
         }
-        $generalDetails = [
+
+        return [
             'countryOfOrigin'      => $person['birthplace']['country'] ?? null,
             'nativeLanguage'       => $person['primaryLanguage'] ?? null,
             'otherLanguages'       => $person['speakingLanguages'] ? implode(',', $person['speakingLanguages']) : null,
@@ -340,26 +380,31 @@ class StudentService
             'childrenCount'        => $childrenCount ?? null,
             'childrenDatesOfBirth' => isset($childrenDatesOfBirth) ? implode(',', $childrenDatesOfBirth) : null,
         ];
+    }
 
+    public function handleReferrerDetails($registration, $participant, $registrarPerson = null, $registrarOrganization = null): array
+    {
         if (isset($registration)) {
-            $referrerDetails = [
+            return [
                 'referringOrganization'      => $registrarOrganization['name'] ?? null,
                 'referringOrganizationOther' => null,
                 'email'                      => $registrarPerson['emails'][0]['email'] ?? null,
             ];
-        } else {
-            if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
-                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-            }
-            $referrerDetails = [
-                'referringOrganization'      => $registrarOrganization['name'] ?? null,
-                'referringOrganizationOther' => $registrarOrganization['name'] ?? null,
-                //todo does not check for referringOrganizationOther isn't saved separately right now
-                'email' => $registrarOrganization['emails'][0]['email'] ?? null,
-            ];
         }
+        if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
+            $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+        }
+        return [
+            'referringOrganization'      => $registrarOrganization['name'] ?? null,
+            'referringOrganizationOther' => $registrarOrganization['name'] ?? null,
+            //todo does not check for referringOrganizationOther isn't saved separately right now
+            'email' => $registrarOrganization['emails'][0]['email'] ?? null,
+        ];
+    }
 
-        $backgroundDetails = [
+    public function handleBackgroundDetails($person): array
+    {
+        return [
             'foundVia'      => $person['foundVia'] ?? null,
             'foundViaOther' => $person['foundVia'] ?? null,
             //todo does not check for foundViaOther^ isn't saved separately right now
@@ -369,44 +414,50 @@ class StudentService
             'network'                    => $person['network'] ?? null,
             'participationLadder'        => isset($person['participationLadder']) ? (int) $person['participationLadder'] : null,
         ];
+    }
 
-        $dutchNTDetails = [
+    public function handleDutchNTDetails($person): array
+    {
+        return [
             'dutchNTLevel'           => $person['dutchNTLevel'] ?? null,
             'inNetherlandsSinceYear' => $person['inNetherlandsSinceYear'] ?? null,
             'languageInDailyLife'    => $person['languageInDailyLife'] ?? null,
             'knowsLatinAlphabet'     => isset($person['knowsLatinAlphabet']) ? (bool) $person['knowsLatinAlphabet'] : null,
             'lastKnownLevel'         => $person['lastKnownLevel'] ?? null,
         ];
+    }
 
-        $lastEducation = $followingEducationNo = $followingEducationYes = $course = null;
+    public function getEducationsFromEmployee($employee): array
+    {
         if (isset($employee['educations'])) {
             foreach ($employee['educations'] as $education) {
                 switch ($education['description']) {
                     case 'lastEducation':
-                        if (!isset($lastEducation)) {
-                            $lastEducation = $education;
-                        }
+                        if (!isset($lastEducation)) $lastEducation = $education;
                         break;
                     case 'followingEducationNo':
-                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
-                            $followingEducationNo = $education;
-                        }
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) $followingEducationNo = $education;
                         break;
                     case 'followingEducationYes':
-                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
-                            $followingEducationYes = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
+                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) $followingEducationYes = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
                         break;
                     case 'course':
-                        if (!isset($course)) {
-                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
+                        if (!isset($course)) $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
                         break;
                 }
             }
         }
+        return [
+            'lastEducation'         => $lastEducation ?? null,
+            'followingEducationNo'  => $followingEducationNo ?? null,
+            'followingEducationYes' => $followingEducationYes ?? null,
+            'course'                => $course ?? null,
+        ];
+    }
 
-        $educationDetails = [
+    public function handleEducationDetails($lastEducation, $followingEducationYes, $followingEducationNo): array
+    {
+        return [
             'lastFollowedEducation'                            => $lastEducation['iscedEducationLevelCode'] ?? null,
             'didGraduate'                                      => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
             'followingEducationRightNow'                       => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
@@ -419,8 +470,11 @@ class StudentService
             'followingEducationRightNowNoLevel'                => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
             'followingEducationRightNowNoGotCertificate'       => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
         ];
+    }
 
-        $courseDetails = [
+    public function handleCourseDetails($course): array
+    {
+        return [
             'isFollowingCourseRightNow'    => isset($course),
             'courseName'                   => $course['name'] ?? null,
             'courseTeacher'                => $course['teacherProfessionalism'] ?? null,
@@ -428,15 +482,21 @@ class StudentService
             'amountOfHours'                => $course['amountOfHours'] ?? null,
             'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool) $course['providesCertificate'] : null,
         ];
+    }
 
-        $jobDetails = [
+    public function handleJobDetails($employee): array
+    {
+        return [
             'trainedForJob'          => $employee['trainedForJob'] ?? null,
             'lastJob'                => $employee['lastJob'] ?? null,
             'dayTimeActivities'      => $employee['dayTimeActivities'] ?? null,
             'dayTimeActivitiesOther' => $employee['dayTimeActivitiesOther'] ?? null,
         ];
+    }
 
-        $motivationDetails = [
+    public function handleMotivationDetails($participant): array
+    {
+        return [
             'desiredSkills'                 => $participant['desiredSkills'] ?? null,
             'desiredSkillsOther'            => $participant['desiredSkillsOther'] ?? null,
             'hasTriedThisBefore'            => $participant['hasTriedThisBefore'] ?? null,
@@ -446,58 +506,23 @@ class StudentService
             'desiredLearningMethod'         => $participant['desiredLearningMethod'] ?? null,
             'remarks'                       => $participant['remarks'] ?? null,
         ];
+    }
 
-        $availabilityDetails = [
+    public function handleAvailabilityDetails($person): array
+    {
+        return [
             'availability'      => $person['availability'] ?? null,
             'availabilityNotes' => $person['availabilityNotes'] ?? null,
         ];
+    }
 
-        $permissionDetails = [
+    public function handlePermissionDetails($person): array
+    {
+        return [
             'didSignPermissionForm'                        => $person['didSignPermissionForm'] ?? null,
             'hasPermissionToShareDataWithAanbieders'       => $person['hasPermissionToShareDataWithAanbieders'] ?? null,
             'hasPermissionToShareDataWithLibraries'        => $person['hasPermissionToShareDataWithLibraries'] ?? null,
             'hasPermissionToSendInformationAboutLibraries' => $person['hasPermissionToSendInformationAboutLibraries'] ?? null,
         ];
-
-        // Set all subresources in response DTO body
-        if (isset($participant['dateCreated'])) {
-            $resource->setDateCreated(new \DateTime($participant['dateCreated']));
-        } //todo: this is currently incorrect, timezone problem
-        if (isset($participant['status'])) {
-            $resource->setStatus($participant['status']);
-        }
-        if (isset($registrarMemo['description'])) {
-            $resource->setMemo($registrarMemo['description']);
-        }
-        $resource->setRegistrar($registrar);
-        $resource->setCivicIntegrationDetails($civicIntegrationDetails);
-        $resource->setPersonDetails($personDetails);
-        $resource->setContactDetails($contactDetails);
-        $resource->setGeneralDetails($generalDetails);
-        $resource->setReferrerDetails($referrerDetails);
-        $resource->setBackgroundDetails($backgroundDetails);
-        $resource->setDutchNTDetails($dutchNTDetails);
-        if (isset($employee['speakingLevel'])) {
-            $resource->setSpeakingLevel($employee['speakingLevel']);
-        }
-        $resource->setEducationDetails($educationDetails);
-        $resource->setCourseDetails($courseDetails);
-        $resource->setJobDetails($jobDetails);
-        $resource->setMotivationDetails($motivationDetails);
-        $resource->setAvailabilityDetails($availabilityDetails);
-        if (isset($participant['readingTestResult'])) {
-            $resource->setReadingTestResult($participant['readingTestResult']);
-        }
-        if (isset($participant['writingTestResult'])) {
-            $resource->setWritingTestResult($participant['writingTestResult']);
-        }
-        $resource->setPermissionDetails($permissionDetails);
-        $resource->setDateCreated(new \DateTime($participant['dateCreated']));
-
-        // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
-//        $resource->setId(Uuid::getFactory()->fromString($participant['id']));
-        $this->entityManager->persist($resource);
-
-        return $resource;
     }
 }
