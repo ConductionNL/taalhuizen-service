@@ -2,12 +2,10 @@
 
 namespace App\Resolver;
 
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
@@ -51,5 +49,4 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
 
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
-
 }

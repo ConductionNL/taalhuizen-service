@@ -2,11 +2,9 @@
 
 namespace App\Resolver;
 
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\LearningNeedService;
 use App\Service\ResolverService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -62,5 +60,4 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
 
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
-
 }

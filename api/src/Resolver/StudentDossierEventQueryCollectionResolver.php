@@ -2,11 +2,9 @@
 
 namespace App\Resolver;
 
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\EDUService;
 use App\Service\ResolverService;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class StudentDossierEventQueryCollectionResolver implements QueryCollectionResolverInterface
 {
@@ -32,6 +30,4 @@ class StudentDossierEventQueryCollectionResolver implements QueryCollectionResol
 
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
-
-
 }
