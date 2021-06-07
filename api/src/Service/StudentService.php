@@ -299,7 +299,7 @@ class StudentService
         return $resource;
     }
 
-    public function handleSubResources($resource, $person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registration = null): object
+    private function handleSubResources($resource, $person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registration = null): object
     {
         $resource->setRegistrar($this->handleRegistrar($registrarPerson, $registrarOrganization));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
@@ -321,7 +321,7 @@ class StudentService
         return $resource;
     }
 
-    public function handleRegistrar($registrarPerson = null, $registrarOrganization = null): array
+    private function handleRegistrar($registrarPerson = null, $registrarOrganization = null): array
     {
         return [
             'id'               => $registrarOrganization['id'] ?? null,
@@ -334,7 +334,7 @@ class StudentService
         ];
     }
 
-    public function handleCivicIntegrationDetails($person): array
+    private function handleCivicIntegrationDetails($person): array
     {
         return [
             'civicIntegrationRequirement'           => $person['civicIntegrationRequirement'] ?? null,
@@ -343,7 +343,7 @@ class StudentService
         ];
     }
 
-    public function handlePersonDetails($person): array
+    private function handlePersonDetails($person): array
     {
         return [
             'givenName'      => $person['givenName'] ?? null,
@@ -354,7 +354,7 @@ class StudentService
         ];
     }
 
-    public function handleContactDetails($person): array
+    private function handleContactDetails($person): array
     {
         return [
             'street'                 => $person['addresses'][0]['street'] ?? null,
@@ -371,7 +371,7 @@ class StudentService
         ];
     }
 
-    public function handleGeneralDetails($person): array
+    private function handleGeneralDetails($person): array
     {
         if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
             $childrenCount = count($person['ownedContactLists'][0]['people']);
@@ -398,7 +398,7 @@ class StudentService
         ];
     }
 
-    public function handleReferrerDetails($registration, $participant, $registrarPerson = null, $registrarOrganization = null): array
+    private function handleReferrerDetails($registration, $participant, $registrarPerson = null, $registrarOrganization = null): array
     {
         if (isset($registration)) {
             return [
@@ -419,7 +419,7 @@ class StudentService
         ];
     }
 
-    public function handleBackgroundDetails($person): array
+    private function handleBackgroundDetails($person): array
     {
         return [
             'foundVia'      => $person['foundVia'] ?? null,
@@ -433,7 +433,7 @@ class StudentService
         ];
     }
 
-    public function handleDutchNTDetails($person): array
+    private function handleDutchNTDetails($person): array
     {
         return [
             'dutchNTLevel'           => $person['dutchNTLevel'] ?? null,
@@ -444,7 +444,7 @@ class StudentService
         ];
     }
 
-    public function getEducationsFromEmployee($employee): array
+    private function getEducationsFromEmployee($employee): array
     {
         $educations = [
             'lastEducation'         => null,
@@ -462,7 +462,7 @@ class StudentService
         return $educations;
     }
 
-    public function setEducationType(&$educations, $education)
+    private function setEducationType(&$educations, $education)
     {
         switch ($education['description']) {
             case 'lastEducation':
@@ -484,7 +484,7 @@ class StudentService
         }
     }
 
-    public function handleEducationDetails($lastEducation, $followingEducationYes, $followingEducationNo): array
+    private function handleEducationDetails($lastEducation, $followingEducationYes, $followingEducationNo): array
     {
         return [
             'lastFollowedEducation'                            => $lastEducation['iscedEducationLevelCode'] ?? null,
@@ -501,7 +501,7 @@ class StudentService
         ];
     }
 
-    public function handleCourseDetails($course): array
+    private function handleCourseDetails($course): array
     {
         return [
             'isFollowingCourseRightNow'    => isset($course),
@@ -513,7 +513,7 @@ class StudentService
         ];
     }
 
-    public function handleJobDetails($employee): array
+    private function handleJobDetails($employee): array
     {
         return [
             'trainedForJob'          => $employee['trainedForJob'] ?? null,
@@ -523,7 +523,7 @@ class StudentService
         ];
     }
 
-    public function handleMotivationDetails($participant): array
+    private function handleMotivationDetails($participant): array
     {
         return [
             'desiredSkills'                 => $participant['desiredSkills'] ?? null,
@@ -537,7 +537,7 @@ class StudentService
         ];
     }
 
-    public function handleAvailabilityDetails($person): array
+    private function handleAvailabilityDetails($person): array
     {
         return [
             'availability'      => $person['availability'] ?? null,
@@ -545,7 +545,7 @@ class StudentService
         ];
     }
 
-    public function handlePermissionDetails($person): array
+    private function handlePermissionDetails($person): array
     {
         return [
             'didSignPermissionForm'                        => $person['didSignPermissionForm'] ?? null,

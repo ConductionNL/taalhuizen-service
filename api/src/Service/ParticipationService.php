@@ -475,7 +475,9 @@ class ParticipationService
         if (isset($participation['startDate']) && isset($participation['endDate'])) {
             if ($participation['startDate'] instanceof \DateTime && $participation['endDate'] instanceof \DateTime) {
                 $startDate = $participation['startDate'];
+                $participation['startDate'] = $startDate->format('Y-m-d H:i:s');
                 $endDate = $participation['endDate'];
+                $participation['endDate'] = $endDate->format('Y-m-d H:i:s');
             } else {
                 $startDate = new \DateTime($participation['startDate']);
                 $startDate->format('Y-m-d H:i:s');
@@ -489,7 +491,9 @@ class ParticipationService
         if (isset($participation['presenceStartDate']) && isset($participation['presenceEndDate'])) {
             if ($participation['presenceStartDate'] instanceof \DateTime && $participation['presenceEndDate'] instanceof \DateTime) {
                 $startDate = $participation['presenceStartDate'];
+                $participation['presenceStartDate'] = $startDate->format('Y-m-d H:i:s');
                 $endDate = $participation['presenceEndDate'];
+                $participation['presenceEndDate'] = $endDate->format('Y-m-d H:i:s');
             } else {
                 $startDate = new \DateTime($participation['presenceStartDate']);
                 $startDate->format('Y-m-d H:i:s');
