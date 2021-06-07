@@ -356,7 +356,8 @@ class MrcService
         return $employee;
     }
 
-    private function contactToEmployeeObject($employee, $contact) {
+    private function contactToEmployeeObject($employee, $contact)
+    {
         $employee->setGivenName($contact['givenName']);
         $employee->setAdditionalName($contact['additionalName']);
         $employee->setFamilyName($contact['familyName']);
@@ -378,7 +379,8 @@ class MrcService
         return $employee;
     }
 
-    private function contactObjectsToEmployeeObject($employee, $contact) {
+    private function contactObjectsToEmployeeObject($employee, $contact)
+    {
         foreach ($contact['telephones'] as $telephone) {
             if ($telephone['name'] == 'contact telephone') {
                 $employee->setContactTelephone($telephone['telephone']);
@@ -396,16 +398,19 @@ class MrcService
         return $employee;
     }
 
-    private function resultToEmployeeObject($employee, $result) {
+    private function resultToEmployeeObject($employee, $result)
+    {
         $employee->setIsVOGChecked($result['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($result['relevantCertificates']);
         $employee->setGotHereVia($result['referrer']);
         $employee->setDateCreated(new \DateTime($result['dateCreated']));
         $employee->setDateModified(new \DateTime($result['dateModified']));
+
         return $employee;
     }
 
-    private function subObjectsToEmployeeObject($employee, $result) {
+    private function subObjectsToEmployeeObject($employee, $result)
+    {
         $competences = [];
         foreach ($result['competencies'] as $competence) {
             $competences[] = $competence['name'];
@@ -435,7 +440,8 @@ class MrcService
         return $employee;
     }
 
-    private function relatedObjectsToEmployeeObject($employee, $result) {
+    private function relatedObjectsToEmployeeObject($employee, $result)
+    {
         $providerIdArray = explode('/', parse_url($result['provider'])['path']);
         $employee->setProviderId(end($providerIdArray));
         $languageHouseIdArray = explode('/', parse_url($result['organization'])['path']);
