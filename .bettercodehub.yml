@@ -21,5 +21,7 @@ languages:
   test:
     include:
         - /api/tests/.*
+    exclude:
+        - /api/src/Resolver/.*
 
 
