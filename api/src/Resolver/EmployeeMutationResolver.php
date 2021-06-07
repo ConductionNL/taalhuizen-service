@@ -1,24 +1,15 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
-use App\Entity\Document;
 use App\Entity\Employee;
-use App\Entity\LanguageHouse;
-use App\Entity\User;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class EmployeeMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private MrcService $mrcService;
     private ParticipationService $participationService;
@@ -28,6 +19,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
         $this->mrcService = $mrcService;
         $this->participationService = $participationService;
     }
+
     /**
      * @inheritDoc
      */
@@ -36,7 +28,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
         if (!$item instanceof Employee && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createEmployee':
                 return $this->createEmployee($context['info']->variableValues['input']);
             case 'updateEmployee':
@@ -57,14 +49,16 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     public function updateEmployee(array $input): Employee
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
+
         return $this->mrcService->updateEmployee(end($id), $input);
     }
 
     public function deleteEmployee(array $input): ?Employee
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
         $this->mrcService->deleteEmployee(end($id));
+
         return null;
     }
 

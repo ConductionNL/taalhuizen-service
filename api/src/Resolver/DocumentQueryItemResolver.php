@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\WRCService;
@@ -12,12 +10,14 @@ class DocumentQueryItemResolver implements QueryItemResolverInterface
 {
     private WRCService $wrcService;
 
-    public function __construct(WRCService $wrcService){
+    public function __construct(WRCService $wrcService)
+    {
         $this->wrcService = $wrcService;
     }
 
     /**
      * @inheritDoc
+     *
      * @throws Exception
      */
     public function __invoke($item, array $context)

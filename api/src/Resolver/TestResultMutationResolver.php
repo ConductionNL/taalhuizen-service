@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\TestResult;
@@ -13,16 +11,17 @@ use Ramsey\Uuid\Uuid;
 
 class TestResultMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, TestResultService $testResultService){
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, TestResultService $testResultService)
+    {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->testResultService = $testResultService;
     }
+
     /**
      * @inheritDoc
      */
@@ -31,7 +30,7 @@ class TestResultMutationResolver implements MutationResolverInterface
         if (!$item instanceof TestResult && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createTestResult':
                 return $this->createTestResult($context['info']->variableValues['input']);
             case 'updateTestResult':
@@ -46,7 +45,7 @@ class TestResultMutationResolver implements MutationResolverInterface
     public function createTestResult(array $input): TestResult
     {
         if (isset($input['participationId'])) {
-            $participationId = explode('/',$input['participationId']);
+            $participationId = explode('/', $input['participationId']);
             if (is_array($participationId)) {
                 $participationId = end($participationId);
             }
@@ -69,12 +68,13 @@ class TestResultMutationResolver implements MutationResolverInterface
         $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
 
         $this->entityManager->persist($resourceResult);
+
         return $resourceResult;
     }
 
     public function updateTestResult(array $input): TestResult
     {
-        $testResultId = explode('/',$input['id']);
+        $testResultId = explode('/', $input['id']);
         if (is_array($testResultId)) {
             $testResultId = end($testResultId);
         }
@@ -101,13 +101,14 @@ class TestResultMutationResolver implements MutationResolverInterface
         $resourceResult->setId(Uuid::getFactory()->fromString($testResult['testResult']['id']));
 
         $this->entityManager->persist($resourceResult);
+
         return $resourceResult;
     }
 
     public function removeTestResult(array $testResult): ?TestResult
     {
         if (isset($testResult['id'])) {
-            $testResultId = explode('/',$testResult['id']);
+            $testResultId = explode('/', $testResult['id']);
             if (is_array($testResultId)) {
                 $testResultId = end($testResultId);
             }
@@ -120,25 +121,27 @@ class TestResultMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function inputToTestResult(array $input) {
+    private function inputToTestResult(array $input)
+    {
         // Get all info from the input array for creating/updating a TestResult and return the body for this
         return [
-            'name' => $input['examUsedExam'],
-            'completionDate' => $input['examDate'],
-            'goal' => $input['outComesGoal'],
-            'topic' => $input['outComesTopic'],
-            'topicOther' => $input['outComesTopicOther'] ?? null,
-            'application' => $input['outComesApplication'],
+            'name'             => $input['examUsedExam'],
+            'completionDate'   => $input['examDate'],
+            'goal'             => $input['outComesGoal'],
+            'topic'            => $input['outComesTopic'],
+            'topicOther'       => $input['outComesTopicOther'] ?? null,
+            'application'      => $input['outComesApplication'],
             'applicationOther' => $input['outComesApplicationOther'] ?? null,
-            'level' => $input['outComesLevel'],
-            'levelOther' => $input['outComesLevelOther'] ?? null,
+            'level'            => $input['outComesLevel'],
+            'levelOther'       => $input['outComesLevelOther'] ?? null,
         ];
     }
 
-    private function inputToResultMemo(array $input) {
+    private function inputToResultMemo(array $input)
+    {
         // Get all info from the input array for creating/updating a memo and return the body for this
         return [
-            'name' => 'Memo for result '.$input['examUsedExam'],
+            'name'        => 'Memo for result '.$input['examUsedExam'],
             'description' => $input['examMemo'] ?? null,
         ];
     }

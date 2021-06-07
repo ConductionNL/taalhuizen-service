@@ -1,3 +1,10 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service?ref=badge_shield)
+[![BCH compliance](https://bettercodehub.com/edge/badge/ConductionNL/taalhuizen-service?branch=master)](https://bettercodehub.com/results/ConductionNL/taalhuizen-service)
+[![StyleCI](https://github.styleci.io/repos/355113584/shield?branch=master)](https://github.styleci.io/repos/355113584)
+[![Docker Image CI](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml/badge.svg)](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/taalhuizen-service)](https://artifacthub.io/packages/helm/taalhuizen-service/taalhuizen-service)
+[![Componenten Catalogus](https://img.shields.io/badge/vng--componentencatalogus-posted-green)](https://componentencatalogus.commonground.nl/componenten/180?)
+
 # Readme
 -------
 Welcome to the the VNG Common Ground proto component!

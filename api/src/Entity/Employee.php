@@ -2,25 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeQueryItemResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeMutationResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Repository\EmployeeRepository;
+use App\Resolver\EmployeeMutationResolver;
+use App\Resolver\EmployeeQueryCollectionResolver;
+use App\Resolver\EmployeeQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -279,7 +274,6 @@ class Employee
     private ?array $currentEducationYes = [];
 
     /**
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
@@ -334,7 +328,7 @@ class Employee
     private $otherRelevantCertificates;
 
     /**
-     * @var boolean|null Whether the employee has submitted a police certificate
+     * @var bool|null Whether the employee has submitted a police certificate
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -402,6 +396,7 @@ class Employee
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

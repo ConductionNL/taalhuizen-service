@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\StudentService;
@@ -15,7 +13,8 @@ class RegistrationQueryItemResolver implements QueryItemResolverInterface
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService){
+    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
+    {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
     }
@@ -25,14 +24,14 @@ class RegistrationQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        if(key_exists('studentId', $context['info']->variableValues)){
+        if (key_exists('studentId', $context['info']->variableValues)) {
             $studentId = $context['info']->variableValues['studentId'];
         } elseif (key_exists('id', $context['args'])) {
             $studentId = $context['args']['id'];
         } else {
             throw new Exception('The studentId was not specified');
         }
-        $studentId = explode('/',$studentId);
+        $studentId = explode('/', $studentId);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }

@@ -1,26 +1,23 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\User;
 use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class UserMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private UcService $ucService;
 
-    public function __construct(EntityManagerInterface $entityManager, UcService $ucService){
+    public function __construct(EntityManagerInterface $entityManager, UcService $ucService)
+    {
         $this->entityManager = $entityManager;
         $this->ucService = $ucService;
     }
+
     /**
      * @inheritDoc
      */
@@ -29,7 +26,7 @@ class UserMutationResolver implements MutationResolverInterface
         if (!$item instanceof User && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createUser':
                 return $this->createUser($context['info']->variableValues['input']);
             case 'updateUser':
@@ -38,6 +35,8 @@ class UserMutationResolver implements MutationResolverInterface
                 return $this->deleteUser($context['info']->variableValues['input']);
             case 'loginUser':
                 return $this->login($context['info']->variableValues['input']);
+            case 'logoutUser':
+                return $this->logout();
             case 'requestPasswordResetUser':
                 return $this->requestPasswordReset($context['info']->variableValues['input']);
             case 'resetPasswordUser':
@@ -54,16 +53,18 @@ class UserMutationResolver implements MutationResolverInterface
 
     public function updateUser(array $input): User
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
         $id = end($id);
+
         return $this->ucService->updateUser($id, $input);
     }
 
     public function deleteUser(array $user): ?User
     {
-        $id = explode('/',$user['id']);
+        $id = explode('/', $user['id']);
         $id = end($id);
         $this->ucService->deleteUser($id);
+
         return null;
     }
 
@@ -88,5 +89,12 @@ class UserMutationResolver implements MutationResolverInterface
         $this->entityManager->persist($userObject);
 
         return $userObject;
+    }
+
+    public function logout(): ?User
+    {
+        $this->ucService->logout();
+
+        return null;
     }
 }
