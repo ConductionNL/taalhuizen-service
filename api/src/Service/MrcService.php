@@ -162,7 +162,6 @@ class MrcService
     public function getEducation(string $type, array $educations): ?string
     {
         foreach ($educations as $education) {
-//            var_dump($education);
             switch ($type) {
                 case 'currentEducation':
                     if ($education['startDate'] && !$education['endDate'] && !$education['institution']) {
@@ -270,7 +269,6 @@ class MrcService
 
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
-//        var_Dump($education);
         $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
         $employee->setDoesCurrentlyFollowCourse(true);
         $employee->setCurrentlyFollowingCourseName($education['name']);
@@ -575,10 +573,6 @@ class MrcService
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
             $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
-//        elseif(!isset($user)) {
-//            $userId = $employee->getUserId();
-//            $user = $this->ucService->getUserArray($userId);
-//        }
         $resource = [
             'organization'          => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'],
             'person'                => $contact['@id'],

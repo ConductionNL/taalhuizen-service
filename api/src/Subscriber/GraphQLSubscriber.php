@@ -53,7 +53,6 @@ class GraphQLSubscriber implements EventSubscriberInterface
             $auth = $event->getRequest()->headers->get('Authorization');
             if ($this->checkInvalidated($auth)) {
                 $result['errors'][] = new Error('Token has been invalidated');
-                var_dump('hi!');
                 $this->throwError($event, $result);
 
                 return;

@@ -5,9 +5,6 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Provider;
 use App\Service\CCService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -15,19 +12,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class AanbiederSubscriber implements EventSubscriberInterface
 {
-    private $em;
-    private $params;
-    private $commonGroundService;
-    private $ccService;
-
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService)
-    {
-        $this->em = $em;
-        $this->params = $params;
-        $this->commonGroundService = $commonGroundService;
-        $this->ccService = $ccService;
-    }
-
     public static function getSubscribedEvents()
     {
         return [
@@ -54,14 +38,12 @@ class AanbiederSubscriber implements EventSubscriberInterface
 
         // Handle a post collection
         if ($route == 'api_providers_post_collection' and $resource instanceof Provider) {
-//            var_dump($resource->getAddress());
 
                 // No errors so lets continue... to: get all DTO info and save this in the correct places
 //                $aanbieder = $this->dtoAanbieder($resource);
 //
 //                // Save the Aanbieder
 //                $aanbieder = $this->ccService->createResource($aanbieder, 'providers');
-//                var_dump($aanbieder);
 //
 //                // Add $aanbieder to the $result['aanbieder'] because this is convenient when testing or debugging (mostly for us)
 //                $result['aanbieder'] = $aanbieder;

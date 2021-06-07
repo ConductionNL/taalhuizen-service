@@ -1,20 +1,28 @@
 component_depth: 3
 languages:
-- php
-exclude:
-- /nlx-setup/.*
-- /resources/.*
-- /api/bin/.*
-- /api/config/.*
-- /api/docker/.*
-- /api/docs/.*
-- /api/helm/.*
-- /api/migrations/.*
-- /api/nlx-setup/.*
-- /api/public/.*
-- /api/templates/.*
-- /api/translations/.*
-- /api/var/.*
-- /api/vendor/.*
-- /api/src/Entity/.*
-- /api/src/Subscriber/.*
+- name: php
+  production:
+      exclude:
+          - /nlx-setup/.*
+          - /resources/.*
+          - /api/bin/.*
+          - /api/config/.*
+          - /api/docker/.*
+          - /api/docs/.*
+          - /api/helm/.*
+          - /api/migrations/.*
+          - /api/nlx-setup/.*
+          - /api/public/.*
+          - /api/templates/.*
+          - /api/translations/.*
+          - /api/var/.*
+          - /api/vendor/.*
+          - /api/src/Entity/.*
+          - /api/src/Subscriber/.*
+  test:
+    include:
+        - /api/tests/.*
+    exclude:
+        - /api/src/Resolver/.*
+
+

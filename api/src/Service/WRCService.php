@@ -95,10 +95,7 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function downloadDocument($input): Document
+    public function getDocumentId(array $input)
     {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
             throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
@@ -114,6 +111,16 @@ class WRCService
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
+
+        return $id;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function downloadDocument($input): Document
+    {
+        $id = $this->getDocumentId($input);
 
         try {
             $document = $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'wrc', 'type' => 'documents', 'id' => $id]));
@@ -133,20 +140,7 @@ class WRCService
      */
     public function removeDocument(array $input): ?Document
     {
-        if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
-            throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
-        }
-        if (isset($input['studentDocumentId'])) {
-            $id = $input['studentDocumentId'];
-        } elseif (isset($input['aanbiederEmployeeDocumentId'])) {
-            $id = $input['aanbiederEmployeeDocumentId'];
-        } else {
-            throw new Exception('No studentDocumentId or aanbiederEmployeeDocumentId given');
-        }
-        if (strpos($id, '/') !== false) {
-            $idArray = explode('/', $id);
-            $id = end($idArray);
-        }
+        $id = $this->getDocumentId($input);
 
         try {
             $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'documents', 'id' => $id]);
