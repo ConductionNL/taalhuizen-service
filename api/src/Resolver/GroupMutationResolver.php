@@ -157,6 +157,7 @@ class GroupMutationResolver implements MutationResolverInterface
         return $course;
     }
 
+    //w.i.p.
     public function makeGroup($course, $group, $groupId = null)
     {
         $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
