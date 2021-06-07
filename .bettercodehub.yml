@@ -17,3 +17,6 @@ exclude:
 - /api/var/.*
 - /api/vendor/.*
 - /api/src/Entity/.*
+test:
+    include:
+        - /api/tests/ExampleTest.php
