@@ -5,6 +5,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\EDUService;
+use App\Service\ResolverService;
 use App\Service\StudentService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,11 +15,13 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private EDUService $eduService;
     private StudentService $studentService;
+    private ResolverService $resolverService;
 
-    public function __construct(EDUService $eduService, StudentService $studentService)
+    public function __construct(EDUService $eduService, StudentService $studentService, ResolverService $resolverService)
     {
         $this->eduService = $eduService;
         $this->studentService = $studentService;
+        $this->resolverService = $resolverService;
     }
 
     /**
@@ -37,13 +40,13 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
 
         switch ($context['info']->operation->name->value) {
             case 'activeGroups':
-                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId, 'ACTIVE'), $context['args']);
+                return $this->resolverService->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId, 'ACTIVE'), $context['args']);
             case 'futureGroups':
-                return $this->createPaginator($this->futureGroups(['course.organization' => $aanbiederId]), $context['args']);
+                return $this->resolverService->createPaginator($this->futureGroups(['course.organization' => $aanbiederId]), $context['args']);
             case 'completedGroups':
-                return $this->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId, 'COMPLETED'), $context['args']);
+                return $this->resolverService->createPaginator($this->eduService->getGroupsWithStatus($aanbiederId, 'COMPLETED'), $context['args']);
             default:
-                return $this->createPaginator($this->getGroups(['course.organization' => $aanbiederId]), $context['args']);
+                return $this->resolverService->createPaginator($this->getGroups(['course.organization' => $aanbiederId]), $context['args']);
         }
     }
 
@@ -59,27 +62,6 @@ class GroupQueryCollectionResolver implements QueryCollectionResolverInterface
     public function getGroups(?array $query = []): ArrayCollection
     {
         return new ArrayCollection($this->eduService->getGroups($query));
-    }
-
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
-        if (key_exists('first', $args)) {
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif (key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if (key_exists('after', $args)) {
-            $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
     public function activeGroups(?array $query = []): ArrayCollection
