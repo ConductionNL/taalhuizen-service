@@ -21,6 +21,6 @@ languages:
   test:
     include:
         - /api/tests/.*
-        - /api/src/Subscriber/.*
+        - /api/src/Service/.*
 
 
