@@ -98,7 +98,6 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
                 $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
