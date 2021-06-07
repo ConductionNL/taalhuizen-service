@@ -1,17 +1,15 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
+use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EAVService;
 use App\Service\EDUService;
 use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use App\Entity\Student;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -28,8 +26,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private EAVService $eavService;
     private SerializerInterface $serializer;
 
-    public function __construct
-    (
+    public function __construct(
         EntityManagerInterface $entityManager,
         CommongroundService $commonGroundService,
         StudentService $studentService,
@@ -38,8 +35,7 @@ class StudentMutationResolver implements MutationResolverInterface
         MrcService $mrcService,
         EAVService $eavService,
         SerializerInterface $serializer
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
@@ -52,6 +48,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke($item, array $context)
@@ -74,7 +71,7 @@ class StudentMutationResolver implements MutationResolverInterface
     public function createStudent(array $input): Student
     {
         if (isset($input['languageHouseId'])) {
-            $languageHouseId = explode('/',$input['languageHouseId']);
+            $languageHouseId = explode('/', $input['languageHouseId']);
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
@@ -120,7 +117,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
     public function updateStudent(array $input): Student
     {
-        $studentId = explode('/',$input['id']);
+        $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }
@@ -159,6 +156,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         $this->entityManager->persist($resourceResult);
+
         return $resourceResult;
     }
 
@@ -203,7 +201,7 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($input['availabilityDetails'])) {
             if (isset($input['id'])) {
                 //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes','topic' => $ccPersonUrl])['hydra:member'];
+                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $ccPersonUrl])['hydra:member'];
                 if (count($availabilityMemos) > 0) {
                     $availabilityMemo = $availabilityMemos[0];
                 }
@@ -215,7 +213,7 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($input['motivationDetails'])) {
             if (isset($input['id'])) {
                 //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks','topic' => $ccPersonUrl])['hydra:member'];
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $ccPersonUrl])['hydra:member'];
                 if (count($motivationMemos) > 0) {
                     $motivationMemo = $motivationMemos[0];
                 }
@@ -223,9 +221,10 @@ class StudentMutationResolver implements MutationResolverInterface
             $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $languageHouseUrl));
             $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
         }
+
         return [
             'availabilityMemo' => $availabilityMemo,
-            'motivationMemo' => $motivationMemo
+            'motivationMemo'   => $motivationMemo,
         ];
     }
 
@@ -256,7 +255,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function inputToPerson(array $input, string $languageHouseId = null, $updatePerson = null)
     {
         if (isset($languageHouseId)) {
-            $person['organization'] = '/organizations/' . $languageHouseId;
+            $person['organization'] = '/organizations/'.$languageHouseId;
         } else {
             $person = [];
         }
@@ -299,6 +298,7 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($civicIntegrationDetails['civicIntegrationRequirementFinishDate'])) {
             $person['civicIntegrationRequirementFinishDate'] = $civicIntegrationDetails['civicIntegrationRequirementFinishDate'];
         }
+
         return $person;
     }
 
@@ -319,6 +319,7 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($personDetails['dateOfBirth'])) {
             $person['birthday'] = $personDetails['dateOfBirth'];
         }
+
         return $person;
     }
 
@@ -400,7 +401,7 @@ class StudentMutationResolver implements MutationResolverInterface
     {
         if (isset($generalDetails['countryOfOrigin'])) {
             $person['birthplace'] = [
-                'country' => $generalDetails['countryOfOrigin']
+                'country' => $generalDetails['countryOfOrigin'],
             ];
             if (isset($updatePerson['birthplace']['id'])) {
                 //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
@@ -416,7 +417,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
         }
         if (isset($generalDetails['otherLanguages'])) {
-            $person['speakingLanguages'] = explode(",", $generalDetails['otherLanguages']);
+            $person['speakingLanguages'] = explode(',', $generalDetails['otherLanguages']);
         }
         //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
         if (isset($generalDetails['familyComposition'])) {
@@ -425,10 +426,10 @@ class StudentMutationResolver implements MutationResolverInterface
 
         // Create the children of this person
         if (isset($generalDetails['childrenCount'])) {
-            $childrenCount = (int)$generalDetails['childrenCount'];
+            $childrenCount = (int) $generalDetails['childrenCount'];
         }
         if (isset($generalDetails['childrenDatesOfBirth'])) {
-            $childrenDatesOfBirth = explode(",", $generalDetails['childrenDatesOfBirth']);
+            $childrenDatesOfBirth = explode(',', $generalDetails['childrenDatesOfBirth']);
             foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
                 try {
                     new \DateTime($childrenDateOfBirth);
@@ -442,9 +443,9 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         if (isset($childrenCount)) {
             $children = [];
-            for ($i=0; $i<$childrenCount; $i++) {
+            for ($i = 0; $i < $childrenCount; $i++) {
                 $child = [
-                    'givenName' => 'Child ' . ($i+1) . ' of ' . $person['givenName'] ?? ''
+                    'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
                 ];
                 if (isset($childrenDatesOfBirth[$i])) {
                     $child['birthday'] = $childrenDatesOfBirth[$i];
@@ -452,9 +453,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 $children[] = $child;
             }
             $person['ownedContactLists'][0] = [
-                'name' => 'Children',
-                'description' => 'The children of '. $person['givenName'] ?? 'this owner',
-                'people' => $children
+                'name'        => 'Children',
+                'description' => 'The children of '.$person['givenName'] ?? 'this owner',
+                'people'      => $children,
             ];
             // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
             if (isset($updatePerson['ownedContactLists'][0]['id'])) {
@@ -578,7 +579,7 @@ class StudentMutationResolver implements MutationResolverInterface
             if (count($programs) > 0) {
                 $participant['program'] = '/programs/'.$programs[0]['id'];
             } else {
-                throw new Exception('Invalid request, '. $languageHouseUrl .' does not have an existing program (edu/program)!');
+                throw new Exception('Invalid request, '.$languageHouseUrl.' does not have an existing program (edu/program)!');
             }
         }
 
@@ -611,12 +612,12 @@ class StudentMutationResolver implements MutationResolverInterface
                 $referringOrganization['emails'][0]['email'] = $referrerDetails['email'];
                 $email = $this->commonGroundService->saveResource($referringOrganization['emails'][0], $referringOrganization['emails'][0]['@id']);
             } else {
-                $email['name'] = 'Email ' . $referringOrganization['name'];
+                $email['name'] = 'Email '.$referringOrganization['name'];
                 $email['email'] = $referrerDetails['email'];
-                $email['organization'] = '/organizations/' . $referringOrganization['id'];
+                $email['organization'] = '/organizations/'.$referringOrganization['id'];
                 $email = $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails']);
             }
-            $referringOrganization['emails'][0] = '/emails/' . $email['id'];
+            $referringOrganization['emails'][0] = '/emails/'.$email['id'];
             $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations']);
         }
 
@@ -655,7 +656,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
     {
         $employee = [
-            'person' => $personUrl
+            'person' => $personUrl,
         ];
 
         $lastEducation = $followingEducation = $course = null;
@@ -678,7 +679,7 @@ class StudentMutationResolver implements MutationResolverInterface
                         }
                         break;
                     case 'course':
-                        if(!isset($course)) {
+                        if (!isset($course)) {
                             $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
                         }
                         break;
@@ -706,9 +707,9 @@ class StudentMutationResolver implements MutationResolverInterface
     {
         if (isset($educationDetails['lastFollowedEducation'])) {
             $newEducation = [
-                'name' => $educationDetails['lastFollowedEducation'],
-                'description' => 'lastEducation',
-                'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation']
+                'name'                    => $educationDetails['lastFollowedEducation'],
+                'description'             => 'lastEducation',
+                'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
             ];
             if (isset($lastEducation['id'])) {
                 $newEducation['id'] = $lastEducation['id'];
