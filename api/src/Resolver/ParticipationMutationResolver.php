@@ -247,27 +247,33 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function setMentorId(array $input) {
+    public function setMentorId(array $input)
+    {
         $mentorId = explode('/', $input['aanbiederEmployeeId']);
         if (is_array($mentorId)) {
             $mentorId = end($mentorId);
         }
+
         return $mentorId;
     }
 
-    public function setParticipationId(array $input) {
+    public function setParticipationId(array $input)
+    {
         $participationId = explode('/', $input['participationId']);
         if (is_array($participationId)) {
             $participationId = end($participationId);
         }
+
         return $participationId;
     }
 
-    public function setGroupId(array $input) {
+    public function setGroupId(array $input)
+    {
         $groupId = explode('/', $input['groupId']);
         if (is_array($groupId)) {
             $groupId = end($groupId);
         }
+
         return $groupId;
     }
 

@@ -93,7 +93,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->handleStudentCollection($query);
     }
 
-    public function handleStudentCollection ($query) {
+    public function handleStudentCollection($query)
+    {
         $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
@@ -105,6 +106,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
                 $collection->add($resourceResult);
             }
         }
+
         return $collection;
     }
 
