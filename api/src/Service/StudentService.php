@@ -277,6 +277,8 @@ class StudentService
         }
 
         // Set all subresources in response DTO body
+        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrarPerson, $registrarOrganization, $registration);
+
         if (isset($participant['dateCreated'])) {
             $resource->setDateCreated(new \DateTime($participant['dateCreated']));
         } //todo: this is currently incorrect, timezone problem
@@ -286,6 +288,22 @@ class StudentService
         if (isset($registrarMemo['description'])) {
             $resource->setMemo($registrarMemo['description']);
         }
+        if (isset($employee['speakingLevel'])) {
+            $resource->setSpeakingLevel($employee['speakingLevel']);
+        }
+        if (isset($participant['readingTestResult'])) {
+            $resource->setReadingTestResult($participant['readingTestResult']);
+        }
+        if (isset($participant['writingTestResult'])) {
+            $resource->setWritingTestResult($participant['writingTestResult']);
+        }
+        $this->entityManager->persist($resource);
+
+        return $resource;
+    }
+
+    public function handleSubResources($resource, $person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registration = null): object
+    {
         $resource->setRegistrar($this->handleRegistrar($registrarPerson, $registrarOrganization));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
         $resource->setPersonDetails($this->handlePersonDetails($person));
@@ -294,25 +312,14 @@ class StudentService
         $resource->setReferrerDetails($this->handleReferrerDetails($registration, $participant, $registrarPerson, $registrarOrganization));
         $resource->setBackgroundDetails($this->handleBackgroundDetails($person));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($person));
-        if (isset($employee['speakingLevel'])) {
-            $resource->setSpeakingLevel($employee['speakingLevel']);
-        }
+
         $mrcEducations = $this->getEducationsFromEmployee($employee);
         $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
         $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
         $resource->setJobDetails($this->handleJobDetails($employee));
         $resource->setMotivationDetails($this->handleMotivationDetails($participant));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($person));
-        if (isset($participant['readingTestResult'])) {
-            $resource->setReadingTestResult($participant['readingTestResult']);
-        }
-        if (isset($participant['writingTestResult'])) {
-            $resource->setWritingTestResult($participant['writingTestResult']);
-        }
         $resource->setPermissionDetails($this->handlePermissionDetails($person));
-
-        $this->entityManager->persist($resource);
-
         return $resource;
     }
 
@@ -366,7 +373,6 @@ class StudentService
         ];
     }
 
-    // todo: might need another split in 2 functions:
     public function handleGeneralDetails($person): array
     {
         if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
@@ -442,39 +448,42 @@ class StudentService
 
     public function getEducationsFromEmployee($employee): array
     {
+        $educations = [
+            'lastEducation'         => null,
+            'followingEducationNo'  => null,
+            'followingEducationYes' => null,
+            'course'                => null,
+        ];
+
         if (isset($employee['educations'])) {
             foreach ($employee['educations'] as $education) {
-                switch ($education['description']) {
-                    case 'lastEducation':
-                        if (!isset($lastEducation)) {
-                            $lastEducation = $education;
-                        }
-                        break;
-                    case 'followingEducationNo':
-                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
-                            $followingEducationNo = $education;
-                        }
-                        break;
-                    case 'followingEducationYes':
-                        if (!isset($followingEducationYes) && !isset($followingEducationNo)) {
-                            $followingEducationYes = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                    case 'course':
-                        if (!isset($course)) {
-                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                }
+                $this->setEducationType($educations, $education);
             }
         }
 
-        return [
-            'lastEducation'         => $lastEducation ?? null,
-            'followingEducationNo'  => $followingEducationNo ?? null,
-            'followingEducationYes' => $followingEducationYes ?? null,
-            'course'                => $course ?? null,
-        ];
+        return $educations;
+    }
+
+    public function setEducationType(&$educations, $education)
+    {
+        switch ($education['description']) {
+            case 'lastEducation':
+                $educations['lastEducation'] = $education;
+                break;
+            case 'followingEducationNo':
+                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
+                    $educations['followingEducationNo'] = $education;
+                }
+                break;
+            case 'followingEducationYes':
+                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
+                    $educations['followingEducationYes'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                }
+                break;
+            case 'course':
+                $educations['course'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                break;
+        }
     }
 
     public function handleEducationDetails($lastEducation, $followingEducationYes, $followingEducationNo): array
