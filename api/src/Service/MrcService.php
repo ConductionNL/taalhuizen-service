@@ -455,19 +455,6 @@ class MrcService
         return $result;
     }
 
-    public function cleanResource(array $array): array
-    {
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $array[$key] = $this->cleanResource($value);
-            } elseif (!$value) {
-                unset($array[$key]);
-            }
-        }
-
-        return $array;
-    }
-
     public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
     {
         if (isset($studentEmployee) && isset($employeeArray['person'])) {
@@ -511,7 +498,7 @@ class MrcService
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
-        $resource = $this->cleanResource($resource);
+        $resource = $this->ccService->cleanResource($resource);
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
         if (key_exists('targetGroupPreferences', $employeeArray)) {
@@ -561,7 +548,7 @@ class MrcService
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, $employee, $employeeRaw);
 
-        $resource = $this->cleanResource($resource);
+        $resource = $this->ccService->cleanResource($resource);
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
         key_exists('targetGroupPreferences', $employeeArray) ? $this->createCompetences($employeeArray, $result['id'], $result) : null;
