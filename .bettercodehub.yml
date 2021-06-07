@@ -4,8 +4,7 @@ languages:
 - name: php
   test:
     include:
-        - /api/tests/ExampleTest.php
-    exclude:
+        - /api/tests/.*
         - /api/Service/.*
 exclude:
 - /nlx-setup/.*
