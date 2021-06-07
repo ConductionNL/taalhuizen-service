@@ -742,6 +742,7 @@ class StudentMutationResolver implements MutationResolverInterface
                 $newEducation['degreeGrantedStatus'] = 'notGranted';
             }
         }
+
         return $newEducation;
     }
 
