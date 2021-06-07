@@ -232,14 +232,10 @@ class GroupMutationResolver implements MutationResolverInterface
         if (isset($groupId)) {
             //update
             $group['course'] = '/courses/'.$course['id'];
-
-//            $group['dateModified'] = $now;
-            // var_dump($group);
             $group = $this->eavService->saveObject($group, 'groups', 'edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
         } else {
             //create
             $group['course'] = '/courses/'.$course['id'];
-            //   var_dump($group);
             $group = $this->eavService->saveObject($group, 'groups', 'edu');
         }
         $result['group'] = $group;

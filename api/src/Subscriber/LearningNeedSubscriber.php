@@ -82,7 +82,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 $result['result'] = $this->handleResult($result['learningNeed']);
             }
         } elseif ($route == 'api_learning_needs_get_learning_need_collection') {
-            // Handle a get collection for a specific item: /learning_needs/{id}
+            // Handle a get collection for a specific item
             $result = array_merge($result, $this->getLearningNeed($event->getRequest()->attributes->get('id')));
 
             // Now put together the expected result in $result['result'] for Lifely:
@@ -117,7 +117,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 }
             }
         } elseif ($route == 'api_learning_needs_delete_learning_need_collection') {
-            // Handle a delete (get collection for a specific item): /learning_needs/{id}/delete
+            // Handle a delete (get collection for a specific item)
             $result = array_merge($result, $this->deleteLearningNeed($event->getRequest()->attributes->get('id')));
 
             $result['result'] = false;

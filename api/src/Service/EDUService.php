@@ -286,12 +286,6 @@ class EDUService
                             $watanders->add($resourceResult);
                         }
                     }
-                    //else {
-                      //  $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
-                    //}
-                    //                } else {
-                    //                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
-                    //                }
                 } catch (Exception $e) {
                     continue;
                 }
