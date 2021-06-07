@@ -431,6 +431,7 @@ class StudentMutationResolver implements MutationResolverInterface
             //unset person birthplace
             unset($person['birthplace']);
         }
+
         return $person;
     }
 
@@ -451,6 +452,7 @@ class StudentMutationResolver implements MutationResolverInterface
                 $person = $this->updatePersonChildrenContactList($person, $updatePerson);
             }
         }
+
         return $person;
     }
 
@@ -464,6 +466,7 @@ class StudentMutationResolver implements MutationResolverInterface
                 unset($childrenDatesOfBirth[$key]);
             }
         }
+
         return $childrenDatesOfBirth;
     }
 
@@ -479,6 +482,7 @@ class StudentMutationResolver implements MutationResolverInterface
             }
             $children[] = $child;
         }
+
         return [
             'name'        => 'Children',
             'description' => 'The children of '.$person['givenName'] ?? 'this owner',
@@ -501,6 +505,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         //unset person ownedContactLists
         unset($person['ownedContactLists']);
+
         return $person;
     }
 
