@@ -400,17 +400,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['countryOfOrigin'])) {
-            $person['birthplace'] = [
-                'country' => $generalDetails['countryOfOrigin'],
-            ];
-            if (isset($updatePerson['birthplace']['id'])) {
-                //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
-                $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
-                $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
-
-                //unset person birthplace
-                unset($person['birthplace']);
-            }
+            $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
         }
         //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
         if (isset($generalDetails['nativeLanguage'])) {
@@ -425,55 +415,92 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Create the children of this person
+        return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
+    }
+
+    private function setPersonBirthplaceFromCountryOfOrigin(array $person, $countryOfOrigin, $updatePerson = null): array
+    {
+        $person['birthplace'] = [
+            'country' => $countryOfOrigin,
+        ];
+        if (isset($updatePerson['birthplace']['id'])) {
+            //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+            $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
+            $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
+
+            //unset person birthplace
+            unset($person['birthplace']);
+        }
+        return $person;
+    }
+
+    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    {
         if (isset($generalDetails['childrenCount'])) {
             $childrenCount = (int) $generalDetails['childrenCount'];
         }
         if (isset($generalDetails['childrenDatesOfBirth'])) {
-            $childrenDatesOfBirth = explode(',', $generalDetails['childrenDatesOfBirth']);
-            foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
-                try {
-                    new \DateTime($childrenDateOfBirth);
-                } catch (Exception $e) {
-                    unset($childrenDatesOfBirth[$key]);
-                }
-            }
+            $childrenDatesOfBirth = $this->setChildrenDatesOfBirthFromGeneralDetails($generalDetails['childrenDatesOfBirth']);
             if (!isset($childrenCount)) {
                 $childrenCount = count($childrenDatesOfBirth);
             }
         }
         if (isset($childrenCount)) {
-            $children = [];
-            for ($i = 0; $i < $childrenCount; $i++) {
-                $child = [
-                    'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
-                ];
-                if (isset($childrenDatesOfBirth[$i])) {
-                    $child['birthday'] = $childrenDatesOfBirth[$i];
-                }
-                $children[] = $child;
-            }
-            $person['ownedContactLists'][0] = [
-                'name'        => 'Children',
-                'description' => 'The children of '.$person['givenName'] ?? 'this owner',
-                'people'      => $children,
-            ];
-            // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
+            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, $childrenCount, $childrenDatesOfBirth ?? null);
             if (isset($updatePerson['ownedContactLists'][0]['id'])) {
-                if (isset($updatePerson['ownedContactLists'][0]['people'])) {
-                    foreach ($updatePerson['ownedContactLists'][0]['people'] as $key => $child) {
-                        $this->commonGroundService->deleteResource($child, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $child['id']]));
-                        unset($updatePerson['ownedContactLists'][0]['people'][$key]);
-                    }
-                }
-                //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
-                $contactList = array_merge($updatePerson['ownedContactLists'][0], $person['ownedContactLists'][0]);
-                $this->commonGroundService->updateResource($contactList, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'contact_lists', 'id' => $updatePerson['ownedContactLists'][0]['id']]));
-
-                //unset person ownedContactLists
-                unset($person['ownedContactLists']);
+                $person = $this->updatePersonChildrenContactList($person, $updatePerson);
             }
         }
+        return $person;
+    }
 
+    private function setChildrenDatesOfBirthFromGeneralDetails($childrenDatesOfBirth): array
+    {
+        $childrenDatesOfBirth = explode(',', $childrenDatesOfBirth);
+        foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
+            try {
+                new \DateTime($childrenDateOfBirth);
+            } catch (Exception $e) {
+                unset($childrenDatesOfBirth[$key]);
+            }
+        }
+        return $childrenDatesOfBirth;
+    }
+
+    private function setChildrenFromChildrenCount(array $person, $childrenCount, $childrenDatesOfBirth): array
+    {
+        $children = [];
+        for ($i = 0; $i < $childrenCount; $i++) {
+            $child = [
+                'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
+            ];
+            if (isset($childrenDatesOfBirth[$i])) {
+                $child['birthday'] = $childrenDatesOfBirth[$i];
+            }
+            $children[] = $child;
+        }
+        return [
+            'name'        => 'Children',
+            'description' => 'The children of '.$person['givenName'] ?? 'this owner',
+            'people'      => $children,
+        ];
+    }
+
+    private function updatePersonChildrenContactList(array $person, array $updatePerson): array
+    {
+        // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
+        if (isset($updatePerson['ownedContactLists'][0]['people'])) {
+            foreach ($updatePerson['ownedContactLists'][0]['people'] as $key => $child) {
+                $this->commonGroundService->deleteResource($child, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $child['id']]));
+                unset($updatePerson['ownedContactLists'][0]['people'][$key]);
+            }
+        }
+        //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+        $contactList = array_merge($updatePerson['ownedContactLists'][0], $person['ownedContactLists'][0]);
+        $this->commonGroundService->updateResource($contactList, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'contact_lists', 'id' => $updatePerson['ownedContactLists'][0]['id']]));
+
+        //unset person ownedContactLists
+        unset($person['ownedContactLists']);
         return $person;
     }
 
