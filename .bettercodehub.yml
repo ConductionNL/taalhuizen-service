@@ -3,28 +3,26 @@ languages:
 - name: php
   production:
       exclude:
-          - /api/src/Resolver/.*
-          - /api/src/Resolver/StudentMutationResolver.php
+          - /nlx-setup/.*
+          - /resources/.*
+          - /api/bin/.*
+          - /api/config/.*
+          - /api/docker/.*
+          - /api/docs/.*
+          - /api/helm/.*
+          - /api/migrations/.*
+          - /api/nlx-setup/.*
+          - /api/public/.*
+          - /api/templates/.*
+          - /api/translations/.*
+          - /api/var/.*
+          - /api/vendor/.*
+          - /api/src/Entity/.*
   test:
     include:
         - /api/tests/.*
         - /api/src/Service/.*
     exclude:
         - /api/src/Resolver/StudentMutationResolver.php
-exclude:
-- /nlx-setup/.*
-- /resources/.*
-- /api/bin/.*
-- /api/config/.*
-- /api/docker/.*
-- /api/docs/.*
-- /api/helm/.*
-- /api/migrations/.*
-- /api/nlx-setup/.*
-- /api/public/.*
-- /api/templates/.*
-- /api/translations/.*
-- /api/var/.*
-- /api/vendor/.*
-- /api/src/Entity/.*
+
 
