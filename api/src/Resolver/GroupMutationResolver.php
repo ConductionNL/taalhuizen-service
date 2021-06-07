@@ -8,7 +8,6 @@ use App\Service\EAVService;
 use App\Service\EDUService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -156,7 +155,7 @@ class GroupMutationResolver implements MutationResolverInterface
 
         return $course;
     }
-    
+
     public function makeGroup($course, $group, $groupId = null)
     {
         if (isset($groupId)) {
@@ -198,7 +197,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getOutComesLevelOther()) {
             $group['levelOther'] = $resource->getOutComesLevelOther();
         }
-        $group['isFormal'] = (bool)$resource->getDetailsIsFormal();
+        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
         $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
         $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
         if ($resource->getDetailsStartDate()) {
