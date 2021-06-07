@@ -5,15 +5,18 @@ namespace App\Resolver;
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\MrcService;
+use App\Service\ResolverService;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class EmployeeQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private MrcService $mrcService;
+    private ResolverService $resolverService;
 
-    public function __construct(MrcService $mrcService)
+    public function __construct(MrcService $mrcService, ResolverService $resolverService)
     {
         $this->mrcService = $mrcService;
+        $this->resolverService = $resolverService;
     }
 
     /**
@@ -30,27 +33,7 @@ class EmployeeQueryCollectionResolver implements QueryCollectionResolverInterfac
                 null
         );
 
-        return $this->createPaginator($collection, $context['args']);
+        return $this->resolverService->createPaginator($collection, $context['args']);
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
-        if (key_exists('first', $args)) {
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif (key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if (key_exists('after', $args)) {
-            $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
 }
