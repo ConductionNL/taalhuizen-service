@@ -6,8 +6,6 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\LearningNeed;
 use App\Service\EAVService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -15,15 +13,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class LearningNeedSubscriber implements EventSubscriberInterface
 {
-    private $em;
-    private $params;
     private $commonGroundService;
     private $eavService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, EAVService $eavService)
+    public function __construct(CommongroundService $commonGroundService, EAVService $eavService)
     {
-        $this->em = $em;
-        $this->params = $params;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
     }
@@ -82,7 +76,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 $result['result'] = $this->handleResult($result['learningNeed']);
             }
         } elseif ($route == 'api_learning_needs_get_learning_need_collection') {
-            // Handle a get collection for a specific item: /learning_needs/{id}
+            // Handle a get collection for a specific item
             $result = array_merge($result, $this->getLearningNeed($event->getRequest()->attributes->get('id')));
 
             // Now put together the expected result in $result['result'] for Lifely:
@@ -117,7 +111,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 }
             }
         } elseif ($route == 'api_learning_needs_delete_learning_need_collection') {
-            // Handle a delete (get collection for a specific item): /learning_needs/{id}/delete
+            // Handle a delete (get collection for a specific item)
             $result = array_merge($result, $this->deleteLearningNeed($event->getRequest()->attributes->get('id')));
 
             $result['result'] = false;

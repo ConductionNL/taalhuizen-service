@@ -46,10 +46,8 @@ class StudentService
         if (isset($languageHouseId)) {
             $person['organization'] = '/organizations/'.$languageHouseId;
         }
-//        $person = $this->ccService->saveEavPerson($person);
 
         $participant['person'] = $person['@id'];
-//        $participant = $this->eduService->saveEavParticipant($participant);
 
         //todo: same for mrc and memo objects...
 
@@ -59,7 +57,6 @@ class StudentService
         ];
     }
 
-    // todo:
     public function deleteStudent($id)
     {
 //        if ($this->eavService->hasEavObject(null, 'students', $id)) {
