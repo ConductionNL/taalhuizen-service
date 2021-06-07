@@ -16,14 +16,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ParticipationSubscriber implements EventSubscriberInterface
 {
     private $em;
-    private $params;
     private $commonGroundService;
     private $eavService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, EAVService $eavService)
+    public function __construct(EntityManagerInterface $em, CommongroundService $commonGroundService, EAVService $eavService)
     {
         $this->em = $em;
-        $this->params = $params;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
     }

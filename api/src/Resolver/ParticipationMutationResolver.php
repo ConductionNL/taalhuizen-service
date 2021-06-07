@@ -177,14 +177,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        $participationId = explode('/', $input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $mentorId = explode('/', $input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $mentorId = $this->setMentorId($input);
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
 
         // Do check if mentorUrl exists
@@ -220,14 +214,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        $participationId = explode('/', $input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $mentorId = explode('/', $input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $mentorId = $this->setMentorId($input);
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
 
         // Do check if mentorUrl exists
@@ -259,18 +247,36 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function addGroupToParticipation(array $input): Participation
-    {
-        $result['result'] = [];
+    public function setMentorId(array $input) {
+        $mentorId = explode('/', $input['aanbiederEmployeeId']);
+        if (is_array($mentorId)) {
+            $mentorId = end($mentorId);
+        }
+        return $mentorId;
+    }
 
+    public function setParticipationId(array $input) {
         $participationId = explode('/', $input['participationId']);
         if (is_array($participationId)) {
             $participationId = end($participationId);
         }
+        return $participationId;
+    }
+
+    public function setGroupId(array $input) {
         $groupId = explode('/', $input['groupId']);
         if (is_array($groupId)) {
             $groupId = end($groupId);
         }
+        return $groupId;
+    }
+
+    public function addGroupToParticipation(array $input): Participation
+    {
+        $result['result'] = [];
+
+        $participationId = $this->setParticipationId($input);
+        $groupId = $this->setGroupId($input);
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
 
         // Do check if $groupUrl exists
@@ -305,14 +311,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        $participationId = explode('/', $input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $groupId = explode('/', $input['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $groupId = $this->setGroupId($input);
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
 
         // Do check if groupUrl exists

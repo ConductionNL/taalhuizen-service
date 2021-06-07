@@ -90,6 +90,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             'status'           => 'accepted',
         ];
 
+        return $this->handleStudentCollection($query);
+    }
+
+    public function handleStudentCollection ($query) {
         $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
@@ -101,7 +105,6 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
                 $collection->add($resourceResult);
             }
         }
-
         return $collection;
     }
 
@@ -163,19 +166,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             'status'               => 'accepted',
         ];
 
-        $students = $this->studentService->getStudents($query);
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->handleStudentCollection($query);
     }
 
     public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
@@ -195,18 +186,6 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             'status' => 'accepted',
         ];
 
-        $students = $this->studentService->getStudents($query);
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->handleStudentCollection($query);
     }
 }

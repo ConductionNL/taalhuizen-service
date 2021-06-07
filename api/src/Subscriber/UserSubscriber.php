@@ -15,18 +15,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class UserSubscriber implements EventSubscriberInterface
 {
-    private $em;
-    private $params;
-    private $commonGroundService;
-    private $ccService;
-
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService)
-    {
-        $this->em = $em;
-        $this->params = $params;
-        $this->commonGroundService = $commonGroundService;
-        $this->ccService = $ccService;
-    }
 
     public static function getSubscribedEvents()
     {

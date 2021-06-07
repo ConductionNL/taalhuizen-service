@@ -15,15 +15,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class LearningNeedSubscriber implements EventSubscriberInterface
 {
-    private $em;
-    private $params;
     private $commonGroundService;
     private $eavService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, EAVService $eavService)
+    public function __construct(CommongroundService $commonGroundService, EAVService $eavService)
     {
-        $this->em = $em;
-        $this->params = $params;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
     }
