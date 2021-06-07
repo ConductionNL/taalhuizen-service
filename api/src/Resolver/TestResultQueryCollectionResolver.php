@@ -2,7 +2,6 @@
 
 namespace App\Resolver;
 
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\TestResultService;
@@ -45,7 +44,7 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
                 $collection->add($resourceResult);
             }
         }
+
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Resolver;
 
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\StudentService;
