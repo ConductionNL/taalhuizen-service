@@ -95,7 +95,8 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
-    public function getDocumentId(array $input) {
+    public function getDocumentId(array $input)
+    {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
             throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
         }
