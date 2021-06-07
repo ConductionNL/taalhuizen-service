@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LearningNeed;
@@ -11,7 +9,6 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class LearningNeedMutationResolver implements MutationResolverInterface
 {
@@ -19,7 +16,8 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private LearningNeedService $learningNeedService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService){
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService)
+    {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->learningNeedService = $learningNeedService;
@@ -27,6 +25,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke($item, array $context)
@@ -34,7 +33,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (!$item instanceof LearningNeed && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createLearningNeed':
                 return $this->createLearningNeed($item);
             case 'updateLearningNeed':
@@ -52,7 +51,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
         // If studentId is set generate the url for it
         if ($resource->getStudentId()) {
-            $studentId = explode('/',$resource->getStudentId());
+            $studentId = explode('/', $resource->getStudentId());
             if (is_array($studentId)) {
                 $studentId = end($studentId);
             }
@@ -81,6 +80,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return $resourceResult;
     }
 
@@ -93,7 +93,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($input['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($input['learningNeedUrl']);
         } else {
-            $learningNeedId = explode('/',$input['id']);
+            $learningNeedId = explode('/', $input['id']);
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
@@ -123,6 +123,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
             throw new Exception($result['errorMessage']);
         }
         $this->entityManager->persist($resourceResult);
+
         return $resourceResult;
     }
 
@@ -134,7 +135,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($learningNeed['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($learningNeed['learningNeedUrl']);
         } elseif (isset($learningNeed['id'])) {
-            $learningNeedId = explode('/',$learningNeed['id']);
+            $learningNeedId = explode('/', $learningNeed['id']);
             if (is_array($learningNeedId)) {
                 $learningNeedId = end($learningNeedId);
             }
@@ -144,19 +145,21 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
         $result = array_merge($result, $this->learningNeedService->deleteLearningNeed($learningNeedId));
 
-        $result['result'] = False;
-        if (isset($result['learningNeed'])){
-            $result['result'] = True;
+        $result['result'] = false;
+        if (isset($result['learningNeed'])) {
+            $result['result'] = true;
         }
 
         // If any error was caught throw it
         if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return null;
     }
 
-    private function dtoToLearningNeed(LearningNeed $resource) {
+    private function dtoToLearningNeed(LearningNeed $resource)
+    {
         // Get all info from the dto for creating a LearningNeed and return the body for this
         // note: everything that is nullabel in the dto has an if check, because eav doesn't like values set to null
         $learningNeed['description'] = $resource->getLearningNeedDescription();
@@ -183,6 +186,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if ($resource->getOfferEngagements()) {
             $learningNeed['offerEngagements'] = $resource->getOfferEngagements();
         }
+
         return $learningNeed;
     }
 
@@ -213,6 +217,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($input['offerEngagements'])) {
             $learningNeed['offerEngagements'] = $input['offerEngagements'];
         }
+
         return $learningNeed;
     }
 }

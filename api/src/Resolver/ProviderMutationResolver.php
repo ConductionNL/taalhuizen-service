@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
@@ -11,12 +9,9 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private ProviderService $providerService;
@@ -99,6 +94,7 @@ class ProviderMutationResolver implements MutationResolverInterface
             throw new Exception($result['errorMessage']);
         }
         $this->entityManager->persist($resourceResult);
+
         return $resourceResult;
     }
 
@@ -110,9 +106,9 @@ class ProviderMutationResolver implements MutationResolverInterface
         $id = end($id);
         $result = array_merge($result, $this->providerService->deleteProvider($id));
 
-        $result['result'] = False;
-        if (isset($result['provider'])){
-            $result['result'] = True;
+        $result['result'] = false;
+        if (isset($result['provider'])) {
+            $result['result'] = true;
         }
 
         // If any error was caught throw it
@@ -134,7 +130,6 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $provider;
     }
 
-
     private function inputToProvider(array $input)
     {
         // Get all info from the input array for updating a LearningNeed and return the body for this
@@ -145,5 +140,4 @@ class ProviderMutationResolver implements MutationResolverInterface
 
         return $provider;
     }
-
 }

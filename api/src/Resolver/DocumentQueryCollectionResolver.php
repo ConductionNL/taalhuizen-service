@@ -1,16 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
@@ -49,6 +45,7 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
         }
 
         $collection = $this->wrcService->getDocuments($contact);
+
         return $this->createPaginator($collection, $context['args']);
     }
 
@@ -69,6 +66,7 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
         } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 }

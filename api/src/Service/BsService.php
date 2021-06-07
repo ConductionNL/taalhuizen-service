@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service;
-
 
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,12 +20,12 @@ class BsService
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
         $message = [
-            'content' => "Beste $email,<p>U heeft een wachtwoord-reset link aangevraagd voor de Taalhuizen applicatie.</p><p><a href='$link'>Klik hier om het wachtwoord te resetten</a></p><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
-            'subject' => 'Wachtwoord reset op Taalhuizen',
-            'sender' => 'info@taalhuizen-bisc.commonground.nu',
+            'content'  => "Beste $email,<p>U heeft een wachtwoord-reset link aangevraagd voor de Taalhuizen applicatie.</p><p><a href='$link'>Klik hier om het wachtwoord te resetten</a></p><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
+            'subject'  => 'Wachtwoord reset op Taalhuizen',
+            'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $email,
-            'status' => 'queued',
-            'service' => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'status'   => 'queued',
+            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -37,12 +35,12 @@ class BsService
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/forgotpassword";
         $message = [
-            'content' => "Beste {$contact['givenName']},<p>Uw wachtwoord is succesvol gewijzigd.</p><p>Als u dit niet zelf gedaan hebt, vraag dan <a href='$link'>een nieuw wachtwoord aan</a><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
-            'subject' => 'Uw wachtwoord op Taalhuizen werd veranderd',
-            'sender' => 'info@taalhuizen-bisc.commonground.nu',
+            'content'  => "Beste {$contact['givenName']},<p>Uw wachtwoord is succesvol gewijzigd.</p><p>Als u dit niet zelf gedaan hebt, vraag dan <a href='$link'>een nieuw wachtwoord aan</a><p>Met vriendelijke groet,</p><p>BiSC Taalhuizen</p>",
+            'subject'  => 'Uw wachtwoord op Taalhuizen werd veranderd',
+            'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $username,
-            'status' => 'queued',
-            'service' => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'status'   => 'queued',
+            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -60,12 +58,12 @@ class BsService
         }
 
         $message = [
-            'content' => $content,
-            'subject' => 'U bent uitgenodigd, welkom!',
-            'sender' => 'info@taalhuizen-bisc.commonground.nu',
+            'content'  => $content,
+            'subject'  => 'U bent uitgenodigd, welkom!',
+            'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $email,
-            'status' => 'queued',
-            'service' => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'status'   => 'queued',
+            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);

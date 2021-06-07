@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Service;
 
 use App\Entity\Document;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -27,10 +25,19 @@ class WRCService
 
     public function saveOrganization(array $body, $contact = null)
     {
-        if (isset($body['address'])) unset($body['address']);
-        if (isset($body['email'])) unset($body['email']);
-        if (isset($body['phoneNumber'])) unset($body['phoneNumber']);
-        if (isset($contact)) $body['contact'] = $contact;
+        if (isset($body['address'])) {
+            unset($body['address']);
+        }
+        if (isset($body['email'])) {
+            unset($body['email']);
+        }
+        if (isset($body['phoneNumber'])) {
+            unset($body['phoneNumber']);
+        }
+        if (isset($contact)) {
+            $body['contact'] = $contact;
+        }
+
         return $this->commonGroundService->saveResource($body, ['component' => 'wrc', 'type' => 'organizations']);
     }
 
@@ -41,15 +48,17 @@ class WRCService
 
     /**
      * @param array $input
-     * @return Document
+     *
      * @throws Exception
+     *
+     * @return Document
      */
     public function createDocument(array $input): Document
     {
         $requiredProps = ['base64data', 'filename'];
         foreach ($requiredProps as $prop) {
             if (!isset($input[$prop])) {
-                throw new Exception('No ' . $prop . ' has been given');
+                throw new Exception('No '.$prop.' has been given');
             }
         }
         if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
@@ -60,7 +69,6 @@ class WRCService
             $idArray = explode('/', $id);
             $id = end($idArray);
             $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-
         } elseif (isset($input['aanbiederEmployeeId'])) {
             $id = $input['aanbiederEmployeeId'];
             $idArray = explode('/', $id);
@@ -114,13 +122,14 @@ class WRCService
         }
 
         return $this->createDocumentObject($document);
-
     }
 
     /**
      * @param array $input
-     * @return Document|null
+     *
      * @throws Exception
+     *
+     * @return Document|null
      */
     public function removeDocument(array $input): ?Document
     {
@@ -138,8 +147,10 @@ class WRCService
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
+
         try {
             $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'documents', 'id' => $id]);
+
             return null;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -148,6 +159,7 @@ class WRCService
 
     /**
      * @param array $document
+     *
      * @return Document
      */
     public function createDocumentObject(array $document): Document
@@ -156,7 +168,7 @@ class WRCService
         $documentObject->setFilename(isset($document['name']) ? $document['name'] : null);
         $documentObject->setBase64data(isset($document['base64']) ? $document['base64'] : null);
         $documentObject->setDateCreated(isset($document['dateCreated']) ? $document['dateCreated'] : null);
-        if(isset($document['contact'])){
+        if (isset($document['contact'])) {
             $contactArray = explode('/', $document['contact']);
             $contact = end($contactArray);
             strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentId($contact) : $documentObject->setAanbiederEmployeeId($contact);
@@ -171,8 +183,10 @@ class WRCService
 
     /**
      * @param string $id
-     * @return Document
+     *
      * @throws Exception
+     *
+     * @return Document
      */
     public function getDocument(string $id): Document
     {
@@ -187,8 +201,10 @@ class WRCService
 
     /**
      * @param string|null $contact
-     * @return ArrayCollection
+     *
      * @throws Exception
+     *
+     * @return ArrayCollection
      */
     public function getDocuments(?string $contact = null): ArrayCollection
     {
@@ -203,8 +219,7 @@ class WRCService
         foreach ($documents as $document) {
             $documentObjects->add($this->createDocumentObject($document));
         }
+
         return $documentObjects;
     }
-
-
 }

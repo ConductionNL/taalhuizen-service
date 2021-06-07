@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\LanguageHouse;
@@ -14,7 +12,8 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
 {
     private LanguageHouseService $languageHouseService;
 
-    public function __construct(LanguageHouseService $languageHouseService){
+    public function __construct(LanguageHouseService $languageHouseService)
+    {
         $this->languageHouseService = $languageHouseService;
     }
 
@@ -28,6 +27,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
+
         return $this->getLanguageHouse($id);
     }
 

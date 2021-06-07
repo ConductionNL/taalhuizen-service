@@ -1,20 +1,19 @@
 <?php
 
-
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Taalhuis;
 use App\Service\CCService;
-use App\Service\WRCService;
 use App\Service\EDUService;
+use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\Response;
 
 class TaalhuisSubscriber implements EventSubscriberInterface
 {
@@ -42,7 +41,8 @@ class TaalhuisSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function taalhuis(ViewEvent $event){
+    public function taalhuis(ViewEvent $event)
+    {
         $method = $event->getRequest()->getMethod();
         $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
@@ -60,7 +60,7 @@ class TaalhuisSubscriber implements EventSubscriberInterface
         $result['result'] = [];
 
         //Handle post
-        if ($route == 'api_taalhuis_post_collection' and $resource instanceof Taalhuis){
+        if ($route == 'api_taalhuis_post_collection' and $resource instanceof Taalhuis) {
             $taalhuis = $this->dtoToTaalhuis($resource);
 
             //create cc organization
@@ -68,18 +68,20 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             //create wrc organization
             $wrcOrganization = $this->wrcService->saveOrganization($taalhuis);
             //connect orgs
-            $taalhuis =  $this->ccService->saveOrganization($ccOrganization,null,$wrcOrganization['@id']);
+            $taalhuis = $this->ccService->saveOrganization($ccOrganization, null, $wrcOrganization['@id']);
             $wrcOrganization = $this->wrcService->saveOrganization($wrcOrganization, $taalhuis['@id']);
 
             //make program so courses can be added later
-            if (!$this->eduService->hasProgram($wrcOrganization)) $this->eduService->saveProgram($wrcOrganization);
+            if (!$this->eduService->hasProgram($wrcOrganization)) {
+                $this->eduService->saveProgram($wrcOrganization);
+            }
             // Add $taalhuis to the $result['taalhuis'] because this is convenient when testing or debugging (mostly for us)
             $result['taalhuis'] = $taalhuis;
             // Now put together the expected result in $result['result'] for Lifely:
             $result['result'] = $this->handleResult($taalhuis);
 
             // If any error was caught set $result['result'] to null
-            if(isset($result['errorMessage'])) {
+            if (isset($result['errorMessage'])) {
                 $result['result'] = null;
             }
 
@@ -91,29 +93,31 @@ class TaalhuisSubscriber implements EventSubscriberInterface
             );
 
             $event->setResponse($response);
-
-
         }
     }
+
     private function dtoToTaalhuis($resource)
     {
-        if ($resource->getId()){
+        if ($resource->getId()) {
             $taalhuis['id'] = $resource->getId();
         }
         $taalhuis['name'] = $resource->getName();
         $taalhuis['address'] = $resource->getAddress();
         $taalhuis['email'] = $resource->getEmail();
         $taalhuis['phoneNumber'] = $resource->getPhoneNumber();
+
         return $taalhuis;
     }
-    private function handleResult($taalhuis) {
+
+    private function handleResult($taalhuis)
+    {
         return [
-            'id' => $taalhuis['id'],
-            'name' => $taalhuis['name'],
-            'address' => $taalhuis['address'],
-            'email' => $taalhuis['email'],
+            'id'        => $taalhuis['id'],
+            'name'      => $taalhuis['name'],
+            'address'   => $taalhuis['address'],
+            'email'     => $taalhuis['email'],
             'telephone' => $taalhuis['telephone'],
-            'type' => $taalhuis['type']
+            'type'      => $taalhuis['type'],
         ];
     }
 }

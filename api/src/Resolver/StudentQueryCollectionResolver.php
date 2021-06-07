@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use App\Entity\Student;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -20,13 +15,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService){
+    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
+    {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
     }
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
@@ -55,29 +52,31 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args){
-        if(key_exists('first', $args)){
+    public function createPaginator(ArrayCollection $collection, array $args)
+    {
+        if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
-        } elseif(key_exists('last', $args)) {
+        } elseif (key_exists('last', $args)) {
             $maxItems = $args['last'];
             $firstItem = (count($collection) - 1) - $maxItems;
         } else {
             $maxItems = count($collection);
             $firstItem = 0;
         }
-        if(key_exists('after', $args)){
+        if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif(key_exists('before', $args)){
+        } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
     public function students(array $context): ?ArrayCollection
     {
-        if(key_exists('languageHouseId', $context['args'])){
-            $languageHouseId = explode('/',$context['args']['languageHouseId']);
+        if (key_exists('languageHouseId', $context['args'])) {
+            $languageHouseId = explode('/', $context['args']['languageHouseId']);
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
@@ -88,7 +87,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         $query = [
             'program.provider' => $languageHouseUrl,
-            'status' => 'accepted'
+            'status'           => 'accepted',
         ];
 
         $students = $this->studentService->getStudents($query);
@@ -108,8 +107,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -122,8 +121,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function activeStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -136,8 +135,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function completedStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -150,8 +149,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function groupStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('groupId', $context['args'])){
-            $groupId = explode('/',$context['args']['groupId']);
+        if (key_exists('groupId', $context['args'])) {
+            $groupId = explode('/', $context['args']['groupId']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
@@ -161,7 +160,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
         $query = [
             'participantGroups.id' => $groupId,
-            'status' => 'accepted'
+            'status'               => 'accepted',
         ];
 
         $students = $this->studentService->getStudents($query);
@@ -181,8 +180,8 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
     public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('aanbiederEmployeeId', $context['args'])){
-            $aanbiederEmployeeId = explode('/',$context['args']['aanbiederEmployeeId']);
+        if (key_exists('aanbiederEmployeeId', $context['args'])) {
+            $aanbiederEmployeeId = explode('/', $context['args']['aanbiederEmployeeId']);
             if (is_array($aanbiederEmployeeId)) {
                 $aanbiederEmployeeId = end($aanbiederEmployeeId);
             }
@@ -193,7 +192,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
         $query = [
             'mentor' => $mentorUrl,
-            'status' => 'accepted'
+            'status' => 'accepted',
         ];
 
         $students = $this->studentService->getStudents($query);
