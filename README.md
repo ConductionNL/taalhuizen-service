@@ -1,4 +1,6 @@
 # Readme
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service?ref=badge_shield)
+
 -------
 Welcome to the the VNG Common Ground proto component!
 
@@ -59,3 +61,7 @@ Credits
 -------
 
 Created by [Ruben van der Linde](https://www.conduction.nl/team) for conduction. But based on [api platform](https://api-platform.com) by [Kévin Dunglas](https://dunglas.fr). Commercial support for common ground components available from [Conduction](https://www.conduction.nl).
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service?ref=badge_large)
