@@ -5,10 +5,13 @@ languages:
   production:
       exclude:
           - /api/src/Resolver/.*
+          - /api/src/Resolver/StudentMutationResolver.php
   test:
     include:
         - /api/tests/.*
         - /api/src/Service/.*
+    exclude:
+        - /api/src/Resolver/StudentMutationResolver.php
 exclude:
 - /nlx-setup/.*
 - /resources/.*
