@@ -706,22 +706,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
     {
         if (isset($educationDetails['lastFollowedEducation'])) {
-            $newEducation = [
-                'name'                    => $educationDetails['lastFollowedEducation'],
-                'description'             => 'lastEducation',
-                'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
-            ];
-            if (isset($lastEducation['id'])) {
-                $newEducation['id'] = $lastEducation['id'];
-            }
-            if (isset($educationDetails['didGraduate'])) {
-                if ($educationDetails['didGraduate'] == true) {
-                    $newEducation['degreeGrantedStatus'] = 'Granted';
-                } else {
-                    $newEducation['degreeGrantedStatus'] = 'notGranted';
-                }
-            }
-            $employee['educations'][] = $newEducation;
+            $employee['educations'][] = $this->getLastEducationFromEducationDetails($educationDetails, $lastEducation);
         }
 
         if (isset($educationDetails['followingEducationRightNow'])) {
@@ -730,48 +715,82 @@ class StudentMutationResolver implements MutationResolverInterface
                 $newEducation['id'] = $followingEducation['id'];
             }
             if ($educationDetails['followingEducationRightNow'] == 'YES') {
-                $newEducation['description'] = 'followingEducationYes';
-                if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
-                    $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesEndDate'])) {
-                    $newEducation['endDate'] = $educationDetails['followingEducationRightNowYesEndDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesLevel'])) {
-                    $newEducation['name'] = $educationDetails['followingEducationRightNowYesLevel'];
-                    $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowYesLevel'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesInstitute'])) {
-                    $newEducation['institution'] = $educationDetails['followingEducationRightNowYesInstitute'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesProvidesCertificate'])) {
-                    if ($educationDetails['followingEducationRightNowYesProvidesCertificate'] == true) {
-                        $newEducation['providesCertificate'] = true;
-                    } else {
-                        $newEducation['providesCertificate'] = false;
-                    }
-                }
+                $newEducation = $this->getFollowingEducationYesFromEducationDetails($educationDetails, $newEducation);
             } else {
-                $newEducation['description'] = 'followingEducationNo';
-                if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
-                    $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowNoLevel'])) {
-                    $newEducation['name'] = $educationDetails['followingEducationRightNowNoLevel'];
-                    $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowNoLevel'];
-                }
-                if (isset($educationDetails['followingEducationRightNowNoGotCertificate'])) {
-                    if ($educationDetails['followingEducationRightNowNoGotCertificate'] == true) {
-                        $newEducation['degreeGrantedStatus'] = 'Granted';
-                    } else {
-                        $newEducation['degreeGrantedStatus'] = 'notGranted';
-                    }
-                }
+                $newEducation = $this->getFollowingEducationNoFromEducationDetails($educationDetails, $newEducation);
             }
             $employee['educations'][] = $newEducation;
         }
 
         return $employee;
+    }
+
+    private function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
+    {
+        $newEducation = [
+            'name'                    => $educationDetails['lastFollowedEducation'],
+            'description'             => 'lastEducation',
+            'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
+        ];
+        if (isset($lastEducation['id'])) {
+            $newEducation['id'] = $lastEducation['id'];
+        }
+        if (isset($educationDetails['didGraduate'])) {
+            if ($educationDetails['didGraduate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+        return $newEducation;
+    }
+
+    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationYes';
+        if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
+            $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesEndDate'])) {
+            $newEducation['endDate'] = $educationDetails['followingEducationRightNowYesEndDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesLevel'])) {
+            $newEducation['name'] = $educationDetails['followingEducationRightNowYesLevel'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowYesLevel'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesInstitute'])) {
+            $newEducation['institution'] = $educationDetails['followingEducationRightNowYesInstitute'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesProvidesCertificate'])) {
+            if ($educationDetails['followingEducationRightNowYesProvidesCertificate'] == true) {
+                $newEducation['providesCertificate'] = true;
+            } else {
+                $newEducation['providesCertificate'] = false;
+            }
+        }
+
+        return $newEducation;
+    }
+
+    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationNo';
+        if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
+            $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoLevel'])) {
+            $newEducation['name'] = $educationDetails['followingEducationRightNowNoLevel'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowNoLevel'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoGotCertificate'])) {
+            if ($educationDetails['followingEducationRightNowNoGotCertificate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        return $newEducation;
     }
 
     private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
