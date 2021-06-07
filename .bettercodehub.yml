@@ -1,6 +1,5 @@
 component_depth: 3
 languages:
-- php
 - name: php
   production:
       exclude:
