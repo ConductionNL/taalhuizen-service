@@ -1,7 +1,7 @@
 <?php
 
-
 namespace App\Subscriber;
+
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
 use App\Service\CCService;
@@ -9,9 +9,9 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -43,7 +43,7 @@ class UserSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        if ($route != 'api_user_get_collection' && $route != 'api_user_post_collection'){
+        if ($route != 'api_user_get_collection' && $route != 'api_user_post_collection') {
             return;
         }
 
@@ -51,13 +51,14 @@ class UserSubscriber implements EventSubscriberInterface
         $result['result'] = [];
 
         //handle post
-        if ($route == 'api_user_post_collection' and $resource instanceof User){
+        if ($route == 'api_user_post_collection' and $resource instanceof User) {
             $person = $this->dtoToUser($resource);
             //make person
         }
     }
 
-    public function dtoToUser($resource){
+    public function dtoToUser($resource)
+    {
         if ($resource->getId()) {
             $user['id'] = $resource->getId();
         }
@@ -69,10 +70,11 @@ class UserSubscriber implements EventSubscriberInterface
         return $user;
     }
 
-    private function handleResult($user) {
+    private function handleResult($user)
+    {
         return [
-            'id' => $user['id'],
-            'username' => $user['username']
+            'id'       => $user['id'],
+            'username' => $user['username'],
         ];
     }
 }

@@ -57,7 +57,8 @@ redis:
     enabled: false
   redisPort: 6379
   usePassword: false
-  enabled: false
+  enabled: true
+
 commonground:
   eherkenning:
     location: https://taalhuizen-bisc.commonground.nu/eherkenning

@@ -145,6 +145,7 @@ class TestResult
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -291,5 +292,4 @@ class TestResult
 
         return $this;
     }
-
 }

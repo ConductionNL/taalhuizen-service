@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use ContainerB9GRdr1\getDebug_Security_UserValueResolverService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -59,6 +54,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
@@ -87,6 +83,7 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
                 $collection->add($resourceResult);
             }
         }
+
         return $collection;
     }
 }

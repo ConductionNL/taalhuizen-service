@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -10,9 +9,9 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\Response;
 
 class AanbiederSubscriber implements EventSubscriberInterface
 {
@@ -54,7 +53,7 @@ class AanbiederSubscriber implements EventSubscriberInterface
         $result['result'] = [];
 
         // Handle a post collection
-        if($route == 'api_providers_post_collection' and $resource instanceof Provider) {
+        if ($route == 'api_providers_post_collection' and $resource instanceof Provider) {
 //            var_dump($resource->getAddress());
 
                 // No errors so lets continue... to: get all DTO info and save this in the correct places
@@ -72,7 +71,7 @@ class AanbiederSubscriber implements EventSubscriberInterface
         }
 
         // If any error was caught set $result['result'] to null
-        if(isset($result['errorMessage'])) {
+        if (isset($result['errorMessage'])) {
             $result['result'] = null;
         }
 
@@ -86,25 +85,28 @@ class AanbiederSubscriber implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    private function dtoAanbieder($resource) {
+    private function dtoAanbieder($resource)
+    {
         // Get all info from the dto for creating/updating a Aanbieder and return the body for this
         $aanbieder['name'] = $resource->getName();
         $aanbieder['phonenumber'] = $resource->getPhoneNumber();
         $aanbieder['email'] = $resource->getEmail();
         $aanbieder['address'] = $resource->getAddress();
         $aanbieder['type'] = 'Aanbieder';
+
         return $aanbieder;
     }
 
-    private function handleResult($aanbieder) {
+    private function handleResult($aanbieder)
+    {
         // Put together the expected result for Lifely:
         return [
-            'id' => $aanbieder['id'],
-            'name' => $aanbieder['name'],
-            'address' => $aanbieder['address'],
-            'email' => $aanbieder['email'],
+            'id'        => $aanbieder['id'],
+            'name'      => $aanbieder['name'],
+            'address'   => $aanbieder['address'],
+            'email'     => $aanbieder['email'],
             'telephone' => $aanbieder['phonenumber'],
-            'type' => $aanbieder['type'],
+            'type'      => $aanbieder['type'],
         ];
     }
 }

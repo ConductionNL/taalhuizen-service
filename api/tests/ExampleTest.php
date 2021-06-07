@@ -2,21 +2,21 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Example;
 use App\Entity\Example as MyExample;
+use PHPUnit\Framework\Example;
+use PHPUnit\Framework\TestCase;
 
 class ExampleTest extends TestCase
 {
     public function testSomething()
     {
         // Let create a new Example resource
-        $example = New MyExample;
+        $example = new MyExample();
         // Set a name
         $example->setName('My test name');
 
         // Test if the name has been set
-        $this->assertEquals('My test name',$example->getName());
+        $this->assertEquals('My test name', $example->getName());
 
         /*
         // Lets test if the example can be saved to the database
