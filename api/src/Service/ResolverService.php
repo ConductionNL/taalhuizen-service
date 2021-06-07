@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\Service;
 
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ResolverService
