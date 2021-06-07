@@ -267,6 +267,7 @@ class StudentService
 //        }
     }
 
+    //w.i.p.
     public function handleResult($person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registrarMemo = null, $registration = null)
     {
         if (isset($registration)) {
