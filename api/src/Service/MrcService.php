@@ -7,6 +7,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
+use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -310,22 +311,6 @@ class MrcService
         }
         $employee->setUserGroupIds($userGroupIds);
 
-//        if ($contactId) {
-//            $resources = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $contactId])['hydra:member'];
-//        } elseif ($username) {
-//            $resources = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => $username])['hydra:member'];
-//        } else {
-//            throw new Error('either contactId or username should be given');
-//        }
-//        if (count($resources) > 0) {
-//            $employee->setUserId($resources[0]['id']);
-//            $userGroupIds = [];
-//            foreach ($resources[0]['userGroups'] as $userGroup) {
-//                $userGroupIds[] = $userGroup['id'];
-//            }
-//            $employee->setUserGroupIds($userGroupIds);
-//        }
-
         return $employee;
     }
 
@@ -524,19 +509,7 @@ class MrcService
             $this->saveUser($employeeArray, $contact);
         }
 
-        $resource = [
-            'organization' => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : null,
-            'person' => $contact['@id'],
-            'provider' => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : null,
-            'hasPoliceCertificate' => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : false,
-            'referrer' => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : null,
-            'relevantCertificates' => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : null,
-            'trainedForJob' => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
-            'lastJob' => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
-            'dayTimeActivities' => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
-            'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
-            'speakingLevel' => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
-        ];
+        $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
         $resource = $this->cleanResource($resource);
 
@@ -585,23 +558,9 @@ class MrcService
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
             $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
-//        elseif(!isset($user)) {
-//            $userId = $employee->getUserId();
-//            $user = $this->ucService->getUserArray($userId);
-//        }
-        $resource = [
-            'organization' => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'],
-            'person' => $contact['@id'],
-            'provider' => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId(),
-            'hasPoliceCertificate' => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked(),
-            'referrer' => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia(),
-            'relevantCertificates' => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates(),
-            'trainedForJob' => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
-            'lastJob' => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
-            'dayTimeActivities' => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
-            'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
-            'speakingLevel' => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
-        ];
+
+        $resource = $this->createEmployeeResource($employeeArray, $contact, $employee, $employeeRaw);
+
         $resource = $this->cleanResource($resource);
 
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
@@ -670,5 +629,24 @@ class MrcService
                 $this->eavService->saveObject($education, 'education', 'mrc');
             }
         }
+    }
+
+    public function createEmployeeResource(array $employeeArray, array $contact, $employee, $employeeRaw)
+    {
+        $resource = [
+            'organization' => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] || null,
+            'person' => $contact['@id'],
+            'provider' => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId() || null,
+            'hasPoliceCertificate' => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked() || false,
+            'referrer' => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia() || null,
+            'relevantCertificates' => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates() || null,
+            'trainedForJob' => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
+            'lastJob' => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
+            'dayTimeActivities' => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
+            'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
+            'speakingLevel' => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
+        ];
+
+        return $resource;
     }
 }
