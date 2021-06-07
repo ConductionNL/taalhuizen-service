@@ -2,10 +2,13 @@ component_depth: 3
 languages:
 - php
 - name: php
+  production:
+      exclude:
+          - /api/src/Resolver/.*
   test:
     include:
         - /api/tests/.*
-        - /api/Service/.*
+        - /api/src/Service/.*
 exclude:
 - /nlx-setup/.*
 - /resources/.*
