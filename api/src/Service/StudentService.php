@@ -320,6 +320,7 @@ class StudentService
         $resource->setMotivationDetails($this->handleMotivationDetails($participant));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($person));
         $resource->setPermissionDetails($this->handlePermissionDetails($person));
+
         return $resource;
     }
 
