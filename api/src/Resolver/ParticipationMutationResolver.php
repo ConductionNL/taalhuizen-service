@@ -413,139 +413,55 @@ class ParticipationMutationResolver implements MutationResolverInterface
     private function dtoToParticipation(Participation $resource, $aanbiederId)
     {
         // Get all info from the dto for creating a Participation and return the body for this
-        // note: everything is nullabel in the dto, but eav doesn't like values set to null
-        if ($resource->getAanbiederId()) {
-            $participation['aanbiederId'] = $aanbiederId;
-        }
-        if ($resource->getAanbiederName()) {
-            $participation['aanbiederName'] = $resource->getAanbiederName();
-        }
-        if ($resource->getAanbiederNote()) {
-            $participation['aanbiederNote'] = $resource->getAanbiederNote();
-        }
-        if ($resource->getOfferName()) {
-            $participation['offerName'] = $resource->getOfferName();
-        }
-        if ($resource->getOfferCourse()) {
-            $participation['offerCourse'] = $resource->getOfferCourse();
-        }
-        if ($resource->getOutComesGoal()) {
-            $participation['goal'] = $resource->getOutComesGoal();
-        }
-        if ($resource->getOutComesTopic()) {
-            $participation['topic'] = $resource->getOutComesTopic();
-        }
-        if ($resource->getOutComesTopicOther()) {
-            $participation['topicOther'] = $resource->getOutComesTopicOther();
-        }
-        if ($resource->getOutComesApplication()) {
-            $participation['application'] = $resource->getOutComesApplication();
-        }
-        if ($resource->getOutComesApplicationOther()) {
-            $participation['applicationOther'] = $resource->getOutComesApplicationOther();
-        }
-        if ($resource->getOutComesLevel()) {
-            $participation['level'] = $resource->getOutComesLevel();
-        }
-        if ($resource->getOutComesLevelOther()) {
-            $participation['levelOther'] = $resource->getOutComesLevelOther();
-        }
-        if (!is_null($resource->getDetailsIsFormal())) {
-            $participation['isFormal'] = $resource->getDetailsIsFormal();
-        }
-        if ($resource->getDetailsGroupFormation()) {
-            $participation['groupFormation'] = $resource->getDetailsGroupFormation();
-        }
-        if ($resource->getDetailsTotalClassHours()) {
-            $participation['totalClassHours'] = $resource->getDetailsTotalClassHours();
-        }
-        if (!is_null($resource->getDetailsCertificateWillBeAwarded())) {
-            $participation['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
-        }
-        if ($resource->getDetailsStartDate()) {
-            $participation['startDate'] = $resource->getDetailsStartDate()->format('d-m-Y H:i:s');
-        }
-        if ($resource->getDetailsEndDate()) {
-            $participation['endDate'] = $resource->getDetailsEndDate()->format('d-m-Y H:i:s');
-        }
-        if ($resource->getDetailsEngagements()) {
-            $participation['engagements'] = $resource->getDetailsEngagements();
-        }
-
-        return $participation;
+        return [
+            'aanbiederId' => $resource->getAanbiederId() ? $aanbiederId : null,
+            'aanbiederName' => $resource->getAanbiederName() ?? null,
+            'aanbiederNote' => $resource->getAanbiederNote() ?? null,
+            'offerName' => $resource->getOfferName() ?? null,
+            'offerCourse' => $resource->getOfferCourse() ?? null,
+            'goal' => $resource->getOutComesGoal() ?? null,
+            'topic' => $resource->getOutComesTopic() ?? null,
+            'topicOther' => $resource->getOutComesTopicOther() ?? null,
+            'application' => $resource->getOutComesApplication() ?? null,
+            'applicationOther' => $resource->getOutComesApplicationOther() ?? null,
+            'level' => $resource->getOutComesLevel() ?? null,
+            'levelOther' => $resource->getOutComesLevelOther() ?? null,
+            'isFormal' => $resource->getDetailsIsFormal() ?? null,
+            'groupFormation' => $resource->getDetailsGroupFormation() ?? null,
+            'totalClassHours' => $resource->getDetailsTotalClassHours() ?? null,
+            'certificateWillBeAwarded' => $resource->getDetailsCertificateWillBeAwarded() ?? null,
+            'startDate' => $resource->getDetailsStartDate() ?? null,
+            'endDate' => $resource->getDetailsEndDate() ?? null,
+            'engagements' => $resource->getDetailsEngagements() ?? null,
+        ];
     }
 
     private function inputToParticipation(array $input)
     {
         // Get all info from the input array for updating a Participation and return the body for this
-        // note: everything is nullabel in the dto, but eav doesn't like values set to null
-        if (isset($input['aanbiederId'])) {
-            $participation['aanbiederId'] = $input['aanbiederId'];
-        }
-        if (isset($input['aanbiederName'])) {
-            $participation['aanbiederName'] = $input['aanbiederName'];
-        }
-        if (isset($input['aanbiederNote'])) {
-            $participation['aanbiederNote'] = $input['aanbiederNote'];
-        }
-        if (isset($input['offerName'])) {
-            $participation['offerName'] = $input['offerName'];
-        }
-        if (isset($input['offerCourse'])) {
-            $participation['offerCourse'] = $input['offerCourse'];
-        }
-        if (isset($input['outComesGoal'])) {
-            $participation['goal'] = $input['outComesGoal'];
-        }
-        if (isset($input['outComesTopic'])) {
-            $participation['topic'] = $input['outComesTopic'];
-        }
-        if (isset($input['outComesTopicOther'])) {
-            $participation['topicOther'] = $input['outComesTopicOther'];
-        }
-        if (isset($input['outComesApplication'])) {
-            $participation['application'] = $input['outComesApplication'];
-        }
-        if (isset($input['outComesApplicationOther'])) {
-            $participation['applicationOther'] = $input['outComesApplicationOther'];
-        }
-        if (isset($input['outComesLevel'])) {
-            $participation['level'] = $input['outComesLevel'];
-        }
-        if (isset($input['outComesLevelOther'])) {
-            $participation['levelOther'] = $input['outComesLevelOther'];
-        }
-        if (isset($input['detailsIsFormal'])) {
-            $participation['isFormal'] = $input['detailsIsFormal'];
-        }
-        if (isset($input['detailsGroupFormation'])) {
-            $participation['groupFormation'] = $input['detailsGroupFormation'];
-        }
-        if (isset($input['detailsTotalClassHours'])) {
-            $participation['totalClassHours'] = $input['detailsTotalClassHours'];
-        }
-        if (isset($input['detailsCertificateWillBeAwarded'])) {
-            $participation['certificateWillBeAwarded'] = $input['detailsCertificateWillBeAwarded'];
-        }
-        if (isset($input['detailsStartDate'])) {
-            $participation['startDate'] = $input['detailsStartDate'];
-        }
-        if (isset($input['detailsEndDate'])) {
-            $participation['endDate'] = $input['detailsEndDate'];
-        }
-        if (isset($input['detailsEngagements'])) {
-            $participation['engagements'] = $input['detailsEngagements'];
-        }
-        if (isset($input['presenceStartDate'])) {
-            $participation['presenceStartDate'] = $input['presenceStartDate'];
-        }
-        if (isset($input['presenceEndDate'])) {
-            $participation['presenceEndDate'] = $input['presenceEndDate'];
-        }
-        if (isset($input['presenceEndParticipationReason'])) {
-            $participation['presenceEndParticipationReason'] = $input['presenceEndParticipationReason'];
-        }
-
-        return $participation;
+        return [
+            'aanbiederId' => $input['aanbiederId'] ?? null,
+            'aanbiederName' => $input['aanbiederName'] ?? null,
+            'aanbiederNote' => $input['aanbiederNote'] ?? null,
+            'offerName' => $input['offerName'] ?? null,
+            'offerCourse' => $input['offerCourse'] ?? null,
+            'goal' => $input['outComesGoal'] ?? null,
+            'topic' => $input['outComesTopic'] ?? null,
+            'topicOther' => $input['outComesTopicOther'] ?? null,
+            'application' => $input['outComesApplication'] ?? null,
+            'applicationOther' => $input['outComesApplicationOther'] ?? null,
+            'level' => $input['outComesLevel'] ?? null,
+            'levelOther' => $input['outComesLevelOther'] ?? null,
+            'isFormal' => $input['detailsIsFormal'] ?? null,
+            'groupFormation' => $input['detailsGroupFormation'] ?? null,
+            'totalClassHours' => $input['detailsTotalClassHours'] ?? null,
+            'certificateWillBeAwarded' => $input['detailsCertificateWillBeAwarded'] ?? null,
+            'startDate' => $input['detailsStartDate'] ?? null,
+            'endDate' => $input['detailsEndDate'] ?? null,
+            'engagements' => $input['detailsEngagements'] ?? null,
+            'presenceStartDate' => $input['presenceStartDate'] ?? null,
+            'presenceEndDate' => $input['presenceEndDate'] ?? null,
+            'presenceEndParticipationReason' => $input['presenceEndParticipationReason'] ?? null,
+        ];
     }
 }
