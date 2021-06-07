@@ -333,6 +333,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
+    //w.i.p.
     public function createEmployeeObject(array $result, array $userRoleArray = []): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
