@@ -2,13 +2,9 @@
 
 namespace App\Service;
 
-
 use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Error;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderService
@@ -25,7 +21,7 @@ class ProviderService
         ParameterBagInterface $parameterBag,
         EDUService $eduService,
         EAVService $eavService
-    ){
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
@@ -42,13 +38,13 @@ class ProviderService
         $providerCCOrganization['name'] = $provider['name'];
         $providerCCOrganization['type'] = 'Aanbieder';
 
-        $providerCCOrganization['addresses'][0]['name'] = 'Address of ' . $provider['name'];
+        $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
         $providerCCOrganization['addresses'][0] = $provider['address'];
 
-        $providerCCOrganization['emails'][0]['name'] = 'Email of ' . $provider['name'];
+        $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
         $providerCCOrganization['emails'][0]['email'] = $provider['email'];
 
-        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $provider['name'];
+        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
         $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
 
         //add source organization to cc organization
@@ -68,17 +64,17 @@ class ProviderService
         $coordinator['organization'] = $providerWrc['contact'];
         $coordinator['name'] = 'AANBIEDER_COORDINATOR';
         $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
-        $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
         //mentor
         $mentor['organization'] = $providerWrc['contact'];
         $mentor['name'] = 'AANBIEDER_MENTOR';
         $mentor['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($mentor,['component' => 'uc', 'type' => 'groups']);
+        $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
         //volunteer
         $volunteer['organization'] = $providerWrc['contact'];
         $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
         $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($volunteer,['component' => 'uc', 'type' => 'groups']);
+        $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
@@ -89,12 +85,14 @@ class ProviderService
     public function getProvider($providerId)
     {
         $result['provider'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
+
         return $result;
     }
 
     public function getProviders()
     {
-        $result['providers'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Aanbieder'])["hydra:member"];
+        $result['providers'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Aanbieder'])['hydra:member'];
+
         return $result;
     }
 
@@ -104,13 +102,13 @@ class ProviderService
             // Update
             $providerCCOrganization['name'] = $provider['name'];
 
-            $providerCCOrganization['addresses'][0]['name'] = 'Address of ' . $provider['name'];
+            $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
             $providerCCOrganization['addresses'][0] = $provider['address'];
 
-            $providerCCOrganization['emails'][0]['name'] = 'Email of ' . $provider['name'];
+            $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
             $providerCCOrganization['emails'][0]['email'] = $provider['email'];
 
-            $providerCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $provider['name'];
+            $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
             $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
 
             $providerCC = $this->commonGroundService->updateResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
@@ -127,13 +125,12 @@ class ProviderService
         return $result;
     }
 
-
     public function deleteProvider($id)
     {
         $providerCC = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $providerCC['@id']])["hydra:member"][0];
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $providerCC['@id']])["hydra:member"];
-        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $providerCC['@id']])['hydra:member'][0];
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $providerCC['@id']])['hydra:member'];
+        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
 
         //delete employees
         $this->deleteEmployees($employees);
@@ -153,6 +150,7 @@ class ProviderService
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $providerCC['addresses'][0]['id']]);
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $providerCC['id']]);
         $result['provider'] = $providerCC;
+
         return $result;
     }
 
@@ -163,11 +161,11 @@ class ProviderService
             $resource->setName($userRoles['name']);
         } else {
             $address = [
-                'street' => $provider['addresses'][0]['street'] ?? null,
-                'houseNumber' => $provider['addresses'][0]['houseNumber'] ?? null,
+                'street'            => $provider['addresses'][0]['street'] ?? null,
+                'houseNumber'       => $provider['addresses'][0]['houseNumber'] ?? null,
                 'houseNumberSuffix' => $provider['addresses'][0]['houseNumberSuffix'] ?? null,
-                'postalCode' => $provider['addresses'][0]['postalCode'] ?? null,
-                'locality' => $provider['addresses'][0]['locality'] ?? null,
+                'postalCode'        => $provider['addresses'][0]['postalCode'] ?? null,
+                'locality'          => $provider['addresses'][0]['locality'] ?? null,
             ];
             $resource->setAddress($address);
             $resource->setEmail($provider['emails'][0]['email'] ?? null);
@@ -176,6 +174,7 @@ class ProviderService
             $resource->setType($provider['type'] ?? null);
         }
         $this->entityManager->persist($resource);
+
         return $resource;
     }
 
@@ -188,6 +187,7 @@ class ProviderService
                 $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
             }
         }
+
         return false;
     }
 
@@ -212,13 +212,14 @@ class ProviderService
                 $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
             }
         }
+
         return false;
     }
 
     public function getUserRolesByProvider($id): array
     {
         $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        $userRolesByProvider =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+        $userRolesByProvider = $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
 
         return $userRolesByProvider;
     }

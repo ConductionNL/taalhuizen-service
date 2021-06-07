@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AddressRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -29,21 +28,18 @@ class Address
     private $id;
 
     /**
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $street;
 
     /**
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $houseNumber;
 
     /**
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -70,9 +66,11 @@ class Address
     {
         return $this->id;
     }
+
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

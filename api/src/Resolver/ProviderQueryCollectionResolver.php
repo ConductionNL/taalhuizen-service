@@ -1,15 +1,11 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ProviderService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -17,12 +13,14 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
 {
     private ProviderService $providerService;
 
-    public function __construct(ProviderService $providerService) {
+    public function __construct(ProviderService $providerService)
+    {
         $this->providerService = $providerService;
     }
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
@@ -37,7 +35,8 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args) {
+    public function createPaginator(ArrayCollection $collection, array $args)
+    {
         if (key_exists('first', $args)) {
             $maxItems = $args['first'];
             $firstItem = 0;
@@ -50,9 +49,10 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         }
         if (key_exists('after', $args)) {
             $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)){
+        } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 
@@ -67,13 +67,14 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
             $resourceResult->setId(Uuid::getFactory()->fromString($provider['id']));
             $collection->add($resourceResult);
         }
+
         return $collection;
     }
 
     public function userRolesByProviders(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }

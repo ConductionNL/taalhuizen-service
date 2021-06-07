@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use App\Resolver\UserMutationResolver;
@@ -14,7 +13,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -124,7 +122,6 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-
     private $username;
 
     /**
@@ -249,6 +246,7 @@ class User
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
