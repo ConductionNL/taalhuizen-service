@@ -1,6 +1,11 @@
 component_depth: 3
 languages:
 - php
+  test:
+    include:
+        - /api/tests/ExampleTest.php
+    exclude:
+        - /api/Service/.*
 exclude:
 - /nlx-setup/.*
 - /resources/.*
@@ -17,6 +22,4 @@ exclude:
 - /api/var/.*
 - /api/vendor/.*
 - /api/src/Entity/.*
-test:
-    include:
-        - /api/tests/ExampleTest.php
+
