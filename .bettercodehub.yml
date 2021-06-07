@@ -21,8 +21,6 @@ languages:
   test:
     include:
         - /api/tests/.*
-        - /api/src/Service/.*
-    exclude:
-        - /api/src/Resolver/StudentMutationResolver.php
+        - /api/src/Subscriber/.*
 
 
