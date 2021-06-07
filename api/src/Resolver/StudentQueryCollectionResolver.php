@@ -80,6 +80,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
+
         } else {
             throw new Exception('The languageHouseId was not specified');
         }
