@@ -174,55 +174,96 @@ class GroupMutationResolver implements MutationResolverInterface
 
     public function dtoToGroup(Group $resource)
     {
+        $group = [];
         if ($resource->getGroupId()) {
             $group['GroupId'] = $resource->getGroupId();
         }
+        //set aanbieder
+        $group = $this->setAanbieder($resource, $group);
+        $group['name'] = $resource->getName();
+        $group['typeCourse'] = $resource->getTypeCourse();
+        $group['goal'] = $resource->getOutComesGoal();
+        $group['topic'] = $resource->getOutComesTopic();
+        $group['application'] = $resource->getOutComesApplication();
+        $group['level'] = $resource->getOutComesLevel();
+        //set outcomes other
+        $group = $this->setOutcomesOther($resource, $group);
+        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
+        $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
+        $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
+        // set detail dates
+        $group = $this->setDetailDates($resource, $group);
+        // set availabilities
+        $group = $this->setGroupAvailabilities($resource, $group);
+        $group['location'] = $resource->getGeneralLocation();
+        //set participant limits
+        $group = $this->setParticipantLimits($resource, $group);
+        if ($resource->getGeneralEvaluation()) {
+            $group['evaluation'] = $resource->getGeneralEvaluation();
+        }
+        $group['mentors'] = $resource->getAanbiederEmployeeIds();
+
+        return $group;
+    }
+
+    public function setAanbieder($resource, $group)
+    {
         $aanbieder = explode('/', $resource->getAanbiederId());
         if (is_array($aanbieder)) {
             $aanbieder = end($aanbieder);
         }
         $group['aanbiederId'] = $aanbieder;
-        $group['name'] = $resource->getName();
-        $group['typeCourse'] = $resource->getTypeCourse();
-        $group['goal'] = $resource->getOutComesGoal();
-        $group['topic'] = $resource->getOutComesTopic();
+
+        return $group;
+    }
+
+    public function setOutcomesOther($resource, $group)
+    {
         if ($resource->getOutComesTopicOther()) {
             $group['topicOther'] = $resource->getOutComesTopicOther();
         }
-        $group['application'] = $resource->getOutComesApplication();
         if ($resource->getOutComesApplicationOther()) {
             $group['applicationOther'] = $resource->getOutComesApplicationOther();
         }
-        $group['level'] = $resource->getOutComesLevel();
         if ($resource->getOutComesLevelOther()) {
             $group['levelOther'] = $resource->getOutComesLevelOther();
         }
-        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
-        $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
-        $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
+
+        return $group;
+    }
+
+    public function setDetailDates($resource, $group)
+    {
         if ($resource->getDetailsStartDate()) {
             $group['startDate'] = $resource->getDetailsStartDate();
         }
         if ($resource->getDetailsEndDate()) {
             $group['endDate'] = $resource->getDetailsEndDate();
         }
-        if ($resource->getAvailability()) {
-            $group['availability'] = $resource->getAvailability();
-        }
-        if ($resource->getAvailabilityNotes()) {
-            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
-        }
-        $group['location'] = $resource->getGeneralLocation();
+
+        return $group;
+    }
+
+    public function setParticipantLimits($resource, $group)
+    {
         if ($resource->getGeneralParticipantsMin()) {
             $group['participantsMin'] = $resource->getGeneralParticipantsMin();
         }
         if ($resource->getGeneralParticipantsMax()) {
             $group['participantsMax'] = $resource->getGeneralParticipantsMax();
         }
-        if ($resource->getGeneralEvaluation()) {
-            $group['evaluation'] = $resource->getGeneralEvaluation();
+
+        return $group;
+    }
+
+    public function setGroupAvailabilities($resource, $group)
+    {
+        if ($resource->getAvailability()) {
+            $group['availability'] = $resource->getAvailability();
         }
-        $group['mentors'] = $resource->getAanbiederEmployeeIds();
+        if ($resource->getAvailabilityNotes()) {
+            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
+        }
 
         return $group;
     }

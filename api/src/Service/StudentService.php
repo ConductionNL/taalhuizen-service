@@ -80,7 +80,7 @@ class StudentService
     }
 
     /**
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws Exception
      */
     public function getStudent($id, $studentUrl = null, $skipChecks = false): array
     {
@@ -93,70 +93,117 @@ class StudentService
 
         // Get the edu/participant from EAV
         if ($skipChecks || $this->eavService->hasEavObject($studentUrl)) {
-            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
-
-            if (!$skipChecks && !$this->commonGroundService->isResource($participant['person'])) {
-                throw new Exception('Warning, '.$participant['person'].' the person (cc/person) of this student does not exist!');
-            }
-            // Get the cc/person from EAV
-            if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
-                $person = $this->eavService->getObject('people', $participant['person'], 'cc');
-            } else {
-                throw new Exception('Warning, '.$participant['person'].' does not have an eav object (eav/cc/people)!');
-            }
-
-            // get the memo for availabilityNotes and add it to the $person
-            if (isset($person)) {
-                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $person['@id']])['hydra:member'];
-                if (count($availabilityMemos) > 0) {
-                    $availabilityMemo = $availabilityMemos[0];
-                    $person['availabilityNotes'] = $availabilityMemo['description'];
-                }
-            }
-
-            // get the memo for remarks (motivationDetails) and add it to the $participant
-            if (isset($participant)) {
-                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $person['@id']])['hydra:member'];
-                if (count($motivationMemos) > 0) {
-                    $motivationMemo = $motivationMemos[0];
-                    $participant['remarks'] = $motivationMemo['description'];
-                }
-            }
-
-            // get the registrarOrganization, registrarPerson and its memo
-            if (isset($participant['referredBy'])) {
-                $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-                if (isset($registrarOrganization['persons'][0]['@id'])) {
-                    $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
-                }
-                $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])['hydra:member'];
-                if (count($registrarMemos) > 0) {
-                    $registrarMemo = $registrarMemos[0];
-                }
-            }
-
-            // Get students data from mrc
-            $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $person['@id']])['hydra:member'];
-            if (count($employees) > 0) {
-                $employee = $employees[0];
-                if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
-                    $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
-                }
-            }
+            $result = $this->getStudentObjects($studentUrl, $skipChecks);
         } else {
             throw new Exception('Invalid request, '.$id.' is not an existing student (eav/edu/participant)!');
         }
+
+        return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getStudentObjects($studentUrl = null, $skipChecks = false): array
+    {
+        $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+
+        $person = $this->getStudentPerson($participant, $skipChecks);
+
+        // get the memo for availabilityNotes and add it to the $person
+        if (isset($person)) {
+            $person = $this->getStudentAvailabilityNotes($person);
+        }
+
+        // get the memo for remarks (motivationDetails) and add it to the $participant
+        if (isset($participant)) {
+            $participant = $this->getStudentMotivationDetailsRemarks($person, $participant);
+        }
+
+        // get the registrarOrganization, registrarPerson and its memo
+        $registrar = $this->getStudentRegistrar($person, $participant);
+
+        // Get students data from mrc
+        $employee = $this->getStudentEmployee($person, $skipChecks);
 
         return [
             'participant'           => $participant ?? null,
             'person'                => $person ?? null,
             'employee'              => $employee ?? null,
+            'registrar'             => $registrar,
+        ];
+    }
+
+    private function getStudentPerson(array $participant, $skipChecks = false): array
+    {
+        if (!$skipChecks && !$this->commonGroundService->isResource($participant['person'])) {
+            throw new Exception('Warning, '.$participant['person'].' the person (cc/person) of this student does not exist!');
+        }
+        // Get the cc/person from EAV
+        if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
+            $person = $this->eavService->getObject('people', $participant['person'], 'cc');
+        } else {
+            throw new Exception('Warning, '.$participant['person'].' does not have an eav object (eav/cc/people)!');
+        }
+
+        return $person;
+    }
+
+    private function getStudentAvailabilityNotes(array $person): array
+    {
+        //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+        $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $person['@id']])['hydra:member'];
+        if (count($availabilityMemos) > 0) {
+            $availabilityMemo = $availabilityMemos[0];
+            $person['availabilityNotes'] = $availabilityMemo['description'];
+        }
+
+        return $person;
+    }
+
+    private function getStudentMotivationDetailsRemarks(array $person, array $participant): array
+    {
+        //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+        $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $person['@id']])['hydra:member'];
+        if (count($motivationMemos) > 0) {
+            $motivationMemo = $motivationMemos[0];
+            $participant['remarks'] = $motivationMemo['description'];
+        }
+
+        return $participant;
+    }
+
+    private function getStudentRegistrar(array $person, array $participant): array
+    {
+        if (isset($participant['referredBy'])) {
+            $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+            if (isset($registrarOrganization['persons'][0]['@id'])) {
+                $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+            }
+            $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])['hydra:member'];
+            if (count($registrarMemos) > 0) {
+                $registrarMemo = $registrarMemos[0];
+            }
+        }
+
+        return [
             'registrarOrganization' => $registrarOrganization ?? null,
             'registrarPerson'       => $registrarPerson ?? null,
             'registrarMemo'         => $registrarMemo ?? null,
         ];
+    }
+
+    private function getStudentEmployee(array $person, $skipChecks = false): array
+    {
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $person['@id']])['hydra:member'];
+        if (count($employees) > 0) {
+            $employee = $employees[0];
+            if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
+                $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
+            }
+        }
+
+        return $employee;
     }
 
     /**
@@ -188,47 +235,62 @@ class StudentService
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
             $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
             // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
-            $studentUrls = [];
-            foreach ($provider['participations'] as $participationUrl) {
-                try {
-                    //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
-//                    if ($this->eavService->hasEavObject($participationUrl)) {
-                    // Get eav/Participation
-                    $participation = $this->eavService->getObject('participations', $participationUrl);
-                    //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
-                    if ($participation['status'] == $status && isset($participation['learningNeed'])) {
-                        //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
-                        // Get eav/LearningNeed
-                        $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
-                        if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
-                            // Add studentUrl to array, if it is not already in there
-                            if (!in_array($learningNeed['participants'][0], $studentUrls)) {
-                                $studentUrls[] = $learningNeed['participants'][0];
-                                // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
-                                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
-                                if ($student['participant']['status'] == 'accepted') {
-                                    // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee']);
-                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                                    // Add to the collection
-                                    $collection->add($resourceResult);
-                                }
-                            }
-                        }
-                    }
-//                        else {
-//                            $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
-//                        }
-//                    } else {
-//                        $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
-//                    }
-                } catch (Exception $e) {
-                    continue;
-                }
-            }
+            $collection = $this->getStudentWithStatusFromParticipations($collection, $provider, $status);
         } else {
             // Do not throw an error, because we want to return an empty array in this case
             $result['message'] = 'Warning, '.$providerId.' is not an existing eav/cc/organization!';
+        }
+
+        return $collection;
+    }
+
+    private function getStudentWithStatusFromParticipations(ArrayCollection $collection, array $provider, $status): ArrayCollection
+    {
+        // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
+        $studentUrls = [];
+        foreach ($provider['participations'] as $participationUrl) {
+            try {
+                //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
+//                if ($this->eavService->hasEavObject($participationUrl)) {
+                // Get eav/Participation
+                $participation = $this->eavService->getObject('participations', $participationUrl);
+                //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
+                if ($participation['status'] == $status && isset($participation['learningNeed'])) {
+                    $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
+                }
+//                    else {
+//                        $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
+//                    }
+//                } else {
+//                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+//                }
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+
+        return $collection;
+    }
+
+    private function getStudentFromLearningNeed(ArrayCollection $collection, array &$studentUrls, $learningNeedUrl): ArrayCollection
+    {
+        //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
+        // Get eav/LearningNeed
+        $learningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+        if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
+            // Add studentUrl to array, if it is not already in there
+            if (!in_array($learningNeed['participants'][0], $studentUrls)) {
+                $studentUrls[] = $learningNeed['participants'][0];
+                // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
+                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
+                if ($student['participant']['status'] == 'accepted') {
+                    // Handle Result
+                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                    // Add to the collection
+                    $collection->add($resourceResult);
+                }
+            }
         }
 
         return $collection;
@@ -260,17 +322,17 @@ class StudentService
 //        }
     }
 
-    public function handleResult($person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registrarMemo = null, $registration = null)
+    public function handleResult($person, $participant, $employee, $registrar = null, $registration = false)
     {
         // Put together the expected result for Lifely:
-        if (isset($registration)) {
+        if ($registration) {
             $resource = new Registration();
         } else {
             $resource = new Student();
         }
 
         // Set all subresources in response DTO body
-        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrarPerson, $registrarOrganization, $registration);
+        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrar);
 
         if (isset($participant['dateCreated'])) {
             $resource->setDateCreated(new \DateTime($participant['dateCreated']));
@@ -278,8 +340,8 @@ class StudentService
         if (isset($participant['status'])) {
             $resource->setStatus($participant['status']);
         }
-        if (isset($registrarMemo['description'])) {
-            $resource->setMemo($registrarMemo['description']);
+        if (isset($registrar['registrarMemo']['description'])) {
+            $resource->setMemo($registrar['registrarMemo']['description']);
         }
         if (isset($employee['speakingLevel'])) {
             $resource->setSpeakingLevel($employee['speakingLevel']);
@@ -295,14 +357,14 @@ class StudentService
         return $resource;
     }
 
-    private function handleSubResources($resource, $person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registration = null): object
+    private function handleSubResources($resource, $person, $participant, $employee, $registrar = null): object
     {
-        $resource->setRegistrar($this->handleRegistrar($registrarPerson, $registrarOrganization));
+        $resource->setRegistrar($this->handleRegistrar($registrar['registrarPerson'], $registrar['registrarOrganization']));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
         $resource->setPersonDetails($this->handlePersonDetails($person));
         $resource->setContactDetails($this->handleContactDetails($person));
         $resource->setGeneralDetails($this->handleGeneralDetails($person));
-        $resource->setReferrerDetails($this->handleReferrerDetails($registration, $participant, $registrarPerson, $registrarOrganization));
+        $resource->setReferrerDetails($this->handleReferrerDetails($participant, $registrar['registrarPerson'], $registrar['registrarOrganization']));
         $resource->setBackgroundDetails($this->handleBackgroundDetails($person));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($person));
 
@@ -394,16 +456,15 @@ class StudentService
         ];
     }
 
-    private function handleReferrerDetails($registration, $participant, $registrarPerson = null, $registrarOrganization = null): array
+    private function handleReferrerDetails($participant, $registrarPerson = null, $registrarOrganization = null): array
     {
-        if (isset($registration)) {
+        if (isset($registrarOrganization)) {
             return [
                 'referringOrganization'      => $registrarOrganization['name'] ?? null,
                 'referringOrganizationOther' => null,
                 'email'                      => $registrarPerson['emails'][0]['email'] ?? null,
             ];
-        }
-        if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
+        } elseif (isset($participant['referredBy'])) {
             $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
         }
 
@@ -440,7 +501,7 @@ class StudentService
         ];
     }
 
-    private function getEducationsFromEmployee($employee): array
+    public function getEducationsFromEmployee($employee, $followingEducation = false): array
     {
         $educations = [
             'lastEducation'         => null,
@@ -453,6 +514,10 @@ class StudentService
             foreach ($employee['educations'] as $education) {
                 $this->setEducationType($educations, $education);
             }
+        }
+
+        if ($followingEducation) {
+            $educations['followingEducation'] = $educations['followingEducationNo'] ?: $educations['followingEducationYes'];
         }
 
         return $educations;
