@@ -356,25 +356,9 @@ class ParticipationService
     {
         $result = [];
         // Make sure this participation has no mentor or group set
-        if (isset($participation['mentor']) || isset($participation['group'])) {
-            return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
-        }
-
+        $this->checkMentor($participation);
         // Check if group already has an EAV object
-        if ($this->eavService->hasEavObject($groupUrl)) {
-            $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
-            $group['participations'] = $getGroup['participations'];
-            $group['participants'] = $getGroup['participants'];
-        }
-        if (!isset($group['participations'])) {
-            $group['participations'] = [];
-            $group['participants'] = $this->commonGroundService->getResource($groupUrl)['participants'];
-        }
-        if (isset($group['participants'])) {
-            foreach ($group['participants'] as &$participant) {
-                $participant = '/participants/'.$participant['id'];
-            }
-        }
+        $group['participations'] = $this->checkGroup($participation);
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
@@ -397,6 +381,33 @@ class ParticipationService
         }
 
         return $this->handleResult($result['participation']);
+    }
+
+    public function checkMentor($participation)
+    {
+        if (isset($participation['mentor']) || isset($participation['group'])) {
+            return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
+        }
+        return false;
+    }
+
+    public function checkGroup($groupUrl)
+    {
+        if ($this->eavService->hasEavObject($groupUrl)) {
+            $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $group['participations'] = $getGroup['participations'];
+            $group['participants'] = $getGroup['participants'];
+        }
+        if (!isset($group['participations'])) {
+            $group['participations'] = [];
+            $group['participants'] = $this->commonGroundService->getResource($groupUrl)['participants'];
+        }
+        if (isset($group['participants'])) {
+            foreach ($group['participants'] as &$participant) {
+                $participant = '/participants/'.$participant['id'];
+            }
+        }
+        return $group['participations'];
     }
 
     public function removeGroupFromParticipation($groupUrl, $participation)
