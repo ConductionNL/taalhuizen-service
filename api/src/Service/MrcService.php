@@ -650,6 +650,20 @@ class MrcService
         }
     }
 
+    public function deleteEmployees($ccOrganizationId): bool
+    {
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])["hydra:member"];
+
+        if ($employees > 0) {
+            foreach ($employees as $employee) {
+                $person = $this->commonGroundService->getResource($employee['person']);
+                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
+            }
+        }
+        return false;
+    }
+
     public function createEmployeeResource(array $employeeArray, array $contact, $employee, $employeeRaw)
     {
         $resource = [

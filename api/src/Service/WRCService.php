@@ -23,22 +23,25 @@ class WRCService
         $this->params = $params;
     }
 
-    public function saveOrganization(array $body, $contact = null)
+    public function createOrganization(array $organizationArray)
     {
-        if (isset($body['address'])) {
-            unset($body['address']);
-        }
-        if (isset($body['email'])) {
-            unset($body['email']);
-        }
-        if (isset($body['phoneNumber'])) {
-            unset($body['phoneNumber']);
-        }
-        if (isset($contact)) {
-            $body['contact'] = $contact;
-        }
+        $resource = [
+            'name' => $organizationArray['name'],
+        ];
+        $result = $this->commonGroundService->createResource($resource, ['component' => 'wrc', 'type' => 'organizations']);
 
-        return $this->commonGroundService->saveResource($body, ['component' => 'wrc', 'type' => 'organizations']);
+        return $result;
+    }
+
+    public function saveOrganization(array $ccOrganization, array $organizationArray)
+    {
+        $organization = $this->commonGroundService->getResource($ccOrganization['sourceOrganization']);
+        $resource = [
+            'name' => $organizationArray['name'],
+        ];
+        $result = $this->commonGroundService->updateResource($resource, ['component' => 'wrc', 'type' => 'organizations', 'id' => $organization['id']]);
+
+        return $result;
     }
 
     public function getOrganization($id)
