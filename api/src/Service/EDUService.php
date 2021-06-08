@@ -321,6 +321,7 @@ class EDUService
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
             $watanders->add($resourceResult);
         }
+
         return $watanders;
     }
 
