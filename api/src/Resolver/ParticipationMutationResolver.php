@@ -58,8 +58,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
         if ($resource->getAanbiederId()) {
-          $aanbiederId = $this->setAanbiederId(null, $resource);
-          $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
+            $aanbiederId = $this->setAanbiederId(null, $resource);
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
         if ($resource->getLearningNeedId()) {
             $learningNeedId = $this->setLearningneedId($resource);
@@ -170,7 +170,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function setAanbiederId(?array $input, ?Participation $resource = null)
     {
-        if ($resource){
+        if ($resource) {
             $aanbiederId = explode('/', $resource->setAanbiederId());
         } else {
             $aanbiederId = explode('/', $input['aanbiederId']);
