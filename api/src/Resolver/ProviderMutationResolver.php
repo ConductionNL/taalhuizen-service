@@ -8,7 +8,6 @@ use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
