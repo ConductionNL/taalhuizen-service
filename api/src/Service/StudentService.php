@@ -285,7 +285,7 @@ class StudentService
                 $student = $this->getStudent(null, $learningNeed['participants'][0], true);
                 if ($student['participant']['status'] == 'accepted') {
                     // Handle Result
-                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
+                    $resourceResult = $this->handleResult($student);
                     $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                     // Add to the collection
                     $collection->add($resourceResult);
@@ -322,7 +322,7 @@ class StudentService
 //        }
     }
 
-    public function handleResult($person, $participant, $employee, $registrar = null, $registration = false)
+    public function handleResult(array $student, $registration = false): object
     {
         // Put together the expected result for Lifely:
         if ($registration) {
@@ -332,49 +332,49 @@ class StudentService
         }
 
         // Set all subresources in response DTO body
-        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrar);
+        $resource = $this->handleSubResources($resource, $student);
 
-        if (isset($participant['dateCreated'])) {
-            $resource->setDateCreated(new \DateTime($participant['dateCreated']));
+        if (isset($student['participant']['dateCreated'])) {
+            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
         } //todo: this is currently incorrect, timezone problem
-        if (isset($participant['status'])) {
-            $resource->setStatus($participant['status']);
+        if (isset($student['participant']['status'])) {
+            $resource->setStatus($student['participant']['status']);
         }
-        if (isset($registrar['registrarMemo']['description'])) {
-            $resource->setMemo($registrar['registrarMemo']['description']);
+        if (isset($student['registrar']['registrarMemo']['description'])) {
+            $resource->setMemo($student['registrar']['registrarMemo']['description']);
         }
-        if (isset($employee['speakingLevel'])) {
-            $resource->setSpeakingLevel($employee['speakingLevel']);
+        if (isset($student['employee']['speakingLevel'])) {
+            $resource->setSpeakingLevel($student['employee']['speakingLevel']);
         }
-        if (isset($participant['readingTestResult'])) {
-            $resource->setReadingTestResult($participant['readingTestResult']);
+        if (isset($student['participant']['readingTestResult'])) {
+            $resource->setReadingTestResult($student['participant']['readingTestResult']);
         }
-        if (isset($participant['writingTestResult'])) {
-            $resource->setWritingTestResult($participant['writingTestResult']);
+        if (isset($student['participant']['writingTestResult'])) {
+            $resource->setWritingTestResult($student['participant']['writingTestResult']);
         }
         $this->entityManager->persist($resource);
 
         return $resource;
     }
 
-    private function handleSubResources($resource, $person, $participant, $employee, $registrar = null): object
+    private function handleSubResources($resource, array $student): object
     {
-        $resource->setRegistrar($this->handleRegistrar($registrar['registrarPerson'], $registrar['registrarOrganization']));
-        $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
-        $resource->setPersonDetails($this->handlePersonDetails($person));
-        $resource->setContactDetails($this->handleContactDetails($person));
-        $resource->setGeneralDetails($this->handleGeneralDetails($person));
-        $resource->setReferrerDetails($this->handleReferrerDetails($participant, $registrar['registrarPerson'], $registrar['registrarOrganization']));
-        $resource->setBackgroundDetails($this->handleBackgroundDetails($person));
-        $resource->setDutchNTDetails($this->handleDutchNTDetails($person));
+        $resource->setRegistrar($this->handleRegistrar($student['registrar']['registrarPerson'], $student['registrar']['registrarOrganization']));
+        $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($student['person']));
+        $resource->setPersonDetails($this->handlePersonDetails($student['person']));
+        $resource->setContactDetails($this->handleContactDetails($student['person']));
+        $resource->setGeneralDetails($this->handleGeneralDetails($student['person']));
+        $resource->setReferrerDetails($this->handleReferrerDetails($student['participant'], $student['registrar']['registrarPerson'], $student['registrar']['registrarOrganization']));
+        $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
+        $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
 
-        $mrcEducations = $this->getEducationsFromEmployee($employee);
+        $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
         $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
         $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
-        $resource->setJobDetails($this->handleJobDetails($employee));
-        $resource->setMotivationDetails($this->handleMotivationDetails($participant));
-        $resource->setAvailabilityDetails($this->handleAvailabilityDetails($person));
-        $resource->setPermissionDetails($this->handlePermissionDetails($person));
+        $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
+        $resource->setAvailabilityDetails($this->handleAvailabilityDetails($student['person']));
+        $resource->setPermissionDetails($this->handlePermissionDetails($student['person']));
 
         return $resource;
     }

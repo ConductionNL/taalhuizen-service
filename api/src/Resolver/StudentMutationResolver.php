@@ -5,7 +5,6 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Student;
 use App\Service\CCService;
-use App\Service\EAVService;
 use App\Service\EDUService;
 use App\Service\MrcService;
 use App\Service\StudentService;
@@ -22,7 +21,6 @@ class StudentMutationResolver implements MutationResolverInterface
     private CCService $ccService;
     private EDUService $eduService;
     private MrcService $mrcService;
-    private EAVService $eavService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -31,7 +29,6 @@ class StudentMutationResolver implements MutationResolverInterface
         CCService $ccService,
         EDUService $eduService,
         MrcService $mrcService,
-        EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -39,7 +36,6 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->ccService = $ccService;
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
-        $this->eavService = $eavService;
     }
 
     /**
@@ -105,7 +101,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
+        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -148,7 +144,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult($person, $participant, $employee);
+        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         $this->entityManager->persist($resourceResult);
