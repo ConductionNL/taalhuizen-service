@@ -148,10 +148,8 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
-    public function downloadDesiredLearningOutcomesReport(array $reportArray): Report
+    public function setProgramProviderQuery($reportArray, $report)
     {
-        $report = new Report();
-        $time = new \DateTime();
         $query = [];
         if (isset($reportArray['languageHouseId'])) {
             $languageHouseId = explode('/', $reportArray['languageHouseId']);
@@ -162,6 +160,15 @@ class ReportMutationResolver implements MutationResolverInterface
             $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
             $query['program.provider'] = $languageHouseUrl;
         }
+
+        return $query;
+    }
+
+    public function downloadDesiredLearningOutcomesReport(array $reportArray): Report
+    {
+        $report = new Report();
+        $time = new \DateTime();
+        $query = $this->setProgramProviderQuery($reportArray, $report);
         if (isset($reportArray['dateFrom'])) {
             $report->setDateFrom($reportArray['dateFrom']);
             $dateFrom = $reportArray['dateFrom'];
@@ -175,6 +182,18 @@ class ReportMutationResolver implements MutationResolverInterface
         // Get all participants for this languageHouse created before dateUntil
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
+        $learningNeeds = $this->fillLearningNeeds($participants, $dateFrom, $dateUntil);
+        $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
+        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
+        $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
+
+        $this->entityManager->persist($report);
+
+        return $report;
+    }
+
+    public function fillLearningNeeds($participants, $dateFrom, $dateUntil)
+    {
         $learningNeeds = [];
         foreach ($participants as $participant) {
             $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id'], $dateFrom, $dateUntil);
@@ -182,6 +201,12 @@ class ReportMutationResolver implements MutationResolverInterface
                 $learningNeeds = array_merge($learningNeeds, $learningNeedsResult['learningNeeds']);
             }
         }
+
+        return $learningNeeds;
+    }
+
+    public function fillLearningNeedsCollection($learningNeeds)
+    {
         $learningNeedsCollection = new ArrayCollection();
         foreach ($learningNeeds as $learningNeed) {
             if (!isset($learningNeed['errorMessage'])) {
@@ -190,12 +215,8 @@ class ReportMutationResolver implements MutationResolverInterface
                 $learningNeedsCollection->add($resourceResult);
             }
         }
-        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
-        $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
-        $this->entityManager->persist($report);
-
-        return $report;
+        return $learningNeedsCollection;
     }
 
     public function createReport(array $reportArray): Report
