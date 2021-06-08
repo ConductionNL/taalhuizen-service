@@ -164,7 +164,11 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function setParticipationId(array $input)
     {
-        $participationId = explode('/', $input['participationId']);
+        if (isset($input['participationId'])) {
+            $participationId = explode('/', $input['participationId']);
+        } elseif (isset($input['id'])) {
+            $participationId = explode('/', $input['id']);
+        }
         if (is_array($participationId)) {
             $participationId = end($participationId);
         }

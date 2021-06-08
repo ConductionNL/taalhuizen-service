@@ -313,11 +313,11 @@ class MrcService
 
     public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
     {
-        $resources = $this->checkIfUserExists($contactId, $username);
-        $employee->setUserId($resources[0]['id']);
+        $resource = $this->checkIfUserExists($contactId, $username);
+        $employee->setUserId($resource['id']);
         $userGroupIds = [];
 
-        foreach ($resources[0]['userGroups'] as $userGroup) {
+        foreach ($resource['userGroups'] as $userGroup) {
             $userGroupIds[] = $userGroup['id'];
         }
         $employee->setUserGroupIds($userGroupIds);
@@ -652,7 +652,7 @@ class MrcService
         }
 
         //set userRoleArray
-        $this->setUserRoleArray($employeeArray);
+        $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
@@ -738,10 +738,10 @@ class MrcService
         return [
             'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
-            'provider'               => (key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : isset($employee)) ? $employee->getProviderId() : null,
-            'hasPoliceCertificate'   => (key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : isset($employee)) ? $employee->getIsVOGChecked() : false,
-            'referrer'               => (key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : isset($employee)) ? $employee->getGotHereVia() : null,
-            'relevantCertificates'   => (key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : isset($employee)) ? $employee->getOtherRelevantCertificates() : null,
+            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : (isset($employee) ? $employee->getProviderId() : null),
+            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : false),
+            'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
+            'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : (isset($employee) ? $employee->getOtherRelevantCertificates() : null),
             'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
             'lastJob'                => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
             'dayTimeActivities'      => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
