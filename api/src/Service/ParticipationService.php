@@ -451,21 +451,69 @@ class ParticipationService
 
     public function checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
     {
+        $this->checkAanbieder($participation);
+        $this->checkTopic($participation);
+        $this->checkApplication($participation);
+        $this->checkLevel($participation);
+        $this->checkAanbiederUrl($aanbiederUrl);
+        $this->checkParticipationId($participationId);
+        $this->checkLearningNeedId($learningNeedId);
+    }
+
+    public function checkAanbieder($participation)
+    {
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             $result['errorMessage'] = 'Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.';
-        } elseif (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
+        }
+        return false;
+    }
+
+    public function checkTopic($participation)
+    {
+        if (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
-        } elseif (isset($participation['application']) && $participation['application'] == 'OTHER' && !isset($participation['applicationOther'])) {
+        }
+        return false;
+    }
+
+    public function checkApplication($participation)
+    {
+        if (isset($participation['application']) && $participation['application'] == 'OTHER' && !isset($participation['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
-        } elseif (isset($participation['level']) && $participation['level'] == 'OTHER' && !isset($participation['levelOther'])) {
+        }
+        return false;
+    }
+
+    public function checkLevel($participation)
+    {
+        if (isset($participation['level']) && $participation['level'] == 'OTHER' && !isset($participation['levelOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
-        } elseif (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
+        }
+        return false;
+    }
+
+    public function checkAanbiederUrl($aanbiederUrl)
+    {
+        if (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
             $result['errorMessage'] = 'Invalid request, aanbiederId is not an existing cc/organization!';
-        } elseif (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
+        }
+        return false;
+    }
+
+    public function checkParticipationId($participationId)
+    {
+        if (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
             $result['errorMessage'] = 'Invalid request, participationId is not an existing eav/participation!';
-        } elseif (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
+        }
+        return false;
+    }
+
+    public function checkLearningNeedId($learningNeedId)
+    {
+        if (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId is not an existing eav/learning_need!';
         }
+        return false;
     }
 
     public function checkParticipationValuesPresenceStartDate($participation)
