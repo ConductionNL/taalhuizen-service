@@ -68,6 +68,16 @@ class WRCService
         return $contact;
     }
 
+    public function handleDocumentProps($input)
+    {
+        $requiredProps = ['base64data', 'filename'];
+        foreach ($requiredProps as $prop) {
+            if (!isset($input[$prop])) {
+                throw new Exception('No '.$prop.' has been given');
+            }
+        }
+    }
+
     /**
      * @param array $input
      *
@@ -77,12 +87,7 @@ class WRCService
      */
     public function createDocument(array $input): Document
     {
-        $requiredProps = ['base64data', 'filename'];
-        foreach ($requiredProps as $prop) {
-            if (!isset($input[$prop])) {
-                throw new Exception('No '.$prop.' has been given');
-            }
-        }
+        $this->handleDocumentProps($input);
         if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
             throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
         }
@@ -90,13 +95,9 @@ class WRCService
         //set contact
         $contact = $this->setContact($input);
 
-        if ($this->commonGroundService->isResource($contact)) {
-            $document['name'] = $input['filename'];
-            $document['base64'] = $input['base64data'];
-            $document['contact'] = $contact;
-        } else {
-            throw new Exception('The person (cc/person) of the given id does not exist!');
-        }
+        $document['name'] = $input['filename'];
+        $document['base64'] = $input['base64data'];
+        $document['contact'] = $contact;
 
         try {
             $document = $this->commonGroundService->saveResource($document, ['component' => 'wrc', 'type' => 'documents']);

@@ -9,12 +9,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MrcService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
@@ -24,7 +22,6 @@ class MrcService
     public function __construct(
         BsService $bcService,
         EntityManagerInterface $entityManager,
-        ParameterBagInterface $parameterBag,
         CommonGroundService $commonGroundService,
         CCService $ccService,
         UcService $ucService,
@@ -32,14 +29,13 @@ class MrcService
     ) {
         $this->bcService = $bcService;
         $this->entityManager = $entityManager;
-        $this->parameterBag = $parameterBag;
         $this->commonGroundService = $commonGroundService;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
         $this->eavService = $EAVService;
     }
 
-    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null, ?array $additionalQuery = []): ArrayCollection
+    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null): ArrayCollection
     {
         $employees = new ArrayCollection();
         if ($languageHouseId) {
@@ -244,6 +240,15 @@ class MrcService
         } else {
             return $employee;
         }
+
+        $employee = $this->handleEducationStartDate($education, $employee);
+        $employee = $this->handleEducationEndDate($education, $employee);
+
+        return $employee;
+    }
+
+    public function handleEducationEndDate($education, $employee)
+    {
         if ($education['endDate']) {
             $employee->setCurrentEducationNoButDidFollow(
                 [
@@ -254,7 +259,14 @@ class MrcService
                 ]
             );
             $employee->setCurrentEducation('NO_BUT_DID_FOLLOW');
-        } elseif ($education['startDate']) {
+        }
+
+        return $employee;
+    }
+
+    public function handleEducationStartDate($education, $employee)
+    {
+        if ($education['startDate']) {
             $employee->setCurrentEducationYes(
                 [
                     'id'                     => $education['id'],
@@ -418,6 +430,14 @@ class MrcService
             $employee->setVolunteeringPreference($interest['name']);
         }
 
+        $employee = $this->handleEmployeeSkills($result, $employee);
+        $employee = $this->handleEducationType($result, $employee);
+
+        return $employee;
+    }
+
+    public function handleEmployeeSkills($result, $employee)
+    {
         foreach ($result['skills'] as $skill) {
             if (in_array($skill['name'], $employee->getTargetGroupPreferences())) {
                 $employee->setHasExperienceWithTargetGroup($skill['grade'] == 'experienced');
@@ -425,6 +445,11 @@ class MrcService
             }
         }
 
+        return $employee;
+    }
+
+    public function handleEducationType($result, $employee)
+    {
         foreach ($result['educations'] as $education) {
             if (!$education['institution']) {
                 $employee = $this->setCurrentEducation($employee, $education);
@@ -456,7 +481,7 @@ class MrcService
         ];
     }
 
-    public function createUser(array $employeeArray, array $contact): array
+    public function handleUserOrganizationUrl($employeeArray)
     {
         if (key_exists('languageHouseId', $employeeArray)) {
             $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
@@ -466,17 +491,32 @@ class MrcService
             $organizationUrl = null;
         }
 
+        return $organizationUrl;
+    }
+
+    public function handleUserGroups($employeeArray, $resource)
+    {
+        if (key_exists('userGroupIds', $employeeArray)) {
+            foreach ($employeeArray['userGroupIds'] as $userGroupId) {
+                $resource['userGroups'][] = "/groups/$userGroupId";
+            }
+        }
+
+        return $resource;
+    }
+
+    public function createUser(array $employeeArray, array $contact): array
+    {
+        $organizationUrl = $this->handleUserOrganizationUrl($employeeArray);
+
         $resource = [
             'username'     => $employeeArray['email'],
             'person'       => $contact['@id'],
             'password'     => 'ThisIsATemporaryPassword',
             'organization' => $organizationUrl ?? null,
         ];
-        if (key_exists('userGroupIds', $employeeArray)) {
-            foreach ($employeeArray['userGroupIds'] as $userGroupId) {
-                $resource['userGroups'][] = "/groups/$userGroupId";
-            }
-        }
+
+        $resource = $this->handleUserGroups($employeeArray, $resource);
 
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
