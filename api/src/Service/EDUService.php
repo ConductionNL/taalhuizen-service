@@ -190,11 +190,8 @@ class EDUService
         return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
     }
 
-    public function convertGroupObject(array $group, $aanbiederId = null): Group
+    public function setGroupCourseDetails($group, $resource)
     {
-        $resource = new Group();
-        $resource->setGroupId($group['id']);
-        $resource->setName($group['name']);
         if (isset($group['course'])) {
             $aanbieder = explode('/', $group['course']['organization']);
             if (is_array($aanbieder)) {
@@ -210,6 +207,28 @@ class EDUService
             $resource->setTypeCourse(null);
             $resource->setDetailsTotalClassHours(null);
         }
+
+        return $resource;
+    }
+
+    public function setGroupDetailsDates($group, $resource)
+    {
+        if (isset($group['endDate'])) {
+            $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        }
+        if (isset($group['startDate'])) {
+            $resource->setDetailsStartDate(new DateTime($group['startDate']));
+        }
+
+        return $resource;
+    }
+
+    public function convertGroupObject(array $group, $aanbiederId = null): Group
+    {
+        $resource = new Group();
+        $resource->setGroupId($group['id']);
+        $resource->setName($group['name']);
+        $resource = $this->setGroupCourseDetails($group, $resource);
         $resource->setOutComesGoal($group['goal']);
         $resource->setOutComesTopic($group['topic']);
         $resource->setOutComesTopicOther($group['topicOther']);
@@ -222,12 +241,7 @@ class EDUService
         $resource->setGeneralLocation($group['location']);
         $resource->setGeneralParticipantsMin($group['minParticipations']);
         $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        if (isset($group['endDate'])) {
-            $resource->setDetailsEndDate(new DateTime($group['endDate']));
-        }
-        if (isset($group['startDate'])) {
-            $resource->setDetailsStartDate(new DateTime($group['startDate']));
-        }
+        $resource = $this->setGroupDetailsDates($group, $resource);
         $resource->setGeneralEvaluation($group['evaluation']);
         $resource->setAanbiederEmployeeIds($group['mentors']);
 
