@@ -105,18 +105,9 @@ class ReportMutationResolver implements MutationResolverInterface
             'extend' => 'person',
             'fields' => 'id,dateCreated,person.givenName,person.additionalName,person.familyName,person.emails,person.telephones',
         ];
-        if (isset($reportArray['dateFrom'])) {
-            $report->setDateFrom($reportArray['dateFrom']);
-            $query['dateCreated[strictly_after]'] = $reportArray['dateFrom'];
-        } else {
-            $dateFrom = null;
-        }
-        if (isset($reportArray['dateUntil'])) {
-            $report->setDateUntil($reportArray['dateUntil']);
-            $query['dateCreated[before]'] = $reportArray['dateUntil'];
-        } else {
-            $dateUntil = null;
-        }
+
+        $this->setDate($report, $reportArray);
+
         if (isset($reportArray['languageHouseId'])) {
             $report->setLanguageHouseId($reportArray['languageHouseId']);
             $query['program.provider'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $reportArray['languageHouseId']]);
@@ -138,18 +129,9 @@ class ReportMutationResolver implements MutationResolverInterface
         $report = new Report();
         $time = new \DateTime();
         $query = [];
-        if (isset($reportArray['dateFrom'])) {
-            $report->setDateFrom($reportArray['dateFrom']);
-            $query['dateCreated[strictly_after]'] = $reportArray['dateFrom'];
-        } else {
-            $dateFrom = null;
-        }
-        if (isset($reportArray['dateUntil'])) {
-            $report->setDateUntil($reportArray['dateUntil']);
-            $query['dateCreated[strictly_before]'] = $reportArray['dateUntil'];
-        } else {
-            $dateUntil = null;
-        }
+
+        $this->setDate($report, $reportArray);
+
         if (isset($reportArray['providerId'])) {
             $report->setProviderId($reportArray['providerId']);
             $providerId = $reportArray['providerId'];
@@ -183,16 +165,12 @@ class ReportMutationResolver implements MutationResolverInterface
         if (isset($reportArray['dateFrom'])) {
             $report->setDateFrom($reportArray['dateFrom']);
             $dateFrom = $reportArray['dateFrom'];
-        } else {
-            $dateFrom = null;
         }
         if (isset($reportArray['dateUntil'])) {
             $report->setDateUntil($reportArray['dateUntil']);
             // edu/participants created after this date will not have eav/learningNeeds created before this date
             $query['dateCreated[strictly_before]'] = $reportArray['dateUntil'];
             $dateUntil = $reportArray['dateUntil'];
-        } else {
-            $dateUntil = null;
         }
         // Get all participants for this languageHouse created before dateUntil
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
@@ -241,5 +219,19 @@ class ReportMutationResolver implements MutationResolverInterface
     public function deleteReport(array $report): ?Report
     {
         return null;
+    }
+
+    public function setDate($resource, array $resourceArray)
+    {
+        if (isset($resourceArray['dateFrom'])) {
+            $resource->setDateFrom($resourceArray['dateFrom']);
+            $query['dateCreated[strictly_after]'] = $resourceArray['dateFrom'];
+        }
+        if (isset($resourceArray['dateUntil'])) {
+            $resource->setDateUntil($resourceArray['dateUntil']);
+            $query['dateCreated[before]'] = $resourceArray['dateUntil'];
+        }
+
+        return false;
     }
 }

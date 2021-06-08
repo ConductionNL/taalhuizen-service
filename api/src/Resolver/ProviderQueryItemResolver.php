@@ -3,18 +3,21 @@
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
-use App\Entity\Provider;
+use App\Service\CCService;
 use App\Service\ProviderService;
 use Exception;
-use Ramsey\Uuid\Uuid;
 
 class ProviderQueryItemResolver implements QueryItemResolverInterface
 {
     private ProviderService $providerService;
+    private CCService $ccService;
 
-    public function __construct(ProviderService $providerService)
-    {
+    public function __construct(
+        ProviderService $providerService,
+        CCService $ccService
+    ) {
         $this->providerService = $providerService;
+        $this->ccService = $ccService;
     }
 
     /**
@@ -22,36 +25,19 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
      */
     public function __invoke($item, array $context)
     {
-        if (isset($context['info']->variableValues['providerId'])) {
-            $id = $context['info']->variableValues['providerId'];
-            $idArray = explode('/', $id);
-            $id = end($idArray);
+        if (key_exists('providerId', $context['info']->variableValues)) {
+            $providerId = $context['info']->variableValues['providerId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $providerId = $context['args']['id'];
+        } else {
+            throw new Exception('The providerId / id was not specified');
         }
 
-        return $this->getProvider($id);
-    }
-
-    public function getProvider(string $id): Provider
-    {
-        $result['result'] = [];
-
-        $id = explode('/', $id);
+        $id = explode('/', $providerId);
         if (is_array($id)) {
             $id = end($id);
         }
 
-        $result = array_merge($result, $this->providerService->getProvider($id));
-
-        if (isset($result['provider'])) {
-            $resourceResult = $this->providerService->handleResult($result['provider']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-
-        return $resourceResult;
+        return $this->ccService->getOrganization($id, $type = 'Aanbieder');
     }
 }
