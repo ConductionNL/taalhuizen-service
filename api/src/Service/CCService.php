@@ -10,26 +10,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CCService
 {
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ParameterBagInterface $parameterBag;
     private EAVService $eavService;
     private WRCService $wrcService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EAVService $eavService,
         WRCService $wrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eavService = $eavService;
         $this->wrcService = $wrcService;
     }
@@ -60,7 +56,7 @@ class CCService
         return $result;
     }
 
-    public function updateOrganization(string $id, array $organizationArray, $type)
+    public function updateOrganization(string $id, array $organizationArray)
     {
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);

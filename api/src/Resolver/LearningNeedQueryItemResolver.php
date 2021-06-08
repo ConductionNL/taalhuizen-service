@@ -27,17 +27,8 @@ class LearningNeedQueryItemResolver implements QueryItemResolverInterface
     public function __invoke($item, array $context)
     {
         $result['result'] = [];
-        if (key_exists('learningNeedId', $context['info']->variableValues)) {
-            $learningNeedId = $context['info']->variableValues['learningNeedId'];
-        } elseif (key_exists('id', $context['args'])) {
-            $learningNeedId = $context['args']['id'];
-        } else {
-            throw new Exception('The learningNeedId was not specified');
-        }
-        $learningNeedId = explode('/', $learningNeedId);
-        if (is_array($learningNeedId)) {
-            $learningNeedId = end($learningNeedId);
-        }
+
+        $learningNeedId = $this->handleLearningNeedId($context);
 
         $result = array_merge($result, $this->learningNeedService->getLearningNeed($learningNeedId));
 
@@ -52,5 +43,22 @@ class LearningNeedQueryItemResolver implements QueryItemResolverInterface
         }
 
         return $resourceResult;
+    }
+
+    public function handleLearningNeedId($context)
+    {
+        if (key_exists('learningNeedId', $context['info']->variableValues)) {
+            $learningNeedId = $context['info']->variableValues['learningNeedId'];
+        } elseif (key_exists('id', $context['args'])) {
+            $learningNeedId = $context['args']['id'];
+        } else {
+            throw new Exception('The learningNeedId was not specified');
+        }
+        $learningNeedId = explode('/', $learningNeedId);
+        if (is_array($learningNeedId)) {
+            $learningNeedId = end($learningNeedId);
+        }
+
+        return $learningNeedId;
     }
 }
