@@ -522,7 +522,6 @@ class MrcService
         } else {
             return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         }
-
     }
 
     public function createEmployee(array $employeeArray, $returnMrcObject = false)

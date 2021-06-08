@@ -148,7 +148,7 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
-    public function setProgramProviderQuery ($reportArray, $report)
+    public function setProgramProviderQuery($reportArray, $report)
     {
         $query = [];
         if (isset($reportArray['languageHouseId'])) {
@@ -192,7 +192,8 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
-    public function fillLearningNeeds($participants, $dateFrom, $dateUntil) {
+    public function fillLearningNeeds($participants, $dateFrom, $dateUntil)
+    {
         $learningNeeds = [];
         foreach ($participants as $participant) {
             $learningNeedsResult = $this->learningNeedService->getLearningNeeds($participant['id'], $dateFrom, $dateUntil);
