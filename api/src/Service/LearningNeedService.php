@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\LearningNeed;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
 
 class LearningNeedService
 {
@@ -255,7 +254,6 @@ class LearningNeedService
 
         return $resource;
     }
-
 
     public function handleResult($learningNeed, $studentId = null, $skipParticipations = false)
     {
