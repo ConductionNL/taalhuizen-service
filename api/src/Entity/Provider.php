@@ -47,6 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     },
  * )
+ *
  * @ApiFilter(SearchFilter::class, properties={"providerId": "exact"})
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
@@ -132,6 +133,7 @@ class Provider
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

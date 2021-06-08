@@ -7,7 +7,10 @@ use App\Repository\UserRepository;
 use App\Resolver\UserMutationResolver;
 use App\Resolver\UserQueryCollectionResolver;
 use App\Resolver\UserQueryItemResolver;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,6 +59,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false,
  *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
+ *          },
+ *          "logout" = {
+ *              "mutation"=UserMutationResolver::class,
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false,
+ *              "args" = {}
  *          },
  *          "requestPasswordReset" = {
  *              "mutation" = UserMutationResolver::class,
@@ -111,7 +122,6 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-
     private $username;
 
     /**
@@ -181,15 +191,12 @@ class User
     private $organizationName;
 
     /**
-     * @var string The userRoles of this User.
+     * @var array The userRoles of this User.
      *
-     * @Assert\Length(
-     *     max = 2550
-     * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $userRoles;
+    private $userRoles = [];
 
     /**
      * @var string The Password of this User.
@@ -213,6 +220,24 @@ class User
      */
     private $token;
 
+    /**
+     * @var Datetime The moment this resource was created
+     *
+     * @Groups({"read"})
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateCreated;
+
+    /**
+     * @var Datetime The moment this resource last Modified
+     *
+     * @Groups({"read"})
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateModified;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -221,6 +246,7 @@ class User
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -320,12 +346,12 @@ class User
         return $this;
     }
 
-    public function getUserRoles(): ?string
+    public function getUserRoles(): ?array
     {
         return $this->userRoles;
     }
 
-    public function setUserRoles(string $userRoles): self
+    public function setUserRoles(array $userRoles): self
     {
         $this->userRoles = $userRoles;
 
@@ -356,4 +382,27 @@ class User
         return $this;
     }
 
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
+
+    public function getDateModified(): ?\DateTimeInterface
+    {
+        return $this->dateModified;
+    }
+
+    public function setDateModified(\DateTimeInterface $dateModified): self
+    {
+        $this->dateModified = $dateModified;
+
+        return $this;
+    }
 }

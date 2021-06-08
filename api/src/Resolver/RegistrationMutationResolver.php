@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Registration;
@@ -17,12 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RegistrationMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
@@ -41,7 +37,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         StudentService $studentService,
         EDUService $eduService,
         ParticipationService $participationService
-    ){
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
@@ -51,15 +47,16 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->eduService = $eduService;
         $this->participationService = $participationService;
     }
+
     /**
      * @inheritDoc
      */
     public function __invoke($item, array $context)
     {
-        if ((!$item instanceof Registration && !key_exists('input', $context['info']->variableValues) ||  !$item instanceof Student && !key_exists('input', $context['info']->variableValues))) {
+        if ((!$item instanceof Registration && !key_exists('input', $context['info']->variableValues) || !$item instanceof Student && !key_exists('input', $context['info']->variableValues))) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createRegistration':
                 return $this->createRegistration($context['info']->variableValues['input']);
             case 'removeRegistration':
@@ -100,16 +97,16 @@ class RegistrationMutationResolver implements MutationResolverInterface
         if (isset($input['languageHouseId'])) {
             $languageHouseId = $input['languageHouseId'];
         }
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc','type'=>'organizations', 'id' => $languageHouseId]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $languageHouseUrl])["hydra:member"][0];
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type'=>'organizations', 'id' => $languageHouseId]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $languageHouseUrl])['hydra:member'][0];
 
         foreach ($program['participants'] as &$programParticipant) {
             $programParticipant = '/participants/'.$programParticipant['id'];
         }
         $program['participants'][] = '/participants/'.$participant['id'];
-        $this->commonGroundService->saveResource($program, ['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $program['id']]);
 
-        $resourceResult = $this->registrationService->handleResult($registrationStudent, $registrationRegistrar, $languageHouseId, $participant, $memo);
+        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $languageHouseId, $participant, $memo);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -119,7 +116,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
 
-        $studentId = explode('/',$input['id']);
+        $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }
@@ -127,9 +124,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         $result = array_merge($result, $this->registrationService->deleteRegistration($student));
 
-        $result['result'] = False;
-        if (isset($result['registration'])){
-            $result['result'] = True;
+        $result['result'] = false;
+        if (isset($result['registration'])) {
+            $result['result'] = true;
         }
 
         // If any error was caught throw it
@@ -142,7 +139,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
     public function acceptRegistration(array $input): Registration
     {
-        $studentId = explode('/',$input['id']);
+        $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }
@@ -150,8 +147,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         $participant['status'] = 'accepted';
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
-
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -174,6 +170,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         if (isset($input['student'])) {
             $student = $this->getStudentProperties($student, $input['student']);
         }
+
         return $student;
     }
 
@@ -200,7 +197,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         return $registration;
     }
-    private function getStudentProperties(array $registration , array $studentInput): array
+
+    private function getStudentProperties(array $registration, array $studentInput): array
     {
         if (isset($studentInput['givenName'])) {
             $registration['givenName'] = $studentInput['givenName'];
@@ -223,6 +221,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
             $registration['addresses'][0]['name'] = 'Address of '.$registration['givenName'];
             $registration['addresses'][0] = $studentInput['address'];
         }
+
         return $registration;
     }
 
@@ -252,7 +251,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return $registration;
     }
 
-    private function inputToOrganization(array $input, string $ccPersonId = null) {
+    private function inputToOrganization(array $input, string $ccPersonId = null)
+    {
         // Add cc/people to this cc/organization
         if (isset($ccPersonId)) {
             $organization['persons'][] = '/people/'.$ccPersonId;
@@ -264,5 +264,4 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         return $organization;
     }
-
 }

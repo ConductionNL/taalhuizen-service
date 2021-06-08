@@ -22,7 +22,8 @@ class TestResultService
         $this->eduService = $eduService;
     }
 
-    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultUrl = null) {
+    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultUrl = null)
+    {
         if (isset($participationId)) {
             // Create
             // Connect the participation and result in eav and save both objects
@@ -48,11 +49,12 @@ class TestResultService
 
         return [
             'testResult' => $testResult,
-            'memo' => $memo
+            'memo'       => $memo,
         ];
     }
 
-    private function addParticipationToTestResult($participationId, $testResult) {
+    private function addParticipationToTestResult($participationId, $testResult)
+    {
         // Check if participation already has testResults
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
@@ -83,14 +85,16 @@ class TestResultService
             array_push($updateParticipation['results'], $testResult['@id']);
             $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', null, $participationId);
         }
+
         return [
-            'testResult' => $testResult,
+            'testResult'    => $testResult,
             'participation' => $participation,
-            'learningNeed' => $learningNeed
+            'learningNeed'  => $learningNeed,
         ];
     }
 
-    public function deleteTestResult($id) {
+    public function deleteTestResult($id)
+    {
         $testResultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
         // Check if this testResult exists
         if (!$this->commonGroundService->isResource($testResultUrl)) {
@@ -110,12 +114,13 @@ class TestResultService
         $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
     }
 
-    private function removeTestResultFromParticipation($testResultUrl) {
+    private function removeTestResultFromParticipation($testResultUrl)
+    {
         $testResult = $this->eavService->getObject('results', $testResultUrl, 'edu');
         if ($this->eavService->hasEavObject($testResult['participation'])) {
             $getParticipation = $this->eavService->getObject('participations', $testResult['participation']);
             if (isset($getParticipation['results'])) {
-                $participation['results'] = array_values(array_filter($getParticipation['results'], function($participationResult) use($testResultUrl) {
+                $participation['results'] = array_values(array_filter($getParticipation['results'], function ($participationResult) use ($testResultUrl) {
                     return $participationResult != $testResultUrl;
                 }));
                 $this->eavService->saveObject($participation, 'participations', 'eav', $testResult['participation']);
@@ -124,7 +129,8 @@ class TestResultService
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
     }
 
-    public function getTestResult($id, $url = null) {
+    public function getTestResult($id, $url = null)
+    {
         if (isset($id)) {
             $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
         } elseif (!isset($url)) {
@@ -141,15 +147,17 @@ class TestResultService
                 $memo = $memos[0];
             }
         } else {
-            throw new Exception('Invalid request, '. $url .' is not an existing eav/edu/result!');
+            throw new Exception('Invalid request, '.$url.' is not an existing eav/edu/result!');
         }
+
         return [
             'testResult' => $testResult,
-            'memo' => $memo
+            'memo'       => $memo,
         ];
     }
 
-    public function getTestResults($participationId) {
+    public function getTestResults($participationId)
+    {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
             $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
@@ -159,12 +167,14 @@ class TestResultService
                 array_push($testResults, $this->getTestResult(null, $result));
             }
         } else {
-            throw new Exception('Invalid request, '. $participationId .' is not an existing eav/participation !');
+            throw new Exception('Invalid request, '.$participationId.' is not an existing eav/participation !');
         }
+
         return $testResults;
     }
 
-    public function checkTestResultValues($testResult, $participationId, $testResultUrl = null) {
+    public function checkTestResultValues($testResult, $participationId, $testResultUrl = null)
+    {
         if (isset($testResultUrl) && !$this->commonGroundService->isResource($testResultUrl)) {
             throw new Exception('Invalid request, testResultId is not an existing edu/result!');
         }
@@ -182,10 +192,12 @@ class TestResultService
         }
         // Make sure not to keep these values in the input/testResult body when doing and update
         unset($testResult['testResultId']);
+
         return $testResult;
     }
 
-    public function handleResult($testResult, $memo, $participationId = null) {
+    public function handleResult($testResult, $memo, $participationId = null)
+    {
         // Put together the expected result for Lifely:
         $resource = new TestResult();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
@@ -205,6 +217,7 @@ class TestResultService
             $resource->setParticipationId($participationId);
         }
         $this->entityManager->persist($resource);
+
         return $resource;
     }
 }

@@ -2,17 +2,11 @@
 
 namespace App\Service;
 
-
-use App\Entity\LanguageHouse;
-use App\Entity\Provider;
 use App\Entity\Registration;
 use App\Entity\Student;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Error;
 use Exception;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RegistrationService
@@ -31,7 +25,7 @@ class RegistrationService
         CCService $ccService,
         StudentService $studentService,
         EAVService $eavService
-    ){
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
@@ -43,19 +37,21 @@ class RegistrationService
     public function getRegistration($languageHouseId)
     {
         $result['registration'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+
         return $result;
     }
 
     public function getRegistrations()
     {
-        $result['registrations'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])["hydra:member"];
+        $result['registrations'] = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])['hydra:member'];
+
         return $result;
     }
 
     public function deleteRegistration($student)
     {
         $organization = $this->commonGroundService->getResource($student['participant']['referredBy']);
-        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])["hydra:member"][0];
+        $memo = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $student['person']['@id'], 'author' => $organization['@id']])['hydra:member'][0];
         $registrarPerson = $this->commonGroundService->getResource($organization['persons'][0]['@id']);
 
         $this->deleteOrganization($organization['id']);
@@ -65,42 +61,49 @@ class RegistrationService
         $participation = $this->deleteParticipant($student['participant']['id']);
 
         $result['registration'] = $participation;
+
         return $result;
     }
 
     public function deleteOrganization(string $id): bool
     {
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+
         return false;
     }
 
     public function deleteMemo(string $id): bool
     {
         $this->commonGroundService->deleteResource(null, ['component'=>'memo', 'type' => 'memos', 'id' => $id]);
+
         return false;
     }
 
     public function deleteRegistrarPerson(string $id): bool
     {
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $id]);
+
         return false;
     }
 
     public function deleteStudentPerson(string $id): bool
     {
-        $this->eavService->deleteObject(null, 'people', $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'people', 'id' => $id]),'cc');
+        $this->eavService->deleteObject(null, 'people', $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'people', 'id' => $id]), 'cc');
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $id]);
+
         return false;
     }
 
     public function deleteParticipant(string $id): bool
     {
-        $this->eavService->deleteObject(null, 'participants', $this->commonGroundService->cleanUrl(['component'=>'edu', 'type' => 'participants', 'id' => $id]),'edu');
+        $this->eavService->deleteObject(null, 'participants', $this->commonGroundService->cleanUrl(['component'=>'edu', 'type' => 'participants', 'id' => $id]), 'edu');
         $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'participants', 'id' => $id]);
+
         return false;
     }
 
-    private function inputToPerson(array $student) {
+    private function inputToPerson(array $student)
+    {
         $person = [];
 
         $person = $this->getPersonPropertiesFromPersonDetails($person, $student);
@@ -150,6 +153,7 @@ class RegistrationService
         $resource->setMemo($memo['description']);
         $resource->setStudentId($participant['id']);
         $this->entityManager->persist($resource);
+
         return $resource;
     }
 

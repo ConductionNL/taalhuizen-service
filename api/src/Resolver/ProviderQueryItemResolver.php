@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\Provider;
@@ -24,6 +22,7 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         $this->providerService = $providerService;
         $this->ccService = $ccService;
     }
+
     /**
      * @inheritDoc
      */

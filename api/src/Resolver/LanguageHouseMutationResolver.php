@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
@@ -16,13 +14,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
-
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private CCService $ccService;
     private UcService $ucService;
@@ -43,6 +37,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $this->mrcService = $mrcService;
         $this->eduService = $eduService;
     }
+
     /**
      * @inheritDoc
      */
@@ -51,7 +46,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         if (!$item instanceof LanguageHouse && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createLanguageHouse':
                 return $this->createLanguageHouse($context['info']->variableValues['input']);
             case 'updateLanguageHouse':

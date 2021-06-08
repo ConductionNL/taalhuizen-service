@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
@@ -15,12 +13,9 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private CCService $ccService;
     private UcService $ucService;

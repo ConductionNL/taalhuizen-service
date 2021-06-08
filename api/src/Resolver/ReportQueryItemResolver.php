@@ -1,14 +1,11 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 
 class ReportQueryItemResolver implements QueryItemResolverInterface
 {
-
     /**
      * @inheritDoc
      */

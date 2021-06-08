@@ -2,25 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeQueryItemResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeMutationResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Repository\EmployeeRepository;
+use App\Resolver\EmployeeMutationResolver;
+use App\Resolver\EmployeeQueryCollectionResolver;
+use App\Resolver\EmployeeQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -238,24 +233,28 @@ class Employee
      */
     private ?string $volunteeringPreference = null;
 
-
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $gotHereVia;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hasExperienceWithTargetGroup;
 
     /**
      * @var bool Shouldn't this be a string to provide the reason for the experience with the target group?
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $experienceWithTargetGroupYesReason;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentEducation;
@@ -267,23 +266,25 @@ class Employee
     private ?array $currentEducationYes = [];
 
     /**
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="json", nullable=true)
      */
     private ?array $currentEducationNoButDidFollow = [];
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $doesCurrentlyFollowCourse;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseName;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currentlyFollowingCourseInstitute;
@@ -307,17 +308,19 @@ class Employee
     private $currentlyFollowingCourseCourseProfessionalism;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $doesCurrentlyFollowingCourseProvideCertificate;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $otherRelevantCertificates;
 
     /**
-     * @var boolean|null Whether the employee has submitted a police certificate
+     * @var bool|null Whether the employee has submitted a police certificate
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -325,25 +328,57 @@ class Employee
 
     /**
      * @var string|null The provider this employee works for
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $providerId;
 
     /**
      * @var string|null The language house this employee works for
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $biscEmployeeId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $userId;
+
+    /**
+     * @var array|null The user roles of this employee
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $userRoles = [];
+
+    /**
+     * @var Datetime The moment this resource was created
+     *
+     * @Groups({"read", "write"})
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateCreated;
+
+    /**
+     * @var Datetime The moment this resource last Modified
+     *
+     * @Groups({"read", "write"})
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateModified;
 
     public function getId(): UuidInterface
     {
@@ -353,6 +388,7 @@ class Employee
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -760,6 +796,42 @@ class Employee
     public function setUserId(?string $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUserRoles(): ?array
+    {
+        return $this->userRoles;
+    }
+
+    public function setUserRoles(?array $userRoles): self
+    {
+        $this->userRoles = $userRoles;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
+
+    public function getDateModified(): ?\DateTimeInterface
+    {
+        return $this->dateModified;
+    }
+
+    public function setDateModified(\DateTimeInterface $dateModified): self
+    {
+        $this->dateModified = $dateModified;
 
         return $this;
     }

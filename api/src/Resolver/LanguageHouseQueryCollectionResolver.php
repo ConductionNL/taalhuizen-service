@@ -1,19 +1,13 @@
 <?php
 
-
 namespace App\Resolver;
 
-
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Service\CCService;
 use App\Service\LanguageHouseService;
 use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -51,7 +45,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                 );
                 return $this->createPaginator($collection, $context['args']);
             default:
-                return $this->createPaginator(new ArrayCollection(), $context['args']);
+                return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
         }
     }
 

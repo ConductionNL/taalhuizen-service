@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\CCService;
 use App\Service\ProviderService;
 use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -32,6 +27,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
@@ -48,7 +44,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
                 );
                 return $this->createPaginator($collection, $context['args']);
             default:
-                return $this->createPaginator(new ArrayCollection(), $context['args']);
+                return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
         }
     }
 
