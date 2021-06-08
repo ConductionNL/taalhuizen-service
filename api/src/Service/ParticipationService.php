@@ -358,7 +358,7 @@ class ParticipationService
         // Make sure this participation has no mentor or group set
         $this->checkMentor($participation);
         // Check if group already has an EAV object
-        $group['participations'] = $this->checkGroup($participation);
+        $group['participations'] = $this->checkEAVGroup($participation);
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
@@ -391,7 +391,7 @@ class ParticipationService
         return false;
     }
 
-    public function checkGroup($groupUrl)
+    public function checkEAVGroup($groupUrl)
     {
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
@@ -413,15 +413,7 @@ class ParticipationService
     public function removeGroupFromParticipation($groupUrl, $participation)
     {
         $result = [];
-        if (!isset($participation['group'])) {
-            return ['errorMessage'=>'Invalid request, this participation has no group!'];
-        }
-        if ($participation['group'] != $groupUrl) {
-            return ['errorMessage'=>'Invalid request, this participation has a different group!'];
-        }
-        if (!$this->eavService->hasEavObject($groupUrl)) {
-            return ['errorMessage'=>'Invalid request, '.$groupUrl.' is not an existing eav/edu/group!'];
-        }
+        $this->errorRemoveGroupFromParticipation($groupUrl, $participation);
 
         // Update eav/edu/group to remove the participation from it
         $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
@@ -444,6 +436,33 @@ class ParticipationService
         // Update eav/participation to remove the EAV/edu/group from it
         $updateParticipation['group'] = null;
         return $this->updateParticipation($participation);
+    }
+
+    public function errorRemoveGroupFromParticipation($groupUrl, $participation)
+    {
+        $this->checkGroupInput($participation);
+        $this->checkGroup($groupUrl, $participation);
+
+        if (!$this->eavService->hasEavObject($groupUrl)) {
+            return ['errorMessage'=>'Invalid request, '.$groupUrl.' is not an existing eav/edu/group!'];
+        }
+        return false;
+    }
+
+    public function checkGroupInput($participation)
+    {
+        if (!isset($participation['group'])) {
+            return ['errorMessage'=>'Invalid request, this participation has no group!'];
+        }
+        return false;
+    }
+
+    public function checkGroup($groupUrl, $participation)
+    {
+        if ($participation['group'] != $groupUrl) {
+            return ['errorMessage'=>'Invalid request, this participation has a different group!'];
+        }
+        return false;
     }
 
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
