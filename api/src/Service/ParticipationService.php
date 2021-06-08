@@ -57,7 +57,8 @@ class ParticipationService
 
         $result = array_merge($result, $this->updateParticipationStatus($result['participation']));
 
-        return $result;
+        // Now put together the expected result in $result['result'] for Lifely:
+        return $this->handleResult($result['participation'], $learningNeedId);
     }
 
     private function addLearningNeedToParticipation($learningNeedId, $participation)
@@ -318,7 +319,7 @@ class ParticipationService
             $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
         }
 
-        return $result;
+        return $this->handleResult($result['participation']);
     }
 
     public function removeMentorFromParticipation($mentorUrl, $participation)
@@ -358,7 +359,7 @@ class ParticipationService
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;
 
-        return $result;
+        return $this->handleResult($result['participation']);
     }
 
     public function addGroupToParticipation($groupUrl, $participation)
@@ -405,7 +406,7 @@ class ParticipationService
             $result['participation'] = $participation;
         }
 
-        return $result;
+        return $this->handleResult($result['participation']);
     }
 
     public function removeGroupFromParticipation($groupUrl, $participation)
@@ -451,7 +452,7 @@ class ParticipationService
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;
 
-        return $result;
+        return $this->handleResult($result['participation']);
     }
 
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
@@ -556,6 +557,8 @@ class ParticipationService
         if (isset($learningNeedId)) {
             $resource->setLearningNeedId($learningNeedId);
         }
+        $this->entityManager->persist($resource);
+        $resource->setId(Uuid::getFactory()->fromString($participation['id']));
         $this->entityManager->persist($resource);
 
         return $resource;
