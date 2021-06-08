@@ -49,6 +49,25 @@ class WRCService
         return $result = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'organizations', 'id' => $id]);
     }
 
+    public function setContact($input)
+    {
+        if (isset($input['studentId'])) {
+            $id = $input['studentId'];
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+            $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+        } elseif (isset($input['aanbiederEmployeeId'])) {
+            $id = $input['aanbiederEmployeeId'];
+            $idArray = explode('/', $id);
+            $id = end($idArray);
+            $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        } else {
+            throw new Exception('No studentId or aanbiederEmployeetId given');
+        }
+
+        return $contact;
+    }
+
     /**
      * @param array $input
      *
@@ -67,19 +86,9 @@ class WRCService
         if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
             throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
         }
-        if (isset($input['studentId'])) {
-            $id = $input['studentId'];
-            $idArray = explode('/', $id);
-            $id = end($idArray);
-            $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-        } elseif (isset($input['aanbiederEmployeeId'])) {
-            $id = $input['aanbiederEmployeeId'];
-            $idArray = explode('/', $id);
-            $id = end($idArray);
-            $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-        } else {
-            throw new Exception('No studentId or aanbiederEmployeetId given');
-        }
+
+        //set contact
+        $contact = $this->setContact($input);
 
         if ($this->commonGroundService->isResource($contact)) {
             $document['name'] = $input['filename'];
