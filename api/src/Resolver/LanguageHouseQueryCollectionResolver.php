@@ -3,13 +3,9 @@
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
-use App\Entity\LanguageHouse;
 use App\Service\CCService;
-use App\Service\LanguageHouseService;
 use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Exception;
-use Ramsey\Uuid\Uuid;
 
 class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
 {
@@ -21,8 +17,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         EntityManagerInterface $entityManager,
         CCService $ccService,
         UcService $ucService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
@@ -36,13 +31,16 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         switch ($context['info']->operation->name->value) {
             case 'languageHouses':
                 $collection = $this->ccService->getOrganizations($type = 'Taalhuis');
+
                 return $this->createPaginator($collection, $context['args']);
             case 'userRolesByLanguageHouses':
                 $collection = $this->ucService->getUserRolesByOrganization(
                     key_exists('languageHouseId', $context['args']) ?
                         $context['args']['languageHouseId'] :
-                        null, $type = 'Taalhuis'
+                        null,
+                    $type = 'Taalhuis'
                 );
+
                 return $this->createPaginator($collection, $context['args']);
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
@@ -66,6 +64,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 }

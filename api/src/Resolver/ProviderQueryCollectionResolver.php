@@ -4,11 +4,9 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\CCService;
-use App\Service\ProviderService;
 use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
-use Ramsey\Uuid\Uuid;
 
 class ProviderQueryCollectionResolver implements QueryCollectionResolverInterface
 {
@@ -18,9 +16,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     public function __construct(
         CCService $ccService,
         UcService $ucService
-
-    )
-    {
+    ) {
         $this->ccService = $ccService;
         $this->ucService = $ucService;
     }
@@ -35,13 +31,16 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         switch ($context['info']->operation->name->value) {
             case 'providers':
                 $collection = $this->ccService->getOrganizations($type = 'Aanbieder');
+
                 return $this->createPaginator($collection, $context['args']);
             case 'userRolesByProviders':
                 $collection = $this->ucService->getUserRolesByOrganization(
                     key_exists('providerId', $context['args']) ?
                         $context['args']['providerId'] :
-                        null, $type = 'Aanbieder'
+                        null,
+                    $type = 'Aanbieder'
                 );
+
                 return $this->createPaginator($collection, $context['args']);
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
@@ -65,6 +64,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         } elseif (key_exists('before', $args)) {
             $firstItem = base64_decode($args['before']) - $maxItems;
         }
+
         return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
     }
 }

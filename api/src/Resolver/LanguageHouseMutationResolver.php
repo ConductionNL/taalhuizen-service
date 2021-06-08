@@ -6,14 +6,9 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Service\CCService;
 use App\Service\EDUService;
-use App\Service\LanguageHouseService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use phpDocumentor\Reflection\Types\This;
-use Ramsey\Uuid\Uuid;
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
@@ -29,8 +24,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         UcService $ucService,
         MrcService $mrcService,
         EDUService $eduService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
@@ -70,7 +64,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
     public function updateLanguageHouse(array $input): LanguageHouse
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
         $type = 'Taalhuis';
 
         $result = $this->ccService->updateOrganization(end($id), $input, $type);
@@ -82,7 +76,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
     public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
 
         //delete userGroups
         $this->ucService->deleteUserGroups($id);
@@ -94,6 +88,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $programId = $this->eduService->deleteParticipants($id);
 
         $this->ccService->deleteOrganization(end($id), $programId);
+
         return null;
     }
 }

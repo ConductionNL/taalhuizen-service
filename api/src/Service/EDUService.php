@@ -56,17 +56,19 @@ class EDUService
     }
 
     //@todo uitwerken
-    public function saveProgram($organization, $update = false){
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
+    public function saveProgram($organization, $update = false)
+    {
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
         $program['provider'] = $organization['@id'];
 
         if ($update) {
             $program = $program[0];
-            $program = $this->commonGroundService->updateResource($program,['component' => 'edu','type'=>'programs', 'id' => $program['id']]);
+            $program = $this->commonGroundService->updateResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $program['id']]);
         } else {
-            $program = $this->commonGroundService->saveResource($program,['component' => 'edu','type'=>'programs']);
+            $program = $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs']);
         }
+
         return $program;
     }
 
@@ -359,8 +361,8 @@ class EDUService
     public function deleteParticipants($id): bool
     {
         $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $ccOrganization['@id']])["hydra:member"][0];
-        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'][0];
+        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
 
         if ($participants > 0) {
             foreach ($participants as $participant) {
@@ -372,6 +374,7 @@ class EDUService
                 $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
             }
         }
+
         return $program['id'];
     }
 
@@ -381,6 +384,7 @@ class EDUService
         foreach ($educationEvents as $educationEvent) {
             $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
         }
+
         return false;
     }
 
@@ -390,6 +394,7 @@ class EDUService
         foreach ($results as $result) {
             $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
         }
+
         return false;
     }
 
@@ -399,6 +404,7 @@ class EDUService
         foreach ($participantGroups as $participantGroup) {
             $this->deleteGroup($participantGroup['id']);
         }
+
         return false;
     }
 }
