@@ -319,6 +319,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    //w.i.p.
     private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
     {
         $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
