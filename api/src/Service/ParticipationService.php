@@ -438,6 +438,19 @@ class ParticipationService
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
     {
         $result = [];
+        $this->checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId);
+        $this->checkParticipationValuesStartDate($participation);
+        $this->checkParticipationValuesPresenceStartDate($participation);
+        // Make sure not to keep these values in the input/participation body when doing and update
+        unset($participation['participationId']);
+        unset($participation['learningNeedId']);
+        $result['participation'] = $participation;
+
+        return $result;
+    }
+
+    public function checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
+    {
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             $result['errorMessage'] = 'Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.';
         } elseif (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
@@ -453,6 +466,10 @@ class ParticipationService
         } elseif (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId is not an existing eav/learning_need!';
         }
+    }
+
+    public function checkParticipationValuesPresenceStartDate($participation)
+    {
         if (isset($participation['startDate']) && isset($participation['endDate'])) {
             if ($participation['startDate'] instanceof \DateTime && $participation['endDate'] instanceof \DateTime) {
                 $startDate = $participation['startDate'];
@@ -469,6 +486,10 @@ class ParticipationService
                 $result['errorMessage'] = 'Invalid request, detailsEndDate needs to be later than detailsStartDate!';
             }
         }
+    }
+
+    public function checkParticipationValuesStartDate($participation)
+    {
         if (isset($participation['presenceStartDate']) && isset($participation['presenceEndDate'])) {
             if ($participation['presenceStartDate'] instanceof \DateTime && $participation['presenceEndDate'] instanceof \DateTime) {
                 $startDate = $participation['presenceStartDate'];
@@ -485,12 +506,6 @@ class ParticipationService
                 $result['errorMessage'] = 'Invalid request, presenceEndDate needs to be later than presenceStartDate!';
             }
         }
-        // Make sure not to keep these values in the input/participation body when doing and update
-        unset($participation['participationId']);
-        unset($participation['learningNeedId']);
-        $result['participation'] = $participation;
-
-        return $result;
     }
 
     public function handleResult($participation, $learningNeedId = null)
@@ -550,29 +565,32 @@ class ParticipationService
         if (isset($participation['status'])) {
             $resource['status'] = $participation['status'];
         }
-        $resource['aanbiederId'] = $participation['aanbiederId'];
-        $resource['aanbiederName'] = $participation['aanbiederName'];
-        $resource['aanbiederNote'] = $participation['aanbiederNote'];
-        $resource['offerName'] = $participation['offerName'];
-        $resource['offerCourse'] = $participation['offerCourse'];
-        $resource['outComesGoal'] = $participation['goal'];
-        $resource['outComesTopic'] = $participation['topic'];
-        $resource['outComesTopicOther'] = $participation['topicOther'];
-        $resource['outComesApplication'] = $participation['application'];
-        $resource['outComesApplicationOther'] = $participation['applicationOther'];
-        $resource['outComesLevel'] = $participation['level'];
-        $resource['outComesLevelOther'] = $participation['levelOther'];
-        $resource['detailsIsFormal'] = $participation['isFormal'];
-        $resource['detailsGroupFormation'] = $participation['groupFormation'];
-        $resource['detailsTotalClassHours'] = $participation['totalClassHours'];
-        $resource['detailsCertificateWillBeAwarded'] = $participation['certificateWillBeAwarded'];
-        $resource['detailsStartDate'] = $participation['startDate'];
-        $resource['detailsEndDate'] = $participation['endDate'];
-        $resource['detailsEngagements'] = $participation['engagements'];
-        $resource['presenceEngagements'] = $participation['presenceEngagements'];
-        $resource['presenceStartDate'] = $participation['presenceStartDate'];
-        $resource['presenceEndDate'] = $participation['presenceEndDate'];
-        $resource['presenceEndParticipationReason'] = $participation['presenceEndParticipationReason'];
+        $resource = [
+            'aanbiederId' => $participation['aanbiederId'],
+            'aanbiederName' => $participation['aanbiederName'],
+            'aanbiederNote' => $participation['aanbiederNote'],
+            'offerName' => $participation['offerName'],
+            'offerCourse' => $participation['offerCourse'],
+            'outComesGoal' => $participation['goal'],
+            'outComesTopic' => $participation['topic'],
+            'outComesTopicOther' => $participation['topicOther'],
+            'outComesApplication' => $participation['application'],
+            'outComesApplicationOther' => $participation['applicationOther'],
+            'outComesLevel' => $participation['level'],
+            'outComesLevelOther' => $participation['levelOther'],
+            'detailsIsFormal' => $participation['isFormal'],
+            'detailsGroupFormation' => $participation['groupFormation'],
+            'detailsTotalClassHours' => $participation['totalClassHours'],
+            'detailsCertificateWillBeAwarded' => $participation['certificateWillBeAwarded'],
+            'detailsStartDate' => $participation['startDate'],
+            'detailsEndDate' => $participation['endDate'],
+            'detailsEngagements' => $participation['engagements'],
+            'presenceEngagements' => $participation['presenceEngagements'],
+            'presenceStartDate' => $participation['presenceStartDate'],
+            'presenceEndDate' => $participation['presenceEndDate'],
+            'presenceEndParticipationReason' => $participation['presenceEndParticipationReason'],
+        ];
+
         if (isset($learningNeedId)) {
             $resource['learningNeedId'] = '/learning_needs/'.$learningNeedId;
         }
