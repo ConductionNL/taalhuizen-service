@@ -58,20 +58,20 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         $result['result'] = [];
         if ($resource->getAanbiederId()) {
-            $aanbiederId = explode('/', $resource->getAanbiederId());
-            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($aanbiederId)]);
+          $aanbiederId = $this->setAanbiederId(null, $resource);
+          $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
         if ($resource->getLearningNeedId()) {
-            $learningNeedId = explode('/', $resource->getLearningNeedId());
+            $learningNeedId = $this->setLearningneedId($resource);
         }
 
         // Transform DTO info to participation body...
-        $participation = $this->dtoToParticipation($resource, end($aanbiederId));
+        $participation = $this->dtoToParticipation($resource, $aanbiederId);
 
         // Do some checks and error handling
-        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, end($learningNeedId)));
+        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, $learningNeedId));
 
-        return $this->participationService->saveParticipation($result['participation'], end($learningNeedId));
+        return $this->participationService->saveParticipation($result['participation'], $learningNeedId);
     }
 
     public function updateParticipation(array $input): Participation
@@ -79,19 +79,20 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $result['result'] = [];
 
         $participationId = $this->setParticipationId($input);
+        $aanbiederId = $this->setAanbiederId($input);
 
         // If aanbiederId is set generate the url for it
         $aanbiederUrl = null;
-        if (isset($input['aanbiederId'])) {
-            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($input['aanbiederId'])]);
+        if (isset($aanbiederId)) {
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
 
         // Transform input info to participation body...
         $participation = $this->inputToParticipation($input);
         // Do some checks and error handling
-        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, end($participationId)));
+        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, $participationId));
 
-        return $this->participationService->saveParticipation($result['participation'], null, end($participationId));
+        return $this->participationService->saveParticipation($result['participation'], null, $participationId);
     }
 
     public function removeParticipation(array $participation): ?Participation
@@ -99,7 +100,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $result['result'] = [];
         $participationId = $this->setParticipationId($participation);
 
-        $result = array_merge($result, $this->participationService->deleteParticipation(end($participationId)));
+        $result = array_merge($result, $this->participationService->deleteParticipation($participationId));
 
         $result['result'] = false;
         if (isset($result['participation'])) {
@@ -146,35 +147,54 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function setMentorId(array $input)
     {
         $mentorId = explode('/', $input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
+        $mentorId = $this->isArray($mentorId);
 
         return $mentorId;
     }
 
+    public function setLearningneedId(Participation $resource)
+    {
+        $learningNeedId = explode('/', $resource->getLearningNeedId());
+        $learningNeedId = $this->isArray($learningNeedId);
+
+        return $learningNeedId;
+    }
+
     public function setParticipationId(array $input)
     {
-        if (isset($input['participationId'])) {
-            $participationId = explode('/', $input['participationId']);
-        } elseif (isset($input['id'])) {
-            $participationId = explode('/', $input['id']);
-        }
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
+        $participationId = explode('/', $input['participationId']);
+        $participationId = $this->isArray($participationId);
 
         return $participationId;
+    }
+
+    public function setAanbiederId(array $input, ?Participation $resource = null)
+    {
+        if ($resource){
+            $aanbiederId = explode('/', $resource->setAanbiederId());
+        } else {
+            $aanbiederId = explode('/', $input['aanbiederId']);
+        }
+        $aanbiederId = $this->isArray($aanbiederId);
+
+        return $aanbiederId;
     }
 
     public function setGroupId(array $input)
     {
         $groupId = explode('/', $input['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
-        }
+        $groupId = $this->isArray($groupId);
 
         return $groupId;
+    }
+
+    public function isArray(string $id)
+    {
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        return $id;
     }
 
     public function addGroupToParticipation(array $input): Participation
