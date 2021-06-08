@@ -8,7 +8,6 @@ use App\Service\EAVService;
 use App\Service\EDUService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -63,7 +62,7 @@ class GroupMutationResolver implements MutationResolverInterface
         $result = array_merge($result, $this->checkGroupValues($group));
 
         if (!isset($result['errorMessage'])) {
-            $result = array_merge($result, $this->makeGroup($course, $group));
+            $result = array_merge($result, $this->makeGroup($course, $result['group']));
 
             $resourceResult = $this->eduService->convertGroupObject($result['group']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
@@ -91,7 +90,7 @@ class GroupMutationResolver implements MutationResolverInterface
         $result = array_merge($result, $this->checkGroupValues($groupArray));
 
         if (!isset($result['errorMessage'])) {
-            $result = array_merge($result, $this->makeGroup($course, $groupArray, $id));
+            $result = array_merge($result, $this->makeGroup($course, $result['group'], $id));
 
             $resourceResult = $this->eduService->convertGroupObject($result['group']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
@@ -151,7 +150,7 @@ class GroupMutationResolver implements MutationResolverInterface
             $course['programs'][0] = $program;
         }
         $course['additionalType'] = $group['typeCourse'];
-        $course['timeRequired'] = (string) $group['detailsTotalClassHours'];
+        $course['timeRequired'] = (string) $group['totalClassHours'];
         $course = $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
 
         return $course;
@@ -159,76 +158,6 @@ class GroupMutationResolver implements MutationResolverInterface
 
     public function makeGroup($course, $group, $groupId = null)
     {
-        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
-        $now = $now->format('d-m-Y H:i:s');
-
-        foreach ($group as $key=>$value) {
-            switch ($key) {
-                case 'outComesGoal':
-                    $group['goal'] = $value;
-                    break;
-                case 'aanbiederId':
-                    $group['aanbiederId'] = $value;
-                    break;
-                case 'id':
-                    $group['groupId'] = $value;
-                    break;
-                case 'outComesTopic':
-                    $group['topic'] = $value;
-                    break;
-                case 'outComesTopicOther':
-                    $group['topicOther'] = $value;
-                    break;
-                case 'outComesApplication':
-                    $group['application'] = $value;
-                    break;
-                case 'outComesApplicationOther':
-                    $group['applicationOther'] = $value;
-                    break;
-                case 'outComesLevel':
-                    $group['level'] = $value;
-                    break;
-                case 'outComesLevelOther':
-                    $group['levelOther'] = $value;
-                    break;
-                case 'detailsIsFormal':
-                    $group['isFormal'] = (bool) $value;
-                    break;
-                case 'detailsCertificateWillBeAwarded':
-                    $group['certificateWillBeAwarded'] = (bool) $value;
-                    break;
-                case 'detailsStartDate':
-                    if ($value instanceof DateTime) {
-                        $value = $value->format('YmdHis');
-                    }
-                    $group['startDate'] = $value;
-                    break;
-                case 'detailsEndDate':
-
-                    if ($value instanceof DateTime) {
-                        $value = $value->format('YmdHis');
-                    }
-                    $group['endDate'] = $value;
-                    break;
-                case 'generalLocation':
-                    $group['location'] = $value;
-                    break;
-                case 'generalParticipantsMin':
-                    $group['participantsMin'] = $value;
-                    break;
-                case 'generalParticipantsMax':
-                    $group['participantsMax'] = $value;
-                    break;
-                case 'generalEvaluation':
-                    $group['evaluation'] = $value;
-                    break;
-                case 'aanbiederEmployeeIds':
-                    $group['mentors'] = $value;
-                    break;
-                default:
-                    break;
-            }
-        }
         if (isset($groupId)) {
             //update
             $group['course'] = '/courses/'.$course['id'];
@@ -255,27 +184,27 @@ class GroupMutationResolver implements MutationResolverInterface
         $group['aanbiederId'] = $aanbieder;
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
-        $group['outComesGoal'] = $resource->getOutComesGoal();
-        $group['outComesTopic'] = $resource->getOutComesTopic();
+        $group['goal'] = $resource->getOutComesGoal();
+        $group['topic'] = $resource->getOutComesTopic();
         if ($resource->getOutComesTopicOther()) {
-            $group['outComesTopicOther'] = $resource->getOutComesTopicOther();
+            $group['topicOther'] = $resource->getOutComesTopicOther();
         }
-        $group['outComesApplication'] = $resource->getOutComesApplication();
+        $group['application'] = $resource->getOutComesApplication();
         if ($resource->getOutComesApplicationOther()) {
-            $group['outComesApplicationOther'] = $resource->getOutComesApplicationOther();
+            $group['applicationOther'] = $resource->getOutComesApplicationOther();
         }
-        $group['outComesLevel'] = $resource->getOutComesLevel();
+        $group['level'] = $resource->getOutComesLevel();
         if ($resource->getOutComesLevelOther()) {
-            $group['outComesLevelOther'] = $resource->getOutComesLevelOther();
+            $group['levelOther'] = $resource->getOutComesLevelOther();
         }
-        $group['detailsIsFormal'] = $resource->getDetailsIsFormal();
-        $group['detailsTotalClassHours'] = $resource->getDetailsTotalClassHours();
-        $group['detailsCertificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
+        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
+        $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
+        $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
         if ($resource->getDetailsStartDate()) {
-            $group['detailsStartDate'] = $resource->getDetailsStartDate();
+            $group['startDate'] = $resource->getDetailsStartDate();
         }
         if ($resource->getDetailsEndDate()) {
-            $group['detailsEndDate'] = $resource->getDetailsEndDate();
+            $group['endDate'] = $resource->getDetailsEndDate();
         }
         if ($resource->getAvailability()) {
             $group['availability'] = $resource->getAvailability();
@@ -283,15 +212,15 @@ class GroupMutationResolver implements MutationResolverInterface
         if ($resource->getAvailabilityNotes()) {
             $group['availabilityNotes'] = $resource->getAvailabilityNotes();
         }
-        $group['generalLocation'] = $resource->getGeneralLocation();
+        $group['location'] = $resource->getGeneralLocation();
         if ($resource->getGeneralParticipantsMin()) {
-            $group['generalParticipantsMin'] = $resource->getGeneralParticipantsMin();
+            $group['participantsMin'] = $resource->getGeneralParticipantsMin();
         }
         if ($resource->getGeneralParticipantsMax()) {
-            $group['generalParticipantsMax'] = $resource->getGeneralParticipantsMax();
+            $group['participantsMax'] = $resource->getGeneralParticipantsMax();
         }
         if ($resource->getGeneralEvaluation()) {
-            $group['generalEvaluation'] = $resource->getGeneralEvaluation();
+            $group['evaluation'] = $resource->getGeneralEvaluation();
         }
         $group['mentors'] = $resource->getAanbiederEmployeeIds();
 
@@ -301,12 +230,18 @@ class GroupMutationResolver implements MutationResolverInterface
     public function checkGroupValues($group)
     {
         $result = [];
-        if ($group['outComesTopic'] == 'OTHER' && !isset($group['outComesTopicOther'])) {
+        if ($group['topic'] == 'OTHER' && !isset($group['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
-        } elseif ($group['outComesApplication'] == 'OTHER' && !isset($group['outComesApplicationOther'])) {
+        } elseif ($group['application'] == 'OTHER' && !isset($group['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
-        } elseif ($group['outComesLevel'] == 'OTHER' && !isset($group['outComesLevelOther'])) {
+        } elseif ($group['level'] == 'OTHER' && !isset($group['levelOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+        }
+        if ($group['startDate'] instanceof DateTime) {
+            $group['startDate'] = $group['startDate']->format('YmdHis');
+        }
+        if ($group['endDate'] instanceof DateTime) {
+            $group['endDate'] = $group['endDate']->format('YmdHis');
         }
         $result['group'] = $group;
 

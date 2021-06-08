@@ -18,6 +18,7 @@ languages:
           - /api/var/.*
           - /api/vendor/.*
           - /api/src/Entity/.*
+          - /api/src/Subscriber/.*
   test:
     include:
         - /api/tests/.*

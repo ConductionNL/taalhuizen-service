@@ -338,18 +338,30 @@ class MrcService
             $contact = $this->commonGroundService->getResource($result['person']);
         }
         $employee = new Employee();
+        $employee = $this->contactToEmployeeObject($employee, $contact);
+        $employee = $this->resultToEmployeeObject($employee, $result);
+        if ($userRoleArray) {
+            $employee->setUserRoles($userRoleArray);
+        }
+        $employee = $this->subObjectsToEmployeeObject($employee, $result);
+        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['@id']), $result);
+
+        $this->entityManager->persist($employee);
+        $employee->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($employee);
+
+        return $employee;
+    }
+
+    private function contactToEmployeeObject($employee, $contact)
+    {
         $employee->setGivenName($contact['givenName']);
         $employee->setAdditionalName($contact['additionalName']);
         $employee->setFamilyName($contact['familyName']);
-        $employee->setGender($contact['gender'] ? $contact['gender'] : 'X');
+        $employee->setGender($contact['gender'] ?: 'X');
         $employee->setDateOfBirth(new \DateTime($contact['birthday']));
-        $employee->setIsVOGChecked($result['hasPoliceCertificate']);
-        $employee->setOtherRelevantCertificates($result['relevantCertificates']);
-        $employee->setGotHereVia($result['referrer']);
-        $employee->setDateCreated(new \DateTime($result['dateCreated']));
-        $employee->setDateModified(new \DateTime($result['dateModified']));
-        if ($userRoleArray) {
-            $employee->setUserRoles($userRoleArray);
+        if (key_exists('availability', $contact)) {
+            $employee->setAvailability($contact['availability']);
         }
 
         if ($contact['contactPreference'] == 'PHONECALL' || $contact['contactPreference'] == 'WHATSAPP' || $contact['contactPreference'] == 'EMAIL') {
@@ -359,6 +371,13 @@ class MrcService
             $employee->setContactPreferenceOther($contact['contactPreference']);
         }
 
+        $this->contactObjectsToEmployeeObject($employee, $contact);
+
+        return $employee;
+    }
+
+    private function contactObjectsToEmployeeObject($employee, $contact)
+    {
         foreach ($contact['telephones'] as $telephone) {
             if ($telephone['name'] == 'contact telephone') {
                 $employee->setContactTelephone($telephone['telephone']);
@@ -373,6 +392,22 @@ class MrcService
             $employee->setAddress($address);
         }
 
+        return $employee;
+    }
+
+    private function resultToEmployeeObject($employee, $result)
+    {
+        $employee->setIsVOGChecked($result['hasPoliceCertificate']);
+        $employee->setOtherRelevantCertificates($result['relevantCertificates']);
+        $employee->setGotHereVia($result['referrer']);
+        $employee->setDateCreated(new \DateTime($result['dateCreated']));
+        $employee->setDateModified(new \DateTime($result['dateModified']));
+
+        return $employee;
+    }
+
+    private function subObjectsToEmployeeObject($employee, $result)
+    {
         $competences = [];
         foreach ($result['competencies'] as $competence) {
             $competences[] = $competence['name'];
@@ -398,21 +433,18 @@ class MrcService
                 $employee = $this->setCurrentCourse($employee, $education);
             }
         }
-        $employee = $this->getUser($employee, $contact['@id']);
+
+        return $employee;
+    }
+
+    private function relatedObjectsToEmployeeObject($employee, $result)
+    {
         $providerIdArray = explode('/', parse_url($result['provider'])['path']);
         $employee->setProviderId(end($providerIdArray));
         $languageHouseIdArray = explode('/', parse_url($result['organization'])['path']);
         $employee->setLanguageHouseId(end($languageHouseIdArray));
 
         $employee->setBiscEmployeeId($result['id']);
-
-        if (key_exists('availability', $contact)) {
-            $employee->setAvailability($contact['availability']);
-        }
-
-        $this->entityManager->persist($employee);
-        $employee->setId(Uuid::fromString($result['id']));
-        $this->entityManager->persist($employee);
 
         return $employee;
     }
