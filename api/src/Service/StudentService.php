@@ -243,7 +243,7 @@ class StudentService
 
         return $collection;
     }
-
+// :)
     private function getStudentWithStatusFromParticipations(ArrayCollection $collection, array $provider, $status): ArrayCollection
     {
         // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
