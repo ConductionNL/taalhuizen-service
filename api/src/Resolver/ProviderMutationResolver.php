@@ -12,20 +12,17 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
-    private EntityManagerInterface $entityManager;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
     private MrcService $mrcService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         CCService $ccService,
         UcService $ucService,
         EDUService $eduService,
         MrcService $mrcService
     ) {
-        $this->entityManager = $entityManager;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
         $this->eduService = $eduService;

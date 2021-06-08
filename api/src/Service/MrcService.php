@@ -14,7 +14,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class MrcService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
@@ -24,7 +23,6 @@ class MrcService
     public function __construct(
         BsService $bcService,
         EntityManagerInterface $entityManager,
-        ParameterBagInterface $parameterBag,
         CommonGroundService $commonGroundService,
         CCService $ccService,
         UcService $ucService,
@@ -32,7 +30,6 @@ class MrcService
     ) {
         $this->bcService = $bcService;
         $this->entityManager = $entityManager;
-        $this->parameterBag = $parameterBag;
         $this->commonGroundService = $commonGroundService;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
@@ -418,6 +415,14 @@ class MrcService
             $employee->setVolunteeringPreference($interest['name']);
         }
 
+        $employee = $this->handleEmployeeSkills($result, $employee);
+        $employee = $this->handleEducationType($result, $employee);
+
+        return $employee;
+    }
+
+    public function handleEmployeeSkills($result, $employee)
+    {
         foreach ($result['skills'] as $skill) {
             if (in_array($skill['name'], $employee->getTargetGroupPreferences())) {
                 $employee->setHasExperienceWithTargetGroup($skill['grade'] == 'experienced');
@@ -425,6 +430,11 @@ class MrcService
             }
         }
 
+        return $employee;
+    }
+
+    public function handleEducationType($result, $employee)
+    {
         foreach ($result['educations'] as $education) {
             if (!$education['institution']) {
                 $employee = $this->setCurrentEducation($employee, $education);

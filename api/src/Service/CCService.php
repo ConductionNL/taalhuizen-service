@@ -16,20 +16,17 @@ class CCService
 {
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ParameterBagInterface $parameterBag;
     private EAVService $eavService;
     private WRCService $wrcService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EAVService $eavService,
         WRCService $wrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eavService = $eavService;
         $this->wrcService = $wrcService;
     }
