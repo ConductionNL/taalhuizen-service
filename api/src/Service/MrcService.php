@@ -314,9 +314,10 @@ class MrcService
     public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
     {
         $resource = $this->checkIfUserExists($contactId, $username);
-        $employee->setUserId($resource['id']);
+        if (isset($resource['id'])) {
+            $employee->setUserId($resource['id']);
+        }
         $userGroupIds = [];
-
         foreach ($resource['userGroups'] as $userGroup) {
             $userGroupIds[] = $userGroup['id'];
         }
