@@ -168,7 +168,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $participationId;
     }
 
-    public function setAanbiederId(array $input, ?Participation $resource = null)
+    public function setAanbiederId(?array $input, ?Participation $resource = null)
     {
         if ($resource){
             $aanbiederId = explode('/', $resource->setAanbiederId());
