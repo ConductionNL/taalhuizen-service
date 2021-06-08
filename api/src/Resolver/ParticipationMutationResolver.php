@@ -67,7 +67,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
         // Transform DTO info to participation body...
         $participation = $this->dtoToParticipation($resource, end($aanbiederId));
-        
+
         // Do some checks and error handling
         $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, end($learningNeedId)));
 
