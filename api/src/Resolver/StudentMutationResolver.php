@@ -718,43 +718,13 @@ class StudentMutationResolver implements MutationResolverInterface
 
     private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
     {
-        $employee = [
-            'person' => $personUrl,
-        ];
-
-        $lastEducation = $followingEducation = $course = null;
-        if (isset($updateEmployee['educations'])) {
-            foreach ($updateEmployee['educations'] as $education) {
-                switch ($education['description']) {
-                    case 'lastEducation':
-                        if (!isset($lastEducation)) {
-                            $lastEducation = $education;
-                        }
-                        break;
-                    case 'followingEducationNo':
-                        if (!isset($followingEducation)) {
-                            $followingEducation = $education;
-                        }
-                        break;
-                    case 'followingEducationYes':
-                        if (!isset($followingEducation)) {
-                            $followingEducation = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                    case 'course':
-                        if (!isset($course)) {
-                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                }
-            }
-        }
-
+        $employee = ['person' => $personUrl];
+        $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $lastEducation, $followingEducation);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $course);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $educations['course']);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);

@@ -478,7 +478,7 @@ class StudentService
         ];
     }
 
-    private function getEducationsFromEmployee($employee): array
+    public function getEducationsFromEmployee($employee, $followingEducation = false): array
     {
         $educations = [
             'lastEducation'         => null,
@@ -491,6 +491,10 @@ class StudentService
             foreach ($employee['educations'] as $education) {
                 $this->setEducationType($educations, $education);
             }
+        }
+
+        if ($followingEducation) {
+            $educations['followingEducation'] = $educations['followingEducationNo'] ?: $educations['followingEducationYes'];
         }
 
         return $educations;
