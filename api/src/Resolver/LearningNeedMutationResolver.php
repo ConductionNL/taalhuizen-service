@@ -119,7 +119,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
-            // Save LearningNeed
+        // Save LearningNeed
         $result = array_merge($result, $this->learningNeedService->saveLearningNeed($result['learningNeed'], null, $learningNeedId));
 
         // Now put together the expected result in $result['result'] for Lifely:
