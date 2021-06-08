@@ -30,7 +30,7 @@ class ParticipationService
         $this->mrcService = $mrcService;
     }
 
-    public function handleGettingParticipation($participationId)
+    public function handleGettingParticipation($participation, $participationId)
     {
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
@@ -55,7 +55,7 @@ class ParticipationService
     public function saveParticipation($participation, $learningNeedId = null, $participationId = null)
     {
         // Save the participation in EAV
-        $participation = $this->handleGettingParticipation($participationId);
+        $participation = $this->handleGettingParticipation($participation, $participationId);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;
