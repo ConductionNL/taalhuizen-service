@@ -41,7 +41,7 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
         $student = $this->studentService->getStudent($studentId);
 
         if (isset($student['participant']['id'])) {
-            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
+            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
             $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
         } else {
             throw new Exception('No participation id was found for this student!');
