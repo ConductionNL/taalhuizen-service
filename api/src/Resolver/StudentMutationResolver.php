@@ -252,7 +252,6 @@ class StudentMutationResolver implements MutationResolverInterface
         return $memo;
     }
 
-    /w.i.p
     private function inputToPerson(array $input, string $languageHouseId = null, $updatePerson = null)
     {
         if (isset($languageHouseId)) {
