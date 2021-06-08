@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\CCService;
+use App\Service\ResolverService;
 use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -11,13 +12,17 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
 {
     private CCService $ccService;
     private UcService $ucService;
+    private ResolverService $resolverService;
+
 
     public function __construct(
         CCService $ccService,
-        UcService $ucService
+        UcService $ucService,
+        ResolverService $resolverService
     ) {
         $this->ccService = $ccService;
         $this->ucService = $ucService;
+        $this->resolverService = $resolverService;
     }
 
     /**
@@ -28,8 +33,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         switch ($context['info']->operation->name->value) {
             case 'languageHouses':
                 $collection = $this->ccService->getOrganizations($type = 'Taalhuis');
-
-                return $this->createPaginator($collection, $context['args']);
+                return $this->resolverService->createPaginator($collection, $context['args']);
             case 'userRolesByLanguageHouses':
                 $collection = $this->ucService->getUserRolesByOrganization(
                     key_exists('languageHouseId', $context['args']) ?
@@ -37,31 +41,11 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                         null,
                     $type = 'Taalhuis'
                 );
-
-                return $this->createPaginator($collection, $context['args']);
+                return $this->resolverService->createPaginator($collection, $context['args']);
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
+
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
-        if (key_exists('first', $args)) {
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif (key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if (key_exists('after', $args)) {
-            $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
 }
