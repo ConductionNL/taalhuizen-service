@@ -26,7 +26,7 @@ class StudentService
         EAVService $eavService,
         CCService $ccService,
         EDUService $eduService,
-        MrcService $mrcService,
+        MrcService $mrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
