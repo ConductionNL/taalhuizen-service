@@ -22,8 +22,7 @@ class ParticipationService
         CommonGroundService $commonGroundService,
         EAVService $eavService,
         MrcService $mrcService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
@@ -300,7 +299,8 @@ class ParticipationService
         return $this->mrcService->getEmployee($aanbiederEmployeeId);
     }
 
-    public function addMentorToParticipation($mentorUrl, $participation) {
+    public function addMentorToParticipation($mentorUrl, $participation)
+    {
         $result = [];
         // Make sure this participation has no mentor or group set
         if (isset($participation['mentor']) || isset($participation['group'])) {

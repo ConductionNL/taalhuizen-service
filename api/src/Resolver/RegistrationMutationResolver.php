@@ -108,6 +108,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
         $participant['status'] = 'pending';
+
         return $this->eduService->saveEavParticipant($participant);
     }
 
