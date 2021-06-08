@@ -356,6 +356,7 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['addresses'][0]['houseNumberSuffix'] = $contactDetails['houseNumberSuffix'];
         }
         if (isset($updatePerson)) {
+            $person = $this->updatePersonSubobjectsContactDetails($person, $updatePerson);
             if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
                 //merge person emails into updatePerson emails and update the updatePerson email
                 $email = array_merge($updatePerson['emails'][0], $person['emails'][0]);
@@ -394,6 +395,12 @@ class StudentMutationResolver implements MutationResolverInterface
         } elseif ($contactDetails['contactPreferenceOther']) {
             $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
         }
+
+        return $person;
+    }
+
+    private function updatePersonSubobjectsContactDetails(array $person, array $updatePerson): array
+    {
 
         return $person;
     }
