@@ -5,12 +5,10 @@ namespace App\Service;
 use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private EDUService $eduService;
     private EAVService $eavService;
@@ -18,23 +16,17 @@ class ProviderService
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EDUService $eduService,
         EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eduService = $eduService;
         $this->eavService = $eavService;
     }
 
-    public function createProvider($provider)
+    public function createProviderCCOrganization($provider, $providerWrc)
     {
-        // Save the provider
-        $providerWrcOrganization['name'] = $provider['name'];
-        $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
-
         $providerCCOrganization['name'] = $provider['name'];
         $providerCCOrganization['type'] = 'Aanbieder';
 
@@ -49,32 +41,60 @@ class ProviderService
 
         //add source organization to cc organization
         $providerCCOrganization['sourceOrganization'] = $providerWrc['@id'];
-        $providerCC = $this->commonGroundService->saveResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
+
+        return $this->commonGroundService->saveResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
+    }
+
+    public function createProgram($provider, $providerWrc)
+    {
+        $program['name'] = 'Program of '.$provider['name'];
+        $program['provider'] = $providerWrc['contact'];
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+    }
+
+    public function createCoordinatorGroup($provider, $providerWrc)
+    {
+        $coordinator['organization'] = $providerWrc['contact'];
+        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
+        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createMentorGroup($provider, $providerWrc)
+    {
+        $mentor['organization'] = $providerWrc['contact'];
+        $mentor['name'] = 'AANBIEDER_MENTOR';
+        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createVolunteerGroup($provider, $providerWrc)
+    {
+        $volunteer['organization'] = $providerWrc['contact'];
+        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
+        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createProvider($provider)
+    {
+        // Save the provider
+        $providerWrcOrganization['name'] = $provider['name'];
+        $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
+        $providerCC = $this->createProviderCCOrganization($provider, $providerWrc);
 
         //add contact to wrc organization
         $providerWrcOrganization['contact'] = $providerCC['@id'];
         $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
         //program
-        $program['name'] = 'Program of '.$provider['name'];
-        $program['provider'] = $providerWrc['contact'];
-        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
-
+        $this->createProgram($provider, $providerWrc);
         //coordinator
-        $coordinator['organization'] = $providerWrc['contact'];
-        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
-        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
-        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
+        $this->createCoordinatorGroup($provider, $providerWrc);
         //mentor
-        $mentor['organization'] = $providerWrc['contact'];
-        $mentor['name'] = 'AANBIEDER_MENTOR';
-        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
+        $this->createMentorGroup($provider, $providerWrc);
         //volunteer
-        $volunteer['organization'] = $providerWrc['contact'];
-        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
-        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
+        $this->createVolunteerGroup($provider, $providerWrc);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
