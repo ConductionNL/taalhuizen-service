@@ -115,7 +115,7 @@ class LearningNeedService
 
             if (isset($learningNeed['participations'])) {
                 foreach ($learningNeed['participations'] as $participationUrl) {
-                    $this->participationService->deleteParticipation(null, $participationUrl, true);
+                    $this->participationService->deleteParticipation(null, $participationUrl);
                 }
             }
 
