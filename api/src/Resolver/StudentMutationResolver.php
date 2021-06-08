@@ -13,7 +13,6 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -24,7 +23,6 @@ class StudentMutationResolver implements MutationResolverInterface
     private EDUService $eduService;
     private MrcService $mrcService;
     private EAVService $eavService;
-    private SerializerInterface $serializer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -33,8 +31,7 @@ class StudentMutationResolver implements MutationResolverInterface
         CCService $ccService,
         EDUService $eduService,
         MrcService $mrcService,
-        EAVService $eavService,
-        SerializerInterface $serializer
+        EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -43,7 +40,6 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
         $this->eavService = $eavService;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -323,6 +319,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    //w.i.p.
     private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
     {
         $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
