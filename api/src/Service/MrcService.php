@@ -550,12 +550,7 @@ class MrcService
         if (key_exists('educations', $employeeArray)) {
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
-        if (key_exists('userGroupIds', $employeeArray)) {
-            $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
-            $userRoleArray = $this->convertUserRole($userRole);
-        } else {
-            $userRoleArray = [];
-        }
+        $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
             return $result;
@@ -564,12 +559,20 @@ class MrcService
         return $this->createEmployeeObject($result, isset($userRoleArray) ? $userRoleArray : []);
     }
 
-    public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
+    public function handleUserRoleArray($employeeArray)
     {
-        $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw);
+        if (key_exists('userGroupIds', $employeeArray)) {
+            $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
+            $userRoleArray = $this->convertUserRole($userRole);
+        } else {
+            $userRoleArray = [];
+        }
 
-        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
+        return $userRoleArray;
+    }
+
+    public function handleRetrievingContact($studentEmployee, $employee, $employeeArray)
+    {
         if ($studentEmployee) {
             if (isset($employeeArray['person'])) {
                 $contact = $this->commonGroundService->getResource($employeeArray['person']);
@@ -581,8 +584,19 @@ class MrcService
                 $userId = $employeeArray['userId'];
             }
             $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $user = $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
         }
+
+        return $contact;
+    }
+
+    public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
+    {
+        $employeeRaw = $this->getEmployeeRaw($id);
+        $employee = $this->createEmployeeObject($employeeRaw);
+
+        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
+        $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, $employee, $employeeRaw);
 

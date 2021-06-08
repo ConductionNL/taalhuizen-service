@@ -49,10 +49,8 @@ class LearningNeedService
         return $result;
     }
 
-    public function addStudentToLearningNeed($studentUrl, $learningNeed)
+    public function handleParticipantLearningNeeds($studentUrl)
     {
-        $result = [];
-        // Check if student already has an EAV object
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
             $participant['learningNeeds'] = $getParticipant['learningNeeds'];
@@ -60,6 +58,15 @@ class LearningNeedService
         if (!isset($participant['learningNeeds'])) {
             $participant['learningNeeds'] = [];
         }
+
+        return $participant;
+    }
+
+    public function addStudentToLearningNeed($studentUrl, $learningNeed)
+    {
+        $result = [];
+        // Check if student already has an EAV object
+        $participant = $this->handleParticipantLearningNeeds($studentUrl);
 
         // Save the participant in EAV with the EAV/learningNeed connected to it
         if (!in_array($learningNeed['@id'], $participant['learningNeeds'])) {

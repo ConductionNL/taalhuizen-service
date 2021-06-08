@@ -295,15 +295,7 @@ class EDUService
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
-                        if (!in_array($participation['group'], $groupUrls)) {
-                            array_push($groupUrls, $participation['group']);
-                            //get group
-                            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
-                            //handle result
-                            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
-                            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
-                            $watanders->add($resourceResult);
-                        }
+                        $watanders = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders);
                     }
                 } catch (Exception $e) {
                     continue;
@@ -315,6 +307,20 @@ class EDUService
             $result['message'] = 'Warning, '.$aanbiederId.' is not an existing eav/cc/organization!';
         }
 
+        return $watanders;
+    }
+
+    public function checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders)
+    {
+        if (!in_array($participation['group'], $groupUrls)) {
+            array_push($groupUrls, $participation['group']);
+            //get group
+            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
+            //handle result
+            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
+            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
+            $watanders->add($resourceResult);
+        }
         return $watanders;
     }
 

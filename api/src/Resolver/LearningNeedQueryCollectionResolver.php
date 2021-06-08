@@ -28,14 +28,12 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
-        if (key_exists('studentId', $context['args'])) {
-            $studentId = explode('/', $context['args']['studentId']);
-            if (is_array($studentId)) {
-                $studentId = end($studentId);
-            }
-        } else {
+
+        if (!key_exists('studentId', $context['args'])) {
             throw new Exception('The studentId was not specified');
         }
+
+        $studentId = $this->handleStudentId($context);
 
         // Get the learningNeeds of this student from EAV
         $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
@@ -59,5 +57,15 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
         }
 
         return $this->resolverService->createPaginator($collection, $context['args']);
+    }
+
+    public function handleStudentId($context)
+    {
+        $studentId = explode('/', $context['args']['studentId']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
+        }
+
+        return $studentId;
     }
 }
