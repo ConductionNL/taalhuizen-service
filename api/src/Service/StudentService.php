@@ -235,47 +235,62 @@ class StudentService
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
             $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
             // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
-            $studentUrls = [];
-            foreach ($provider['participations'] as $participationUrl) {
-                try {
-                    //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
-//                    if ($this->eavService->hasEavObject($participationUrl)) {
+            $collection = $this->getStudentWithStatusFromParticipations($collection, $provider, $status);
+        } else {
+            // Do not throw an error, because we want to return an empty array in this case
+            $result['message'] = 'Warning, '.$providerId.' is not an existing eav/cc/organization!';
+        }
+
+        return $collection;
+    }
+
+    private function getStudentWithStatusFromParticipations(ArrayCollection $collection, array $provider, $status): ArrayCollection
+    {
+        // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
+        $studentUrls = [];
+        foreach ($provider['participations'] as $participationUrl) {
+            try {
+                //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
+//                if ($this->eavService->hasEavObject($participationUrl)) {
                     // Get eav/Participation
                     $participation = $this->eavService->getObject('participations', $participationUrl);
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     if ($participation['status'] == $status && isset($participation['learningNeed'])) {
-                        //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
-                        // Get eav/LearningNeed
-                        $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
-                        if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
-                            // Add studentUrl to array, if it is not already in there
-                            if (!in_array($learningNeed['participants'][0], $studentUrls)) {
-                                $studentUrls[] = $learningNeed['participants'][0];
-                                // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
-                                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
-                                if ($student['participant']['status'] == 'accepted') {
-                                    // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
-                                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                                    // Add to the collection
-                                    $collection->add($resourceResult);
-                                }
-                            }
-                        }
+                        $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
                     }
-//                        else {
-//                            $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
-//                        }
-//                    } else {
-//                        $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+//                    else {
+//                        $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
 //                    }
-                } catch (Exception $e) {
-                    continue;
+//                } else {
+//                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
+//                }
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+
+        return $collection;
+    }
+
+    private function getStudentFromLearningNeed(ArrayCollection $collection, array &$studentUrls, $learningNeedUrl): ArrayCollection
+    {
+        //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
+        // Get eav/LearningNeed
+        $learningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+        if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
+            // Add studentUrl to array, if it is not already in there
+            if (!in_array($learningNeed['participants'][0], $studentUrls)) {
+                $studentUrls[] = $learningNeed['participants'][0];
+                // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
+                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
+                if ($student['participant']['status'] == 'accepted') {
+                    // Handle Result
+                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
+                    $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
+                    // Add to the collection
+                    $collection->add($resourceResult);
                 }
             }
-        } else {
-            // Do not throw an error, because we want to return an empty array in this case
-            $result['message'] = 'Warning, '.$providerId.' is not an existing eav/cc/organization!';
         }
 
         return $collection;
