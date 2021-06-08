@@ -121,16 +121,7 @@ class StudentService
         }
 
         // get the registrarOrganization, registrarPerson and its memo
-        if (isset($participant['referredBy'])) {
-            $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
-            if (isset($registrarOrganization['persons'][0]['@id'])) {
-                $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
-            }
-            $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])['hydra:member'];
-            if (count($registrarMemos) > 0) {
-                $registrarMemo = $registrarMemos[0];
-            }
-        }
+        $registrar = $this->getStudentRegistrar($person, $participant);
 
         // Get students data from mrc
         $employee = $this->getStudentEmployee($person, $skipChecks);
@@ -139,9 +130,7 @@ class StudentService
             'participant'           => $participant ?? null,
             'person'                => $person ?? null,
             'employee'              => $employee ?? null,
-            'registrarOrganization' => $registrarOrganization ?? null,
-            'registrarPerson'       => $registrarPerson ?? null,
-            'registrarMemo'         => $registrarMemo ?? null,
+            'registrar'             => $registrar,
         ];
     }
 
@@ -182,6 +171,26 @@ class StudentService
         }
 
         return $participant;
+    }
+
+    private function getStudentRegistrar(array $person, array $participant): array
+    {
+        if (isset($participant['referredBy'])) {
+            $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+            if (isset($registrarOrganization['persons'][0]['@id'])) {
+                $registrarPerson = $this->commonGroundService->getResource($registrarOrganization['persons'][0]['@id']);
+            }
+            $registrarMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic' => $person['@id'], 'author' => $registrarOrganization['@id']])['hydra:member'];
+            if (count($registrarMemos) > 0) {
+                $registrarMemo = $registrarMemos[0];
+            }
+        }
+
+        return [
+            'registrarOrganization' => $registrarOrganization ?? null,
+            'registrarPerson'       => $registrarPerson ?? null,
+            'registrarMemo'         => $registrarMemo ?? null,
+        ];
     }
 
     private function getStudentEmployee(array $person, $skipChecks = false): array
@@ -246,7 +255,7 @@ class StudentService
                                 $student = $this->getStudent(null, $learningNeed['participants'][0], true);
                                 if ($student['participant']['status'] == 'accepted') {
                                     // Handle Result
-                                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee']);
+                                    $resourceResult = $this->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
                                     $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                                     // Add to the collection
                                     $collection->add($resourceResult);
@@ -298,17 +307,17 @@ class StudentService
 //        }
     }
 
-    public function handleResult($person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registrarMemo = null, $registration = null)
+    public function handleResult($person, $participant, $employee, $registrar = null, $registration = false)
     {
         // Put together the expected result for Lifely:
-        if (isset($registration)) {
+        if ($registration) {
             $resource = new Registration();
         } else {
             $resource = new Student();
         }
 
         // Set all subresources in response DTO body
-        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrarPerson, $registrarOrganization, $registration);
+        $resource = $this->handleSubResources($resource, $person, $participant, $employee, $registrar);
 
         if (isset($participant['dateCreated'])) {
             $resource->setDateCreated(new \DateTime($participant['dateCreated']));
@@ -316,8 +325,8 @@ class StudentService
         if (isset($participant['status'])) {
             $resource->setStatus($participant['status']);
         }
-        if (isset($registrarMemo['description'])) {
-            $resource->setMemo($registrarMemo['description']);
+        if (isset($registrar['registrarMemo']['description'])) {
+            $resource->setMemo($registrar['registrarMemo']['description']);
         }
         if (isset($employee['speakingLevel'])) {
             $resource->setSpeakingLevel($employee['speakingLevel']);
@@ -333,14 +342,14 @@ class StudentService
         return $resource;
     }
 
-    private function handleSubResources($resource, $person, $participant, $employee, $registrarPerson = null, $registrarOrganization = null, $registration = null): object
+    private function handleSubResources($resource, $person, $participant, $employee, $registrar = null): object
     {
-        $resource->setRegistrar($this->handleRegistrar($registrarPerson, $registrarOrganization));
+        $resource->setRegistrar($this->handleRegistrar($registrar['registrarPerson'], $registrar['registrarOrganization']));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($person));
         $resource->setPersonDetails($this->handlePersonDetails($person));
         $resource->setContactDetails($this->handleContactDetails($person));
         $resource->setGeneralDetails($this->handleGeneralDetails($person));
-        $resource->setReferrerDetails($this->handleReferrerDetails($registration, $participant, $registrarPerson, $registrarOrganization));
+        $resource->setReferrerDetails($this->handleReferrerDetails($participant, $registrar['registrarPerson'], $registrar['registrarOrganization']));
         $resource->setBackgroundDetails($this->handleBackgroundDetails($person));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($person));
 
@@ -432,16 +441,16 @@ class StudentService
         ];
     }
 
-    private function handleReferrerDetails($registration, $participant, $registrarPerson = null, $registrarOrganization = null): array
+    private function handleReferrerDetails($participant, $registrarPerson = null, $registrarOrganization = null): array
     {
-        if (isset($registration)) {
+        if (isset($registrarOrganization)) {
             return [
                 'referringOrganization'      => $registrarOrganization['name'] ?? null,
                 'referringOrganizationOther' => null,
                 'email'                      => $registrarPerson['emails'][0]['email'] ?? null,
             ];
         }
-        if (!isset($registrarOrganization) && isset($participant['referredBy'])) {
+        elseif (isset($participant['referredBy'])) {
             $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
         }
 
