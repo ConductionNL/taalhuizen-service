@@ -9,16 +9,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private EntityManagerInterface $entityManager;
     private CCService $ccService;
     private UcService $ucService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         CCService $ccService,
         UcService $ucService
     ) {
-        $this->entityManager = $entityManager;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
     }
