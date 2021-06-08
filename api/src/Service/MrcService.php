@@ -356,7 +356,7 @@ class MrcService
             $employee->setUserRoles($userRoleArray);
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $result);
-        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['@id']), $result);
+        $employee = $this->relatedObjectsToEmployeeObject($employee, $result);
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($result['id']));
