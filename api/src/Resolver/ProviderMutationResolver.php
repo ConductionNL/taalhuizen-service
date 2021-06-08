@@ -7,12 +7,8 @@ use App\Entity\Provider;
 use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\MrcService;
-use App\Service\ProviderService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use Ramsey\Uuid\Uuid;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
@@ -28,8 +24,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         UcService $ucService,
         EDUService $eduService,
         MrcService $mrcService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
@@ -70,7 +65,7 @@ class ProviderMutationResolver implements MutationResolverInterface
     public function updateProvider(array $input): Provider
     {
         $type = 'Aanbieder';
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
 
         $result = $this->ccService->updateOrganization(end($id), $input, $type);
         $this->eduService->saveProgram($result);
@@ -81,7 +76,7 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     public function deleteProvider(array $input): ?Provider
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
 
         //delete userGroups
         $this->ucService->deleteUserGroups($id);
@@ -93,6 +88,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         $programId = $this->eduService->deleteParticipants($id);
 
         $this->ccService->deleteOrganization(end($id), $programId);
+
         return null;
     }
 }

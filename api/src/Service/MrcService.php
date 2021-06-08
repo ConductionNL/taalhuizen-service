@@ -29,8 +29,7 @@ class MrcService
         CCService $ccService,
         UcService $ucService,
         EAVService $EAVService
-    )
-    {
+    ) {
         $this->bcService = $bcService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
@@ -100,10 +99,10 @@ class MrcService
         $competences = [];
         foreach ($employeeArray['targetGroupPreferences'] as $targetGroupPreference) {
             $competence = [
-                'name' => $targetGroupPreference,
+                'name'        => $targetGroupPreference,
                 'description' => '',
-                'grade' => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced' : 'unexperienced',
-                'employee' => "/employees/$employeeId",
+                'grade'       => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced' : 'unexperienced',
+                'employee'    => "/employees/$employeeId",
             ];
             $competences[] = $this->commonGroundService->createResource($competence, ['component' => 'mrc', 'type' => 'competences'])['id'];
         }
@@ -114,11 +113,11 @@ class MrcService
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name' => $employeeArray['currentEducationYes']['name'],
-            'startDate' => $employeeArray['currentEducationYes']['dateSince'],
+            'name'                => $employeeArray['currentEducationYes']['name'],
+            'startDate'           => $employeeArray['currentEducationYes']['dateSince'],
             'degreeGrantedStatus' => 'notGranted',
             'providesCertificate' => $employeeArray['currentEducationYes']['doesProvideCertificate'],
-            'employee' => "/employees/$employeeId",
+            'employee'            => "/employees/$employeeId",
         ];
         if ($educationId) {
             return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
@@ -130,12 +129,12 @@ class MrcService
     public function createUnfinishedEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name' => $employeeArray['currentEducationNoButDidFollow']['name'],
-            'endDate' => $employeeArray['currentEducationNoButDidFollow']['dateUntil'],
-            'degreeGrantedStatus' => 'notGranted',
+            'name'                    => $employeeArray['currentEducationNoButDidFollow']['name'],
+            'endDate'                 => $employeeArray['currentEducationNoButDidFollow']['dateUntil'],
+            'degreeGrantedStatus'     => 'notGranted',
             'iscedEducationLevelCode' => $employeeArray['currentEducationNoButDidFollow']['level'],
-            'providesCertificate' => $employeeArray['currentEducationNoButDidFollow']['gotCertificate'],
-            'employee' => "/employees/$employeeId",
+            'providesCertificate'     => $employeeArray['currentEducationNoButDidFollow']['gotCertificate'],
+            'employee'                => "/employees/$employeeId",
         ];
         if ($educationId) {
             return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
@@ -147,12 +146,12 @@ class MrcService
     public function createCourse(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name' => $employeeArray['currentlyFollowingCourseName'],
-            'institution' => $employeeArray['currentlyFollowingCourseInstitute'],
-            'providesCertificate' => $employeeArray['doesCurrentlyFollowingCourseProvideCertificate'],
-            'courseProfessionalism' => $employeeArray['currentlyFollowingCourseCourseProfessionalism'],
+            'name'                   => $employeeArray['currentlyFollowingCourseName'],
+            'institution'            => $employeeArray['currentlyFollowingCourseInstitute'],
+            'providesCertificate'    => $employeeArray['doesCurrentlyFollowingCourseProvideCertificate'],
+            'courseProfessionalism'  => $employeeArray['currentlyFollowingCourseCourseProfessionalism'],
             'teacherProfessionalism' => $employeeArray['currentlyFollowingCourseTeacherProfessionalism'],
-            'employee' => "/employees/$employeeId",
+            'employee'               => "/employees/$employeeId",
         ];
         if ($educationId) {
             return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
@@ -230,9 +229,9 @@ class MrcService
             }
         }
         $interest = [
-            'name' => $employeeArray['volunteeringPreference'],
+            'name'        => $employeeArray['volunteeringPreference'],
             'description' => '',
-            'employee' => "/employees/$employeeId",
+            'employee'    => "/employees/$employeeId",
         ];
 
         return $this->commonGroundService->createResource($interest, ['component' => 'mrc', 'type' => 'interests'])['id'];
@@ -248,9 +247,9 @@ class MrcService
         if ($education['endDate']) {
             $employee->setCurrentEducationNoButDidFollow(
                 [
-                    'id' => $education['id'],
-                    'dateUntil' => $education['endDate'],
-                    'level' => $education['iscedEducationLevelCode'],
+                    'id'             => $education['id'],
+                    'dateUntil'      => $education['endDate'],
+                    'level'          => $education['iscedEducationLevelCode'],
                     'gotCertificate' => $education['providesCertificate'],
                 ]
             );
@@ -258,9 +257,9 @@ class MrcService
         } elseif ($education['startDate']) {
             $employee->setCurrentEducationYes(
                 [
-                    'id' => $education['id'],
-                    'dateSince' => $education['endDate'],
-                    'name' => $education['name'],
+                    'id'                     => $education['id'],
+                    'dateSince'              => $education['endDate'],
+                    'name'                   => $education['name'],
                     'doesProvideCertificate' => $education['providesCertificate'],
                 ]
             );
@@ -452,7 +451,7 @@ class MrcService
     public function convertUserRole(array $userRoleArray): array
     {
         return [
-            'id' => $userRoleArray['id'],
+            'id'   => $userRoleArray['id'],
             'name' => $userRoleArray['name'],
         ];
     }
@@ -468,9 +467,9 @@ class MrcService
         }
 
         $resource = [
-            'username' => $employeeArray['email'],
-            'person' => $contact['@id'],
-            'password' => 'ThisIsATemporaryPassword',
+            'username'     => $employeeArray['email'],
+            'person'       => $contact['@id'],
+            'password'     => 'ThisIsATemporaryPassword',
             'organization' => $organizationUrl ?? null,
         ];
         if (key_exists('userGroupIds', $employeeArray)) {
@@ -491,7 +490,7 @@ class MrcService
     {
         if (isset($studentEmployee) && isset($employeeArray['person'])) {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
-            // if this person does not exist we should not create it here, but before we update the student employee object!
+        // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
             $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         }
@@ -639,7 +638,7 @@ class MrcService
 
     public function saveEmployeeEducations($educations, $employeeId): void
     {
-        $employeeUri = '/employees/' . $employeeId;
+        $employeeUri = '/employees/'.$employeeId;
         foreach ($educations as $education) {
             $education['employee'] = $employeeUri;
             if (isset($education['id'])) {
@@ -652,7 +651,7 @@ class MrcService
 
     public function deleteEmployees($ccOrganizationId): bool
     {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])["hydra:member"];
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
 
         if ($employees > 0) {
             foreach ($employees as $employee) {
@@ -661,23 +660,24 @@ class MrcService
                 $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
             }
         }
+
         return false;
     }
 
     public function createEmployeeResource(array $employeeArray, array $contact, $employee, $employeeRaw)
     {
         $resource = [
-            'organization' => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] || null,
-            'person' => $contact['@id'],
-            'provider' => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId() || null,
-            'hasPoliceCertificate' => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked() || false,
-            'referrer' => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia() || null,
-            'relevantCertificates' => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates() || null,
-            'trainedForJob' => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
-            'lastJob' => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
-            'dayTimeActivities' => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
+            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] || null,
+            'person'                 => $contact['@id'],
+            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId() || null,
+            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked() || false,
+            'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia() || null,
+            'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates() || null,
+            'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
+            'lastJob'                => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
+            'dayTimeActivities'      => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
             'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
-            'speakingLevel' => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
+            'speakingLevel'          => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
         ];
 
         return $resource;

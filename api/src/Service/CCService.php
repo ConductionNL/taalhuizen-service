@@ -3,13 +3,11 @@
 namespace App\Service;
 
 use App\Entity\Employee;
-use App\Entity\Example;
 use App\Entity\LanguageHouse;
 use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Jose\Component\Signature\Algorithm\EdDSA;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,8 +26,7 @@ class CCService
         ParameterBagInterface $parameterBag,
         EAVService $eavService,
         WRCService $wrcService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
@@ -41,19 +38,19 @@ class CCService
     {
         $wrcOrganization = $this->wrcService->createOrganization($organizationArray);
         $address = [
-            'name' => 'Address of '.$organizationArray['name'],
-            'street' => $organizationArray['address']['street'],
-            'houseNumber' => $organizationArray['address']['houseNumber'],
+            'name'              => 'Address of '.$organizationArray['name'],
+            'street'            => $organizationArray['address']['street'],
+            'houseNumber'       => $organizationArray['address']['houseNumber'],
             'houseNumberSuffix' => $organizationArray['address']['postalCode'],
-            'postalCode' => $organizationArray['address']['postalCode'],
-            'locality' => $organizationArray['address']['locality'],
+            'postalCode'        => $organizationArray['address']['postalCode'],
+            'locality'          => $organizationArray['address']['locality'],
         ];
         $resource = [
-            'name' => $organizationArray['name'],
-            'type' => $type,
-            'telephones'        => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
-            'emails'            => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
-            'addresses'         => [$address],
+            'name'               => $organizationArray['name'],
+            'type'               => $type,
+            'telephones'         => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
+            'emails'             => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
+            'addresses'          => [$address],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
@@ -68,18 +65,18 @@ class CCService
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);
         $address = [
-            'name' => 'Address of '.$organizationArray['name'],
-            'street' => $organizationArray['address']['street'],
-            'houseNumber' => $organizationArray['address']['houseNumber'],
+            'name'              => 'Address of '.$organizationArray['name'],
+            'street'            => $organizationArray['address']['street'],
+            'houseNumber'       => $organizationArray['address']['houseNumber'],
             'houseNumberSuffix' => $organizationArray['address']['postalCode'],
-            'postalCode' => $organizationArray['address']['postalCode'],
-            'locality' => $organizationArray['address']['locality'],
+            'postalCode'        => $organizationArray['address']['postalCode'],
+            'locality'          => $organizationArray['address']['locality'],
         ];
         $resource = [
-            'name'              => $organizationArray['name'],
-            'telephones'        => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
-            'emails'            => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
-            'addresses'         => [$address],
+            'name'               => $organizationArray['name'],
+            'telephones'         => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
+            'emails'             => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
+            'addresses'          => [$address],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
@@ -96,11 +93,11 @@ class CCService
         }
 
         $address = [
-            'street' => $result['addresses'][0]['street'] ?? null,
-            'houseNumber' => $result['addresses'][0]['houseNumber'] ?? null,
+            'street'            => $result['addresses'][0]['street'] ?? null,
+            'houseNumber'       => $result['addresses'][0]['houseNumber'] ?? null,
             'houseNumberSuffix' => $result['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode' => $result['addresses'][0]['postalCode'] ?? null,
-            'locality' => $result['addresses'][0]['locality'] ?? null,
+            'postalCode'        => $result['addresses'][0]['postalCode'] ?? null,
+            'locality'          => $result['addresses'][0]['locality'] ?? null,
         ];
         $organization->setName($result['name']);
         $organization->setAddress($address);
@@ -111,6 +108,7 @@ class CCService
         $this->entityManager->persist($organization);
         $organization->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($organization);
+
         return $organization;
     }
 
@@ -136,9 +134,9 @@ class CCService
         $organizations = new ArrayCollection();
 
         if ($type == 'Taalhuis') {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Taalhuis'])["hydra:member"];
+            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])['hydra:member'];
         } else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'],['type' => 'Aanbieder'])["hydra:member"];
+            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Aanbieder'])['hydra:member'];
         }
 
         foreach ($results as $result) {
@@ -151,6 +149,7 @@ class CCService
     public function getOrganization(string $id, $type)
     {
         $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+
         return $this->createOrganizationObject($result, $type);
     }
 

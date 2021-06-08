@@ -323,33 +323,37 @@ class UcService
     {
         $coordinator = [
             'organization' => $result['@id'],
-            'name' => 'TAALHUIS_COORDINATOR',
-            'description' => 'UserGroup coordinator of '.$result['name'],
+            'name'         => 'TAALHUIS_COORDINATOR',
+            'description'  => 'UserGroup coordinator of '.$result['name'],
         ];
         if ($userGroupCoordinator) {
-            $userGroups[] = $this->commonGroundService->updateResource($coordinator,['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
+            $userGroups[] = $this->commonGroundService->updateResource($coordinator, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
         } else {
-            $userGroups[] = $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+            $userGroups[] = $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
         }
+
         return $userGroups;
     }
-    public function createTaalhuisEmployeeGroup (array $result, array $userGroups, ?array $userGroupEmployee = null): array
+
+    public function createTaalhuisEmployeeGroup(array $result, array $userGroups, ?array $userGroupEmployee = null): array
     {
         $employee = [
             'organization' => $result['@id'],
-            'name' => 'TAALHUIS_EMPLOYEE',
-            'description' => 'UserGroup employee of '.$result['name'],
+            'name'         => 'TAALHUIS_EMPLOYEE',
+            'description'  => 'UserGroup employee of '.$result['name'],
         ];
         if ($userGroupEmployee) {
-            $userGroups[] = $this->commonGroundService->updateResource($employee,['component' => 'uc', 'type' => 'groups', 'id' => $userGroupEmployee['id']]);
+            $userGroups[] = $this->commonGroundService->updateResource($employee, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupEmployee['id']]);
         } else {
-            $userGroups[] = $this->commonGroundService->saveResource($employee,['component' => 'uc', 'type' => 'groups']);
+            $userGroups[] = $this->commonGroundService->saveResource($employee, ['component' => 'uc', 'type' => 'groups']);
         }
+
         return $userGroups;
     }
+
     public function createTaalhuizenUserGroups(array $result, array $userGroups, bool $update): array
     {
-        if ($update){
+        if ($update) {
             $userGroupCoordinator = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][0];
             $userGroupEmployee = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][1];
         } else {
@@ -358,6 +362,7 @@ class UcService
         }
         $userGroups = $this->createTaalhuisCoordinatorGroup($result, $userGroups, $userGroupCoordinator);
         $userGroups = $this->createTaalhuisEmployeeGroup($result, $userGroups, $userGroupEmployee);
+
         return $userGroups;
     }
 
@@ -365,14 +370,15 @@ class UcService
     {
         $coordinator = [
             'organization' => $result['@id'],
-            'name' => 'AANBIEDER_COORDINATOR',
-            'description' => 'UserGroup coordinator of '.$result['name'],
+            'name'         => 'AANBIEDER_COORDINATOR',
+            'description'  => 'UserGroup coordinator of '.$result['name'],
         ];
         if ($userGroupCoordinator) {
-            $userGroups[] = $this->commonGroundService->updateResource($coordinator,['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
+            $userGroups[] = $this->commonGroundService->updateResource($coordinator, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
         } else {
-            $userGroups[] = $this->commonGroundService->saveResource($coordinator,['component' => 'uc', 'type' => 'groups']);
+            $userGroups[] = $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
         }
+
         return $userGroups;
     }
 
@@ -380,14 +386,15 @@ class UcService
     {
         $mentor = [
             'organization' => $result['@id'],
-            'name' => 'AANBIEDER_MENTOR',
-            'description' => 'UserGroup mentor of '.$result['name'],
+            'name'         => 'AANBIEDER_MENTOR',
+            'description'  => 'UserGroup mentor of '.$result['name'],
         ];
         if ($userGroupMentor) {
-            $userGroups[] = $this->commonGroundService->updateResource($mentor,['component' => 'uc', 'type' => 'groups', 'id' => $userGroupMentor['id']]);
+            $userGroups[] = $this->commonGroundService->updateResource($mentor, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupMentor['id']]);
         } else {
-            $userGroups[] = $this->commonGroundService->saveResource($mentor,['component' => 'uc', 'type' => 'groups']);
+            $userGroups[] = $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
         }
+
         return $userGroups;
     }
 
@@ -395,19 +402,21 @@ class UcService
     {
         $volunteer = [
             'organization' => $result['@id'],
-            'name' => 'AANBIEDER_VOLUNTEER',
-            'description' => 'UserGroup volunteer of '.$result['name'],
+            'name'         => 'AANBIEDER_VOLUNTEER',
+            'description'  => 'UserGroup volunteer of '.$result['name'],
         ];
         if ($userGroupVolunteer) {
-            $userGroups[] = $this->commonGroundService->updateResource($volunteer,['component' => 'uc', 'type' => 'groups', 'id' => $userGroupVolunteer['id']]);
+            $userGroups[] = $this->commonGroundService->updateResource($volunteer, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupVolunteer['id']]);
         } else {
-            $userGroups[] = $this->commonGroundService->saveResource($volunteer,['component' => 'uc', 'type' => 'groups']);
+            $userGroups[] = $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
         }
+
         return $userGroups;
     }
+
     public function createProviderUserGroups(array $result, array $userGroups, bool $update): array
     {
-        if ($update){
+        if ($update) {
             $userGroupCoordinator = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][0];
             $userGroupMentor = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][1];
             $userGroupVolunteer = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][2];
@@ -419,8 +428,10 @@ class UcService
         $userGroups = $this->createProviderCoordinatorUserGroup($result, $userGroups, $userGroupCoordinator);
         $userGroups = $this->createProviderMentorUserGroup($result, $userGroups, $userGroupMentor);
         $userGroups = $this->createProviderVolunteerUserGroup($result, $userGroups, $userGroupVolunteer);
+
         return $userGroups;
     }
+
     public function createUserGroups(array $result, $type, $update = false): array
     {
         $userGroups = [];
@@ -429,6 +440,7 @@ class UcService
         } else {
             $userGroups = $this->createProviderUserGroups($result, $userGroups, $update);
         }
+
         return $userGroups;
     }
 
@@ -445,6 +457,7 @@ class UcService
                 $this->commonGroundService->deleteResource(null, ['component'=>'uc', 'type' => 'groups', 'id' => $userGroup['id']]);
             }
         }
+
         return false;
     }
 
@@ -465,7 +478,7 @@ class UcService
     public function getUserRoles($id): array
     {
         $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+        $userRolesByLanguageHouse = $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
 
         return $userRolesByLanguageHouse;
     }
@@ -482,6 +495,7 @@ class UcService
         $this->entityManager->persist($organization);
         $organization->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($organization);
+
         return $organization;
     }
 }
