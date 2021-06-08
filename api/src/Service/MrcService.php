@@ -515,13 +515,21 @@ class MrcService
         return null;
     }
 
-    public function createEmployee(array $employeeArray, $returnMrcObject = false)
+    public function setContact(array $employeeArray)
     {
         if (isset($employeeArray['person'])) {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
+            return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
-            $contact = key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
+            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         }
+
+    }
+
+    public function createEmployee(array $employeeArray, $returnMrcObject = false)
+    {
+        //set contact
+        $contact = $this->setContact($employeeArray);
+
         // TODO fix that a student has a email for creating a user so this if statement can be removed:
         if (!$returnMrcObject) {
             $this->saveUser($employeeArray, $contact);
@@ -590,6 +598,19 @@ class MrcService
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
 
+        //set userRoleArray
+        $this->setUserRoleArray($employeeArray);
+
+        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
+        if ($returnMrcObject) {
+            return $result;
+        }
+
+        return $this->createEmployeeObject($result, $userRoleArray);
+    }
+
+    public function setUserRoleArray($employeeArray)
+    {
         if (key_exists('userGroupIds', $employeeArray)) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
@@ -599,12 +620,7 @@ class MrcService
             $userRoleArray = [];
         }
 
-        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-        if ($returnMrcObject) {
-            return $result;
-        }
-
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $userRoleArray;
     }
 
     public function deleteSubObjects($employee): bool

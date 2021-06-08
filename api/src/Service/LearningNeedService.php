@@ -180,28 +180,34 @@ class LearningNeedService
                     $dateUntil->format('Y-m-d H:i:s');
                 }
                 foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-                    $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
-                    if (isset($learningNeed['learningNeed'])) {
-                        // if dateFrom and/or dateUntill are set filter out the learningNeeds
-                        if (isset($dateFrom) || isset($dateUntil)) {
-                            $dateCreated = new \DateTime($learningNeed['learningNeed']['dateCreated']);
-                            $dateCreated->format('Y-m-d H:i:s');
-                            if ((isset($dateFrom) && isset($dateUntil) && $dateCreated > $dateFrom && $dateCreated < $dateUntil)
-                                || (isset($dateFrom) && !isset($dateUntil) && $dateCreated > $dateFrom)
-                                || (isset($dateUntil) && !isset($dateFrom) && $dateCreated < $dateUntil)) {
-                                $result['learningNeeds'][] = $learningNeed['learningNeed'];
-                            }
-                        } else {
-                            $result['learningNeeds'][] = $learningNeed['learningNeed'];
-                        }
-                    } else {
-                        $result['learningNeeds'][] = ['errorMessage' => $learningNeed['errorMessage']];
-                    }
+                    $result = $this->updateParticipantLearningNeeds($result, $learningNeedUrl, $dateUntil, $dateFrom);
                 }
             }
         } else {
             // Do not throw an error, because we want to return an empty array in this case
             $result['message'] = 'Warning, '.$studentId.' is not an existing eav/edu/participant!';
+        }
+
+        return $result;
+    }
+
+    public function updateParticipantLearningNeeds($result, $learningNeedUrl, $dateUntil, $dateFrom)
+    {
+        $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
+        if (isset($learningNeed['learningNeed'])) {
+            if (isset($dateFrom) || isset($dateUntil)) {
+                $dateCreated = new \DateTime($learningNeed['learningNeed']['dateCreated']);
+                $dateCreated->format('Y-m-d H:i:s');
+                if ((isset($dateFrom) && isset($dateUntil) && $dateCreated > $dateFrom && $dateCreated < $dateUntil)
+                    || (isset($dateFrom) && !isset($dateUntil) && $dateCreated > $dateFrom)
+                    || (isset($dateUntil) && !isset($dateFrom) && $dateCreated < $dateUntil)) {
+                    $result['learningNeeds'][] = $learningNeed['learningNeed'];
+                }
+            } else {
+                $result['learningNeeds'][] = $learningNeed['learningNeed'];
+            }
+        } else {
+            $result['learningNeeds'][] = ['errorMessage' => $learningNeed['errorMessage']];
         }
 
         return $result;
@@ -233,12 +239,28 @@ class LearningNeedService
         return $result;
     }
 
+    public function setResourceParticipations($resource, $learningNeed, $skipParticipations)
+    {
+        if (!$skipParticipations && isset($learningNeed['participations'])) {
+            foreach ($learningNeed['participations'] as &$participation) {
+                $result = $this->participationService->getParticipation(null, $participation);
+                if (!isset($result['errorMessage'])) {
+                    $participation = $this->participationService->handleResultJson($result['participation'], $learningNeed['id']);
+                }
+            }
+            $resource->setParticipations($learningNeed['participations']);
+        } else {
+            $resource->setParticipations([]);
+        }
+
+        return $resource;
+    }
+
+
     public function handleResult($learningNeed, $studentId = null, $skipParticipations = false)
     {
-        // Put together the expected result for Lifely:
         $resource = new LearningNeed();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
-//        $resource->setId(Uuid::getFactory()->fromString($learningNeed['id']));
         $resource->setLearningNeedDescription($learningNeed['description']);
         $resource->setLearningNeedMotivation($learningNeed['motivation']);
         $resource->setDesiredOutComesGoal($learningNeed['goal']);
@@ -253,17 +275,7 @@ class LearningNeedService
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
-        if (!$skipParticipations && isset($learningNeed['participations'])) {
-            foreach ($learningNeed['participations'] as &$participation) {
-                $result = $this->participationService->getParticipation(null, $participation);
-                if (!isset($result['errorMessage'])) {
-                    $participation = $this->participationService->handleResultJson($result['participation'], $learningNeed['id']);
-                }
-            }
-            $resource->setParticipations($learningNeed['participations']);
-        } else {
-            $resource->setParticipations([]);
-        }
+        $resource = $this->setResourceParticipations($resource, $learningNeed, $skipParticipations);
 
         if (isset($studentId)) {
             $resource->setStudentId($studentId);
