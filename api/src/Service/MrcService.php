@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MrcService
 {
