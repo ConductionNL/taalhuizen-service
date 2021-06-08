@@ -225,19 +225,17 @@ class ReportMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function setDate($resource, array $resourceArray): Report
+    public function setDate($resource, array $resourceArray)
     {
         if (isset($resourceArray['dateFrom'])) {
             $resource->setDateFrom($resourceArray['dateFrom']);
             $query['dateCreated[strictly_after]'] = $resourceArray['dateFrom'];
-        } else {
-            $dateFrom = null;
         }
         if (isset($resourceArray['dateUntil'])) {
             $resource->setDateUntil($resourceArray['dateUntil']);
             $query['dateCreated[before]'] = $resourceArray['dateUntil'];
-        } else {
-            $dateUntil = null;
         }
+
+        return false;
     }
 }
