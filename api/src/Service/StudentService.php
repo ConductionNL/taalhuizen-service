@@ -394,9 +394,9 @@ class StudentService
         return [
             'givenName'      => $person['givenName'] ?? null,
             'additionalName' => $person['additionalName'] ?? null,
-            'familyName'     => $person['familyName'] ?? null,
-            'gender'         => $person['gender'] ?? null,
-            'birthday'       => $person['birthday'] ?? null,
+            'familyName' => $person['familyName'] ?? null,
+            'gender' => $person['gender'] ? $person['gender'] : 'X',
+            'birthday' => $person['birthday'] ?? null,
         ];
     }
 

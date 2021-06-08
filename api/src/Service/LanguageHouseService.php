@@ -32,14 +32,20 @@ class LanguageHouseService
         $languageHouseCCOrganization['name'] = $languageHouse['name'];
         $languageHouseCCOrganization['type'] = 'Taalhuis';
 
-        $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
-        $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
+        if (isset($languageHouse['address'])) {
+            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
+        }
 
-        $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
-        $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
+        if (isset($languageHouse['email'])) {
+            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
+        }
 
-        $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
-        $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+        if (isset($languageHouse['phoneNumber'])) {
+            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+        }
 
         //add source organization to cc organization
         $languageHouseCCOrganization['sourceOrganization'] = $languageHouseWrc['@id'];
@@ -114,21 +120,25 @@ class LanguageHouseService
             // Update
             $languageHouseCCOrganization['name'] = $languageHouse['name'];
 
-            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
-            $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
-
-            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
-            $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
-
-            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
-            $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+            if (isset($languageHouse['address'])) {
+                $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
+            }
+            if (isset($languageHouse['email'])) {
+                $languageHouseCCOrganization['emails'][0]['name'] = 'Email of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
+            }
+            if (isset($languageHouse['phoneNumber'])) {
+                $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+            }
 
             $languageHouseCC = $this->commonGroundService->updateResource($languageHouseCCOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
 
             $languageHouseWrcOrganization['name'] = $languageHouse['name'];
             $languageHouseWrcOrganization['id'] = explode('/', $languageHouseCC['sourceOrganization']);
             $languageHouseWrcOrganization['id'] = end($languageHouseWrcOrganization['id']);
-            $providerWrc = $this->commonGroundService->updateResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $languageHouseWrcOrganization['id']]);
+            $this->commonGroundService->updateResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $languageHouseWrcOrganization['id']]);
         }
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)

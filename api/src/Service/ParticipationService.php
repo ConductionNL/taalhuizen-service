@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Employee;
 use App\Entity\LearningNeed;
 use App\Entity\Participation;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -12,17 +13,24 @@ use Ramsey\Uuid\Uuid;
 class ParticipationService
 {
     private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private MrcService $mrcService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        EAVService $eavService,
+        MrcService $mrcService
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
+        $this->mrcService = $mrcService;
     }
 
-    public function handleGettingParticipation($participationId)
+    public function handleGettingParticipation($participation, $participationId)
     {
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
@@ -47,7 +55,7 @@ class ParticipationService
     public function saveParticipation($participation, $learningNeedId = null, $participationId = null)
     {
         // Save the participation in EAV
-        $participation = $this->handleGettingParticipation($participationId);
+        $participation = $this->handleGettingParticipation($participation, $participationId);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;
@@ -281,8 +289,25 @@ class ParticipationService
         return $result;
     }
 
-    public function getEmployeeParticipations($mentorUrl)
+    public function addMentoredParticipationToEmployee($participationId, $aanbiederEmployeeId): Employee
     {
+        $result = [];
+        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+        $result = array_merge($result, $this->getParticipation($participationId));
+
+        array_merge($result, $this->addMentorToParticipation($employeeUrl, $result['participation']));
+
+        return $this->mrcService->getEmployee($aanbiederEmployeeId);
+    }
+
+    public function addMentorToParticipation($mentorUrl, $participation) {
+        $result = [];
+        // Make sure this participation has no mentor or group set
+        if (isset($participation['mentor']) || isset($participation['group'])) {
+            return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
+        }
+
+        // Check if mentor already has an EAV object
         if ($this->eavService->hasEavObject($mentorUrl)) {
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
             $employee['participations'] = $getEmployee['participations'];
@@ -292,41 +317,6 @@ class ParticipationService
         }
 
         return $employee;
-    }
-
-    public function addMentorToParticipation($mentorUrl, $participation)
-    {
-        $result = [];
-        // Make sure this participation has no mentor or group set
-        if (isset($participation['mentor']) || isset($participation['group'])) {
-            return ['errorMessage' => 'Warning, this participation already has a mentor or group set!'];
-        }
-
-        // Check if mentor already has an EAV object
-        $employee = $this->getEmployeeParticipations($mentorUrl);
-
-        // Save the employee in EAV with the EAV/participant connected to it
-        if (!in_array($participation['@id'], $employee['participations'])) {
-            array_push($employee['participations'], $participation['@id']);
-            $employee = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
-
-            // Add $employee to the $result['employee'] because this is convenient when testing or debugging (mostly for us)
-            $result['employee'] = $employee;
-
-            // Update the participant to add the mrc/employee to it
-            $updateParticipation['mentor'] = $employee['@id'];
-            $updateParticipation['status'] = 'ACTIVE';
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
-
-            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
-            $result['participation'] = $participation;
-
-            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
-            $participant['mentor'] = $mentorUrl;
-            $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
-        }
-
-        return $this->handleResult($result['participation']);
     }
 
     public function removeMentorFromParticipation($mentorUrl, $participation)
