@@ -82,7 +82,7 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $collection = new ArrayCollection();
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrar']);
+                $resourceResult = $this->studentService->handleResult($student);
                 $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                 $collection->add($resourceResult);
             }
