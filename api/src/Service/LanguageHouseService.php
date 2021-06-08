@@ -43,6 +43,7 @@ class LanguageHouseService
 
         //add source organization to cc organization
         $languageHouseCCOrganization['sourceOrganization'] = $languageHouseWrc['@id'];
+
         return $this->commonGroundService->saveResource($languageHouseCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
     }
 
