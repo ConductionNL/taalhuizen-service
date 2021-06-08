@@ -403,6 +403,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         //unset person emails
         unset($person['telephones']);
+
         return $person;
     }
 
