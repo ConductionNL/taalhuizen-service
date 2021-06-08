@@ -56,7 +56,7 @@ class CCService
         return $result;
     }
 
-    public function updateOrganization(string $id, array $organizationArray, $type)
+    public function updateOrganization(string $id, array $organizationArray)
     {
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);
