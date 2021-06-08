@@ -322,10 +322,35 @@ class StudentMutationResolver implements MutationResolverInterface
     private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
     {
         $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
+        $person = $this->getPersonEmailsFromContactDetails($person, $contactDetails, $personName);
+        $person = $this->getPersonTelephonesFromContactDetails($person, $contactDetails, $personName);
+        $person = $this->getPersonAdressesFromContactDetails($person, $contactDetails, $personName);
+        if (isset($updatePerson)) {
+            $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
+        }
+
+        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
+        if (isset($contactDetails['contactPreference'])) {
+            $person['contactPreference'] = $contactDetails['contactPreference'];
+        } elseif ($contactDetails['contactPreferenceOther']) {
+            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
+        }
+
+        return $person;
+    }
+
+    private function getPersonEmailsFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         if (isset($contactDetails['email'])) {
             $person['emails'][0]['name'] = 'Email of '.$personName;
             $person['emails'][0]['email'] = $contactDetails['email'];
         }
+
+        return $person;
+    }
+
+    private function getPersonTelephonesFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         if (isset($contactDetails['telephone'])) {
             $person['telephones'][0]['name'] = 'Telephone of '.$personName;
             $person['telephones'][0]['telephone'] = $contactDetails['telephone'];
@@ -334,6 +359,12 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['telephones'][1]['name'] = 'Telephone of the contactPerson of '.$personName;
             $person['telephones'][1]['telephone'] = $contactDetails['contactPersonTelephone'];
         }
+
+        return $person;
+    }
+
+    private function getPersonAdressesFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         $person['addresses'][0]['name'] = 'Address of '.$personName;
         if (isset($contactDetails['street'])) {
             $person['addresses'][0]['street'] = $contactDetails['street'];
@@ -349,16 +380,6 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         if (isset($contactDetails['houseNumberSuffix'])) {
             $person['addresses'][0]['houseNumberSuffix'] = $contactDetails['houseNumberSuffix'];
-        }
-        if (isset($updatePerson)) {
-            $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
-        }
-
-        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
-        if (isset($contactDetails['contactPreference'])) {
-            $person['contactPreference'] = $contactDetails['contactPreference'];
-        } elseif ($contactDetails['contactPreferenceOther']) {
-            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
         }
 
         return $person;
