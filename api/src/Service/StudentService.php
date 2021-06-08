@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class StudentService
 {
@@ -19,7 +18,6 @@ class StudentService
     private CCService $ccService;
     private EDUService $eduService;
     private MrcService $mrcService;
-    private SerializerInterface $serializer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -27,8 +25,7 @@ class StudentService
         EAVService $eavService,
         CCService $ccService,
         EDUService $eduService,
-        MrcService $mrcService,
-        SerializerInterface $serializer
+        MrcService $mrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -36,7 +33,6 @@ class StudentService
         $this->ccService = $ccService;
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
-        $this->serializer = $serializer;
     }
 
     public function saveStudent(array $person, array $participant, $languageHouseId = null, $languageHouseUrl = null)
