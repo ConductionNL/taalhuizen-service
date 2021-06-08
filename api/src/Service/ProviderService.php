@@ -18,8 +18,7 @@ class ProviderService
         CommonGroundService $commonGroundService,
         EDUService $eduService,
         EAVService $eavService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eduService = $eduService;
@@ -31,17 +30,18 @@ class ProviderService
         $providerCCOrganization['name'] = $provider['name'];
         $providerCCOrganization['type'] = 'Aanbieder';
 
-        $providerCCOrganization['addresses'][0]['name'] = 'Address of ' . $provider['name'];
+        $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
         $providerCCOrganization['addresses'][0] = $provider['address'];
 
-        $providerCCOrganization['emails'][0]['name'] = 'Email of ' . $provider['name'];
+        $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
         $providerCCOrganization['emails'][0]['email'] = $provider['email'];
 
-        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $provider['name'];
+        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
         $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
 
         //add source organization to cc organization
         $providerCCOrganization['sourceOrganization'] = $providerWrc['@id'];
+
         return $this->commonGroundService->saveResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
     }
 
