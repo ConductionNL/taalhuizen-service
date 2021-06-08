@@ -21,19 +21,13 @@ class CCService
     private ParameterBagInterface $parameterBag;
     private EAVService $eavService;
     private WRCService $wrcService;
-    private EDUService $eduService;
-    private UcService $ucService;
-    private MrcService $mrcService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
         ParameterBagInterface $parameterBag,
         EAVService $eavService,
-        WRCService $wrcService,
-        EDUService $eduService,
-        UcService $ucService,
-        MrcService $mrcService
+        WRCService $wrcService
     )
     {
         $this->entityManager = $entityManager;
@@ -41,9 +35,6 @@ class CCService
         $this->parameterBag = $parameterBag;
         $this->eavService = $eavService;
         $this->wrcService = $wrcService;
-        $this->eduService = $eduService;
-        $this->ucService = $ucService;
-        $this->mrcService = $mrcService;
     }
 
     public function createOrganization(array $organizationArray, $type)
@@ -69,9 +60,7 @@ class CCService
         $wrcOrganization['contact'] = $result['@id'];
         $this->commonGroundService->saveResource($wrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganization['id']]);
 
-        $this->eduService->saveProgram($result);
-        $this->ucService->createUserGroups($result, $type);
-        return $this->createOrganizationObject($result, $type);
+        return $result;
     }
 
     public function updateOrganization(string $id, array $organizationArray, $type)
@@ -95,24 +84,7 @@ class CCService
         ];
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
 
-        $this->eduService->saveProgram($result);
-        $this->ucService->createUserGroups($result, $type);
-        return $this->createOrganizationObject($result, $type);
-    }
-
-    public function createUserRoleObject(array $result, $type)
-    {
-        if ($type == 'Taalhuis') {
-            $organization = new LanguageHouse();
-        } else {
-            $organization = new Provider();
-        }
-
-        $organization->setName($result['name']);
-        $this->entityManager->persist($organization);
-        $organization->setId(Uuid::fromString($result['id']));
-        $this->entityManager->persist($organization);
-        return $organization;
+        return $result;
     }
 
     public function createOrganizationObject(array $result, $type)
@@ -142,24 +114,11 @@ class CCService
         return $organization;
     }
 
-    public function deleteOrganization(string $id): bool
+    public function deleteOrganization(string $id, string $programId): bool
     {
         $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $ccOrganization['@id']])["hydra:member"][0];
-        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
-
-        //delete userGroups
-        $this->ucService->deleteUserGroups($ccOrganization['@id']);
-
-        //delete employees
-        $this->mrcService->deleteEmployees($ccOrganization['@id']);
-
-        //delete participants
-        $this->eduService->deleteParticipants($participants);
-
         //delete program
-        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $program['id']]);
-
+        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
@@ -187,28 +146,6 @@ class CCService
         }
 
         return $organizations;
-    }
-
-    public function getUserRolesByOrganization($organizationId, $type): ArrayCollection
-    {
-        $id = explode('/', $organizationId);
-        $userRoles = new ArrayCollection();
-
-        $results = $this->getUserRoles(end($id));
-
-        foreach ($results as $result) {
-            $userRoles->add($this->createUserRoleObject($result, $type));
-        }
-
-        return $userRoles;
-    }
-
-    public function getUserRoles($id): array
-    {
-        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        $userRolesByLanguageHouse =  $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
-
-        return $userRolesByLanguageHouse;
     }
 
     public function getOrganization(string $id, $type)

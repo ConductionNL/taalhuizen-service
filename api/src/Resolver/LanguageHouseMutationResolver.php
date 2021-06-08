@@ -7,7 +7,10 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Service\CCService;
+use App\Service\EDUService;
 use App\Service\LanguageHouseService;
+use App\Service\MrcService;
+use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -21,21 +24,24 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
-    private CommonGroundService $commonGroundService;
-    private LanguageHouseService $languageHouseService;
     private CCService $ccService;
+    private UcService $ucService;
+    private MrcService $mrcService;
+    private EDUService $eduService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CommongroundService $commonGroundService,
-        LanguageHouseService $languageHouseService,
-        CCService $ccService
+        CCService $ccService,
+        UcService $ucService,
+        MrcService $mrcService,
+        EDUService $eduService
     )
     {
         $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->languageHouseService = $languageHouseService;
         $this->ccService = $ccService;
+        $this->ucService = $ucService;
+        $this->mrcService = $mrcService;
+        $this->eduService = $eduService;
     }
     /**
      * @inheritDoc
@@ -60,20 +66,39 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     public function createLanguageHouse(array $languageHouseArray): LanguageHouse
     {
         $type = 'Taalhuis';
-        return $this->ccService->createOrganization($languageHouseArray, $type);
+        $result = $this->ccService->createOrganization($languageHouseArray, $type);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
+
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
     public function updateLanguageHouse(array $input): LanguageHouse
     {
         $id = explode('/',$input['id']);
         $type = 'Taalhuis';
-        return $this->ccService->updateOrganization(end($id), $input, $type);
+
+        $result = $this->ccService->updateOrganization(end($id), $input, $type);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
+
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
     public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
         $id = explode('/',$input['id']);
-        $this->ccService->deleteOrganization(end($id));
+
+        //delete userGroups
+        $this->ucService->deleteUserGroups($id);
+
+        //delete employees
+        $this->mrcService->deleteEmployees($id);
+
+        //delete participants
+        $programId = $this->eduService->deleteParticipants($id);
+
+        $this->ccService->deleteOrganization(end($id), $programId);
         return null;
     }
 }

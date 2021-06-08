@@ -9,6 +9,7 @@ use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\CCService;
 use App\Service\ProviderService;
+use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
@@ -16,16 +17,17 @@ use Ramsey\Uuid\Uuid;
 
 class ProviderQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private ProviderService $providerService;
     private CCService $ccService;
+    private UcService $ucService;
 
     public function __construct(
-        ProviderService $providerService,
-        CCService $ccService
+        CCService $ccService,
+        UcService $ucService
+
     )
     {
-        $this->providerService = $providerService;
         $this->ccService = $ccService;
+        $this->ucService = $ucService;
     }
 
     /**
@@ -39,7 +41,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
                 $collection = $this->ccService->getOrganizations($type = 'Aanbieder');
                 return $this->createPaginator($collection, $context['args']);
             case 'userRolesByProviders':
-                $collection = $this->ccService->getUserRolesByOrganization(
+                $collection = $this->ucService->getUserRolesByOrganization(
                     key_exists('providerId', $context['args']) ?
                         $context['args']['providerId'] :
                         null, $type = 'Aanbieder'

@@ -7,6 +7,8 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
 use App\Service\CCService;
+use App\Service\EDUService;
+use App\Service\MrcService;
 use App\Service\ProviderService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -20,24 +22,24 @@ class ProviderMutationResolver implements MutationResolverInterface
 {
 
     private EntityManagerInterface $entityManager;
-    private CommonGroundService $commonGroundService;
-    private ProviderService $providerService;
     private CCService $ccService;
     private UcService $ucService;
+    private EDUService $eduService;
+    private MrcService $mrcService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CommongroundService $commonGroundService,
-        ProviderService $providerService,
         CCService $ccService,
-        UcService $ucService
+        UcService $ucService,
+        EDUService $eduService,
+        MrcService $mrcService
     )
     {
         $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->providerService = $providerService;
         $this->ccService = $ccService;
         $this->ucService = $ucService;
+        $this->eduService = $eduService;
+        $this->mrcService = $mrcService;
     }
 
     /**
@@ -63,20 +65,39 @@ class ProviderMutationResolver implements MutationResolverInterface
     public function createProvider(array $providerArray): Provider
     {
         $type = 'Aanbieder';
-        return $this->ccService->createOrganization($providerArray, $type);
+        $result = $this->ccService->createOrganization($providerArray, $type);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
+
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
     public function updateProvider(array $input): Provider
     {
         $type = 'Aanbieder';
         $id = explode('/',$input['id']);
-        return $this->ccService->updateOrganization(end($id), $input, $type);
+
+        $result = $this->ccService->updateOrganization(end($id), $input, $type);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
+
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
     public function deleteProvider(array $input): ?Provider
     {
         $id = explode('/',$input['id']);
-        $this->ccService->deleteOrganization(end($id));
+
+        //delete userGroups
+        $this->ucService->deleteUserGroups($id);
+
+        //delete employees
+        $this->mrcService->deleteEmployees($id);
+
+        //delete participants
+        $programId = $this->eduService->deleteParticipants($id);
+
+        $this->ccService->deleteOrganization(end($id), $programId);
         return null;
     }
 }

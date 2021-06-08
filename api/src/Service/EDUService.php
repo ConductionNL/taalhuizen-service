@@ -312,26 +312,48 @@ class EDUService
         return $this->convertGroupObject($this->eavService->saveObject($groep,'groups','edu',$groupUrl));
     }
 
-    public function deleteParticipants($participants): bool
+    public function deleteParticipants($id): bool
     {
+        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu','type'=>'programs'], ['provider' => $ccOrganization['@id']])["hydra:member"][0];
+        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])["hydra:member"];
+
         if ($participants > 0) {
             foreach ($participants as $participant) {
                 $person = $this->commonGroundService->getResource($participant['person']);
-                $educationEvents = $this->commonGroundService->getResource($participant['educationEvents']);
-                $results = $this->commonGroundService->getResource($participant['results']);
-                $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
-                foreach ($educationEvents as $educationEvent) {
-                    $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
-                }
-                foreach ($results as $result) {
-                    $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
-                }
-                foreach ($participantGroups as $participantGroup) {
-                    $this->deleteGroup($participantGroup['id']);
-                }
+                $this->deleteEducationEvents($participant);
+                $this->deleteResults($participant);
+                $this->deleteParticipantGroups($participant);
                 $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
                 $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
             }
+        }
+        return $program['id'];
+    }
+
+    public function deleteEducationEvents($participant): bool
+    {
+        $educationEvents = $this->commonGroundService->getResource($participant['educationEvents']);
+        foreach ($educationEvents as $educationEvent) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
+        }
+        return false;
+    }
+
+    public function deleteResults($participant): bool
+    {
+        $results = $this->commonGroundService->getResource($participant['results']);
+        foreach ($results as $result) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
+        }
+        return false;
+    }
+
+    public function deleteParticipantGroups($participant): bool
+    {
+        $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
+        foreach ($participantGroups as $participantGroup) {
+            $this->deleteGroup($participantGroup['id']);
         }
         return false;
     }

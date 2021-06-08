@@ -10,6 +10,7 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Service\CCService;
 use App\Service\LanguageHouseService;
+use App\Service\UcService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -18,19 +19,19 @@ use Ramsey\Uuid\Uuid;
 
 class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private LanguageHouseService $languageHouseService;
     private EntityManagerInterface $entityManager;
     private CCService $ccService;
+    private UcService $ucService;
 
     public function __construct(
-        LanguageHouseService $languageHouseService,
         EntityManagerInterface $entityManager,
-        CCService $ccService
+        CCService $ccService,
+        UcService $ucService
     )
     {
-        $this->languageHouseService = $languageHouseService;
         $this->entityManager = $entityManager;
         $this->ccService = $ccService;
+        $this->ucService = $ucService;
     }
 
     /**
@@ -43,7 +44,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                 $collection = $this->ccService->getOrganizations($type = 'Taalhuis');
                 return $this->createPaginator($collection, $context['args']);
             case 'userRolesByLanguageHouses':
-                $collection = $this->ccService->getUserRolesByOrganization(
+                $collection = $this->ucService->getUserRolesByOrganization(
                     key_exists('languageHouseId', $context['args']) ?
                         $context['args']['languageHouseId'] :
                         null, $type = 'Taalhuis'
