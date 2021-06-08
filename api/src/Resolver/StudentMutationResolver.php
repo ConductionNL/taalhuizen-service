@@ -847,18 +847,25 @@ class StudentMutationResolver implements MutationResolverInterface
                 if (isset($courseDetails['amountOfHours'])) {
                     $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
                 }
-                if (isset($courseDetails['doesCourseProvideCertificate'])) {
-                    if ($courseDetails['doesCourseProvideCertificate'] == true) {
-                        $newEducation['providesCertificate'] = true;
-                    } else {
-                        $newEducation['providesCertificate'] = false;
-                    }
-                }
+                $newEducation = $this->getCourseProvideCertificateFromCourseDetails($newEducation);
             }
             $employee['educations'][] = $newEducation;
         }
 
         return $employee;
+    }
+
+    private function getCourseProvideCertificateFromCourseDetails(array $newEducation): array
+    {
+        if (isset($courseDetails['doesCourseProvideCertificate'])) {
+            if ($courseDetails['doesCourseProvideCertificate'] == true) {
+                $newEducation['providesCertificate'] = true;
+            } else {
+                $newEducation['providesCertificate'] = false;
+            }
+        }
+
+        return $newEducation;
     }
 
     private function getEmployeePropertiesFromJobDetails($employee, $jobDetails): array
