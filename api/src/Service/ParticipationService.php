@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Employee;
 use App\Entity\LearningNeed;
 use App\Entity\Participation;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -12,14 +13,21 @@ use Ramsey\Uuid\Uuid;
 class ParticipationService
 {
     private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private MrcService $mrcService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        EAVService $eavService,
+        MrcService $mrcService
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
+        $this->mrcService = $mrcService;
     }
 
     public function handleGettingParticipation($participationId)
@@ -282,7 +290,25 @@ class ParticipationService
     }
 
     public function getEmployeeParticipations($mentorUrl)
+    public function addMentoredParticipationToEmployee($participationId, $aanbiederEmployeeId): Employee
     {
+        $result = [];
+        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+        $result = array_merge($result, $this->getParticipation($participationId));
+
+        array_merge($result, $this->addMentorToParticipation($employeeUrl, $result['participation']));
+
+        return $this->mrcService->getEmployee($aanbiederEmployeeId);
+    }
+
+    public function addMentorToParticipation($mentorUrl, $participation) {
+        $result = [];
+        // Make sure this participation has no mentor or group set
+        if (isset($participation['mentor']) || isset($participation['group'])) {
+            return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
+        }
+
+        // Check if mentor already has an EAV object
         if ($this->eavService->hasEavObject($mentorUrl)) {
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
             $employee['participations'] = $getEmployee['participations'];

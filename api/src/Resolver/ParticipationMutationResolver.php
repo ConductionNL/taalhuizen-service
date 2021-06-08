@@ -39,8 +39,6 @@ class ParticipationMutationResolver implements MutationResolverInterface
                 return $this->updateParticipation($context['info']->variableValues['input']);
             case 'removeParticipation':
                 return $this->removeParticipation($context['info']->variableValues['input']);
-            case 'addMentorToParticipation':
-                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             case 'updateMentorParticipation':
                 return $this->updateMentorGroupParticipation($context['info']->variableValues['input'], 'mentor');
             case 'removeMentorFromParticipation':
