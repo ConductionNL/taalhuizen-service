@@ -156,6 +156,7 @@ class StudentService
         } else {
             throw new Exception('Warning, '.$participant['person'].' does not have an eav object (eav/cc/people)!');
         }
+
         return $person;
     }
 
