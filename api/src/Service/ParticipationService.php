@@ -27,7 +27,7 @@ class ParticipationService
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
             if (!$this->eavService->hasEavObject(null, 'participations', $participationId)) {
-                return $result['errorMessage'] = $result['errorMessage'] = 'Invalid request, ' . $participationId . ' is not an existing eav/participation!';
+                return $result['errorMessage'] = $result['errorMessage'] = 'Invalid request, '.$participationId.' is not an existing eav/participation!';
             }
             // Update
             $participation = $this->eavService->saveObject($participation, 'participations', 'eav', null, $participationId);
@@ -202,14 +202,14 @@ class ParticipationService
                 $participation = $this->eavService->getObject('participations', null, 'eav', $id);
                 $result['participation'] = $participation;
             } else {
-                $result['errorMessage'] = 'Invalid request, ' . $id . ' is not an existing eav/participation!';
+                $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/participation!';
             }
         } elseif (isset($url)) {
             if ($this->eavService->hasEavObject($url)) {
                 $participation = $this->eavService->getObject('participations', $url);
                 $result['participation'] = $participation;
             } else {
-                $result['errorMessage'] = 'Invalid request, ' . $url . ' is not an existing eav/participation!';
+                $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/participation!';
             }
         }
         if (isset($result['participation'])) {
@@ -235,7 +235,7 @@ class ParticipationService
             }
         } else {
             // Do not throw an error, because we want to return an empty array in this case
-            $result['message'] = 'Warning, ' . $learningNeedId . ' is not an existing eav/learning_need!';
+            $result['message'] = 'Warning, '.$learningNeedId.' is not an existing eav/learning_need!';
         }
 
         return $result;
@@ -339,7 +339,7 @@ class ParticipationService
             return ['errorMessage' => 'Invalid request, this participation has a different mentor!'];
         }
         if (!$this->eavService->hasEavObject($mentorUrl)) {
-            return ['errorMessage' => 'Invalid request, ' . $mentorUrl . ' is not an existing eav/mrc/employee!'];
+            return ['errorMessage' => 'Invalid request, '.$mentorUrl.' is not an existing eav/mrc/employee!'];
         }
 
         $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
@@ -373,7 +373,7 @@ class ParticipationService
             $group['participations'][] = $participation['@id'];
             $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
             $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
-            $group['participants'][] = '/participants/' . $participantId;
+            $group['participants'][] = '/participants/'.$participantId;
             $group = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
 
             // Add $group to the $result['group'] because this is convenient when testing or debugging (mostly for us)
@@ -413,7 +413,7 @@ class ParticipationService
         }
         if (isset($group['participants'])) {
             foreach ($group['participants'] as &$participant) {
-                $participant = '/participants/' . $participant['id'];
+                $participant = '/participants/'.$participant['id'];
             }
         }
 
@@ -438,7 +438,7 @@ class ParticipationService
             }));
             if (isset($group['participants'])) {
                 foreach ($group['participants'] as &$participant) {
-                    $participant = '/participants/' . $participant['id'];
+                    $participant = '/participants/'.$participant['id'];
                 }
             }
             $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
@@ -455,7 +455,7 @@ class ParticipationService
         $this->checkGroup($groupUrl, $participation);
 
         if (!$this->eavService->hasEavObject($groupUrl)) {
-            return ['errorMessage' => 'Invalid request, ' . $groupUrl . ' is not an existing eav/edu/group!'];
+            return ['errorMessage' => 'Invalid request, '.$groupUrl.' is not an existing eav/edu/group!'];
         }
 
         return false;
@@ -616,7 +616,7 @@ class ParticipationService
         if (isset($participation['status'])) {
             $resource->setStatus($participation['status']);
         }
-        $resource->setAanbiederId('/providers/' . $participation['aanbiederId']);
+        $resource->setAanbiederId('/providers/'.$participation['aanbiederId']);
         $resource->setAanbiederName($participation['aanbiederName']);
         $resource->setAanbiederNote($participation['aanbiederNote']);
         $resource->setOfferName($participation['offerName']);
@@ -670,38 +670,38 @@ class ParticipationService
 
     public function handleResultJson($participation, $learningNeedId = null)
     {
-        $resource['id'] = '/participations/' . $participation['id'];
+        $resource['id'] = '/participations/'.$participation['id'];
         if (isset($participation['status'])) {
             $resource['status'] = $participation['status'];
         }
         $resource = [
-            'aanbiederId' => $participation['aanbiederId'],
-            'aanbiederName' => $participation['aanbiederName'],
-            'aanbiederNote' => $participation['aanbiederNote'],
-            'offerName' => $participation['offerName'],
-            'offerCourse' => $participation['offerCourse'],
-            'outComesGoal' => $participation['goal'],
-            'outComesTopic' => $participation['topic'],
-            'outComesTopicOther' => $participation['topicOther'],
-            'outComesApplication' => $participation['application'],
-            'outComesApplicationOther' => $participation['applicationOther'],
-            'outComesLevel' => $participation['level'],
-            'outComesLevelOther' => $participation['levelOther'],
-            'detailsIsFormal' => $participation['isFormal'],
-            'detailsGroupFormation' => $participation['groupFormation'],
-            'detailsTotalClassHours' => $participation['totalClassHours'],
+            'aanbiederId'                     => $participation['aanbiederId'],
+            'aanbiederName'                   => $participation['aanbiederName'],
+            'aanbiederNote'                   => $participation['aanbiederNote'],
+            'offerName'                       => $participation['offerName'],
+            'offerCourse'                     => $participation['offerCourse'],
+            'outComesGoal'                    => $participation['goal'],
+            'outComesTopic'                   => $participation['topic'],
+            'outComesTopicOther'              => $participation['topicOther'],
+            'outComesApplication'             => $participation['application'],
+            'outComesApplicationOther'        => $participation['applicationOther'],
+            'outComesLevel'                   => $participation['level'],
+            'outComesLevelOther'              => $participation['levelOther'],
+            'detailsIsFormal'                 => $participation['isFormal'],
+            'detailsGroupFormation'           => $participation['groupFormation'],
+            'detailsTotalClassHours'          => $participation['totalClassHours'],
             'detailsCertificateWillBeAwarded' => $participation['certificateWillBeAwarded'],
-            'detailsStartDate' => $participation['startDate'],
-            'detailsEndDate' => $participation['endDate'],
-            'detailsEngagements' => $participation['engagements'],
-            'presenceEngagements' => $participation['presenceEngagements'],
-            'presenceStartDate' => $participation['presenceStartDate'],
-            'presenceEndDate' => $participation['presenceEndDate'],
-            'presenceEndParticipationReason' => $participation['presenceEndParticipationReason'],
+            'detailsStartDate'                => $participation['startDate'],
+            'detailsEndDate'                  => $participation['endDate'],
+            'detailsEngagements'              => $participation['engagements'],
+            'presenceEngagements'             => $participation['presenceEngagements'],
+            'presenceStartDate'               => $participation['presenceStartDate'],
+            'presenceEndDate'                 => $participation['presenceEndDate'],
+            'presenceEndParticipationReason'  => $participation['presenceEndParticipationReason'],
         ];
 
         if (isset($learningNeedId)) {
-            $resource['learningNeedId'] = '/learning_needs/' . $learningNeedId;
+            $resource['learningNeedId'] = '/learning_needs/'.$learningNeedId;
         }
 
         return $resource;
