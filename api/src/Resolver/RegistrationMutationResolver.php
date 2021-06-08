@@ -7,15 +7,12 @@ use App\Entity\Registration;
 use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EDUService;
-use App\Service\ParticipationService;
 use App\Service\RegistrationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RegistrationMutationResolver implements MutationResolverInterface
 {
