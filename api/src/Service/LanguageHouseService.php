@@ -7,7 +7,6 @@ use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\This;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LanguageHouseService
 {

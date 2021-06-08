@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderService
 {
