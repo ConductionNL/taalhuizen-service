@@ -68,6 +68,16 @@ class WRCService
         return $contact;
     }
 
+    public function handleDocumentProps($input)
+    {
+        $requiredProps = ['base64data', 'filename'];
+        foreach ($requiredProps as $prop) {
+            if (!isset($input[$prop])) {
+                throw new Exception('No '.$prop.' has been given');
+            }
+        }
+    }
+
     /**
      * @param array $input
      *
@@ -77,12 +87,7 @@ class WRCService
      */
     public function createDocument(array $input): Document
     {
-        $requiredProps = ['base64data', 'filename'];
-        foreach ($requiredProps as $prop) {
-            if (!isset($input[$prop])) {
-                throw new Exception('No '.$prop.' has been given');
-            }
-        }
+        $this->handleDocumentProps($input);
         if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
             throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
         }
