@@ -80,27 +80,38 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
 
         //Save participant
-        $participant['referredBy'] = $organization['@id'];
-        $participant['person'] = $registrationStudent['@id'];
-        $participant['status'] = 'pending';
-        $participant = $this->eduService->saveEavParticipant($participant);
+        $participant = $this->createParticipant($organization, $registrationStudent);
 
-        if (isset($input['languageHouseId'])) {
-            $languageHouseId = $input['languageHouseId'];
+        if (!isset($input['languageHouseId'])) {
+            throw new Exception('No Language House Id provided');
         }
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type'=>'organizations', 'id' => $languageHouseId]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $languageHouseUrl])['hydra:member'][0];
 
+        //update program
+        $this->updateProgram($input, $participant);
+
+        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $input['languageHouseId'], $participant, $memo);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
+        return $resourceResult;
+    }
+
+    public function updateProgram($input, $participant)
+    {
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type'=>'organizations', 'id' => $input['languageHouseId']]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $languageHouseUrl])['hydra:member'][0];
         foreach ($program['participants'] as &$programParticipant) {
             $programParticipant = '/participants/'.$programParticipant['id'];
         }
         $program['participants'][] = '/participants/'.$participant['id'];
         $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $program['id']]);
+    }
 
-        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $languageHouseId, $participant, $memo);
-        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
-
-        return $resourceResult;
+    public function createParticipant($organization, $registrationStudent)
+    {
+        $participant['referredBy'] = $organization['@id'];
+        $participant['person'] = $registrationStudent['@id'];
+        $participant['status'] = 'pending';
+        $return = $this->eduService->saveEavParticipant($participant);
     }
 
     public function deleteRegistration(array $input): ?Registration

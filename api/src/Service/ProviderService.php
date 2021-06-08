@@ -19,11 +19,62 @@ class ProviderService
         CommonGroundService $commonGroundService,
         EDUService $eduService,
         EAVService $eavService
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eduService = $eduService;
         $this->eavService = $eavService;
+    }
+
+    public function createProviderCCOrganization($provider, $providerWrc)
+    {
+        $providerCCOrganization['name'] = $provider['name'];
+        $providerCCOrganization['type'] = 'Aanbieder';
+
+        $providerCCOrganization['addresses'][0]['name'] = 'Address of ' . $provider['name'];
+        $providerCCOrganization['addresses'][0] = $provider['address'];
+
+        $providerCCOrganization['emails'][0]['name'] = 'Email of ' . $provider['name'];
+        $providerCCOrganization['emails'][0]['email'] = $provider['email'];
+
+        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $provider['name'];
+        $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
+
+        //add source organization to cc organization
+        $providerCCOrganization['sourceOrganization'] = $providerWrc['@id'];
+        return $this->commonGroundService->saveResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
+    }
+
+    public function createProgram($provider, $providerWrc)
+    {
+        $program['name'] = 'Program of '.$provider['name'];
+        $program['provider'] = $providerWrc['contact'];
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
+    }
+
+    public function createCoordinatorGroup($provider, $providerWrc)
+    {
+        $coordinator['organization'] = $providerWrc['contact'];
+        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
+        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createMentorGroup($provider, $providerWrc)
+    {
+        $mentor['organization'] = $providerWrc['contact'];
+        $mentor['name'] = 'AANBIEDER_MENTOR';
+        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createVolunteerGroup($provider, $providerWrc)
+    {
+        $volunteer['organization'] = $providerWrc['contact'];
+        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
+        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
+        $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
     }
 
     public function createProvider($provider)
@@ -31,47 +82,20 @@ class ProviderService
         // Save the provider
         $providerWrcOrganization['name'] = $provider['name'];
         $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
-
-        $providerCCOrganization['name'] = $provider['name'];
-        $providerCCOrganization['type'] = 'Aanbieder';
-
-        $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
-        $providerCCOrganization['addresses'][0] = $provider['address'];
-
-        $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
-        $providerCCOrganization['emails'][0]['email'] = $provider['email'];
-
-        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
-        $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
-
-        //add source organization to cc organization
-        $providerCCOrganization['sourceOrganization'] = $providerWrc['@id'];
-        $providerCC = $this->commonGroundService->saveResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
+        $providerCC = $this->createProviderCCOrganization($provider, $providerWrc);
 
         //add contact to wrc organization
         $providerWrcOrganization['contact'] = $providerCC['@id'];
         $providerWrc = $this->commonGroundService->saveResource($providerWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
         //program
-        $program['name'] = 'Program of '.$provider['name'];
-        $program['provider'] = $providerWrc['contact'];
-        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
-
+        $this->createProgram($provider, $providerWrc);
         //coordinator
-        $coordinator['organization'] = $providerWrc['contact'];
-        $coordinator['name'] = 'AANBIEDER_COORDINATOR';
-        $coordinator['description'] = 'userGroup coordinator of '.$provider['name'];
-        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
+        $this->createCoordinatorGroup($provider, $providerWrc);
         //mentor
-        $mentor['organization'] = $providerWrc['contact'];
-        $mentor['name'] = 'AANBIEDER_MENTOR';
-        $mentor['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($mentor, ['component' => 'uc', 'type' => 'groups']);
+        $this->createMentorGroup($provider, $providerWrc);
         //volunteer
-        $volunteer['organization'] = $providerWrc['contact'];
-        $volunteer['name'] = 'AANBIEDER_VOLUNTEER';
-        $volunteer['description'] = 'userGroup mentor of '.$provider['name'];
-        $this->commonGroundService->saveResource($volunteer, ['component' => 'uc', 'type' => 'groups']);
+        $this->createVolunteerGroup($provider, $providerWrc);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['provider'] = $providerCC;
