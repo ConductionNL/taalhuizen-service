@@ -349,17 +349,7 @@ class ParticipationService
         }
         // Update eav/participation to remove the EAV/mrc/employee from it
         $updateParticipation['mentor'] = null;
-        $updateParticipation['status'] = 'REFERRED';
-        $updateParticipation['presenceEngagements'] = null;
-        $updateParticipation['presenceStartDate'] = null;
-        $updateParticipation['presenceEndDate'] = null;
-        $updateParticipation['presenceEndParticipationReason'] = null;
-        $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
-
-        // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
-        $result['participation'] = $participation;
-
-        return $this->handleResult($result['participation']);
+        return $this->updateParticipation($participation);
     }
 
     public function addGroupToParticipation($groupUrl, $participation)
@@ -442,17 +432,7 @@ class ParticipationService
         }
         // Update eav/participation to remove the EAV/edu/group from it
         $updateParticipation['group'] = null;
-        $updateParticipation['status'] = 'REFERRED';
-        $updateParticipation['presenceEngagements'] = null;
-        $updateParticipation['presenceStartDate'] = null;
-        $updateParticipation['presenceEndDate'] = null;
-        $updateParticipation['presenceEndParticipationReason'] = null;
-        $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
-
-        // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
-        $result['participation'] = $participation;
-
-        return $this->handleResult($result['participation']);
+        return $this->updateParticipation($participation);
     }
 
     public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
@@ -598,5 +578,20 @@ class ParticipationService
         }
 
         return $resource;
+    }
+
+    public function updateParticipation($participation)
+    {
+        $updateParticipation['status'] = 'REFERRED';
+        $updateParticipation['presenceEngagements'] = null;
+        $updateParticipation['presenceStartDate'] = null;
+        $updateParticipation['presenceEndDate'] = null;
+        $updateParticipation['presenceEndParticipationReason'] = null;
+        $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+
+        // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+        $result['participation'] = $participation;
+
+        return $this->handleResult($result['participation']);
     }
 }

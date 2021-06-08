@@ -117,25 +117,21 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function addMentorToParticipation(array $input): Participation
     {
-        $result['result'] = [];
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
 
-        $participationId = $this->setParticipationId($input);
-        $mentorId = $this->setMentorId($input);
-        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
-
-        // Do check if mentorUrl exists
-        // todo: Maybe also check if this employee is an aanbieder employee?
-        if (!$this->commonGroundService->isResource($mentorUrl)) {
-            throw new Exception('Invalid request, aanbiederEmployeeId is not an existing mrc/employee!');
-        }
-
-        // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-
+        $result = $this->getParticipationMentor($input);
         return $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']);
     }
 
     public function removeMentorFromParticipation(array $input): Participation
+    {
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
+
+        $result = $this->getParticipationMentor($input);
+        return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
+    }
+
+    public function getParticipationMentor(array $input)
     {
         $result['result'] = [];
 
@@ -152,7 +148,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         // Get the participation
         $result = array_merge($result, $this->participationService->getParticipation($participationId));
 
-        return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
+        return $result;
     }
 
     public function setMentorId(array $input)
@@ -187,24 +183,21 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function addGroupToParticipation(array $input): Participation
     {
-        $result['result'] = [];
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
 
-        $participationId = $this->setParticipationId($input);
-        $groupId = $this->setGroupId($input);
-        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
-
-        // Do check if $groupUrl exists
-        if (!$this->commonGroundService->isResource($groupUrl)) {
-            throw new Exception('Invalid request, groupId is not an existing edu/group!');
-        }
-
-        // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-
+        $result = $this->getParticipationGroup($input);
         return $this->participationService->addGroupToParticipation($groupUrl, $result['participation']);
     }
 
     public function removeGroupFromParticipation(array $input): Participation
+    {
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
+
+        $result = $this->getParticipationGroup($input);
+        return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
+    }
+
+    public function getParticipationGroup(array $input)
     {
         $result['result'] = [];
 
@@ -220,7 +213,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         // Get the participation
         $result = array_merge($result, $this->participationService->getParticipation($participationId));
 
-        return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
+        return $result;
     }
 
     public function updateMentorGroupParticipation(array $input, $type): Participation
