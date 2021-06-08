@@ -400,17 +400,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['countryOfOrigin'])) {
-            $person['birthplace'] = [
-                'country' => $generalDetails['countryOfOrigin'],
-            ];
-            if (isset($updatePerson['birthplace']['id'])) {
-                //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
-                $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
-                $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
-
-                //unset person birthplace
-                unset($person['birthplace']);
-            }
+            $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
         }
         //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
         if (isset($generalDetails['nativeLanguage'])) {
@@ -425,54 +415,96 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Create the children of this person
+        return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
+    }
+
+    private function setPersonBirthplaceFromCountryOfOrigin(array $person, $countryOfOrigin, $updatePerson = null): array
+    {
+        $person['birthplace'] = [
+            'country' => $countryOfOrigin,
+        ];
+        if (isset($updatePerson['birthplace']['id'])) {
+            //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+            $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
+            $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
+
+            //unset person birthplace
+            unset($person['birthplace']);
+        }
+
+        return $person;
+    }
+
+    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    {
         if (isset($generalDetails['childrenCount'])) {
             $childrenCount = (int) $generalDetails['childrenCount'];
         }
         if (isset($generalDetails['childrenDatesOfBirth'])) {
-            $childrenDatesOfBirth = explode(',', $generalDetails['childrenDatesOfBirth']);
-            foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
-                try {
-                    new \DateTime($childrenDateOfBirth);
-                } catch (Exception $e) {
-                    unset($childrenDatesOfBirth[$key]);
-                }
-            }
+            $childrenDatesOfBirth = $this->setChildrenDatesOfBirthFromGeneralDetails($generalDetails['childrenDatesOfBirth']);
             if (!isset($childrenCount)) {
                 $childrenCount = count($childrenDatesOfBirth);
             }
         }
         if (isset($childrenCount)) {
-            $children = [];
-            for ($i = 0; $i < $childrenCount; $i++) {
-                $child = [
-                    'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
-                ];
-                if (isset($childrenDatesOfBirth[$i])) {
-                    $child['birthday'] = $childrenDatesOfBirth[$i];
-                }
-                $children[] = $child;
-            }
-            $person['ownedContactLists'][0] = [
-                'name'        => 'Children',
-                'description' => 'The children of '.$person['givenName'] ?? 'this owner',
-                'people'      => $children,
-            ];
-            // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
+            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, $childrenCount, $childrenDatesOfBirth ?? null);
             if (isset($updatePerson['ownedContactLists'][0]['id'])) {
-                if (isset($updatePerson['ownedContactLists'][0]['people'])) {
-                    foreach ($updatePerson['ownedContactLists'][0]['people'] as $key => $child) {
-                        $this->commonGroundService->deleteResource($child, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $child['id']]));
-                        unset($updatePerson['ownedContactLists'][0]['people'][$key]);
-                    }
-                }
-                //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
-                $contactList = array_merge($updatePerson['ownedContactLists'][0], $person['ownedContactLists'][0]);
-                $this->commonGroundService->updateResource($contactList, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'contact_lists', 'id' => $updatePerson['ownedContactLists'][0]['id']]));
-
-                //unset person ownedContactLists
-                unset($person['ownedContactLists']);
+                $person = $this->updatePersonChildrenContactList($person, $updatePerson);
             }
         }
+
+        return $person;
+    }
+
+    private function setChildrenDatesOfBirthFromGeneralDetails($childrenDatesOfBirth): array
+    {
+        $childrenDatesOfBirth = explode(',', $childrenDatesOfBirth);
+        foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
+            try {
+                new \DateTime($childrenDateOfBirth);
+            } catch (Exception $e) {
+                unset($childrenDatesOfBirth[$key]);
+            }
+        }
+
+        return $childrenDatesOfBirth;
+    }
+
+    private function setChildrenFromChildrenCount(array $person, $childrenCount, $childrenDatesOfBirth): array
+    {
+        $children = [];
+        for ($i = 0; $i < $childrenCount; $i++) {
+            $child = [
+                'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
+            ];
+            if (isset($childrenDatesOfBirth[$i])) {
+                $child['birthday'] = $childrenDatesOfBirth[$i];
+            }
+            $children[] = $child;
+        }
+
+        return [
+            'name'        => 'Children',
+            'description' => 'The children of '.$person['givenName'] ?? 'this owner',
+            'people'      => $children,
+        ];
+    }
+
+    private function updatePersonChildrenContactList(array $person, array $updatePerson): array
+    {
+        // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
+        if (isset($updatePerson['ownedContactLists'][0]['people'])) {
+            foreach ($updatePerson['ownedContactLists'][0]['people'] as $key => $child) {
+                $this->commonGroundService->deleteResource($child, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $child['id']]));
+                unset($updatePerson['ownedContactLists'][0]['people'][$key]);
+            }
+        }
+        //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+        $contactList = array_merge($updatePerson['ownedContactLists'][0], $person['ownedContactLists'][0]);
+        $this->commonGroundService->updateResource($contactList, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'contact_lists', 'id' => $updatePerson['ownedContactLists'][0]['id']]));
+
+        //unset person ownedContactLists
+        unset($person['ownedContactLists']);
 
         return $person;
     }
@@ -706,22 +738,7 @@ class StudentMutationResolver implements MutationResolverInterface
     private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
     {
         if (isset($educationDetails['lastFollowedEducation'])) {
-            $newEducation = [
-                'name'                    => $educationDetails['lastFollowedEducation'],
-                'description'             => 'lastEducation',
-                'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
-            ];
-            if (isset($lastEducation['id'])) {
-                $newEducation['id'] = $lastEducation['id'];
-            }
-            if (isset($educationDetails['didGraduate'])) {
-                if ($educationDetails['didGraduate'] == true) {
-                    $newEducation['degreeGrantedStatus'] = 'Granted';
-                } else {
-                    $newEducation['degreeGrantedStatus'] = 'notGranted';
-                }
-            }
-            $employee['educations'][] = $newEducation;
+            $employee['educations'][] = $this->getLastEducationFromEducationDetails($educationDetails, $lastEducation);
         }
 
         if (isset($educationDetails['followingEducationRightNow'])) {
@@ -730,48 +747,83 @@ class StudentMutationResolver implements MutationResolverInterface
                 $newEducation['id'] = $followingEducation['id'];
             }
             if ($educationDetails['followingEducationRightNow'] == 'YES') {
-                $newEducation['description'] = 'followingEducationYes';
-                if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
-                    $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesEndDate'])) {
-                    $newEducation['endDate'] = $educationDetails['followingEducationRightNowYesEndDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesLevel'])) {
-                    $newEducation['name'] = $educationDetails['followingEducationRightNowYesLevel'];
-                    $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowYesLevel'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesInstitute'])) {
-                    $newEducation['institution'] = $educationDetails['followingEducationRightNowYesInstitute'];
-                }
-                if (isset($educationDetails['followingEducationRightNowYesProvidesCertificate'])) {
-                    if ($educationDetails['followingEducationRightNowYesProvidesCertificate'] == true) {
-                        $newEducation['providesCertificate'] = true;
-                    } else {
-                        $newEducation['providesCertificate'] = false;
-                    }
-                }
+                $newEducation = $this->getFollowingEducationYesFromEducationDetails($educationDetails, $newEducation);
             } else {
-                $newEducation['description'] = 'followingEducationNo';
-                if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
-                    $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
-                }
-                if (isset($educationDetails['followingEducationRightNowNoLevel'])) {
-                    $newEducation['name'] = $educationDetails['followingEducationRightNowNoLevel'];
-                    $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowNoLevel'];
-                }
-                if (isset($educationDetails['followingEducationRightNowNoGotCertificate'])) {
-                    if ($educationDetails['followingEducationRightNowNoGotCertificate'] == true) {
-                        $newEducation['degreeGrantedStatus'] = 'Granted';
-                    } else {
-                        $newEducation['degreeGrantedStatus'] = 'notGranted';
-                    }
-                }
+                $newEducation = $this->getFollowingEducationNoFromEducationDetails($educationDetails, $newEducation);
             }
             $employee['educations'][] = $newEducation;
         }
 
         return $employee;
+    }
+
+    private function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
+    {
+        $newEducation = [
+            'name'                    => $educationDetails['lastFollowedEducation'],
+            'description'             => 'lastEducation',
+            'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
+        ];
+        if (isset($lastEducation['id'])) {
+            $newEducation['id'] = $lastEducation['id'];
+        }
+        if (isset($educationDetails['didGraduate'])) {
+            if ($educationDetails['didGraduate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        return $newEducation;
+    }
+
+    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationYes';
+        if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
+            $newEducation['startDate'] = $educationDetails['followingEducationRightNowYesStartDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesEndDate'])) {
+            $newEducation['endDate'] = $educationDetails['followingEducationRightNowYesEndDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesLevel'])) {
+            $newEducation['name'] = $educationDetails['followingEducationRightNowYesLevel'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowYesLevel'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesInstitute'])) {
+            $newEducation['institution'] = $educationDetails['followingEducationRightNowYesInstitute'];
+        }
+        if (isset($educationDetails['followingEducationRightNowYesProvidesCertificate'])) {
+            if ($educationDetails['followingEducationRightNowYesProvidesCertificate'] == true) {
+                $newEducation['providesCertificate'] = true;
+            } else {
+                $newEducation['providesCertificate'] = false;
+            }
+        }
+
+        return $newEducation;
+    }
+
+    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationNo';
+        if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
+            $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoLevel'])) {
+            $newEducation['name'] = $educationDetails['followingEducationRightNowNoLevel'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowNoLevel'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoGotCertificate'])) {
+            if ($educationDetails['followingEducationRightNowNoGotCertificate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        return $newEducation;
     }
 
     private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
