@@ -90,13 +90,9 @@ class WRCService
         //set contact
         $contact = $this->setContact($input);
 
-        if ($this->commonGroundService->isResource($contact)) {
-            $document['name'] = $input['filename'];
-            $document['base64'] = $input['base64data'];
-            $document['contact'] = $contact;
-        } else {
-            throw new Exception('The person (cc/person) of the given id does not exist!');
-        }
+        $document['name'] = $input['filename'];
+        $document['base64'] = $input['base64data'];
+        $document['contact'] = $contact;
 
         try {
             $document = $this->commonGroundService->saveResource($document, ['component' => 'wrc', 'type' => 'documents']);

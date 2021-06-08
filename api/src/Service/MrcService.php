@@ -456,7 +456,7 @@ class MrcService
         ];
     }
 
-    public function createUser(array $employeeArray, array $contact): array
+    public function handleUserOrganizationUrl($employeeArray)
     {
         if (key_exists('languageHouseId', $employeeArray)) {
             $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
@@ -466,17 +466,32 @@ class MrcService
             $organizationUrl = null;
         }
 
+        return $organizationUrl;
+    }
+
+    public function handleUserGroups($employeeArray, $resource)
+    {
+        if (key_exists('userGroupIds', $employeeArray)) {
+            foreach ($employeeArray['userGroupIds'] as $userGroupId) {
+                $resource['userGroups'][] = "/groups/$userGroupId";
+            }
+        }
+
+        return $resource;
+    }
+
+    public function createUser(array $employeeArray, array $contact): array
+    {
+        $organizationUrl = $this->handleUserOrganizationUrl($employeeArray);
+
         $resource = [
             'username'     => $employeeArray['email'],
             'person'       => $contact['@id'],
             'password'     => 'ThisIsATemporaryPassword',
             'organization' => $organizationUrl ?? null,
         ];
-        if (key_exists('userGroupIds', $employeeArray)) {
-            foreach ($employeeArray['userGroupIds'] as $userGroupId) {
-                $resource['userGroups'][] = "/groups/$userGroupId";
-            }
-        }
+
+        $resource = $this->handleUserGroups($employeeArray, $resource);
 
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
