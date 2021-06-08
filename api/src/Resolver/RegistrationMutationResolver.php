@@ -108,7 +108,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
         $participant['status'] = 'pending';
-        $return = $this->eduService->saveEavParticipant($participant);
+        return $this->eduService->saveEavParticipant($participant);
     }
 
     public function deleteRegistration(array $input): ?Registration
@@ -136,7 +136,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function acceptRegistration(array $input): Registration
+    public function acceptRegistration(array $input): object
     {
         $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
