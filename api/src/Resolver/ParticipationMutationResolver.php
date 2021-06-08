@@ -57,11 +57,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function createParticipation(Participation $resource): Participation
     {
         $result['result'] = [];
-
-        $aanbiederId = explode('/', $resource->getAanbiederId());
-        $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($aanbiederId)]);
-
-        $learningNeedId = explode('/', $resource->getLearningNeedId());
+        if ($resource->getAanbiederId()) {
+            $aanbiederId = explode('/', $resource->getAanbiederId());
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($aanbiederId)]);
+        }
+        if ($resource->getLearningNeedId()) {
+            $learningNeedId = explode('/', $resource->getLearningNeedId());
+        }
 
         // Transform DTO info to participation body...
         $participation = $this->dtoToParticipation($resource, end($aanbiederId));
@@ -110,15 +112,6 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
 
         return null;
-    }
-
-    public function addMentorToParticipation(array $input): Participation
-    {
-        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
-
-        $result = $this->getParticipationMentor($input);
-
-        return $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']);
     }
 
     public function removeMentorFromParticipation(array $input): Participation
