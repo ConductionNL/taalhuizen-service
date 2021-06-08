@@ -95,6 +95,30 @@ class LearningNeedService
         return $result;
     }
 
+    public function handleLearningNeedParticipants($learningNeed, $result)
+    {
+        if (isset($learningNeed['participants'])) {
+            foreach ($learningNeed['participants'] as $studentUrl) {
+                $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+                if (isset($studentResult['participant'])) {
+                    // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
+                    array_push($result['participants'], $studentResult['participant']['@id']);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function handleDeletionParticipations($learningNeed)
+    {
+        if (isset($learningNeed['participations'])) {
+            foreach ($learningNeed['participations'] as $participationUrl) {
+                $this->participationService->deleteParticipation(null, $participationUrl, true);
+            }
+        }
+    }
+
     public function deleteLearningNeed($id)
     {
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
@@ -103,21 +127,9 @@ class LearningNeedService
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
 
             // Remove this learningNeed from all EAV/edu/participants
-            if (isset($learningNeed['participants'])) {
-                foreach ($learningNeed['participants'] as $studentUrl) {
-                    $studentResult = $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
-                    if (isset($studentResult['participant'])) {
-                        // Add $studentUrl to the $result['participants'] because this is convenient when testing or debugging (mostly for us)
-                        array_push($result['participants'], $studentResult['participant']['@id']);
-                    }
-                }
-            }
+            $result = $this->handleLearningNeedParticipants($learningNeed, $result);
 
-            if (isset($learningNeed['participations'])) {
-                foreach ($learningNeed['participations'] as $participationUrl) {
-                    $this->participationService->deleteParticipation(null, $participationUrl, true);
-                }
-            }
+            $this->handleDeletionParticipations($learningNeed);
 
             // Delete the learningNeed in EAV
             $this->eavService->deleteObject($learningNeed['eavId']);

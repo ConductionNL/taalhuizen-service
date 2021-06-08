@@ -22,9 +22,8 @@ class ParticipationService
         $this->eavService = $eavService;
     }
 
-    public function saveParticipation($participation, $learningNeedId = null, $participationId = null)
+    public function handleGettingParticipation($participationId)
     {
-        // Save the participation in EAV
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
             if (!$this->eavService->hasEavObject(null, 'participations', $participationId)) {
@@ -41,6 +40,14 @@ class ParticipationService
             }
             $participation = $this->eavService->saveObject($participation, 'participations');
         }
+
+        return $participation;
+    }
+
+    public function saveParticipation($participation, $learningNeedId = null, $participationId = null)
+    {
+        // Save the participation in EAV
+        $participation = $this->handleGettingParticipation($participationId);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;
@@ -248,11 +255,8 @@ class ParticipationService
         return $result;
     }
 
-    public function updateParticipationStatus($participation)
+    public function handleParticipationStatus($participation)
     {
-        $result = [];
-
-        // Check what the current status should be
         if ((isset($participation['mentor']) || isset($participation['group']))) {
             $updateParticipation['status'] = 'ACTIVE';
             if (isset($participation['presenceEndDate'])) {
@@ -269,6 +273,16 @@ class ParticipationService
         } else {
             $updateParticipation['status'] = 'REFERRED';
         }
+
+        return $updateParticipation;
+    }
+
+    public function updateParticipationStatus($participation)
+    {
+        $result = [];
+
+        // Check what the current status should be
+        $updateParticipation = $this->handleParticipationStatus($participation);
         // Check if the status needs to be changed
         if ($participation['status'] != $updateParticipation['status']) {
             // Update status
@@ -281,6 +295,19 @@ class ParticipationService
         return $result;
     }
 
+    public function getEmployeeParticipations($mentorUrl)
+    {
+        if ($this->eavService->hasEavObject($mentorUrl)) {
+            $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
+            $employee['participations'] = $getEmployee['participations'];
+        }
+        if (!isset($employee['participations'])) {
+            $employee['participations'] = [];
+        }
+
+        return $employee;
+    }
+
     public function addMentorToParticipation($mentorUrl, $participation)
     {
         $result = [];
@@ -290,13 +317,7 @@ class ParticipationService
         }
 
         // Check if mentor already has an EAV object
-        if ($this->eavService->hasEavObject($mentorUrl)) {
-            $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
-            $employee['participations'] = $getEmployee['participations'];
-        }
-        if (!isset($employee['participations'])) {
-            $employee['participations'] = [];
-        }
+        $employee = $this->getEmployeeParticipations($mentorUrl);
 
         // Save the employee in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $employee['participations'])) {
@@ -625,21 +646,12 @@ class ParticipationService
         $resource->setDetailsGroupFormation($participation['groupFormation']);
         $resource->setDetailsTotalClassHours($participation['totalClassHours']);
         $resource->setDetailsCertificateWillBeAwarded($participation['certificateWillBeAwarded']);
-        if (isset($participation['startDate'])) {
-            $resource->setDetailsStartDate(new \DateTime($participation['startDate']));
-        }
-        if (isset($participation['endDate'])) {
-            $resource->setDetailsEndDate(new \DateTime($participation['endDate']));
-        }
+        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
         $resource->setDetailsEngagements($participation['engagements']);
         $resource->setPresenceEngagements($participation['presenceEngagements']);
-        if (isset($participation['presenceStartDate'])) {
-            $resource->setPresenceStartDate(new \DateTime($participation['presenceStartDate']));
-        }
-        if (isset($participation['presenceEndDate'])) {
-            $resource->setPresenceEndDate(new \DateTime($participation['presenceEndDate']));
-        }
-        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
+
+        //handle dates
+        $this->handleParticipationDates($resource, $participation);
 
         if (isset($learningNeedId)) {
             $resource->setLearningNeedId($learningNeedId);
@@ -649,6 +661,25 @@ class ParticipationService
         $this->entityManager->persist($resource);
 
         return $resource;
+    }
+
+    public function handleParticipationDates($resource, $participation)
+    {
+        if (isset($participation['startDate'])) {
+            $resource->setDetailsStartDate(new \DateTime($participation['startDate']));
+        }
+        if (isset($participation['endDate'])) {
+            $resource->setDetailsEndDate(new \DateTime($participation['endDate']));
+        }
+
+        if (isset($participation['presenceStartDate'])) {
+            $resource->setPresenceStartDate(new \DateTime($participation['presenceStartDate']));
+        }
+        if (isset($participation['presenceEndDate'])) {
+            $resource->setPresenceEndDate(new \DateTime($participation['presenceEndDate']));
+        }
+
+        return $participation;
     }
 
     public function handleResultJson($participation, $learningNeedId = null)
