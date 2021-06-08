@@ -240,6 +240,15 @@ class MrcService
         } else {
             return $employee;
         }
+
+        $employee = $this->handleEducationStartDate($education, $employee);
+        $employee = $this->handleEducationEndDate($education, $employee);
+
+        return $employee;
+    }
+
+    public function handleEducationEndDate($education, $employee)
+    {
         if ($education['endDate']) {
             $employee->setCurrentEducationNoButDidFollow(
                 [
@@ -250,17 +259,24 @@ class MrcService
                 ]
             );
             $employee->setCurrentEducation('NO_BUT_DID_FOLLOW');
-        } elseif ($education['startDate']) {
-            $employee->setCurrentEducationYes(
-                [
-                    'id'                     => $education['id'],
-                    'dateSince'              => $education['endDate'],
-                    'name'                   => $education['name'],
-                    'doesProvideCertificate' => $education['providesCertificate'],
-                ]
-            );
-            $employee->setCurrentEducation('YES');
         }
+
+        return $employee;
+    }
+
+    public function handleEducationStartDate($education, $employee)
+    {
+        if ($education['startDate']) {
+                $employee->setCurrentEducationYes(
+                    [
+                        'id'                     => $education['id'],
+                        'dateSince'              => $education['endDate'],
+                        'name'                   => $education['name'],
+                        'doesProvideCertificate' => $education['providesCertificate'],
+                    ]
+                );
+                $employee->setCurrentEducation('YES');
+            }
 
         return $employee;
     }
