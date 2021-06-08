@@ -267,16 +267,16 @@ class MrcService
     public function handleEducationStartDate($education, $employee)
     {
         if ($education['startDate']) {
-                $employee->setCurrentEducationYes(
-                    [
-                        'id'                     => $education['id'],
-                        'dateSince'              => $education['endDate'],
-                        'name'                   => $education['name'],
-                        'doesProvideCertificate' => $education['providesCertificate'],
-                    ]
-                );
-                $employee->setCurrentEducation('YES');
-            }
+            $employee->setCurrentEducationYes(
+                [
+                    'id'                     => $education['id'],
+                    'dateSince'              => $education['endDate'],
+                    'name'                   => $education['name'],
+                    'doesProvideCertificate' => $education['providesCertificate'],
+                ]
+            );
+            $employee->setCurrentEducation('YES');
+        }
 
         return $employee;
     }
