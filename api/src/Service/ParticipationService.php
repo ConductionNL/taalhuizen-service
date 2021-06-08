@@ -349,6 +349,7 @@ class ParticipationService
         }
         // Update eav/participation to remove the EAV/mrc/employee from it
         $updateParticipation['mentor'] = null;
+
         return $this->updateParticipation($participation);
     }
 
@@ -388,6 +389,7 @@ class ParticipationService
         if (isset($participation['mentor']) || isset($participation['group'])) {
             return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
         }
+
         return false;
     }
 
@@ -407,6 +409,7 @@ class ParticipationService
                 $participant = '/participants/'.$participant['id'];
             }
         }
+
         return $group['participations'];
     }
 
@@ -435,6 +438,7 @@ class ParticipationService
         }
         // Update eav/participation to remove the EAV/edu/group from it
         $updateParticipation['group'] = null;
+
         return $this->updateParticipation($participation);
     }
 
@@ -446,6 +450,7 @@ class ParticipationService
         if (!$this->eavService->hasEavObject($groupUrl)) {
             return ['errorMessage'=>'Invalid request, '.$groupUrl.' is not an existing eav/edu/group!'];
         }
+
         return false;
     }
 
@@ -454,6 +459,7 @@ class ParticipationService
         if (!isset($participation['group'])) {
             return ['errorMessage'=>'Invalid request, this participation has no group!'];
         }
+
         return false;
     }
 
@@ -462,6 +468,7 @@ class ParticipationService
         if ($participation['group'] != $groupUrl) {
             return ['errorMessage'=>'Invalid request, this participation has a different group!'];
         }
+
         return false;
     }
 
@@ -495,6 +502,7 @@ class ParticipationService
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             $result['errorMessage'] = 'Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.';
         }
+
         return false;
     }
 
@@ -503,6 +511,7 @@ class ParticipationService
         if (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
         }
+
         return false;
     }
 
@@ -511,6 +520,7 @@ class ParticipationService
         if (isset($participation['application']) && $participation['application'] == 'OTHER' && !isset($participation['applicationOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
         }
+
         return false;
     }
 
@@ -519,6 +529,7 @@ class ParticipationService
         if (isset($participation['level']) && $participation['level'] == 'OTHER' && !isset($participation['levelOther'])) {
             $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
         }
+
         return false;
     }
 
@@ -527,6 +538,7 @@ class ParticipationService
         if (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
             $result['errorMessage'] = 'Invalid request, aanbiederId is not an existing cc/organization!';
         }
+
         return false;
     }
 
@@ -535,6 +547,7 @@ class ParticipationService
         if (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
             $result['errorMessage'] = 'Invalid request, participationId is not an existing eav/participation!';
         }
+
         return false;
     }
 
@@ -543,6 +556,7 @@ class ParticipationService
         if (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId is not an existing eav/learning_need!';
         }
+
         return false;
     }
 
@@ -644,29 +658,29 @@ class ParticipationService
             $resource['status'] = $participation['status'];
         }
         $resource = [
-            'aanbiederId' => $participation['aanbiederId'],
-            'aanbiederName' => $participation['aanbiederName'],
-            'aanbiederNote' => $participation['aanbiederNote'],
-            'offerName' => $participation['offerName'],
-            'offerCourse' => $participation['offerCourse'],
-            'outComesGoal' => $participation['goal'],
-            'outComesTopic' => $participation['topic'],
-            'outComesTopicOther' => $participation['topicOther'],
-            'outComesApplication' => $participation['application'],
-            'outComesApplicationOther' => $participation['applicationOther'],
-            'outComesLevel' => $participation['level'],
-            'outComesLevelOther' => $participation['levelOther'],
-            'detailsIsFormal' => $participation['isFormal'],
-            'detailsGroupFormation' => $participation['groupFormation'],
-            'detailsTotalClassHours' => $participation['totalClassHours'],
+            'aanbiederId'                     => $participation['aanbiederId'],
+            'aanbiederName'                   => $participation['aanbiederName'],
+            'aanbiederNote'                   => $participation['aanbiederNote'],
+            'offerName'                       => $participation['offerName'],
+            'offerCourse'                     => $participation['offerCourse'],
+            'outComesGoal'                    => $participation['goal'],
+            'outComesTopic'                   => $participation['topic'],
+            'outComesTopicOther'              => $participation['topicOther'],
+            'outComesApplication'             => $participation['application'],
+            'outComesApplicationOther'        => $participation['applicationOther'],
+            'outComesLevel'                   => $participation['level'],
+            'outComesLevelOther'              => $participation['levelOther'],
+            'detailsIsFormal'                 => $participation['isFormal'],
+            'detailsGroupFormation'           => $participation['groupFormation'],
+            'detailsTotalClassHours'          => $participation['totalClassHours'],
             'detailsCertificateWillBeAwarded' => $participation['certificateWillBeAwarded'],
-            'detailsStartDate' => $participation['startDate'],
-            'detailsEndDate' => $participation['endDate'],
-            'detailsEngagements' => $participation['engagements'],
-            'presenceEngagements' => $participation['presenceEngagements'],
-            'presenceStartDate' => $participation['presenceStartDate'],
-            'presenceEndDate' => $participation['presenceEndDate'],
-            'presenceEndParticipationReason' => $participation['presenceEndParticipationReason'],
+            'detailsStartDate'                => $participation['startDate'],
+            'detailsEndDate'                  => $participation['endDate'],
+            'detailsEngagements'              => $participation['engagements'],
+            'presenceEngagements'             => $participation['presenceEngagements'],
+            'presenceStartDate'               => $participation['presenceStartDate'],
+            'presenceEndDate'                 => $participation['presenceEndDate'],
+            'presenceEndParticipationReason'  => $participation['presenceEndParticipationReason'],
         ];
 
         if (isset($learningNeedId)) {
