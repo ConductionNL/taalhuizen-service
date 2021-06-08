@@ -319,14 +319,38 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    //w.i.p.
     private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
     {
         $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
+        $person = $this->getPersonEmailsFromContactDetails($person, $contactDetails, $personName);
+        $person = $this->getPersonTelephonesFromContactDetails($person, $contactDetails, $personName);
+        $person = $this->getPersonAdressesFromContactDetails($person, $contactDetails, $personName);
+        if (isset($updatePerson)) {
+            $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
+        }
+
+        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
+        if (isset($contactDetails['contactPreference'])) {
+            $person['contactPreference'] = $contactDetails['contactPreference'];
+        } elseif ($contactDetails['contactPreferenceOther']) {
+            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
+        }
+
+        return $person;
+    }
+
+    private function getPersonEmailsFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         if (isset($contactDetails['email'])) {
             $person['emails'][0]['name'] = 'Email of '.$personName;
             $person['emails'][0]['email'] = $contactDetails['email'];
         }
+
+        return $person;
+    }
+
+    private function getPersonTelephonesFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         if (isset($contactDetails['telephone'])) {
             $person['telephones'][0]['name'] = 'Telephone of '.$personName;
             $person['telephones'][0]['telephone'] = $contactDetails['telephone'];
@@ -335,6 +359,12 @@ class StudentMutationResolver implements MutationResolverInterface
             $person['telephones'][1]['name'] = 'Telephone of the contactPerson of '.$personName;
             $person['telephones'][1]['telephone'] = $contactDetails['contactPersonTelephone'];
         }
+
+        return $person;
+    }
+
+    private function getPersonAdressesFromContactDetails(array $person, array $contactDetails, $personName): array
+    {
         $person['addresses'][0]['name'] = 'Address of '.$personName;
         if (isset($contactDetails['street'])) {
             $person['addresses'][0]['street'] = $contactDetails['street'];
@@ -351,45 +381,49 @@ class StudentMutationResolver implements MutationResolverInterface
         if (isset($contactDetails['houseNumberSuffix'])) {
             $person['addresses'][0]['houseNumberSuffix'] = $contactDetails['houseNumberSuffix'];
         }
-        if (isset($updatePerson)) {
-            if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
-                //merge person emails into updatePerson emails and update the updatePerson email
-                $email = array_merge($updatePerson['emails'][0], $person['emails'][0]);
-                $this->commonGroundService->updateResource($email, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'emails', 'id' => $updatePerson['emails'][0]['id']]));
 
-                //unset person emails
-                unset($person['emails']);
-            }
-            if (isset($person['telephones']) && isset($updatePerson['telephones'])) {
-                if (isset($person['telephones'][0]) && isset($updatePerson['telephones'][0]['id'])) {
-                    //merge person telephones into updatePerson telephones and update the updatePerson telephone
-                    $telephone = array_merge($updatePerson['telephones'][0], $person['telephones'][0]);
-                    $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][0]['id']]));
-                }
-                if (isset($person['telephones'][1]) && isset($updatePerson['telephones'][1]['id'])) {
-                    //merge person telephones into updatePerson telephones and update the updatePerson telephone
-                    $telephone = array_merge($updatePerson['telephones'][1], $person['telephones'][1]);
-                    $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][1]['id']]));
-                }
-                //unset person emails
-                unset($person['telephones']);
-            }
-            if (isset($person['addresses'][0]) && isset($updatePerson['addresses'][0]['id'])) {
-                //merge person addresses into updatePerson addresses and update the updatePerson address
-                $address = array_merge($updatePerson['addresses'][0], $person['addresses'][0]);
-                $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['addresses'][0]['id']]));
+        return $person;
+    }
 
-                //unset person addresses
-                unset($person['addresses']);
-            }
+    private function updatePersonContactDetailsSubobjects(array $person, array $updatePerson): array
+    {
+        if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
+            //merge person emails into updatePerson emails and update the updatePerson email
+            $email = array_merge($updatePerson['emails'][0], $person['emails'][0]);
+            $this->commonGroundService->updateResource($email, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'emails', 'id' => $updatePerson['emails'][0]['id']]));
+
+            //unset person emails
+            unset($person['emails']);
+        }
+        if (isset($person['telephones']) && isset($updatePerson['telephones'])) {
+            $person = $this->updatePersonContactDetailsTelephones($person, $updatePerson);
+        }
+        if (isset($person['addresses'][0]) && isset($updatePerson['addresses'][0]['id'])) {
+            //merge person addresses into updatePerson addresses and update the updatePerson address
+            $address = array_merge($updatePerson['addresses'][0], $person['addresses'][0]);
+            $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['addresses'][0]['id']]));
+
+            //unset person addresses
+            unset($person['addresses']);
         }
 
-        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
-        if (isset($contactDetails['contactPreference'])) {
-            $person['contactPreference'] = $contactDetails['contactPreference'];
-        } elseif ($contactDetails['contactPreferenceOther']) {
-            $person['contactPreference'] = $contactDetails['contactPreferenceOther'];
+        return $person;
+    }
+
+    private function updatePersonContactDetailsTelephones(array $person, array $updatePerson): array
+    {
+        if (isset($person['telephones'][0]) && isset($updatePerson['telephones'][0]['id'])) {
+            //merge person telephones into updatePerson telephones and update the updatePerson telephone
+            $telephone = array_merge($updatePerson['telephones'][0], $person['telephones'][0]);
+            $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][0]['id']]));
         }
+        if (isset($person['telephones'][1]) && isset($updatePerson['telephones'][1]['id'])) {
+            //merge person telephones into updatePerson telephones and update the updatePerson telephone
+            $telephone = array_merge($updatePerson['telephones'][1], $person['telephones'][1]);
+            $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][1]['id']]));
+        }
+        //unset person emails
+        unset($person['telephones']);
 
         return $person;
     }
@@ -684,43 +718,13 @@ class StudentMutationResolver implements MutationResolverInterface
 
     private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
     {
-        $employee = [
-            'person' => $personUrl,
-        ];
-
-        $lastEducation = $followingEducation = $course = null;
-        if (isset($updateEmployee['educations'])) {
-            foreach ($updateEmployee['educations'] as $education) {
-                switch ($education['description']) {
-                    case 'lastEducation':
-                        if (!isset($lastEducation)) {
-                            $lastEducation = $education;
-                        }
-                        break;
-                    case 'followingEducationNo':
-                        if (!isset($followingEducation)) {
-                            $followingEducation = $education;
-                        }
-                        break;
-                    case 'followingEducationYes':
-                        if (!isset($followingEducation)) {
-                            $followingEducation = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                    case 'course':
-                        if (!isset($course)) {
-                            $course = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
-                        }
-                        break;
-                }
-            }
-        }
-
+        $employee = ['person' => $personUrl];
+        $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $lastEducation, $followingEducation);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $course);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $educations['course']);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);

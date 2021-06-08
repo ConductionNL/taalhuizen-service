@@ -146,7 +146,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         $participant['status'] = 'accepted';
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
+        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['employee'], $student['registrar'], true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
