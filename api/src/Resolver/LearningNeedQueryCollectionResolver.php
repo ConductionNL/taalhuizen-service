@@ -32,12 +32,9 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
         if (!key_exists('studentId', $context['args'])) {
             throw new Exception('The studentId was not specified');
         }
-
         $studentId = $this->handleStudentId($context);
-
         // Get the learningNeeds of this student from EAV
         $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
-
         $collection = new ArrayCollection();
         if (isset($result['learningNeeds'])) {
             // Now put together the expected result for Lifely:

@@ -646,21 +646,12 @@ class ParticipationService
         $resource->setDetailsGroupFormation($participation['groupFormation']);
         $resource->setDetailsTotalClassHours($participation['totalClassHours']);
         $resource->setDetailsCertificateWillBeAwarded($participation['certificateWillBeAwarded']);
-        if (isset($participation['startDate'])) {
-            $resource->setDetailsStartDate(new \DateTime($participation['startDate']));
-        }
-        if (isset($participation['endDate'])) {
-            $resource->setDetailsEndDate(new \DateTime($participation['endDate']));
-        }
+        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
         $resource->setDetailsEngagements($participation['engagements']);
         $resource->setPresenceEngagements($participation['presenceEngagements']);
-        if (isset($participation['presenceStartDate'])) {
-            $resource->setPresenceStartDate(new \DateTime($participation['presenceStartDate']));
-        }
-        if (isset($participation['presenceEndDate'])) {
-            $resource->setPresenceEndDate(new \DateTime($participation['presenceEndDate']));
-        }
-        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
+
+        //handle dates
+        $this->handleParticipationDates($resource, $participation);
 
         if (isset($learningNeedId)) {
             $resource->setLearningNeedId($learningNeedId);
@@ -670,6 +661,25 @@ class ParticipationService
         $this->entityManager->persist($resource);
 
         return $resource;
+    }
+
+    public function handleParticipationDates($resource, $participation)
+    {
+        if (isset($participation['startDate'])) {
+            $resource->setDetailsStartDate(new \DateTime($participation['startDate']));
+        }
+        if (isset($participation['endDate'])) {
+            $resource->setDetailsEndDate(new \DateTime($participation['endDate']));
+        }
+
+        if (isset($participation['presenceStartDate'])) {
+            $resource->setPresenceStartDate(new \DateTime($participation['presenceStartDate']));
+        }
+        if (isset($participation['presenceEndDate'])) {
+            $resource->setPresenceEndDate(new \DateTime($participation['presenceEndDate']));
+        }
+
+        return $participation;
     }
 
     public function handleResultJson($participation, $learningNeedId = null)
