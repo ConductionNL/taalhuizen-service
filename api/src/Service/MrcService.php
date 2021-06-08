@@ -35,7 +35,7 @@ class MrcService
         $this->eavService = $EAVService;
     }
 
-    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null, ?array $additionalQuery = []): ArrayCollection
+    public function getEmployees(?string $languageHouseId = null, ?string $providerId = null): ArrayCollection
     {
         $employees = new ArrayCollection();
         if ($languageHouseId) {
