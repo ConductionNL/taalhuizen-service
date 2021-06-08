@@ -252,12 +252,12 @@ class StudentService
             try {
                 //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                if ($this->eavService->hasEavObject($participationUrl)) {
-                    // Get eav/Participation
-                    $participation = $this->eavService->getObject('participations', $participationUrl);
-                    //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
-                    if ($participation['status'] == $status && isset($participation['learningNeed'])) {
-                        $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
-                    }
+                // Get eav/Participation
+                $participation = $this->eavService->getObject('participations', $participationUrl);
+                //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
+                if ($participation['status'] == $status && isset($participation['learningNeed'])) {
+                    $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
+                }
 //                    else {
 //                        $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
 //                    }
@@ -464,8 +464,7 @@ class StudentService
                 'referringOrganizationOther' => null,
                 'email'                      => $registrarPerson['emails'][0]['email'] ?? null,
             ];
-        }
-        elseif (isset($participant['referredBy'])) {
+        } elseif (isset($participant['referredBy'])) {
             $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
         }
 
