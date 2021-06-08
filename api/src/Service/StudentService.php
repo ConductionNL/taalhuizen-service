@@ -15,27 +15,18 @@ class StudentService
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
-    private CCService $ccService;
-    private EDUService $eduService;
-    private MrcService $mrcService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        EAVService $eavService,
-        CCService $ccService,
-        EDUService $eduService,
-        MrcService $mrcService
+        EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
-        $this->ccService = $ccService;
-        $this->eduService = $eduService;
-        $this->mrcService = $mrcService;
     }
 
-    public function saveStudent(array $person, array $participant, $languageHouseId = null, $languageHouseUrl = null)
+    public function saveStudent(array $student, $languageHouseId = null): array
     {
         // todo use this to create and update the cc/person, edu/participant etc. instead of in the resolver
 
@@ -43,14 +34,11 @@ class StudentService
             $person['organization'] = '/organizations/'.$languageHouseId;
         }
 
-        $participant['person'] = $person['@id'];
+        $student['participant']['person'] = $student['person']['@id'];
 
         //todo: same for mrc and memo objects...
 
-        return [
-            'person'      => $person,
-            'participant' => $participant,
-        ];
+        return $student;
     }
 
     public function deleteStudent($id)
@@ -296,9 +284,9 @@ class StudentService
         return $collection;
     }
 
-    public function checkStudentValues($input, $languageHouseUrl = null)
+    public function checkStudentValues($input)
     {
-        if (isset($languageHouseUrl) and !$this->commonGroundService->isResource($languageHouseUrl)) {
+        if (isset($input['languageHouseUrl']) and !$this->commonGroundService->isResource($input['languageHouseUrl'])) {
             throw new Exception('Invalid request, languageHouseId is not an existing cc/organization!');
         }
 

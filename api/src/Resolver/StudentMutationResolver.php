@@ -67,23 +67,23 @@ class StudentMutationResolver implements MutationResolverInterface
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
-            $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+            $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         } else {
             throw new \Exception('languageHouseId not given');
         }
 
         // Do some checks and error handling
-        $this->studentService->checkStudentValues($input, $languageHouseUrl);
+        $this->studentService->checkStudentValues($input);
 
         //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
 
         // Transform DTO info to cc/person body
-        $person = $this->inputToPerson($input, $languageHouseId);
+        $person = $this->inputToPerson($input);
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person);
 
         // Transform DTO info to edu/participant body
-        $participant = $this->inputToParticipant($input, $person['@id'], $languageHouseUrl);
+        $participant = $this->inputToParticipant($input, $person['@id']);
         // Save edu/participant
         $participant = $this->eduService->saveEavParticipant($participant);
 
@@ -92,7 +92,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $employee = $this->mrcService->createEmployee($employee, true);
 
         // Then save memos
-        $memos = $this->saveMemos($input, $person['@id'], $languageHouseUrl);
+        $memos = $this->saveMemos($input, $person['@id']);
         if (isset($memos['availabilityMemo']['description'])) {
             $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
         }
@@ -101,7 +101,8 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee]);
+        $registrar = ['registrarOrganization' => null, 'registrarPerson' => null, 'registrarMemo' => null];
+        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'registrar' => $registrar]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -121,7 +122,7 @@ class StudentMutationResolver implements MutationResolverInterface
         //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
 
         // Transform DTO info to cc/person body
-        $person = $this->inputToPerson($input, null, $student['person']);
+        $person = $this->inputToPerson($input, $student['person']);
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);
 
@@ -144,7 +145,8 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Now put together the expected result in $result['result'] for Lifely:
-        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee]);
+        $registrar = ['registrarOrganization' => null, 'registrarPerson' => null, 'registrarMemo' => null];
+        $resourceResult = $this->studentService->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'registrar' => $registrar]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         $this->entityManager->persist($resourceResult);
@@ -185,7 +187,7 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
     //todo: should be done in StudentService, for examples how to do this: see StudentService->saveStudent or TestResultService->saveTestResult
-    private function saveMemos(array $input, string $ccPersonUrl, string $languageHouseUrl = null)
+    private function saveMemos(array $input, string $ccPersonUrl)
     {
         $availabilityMemo = [];
         $motivationMemo = [];
@@ -198,7 +200,7 @@ class StudentMutationResolver implements MutationResolverInterface
                     $availabilityMemo = $availabilityMemos[0];
                 }
             }
-            $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $languageHouseUrl));
+            $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
             $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -210,7 +212,7 @@ class StudentMutationResolver implements MutationResolverInterface
                     $motivationMemo = $motivationMemos[0];
                 }
             }
-            $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $languageHouseUrl));
+            $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
             $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -244,10 +246,10 @@ class StudentMutationResolver implements MutationResolverInterface
         return $memo;
     }
 
-    private function inputToPerson(array $input, string $languageHouseId = null, $updatePerson = null)
+    private function inputToPerson(array $input, $updatePerson = null): array
     {
-        if (isset($languageHouseId)) {
-            $person['organization'] = '/organizations/'.$languageHouseId;
+        if (isset($input['languageHouseId'])) {
+            $person['organization'] = '/organizations/'.$input['languageHouseId'];
         } else {
             $person = [];
         }
@@ -614,7 +616,7 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function inputToParticipant(array $input, string $ccPersonUrl = null, string $languageHouseUrl = null): array
+    private function inputToParticipant(array $input, string $ccPersonUrl = null): array
     {
         // Add cc/person to this edu/participant
         if (isset($ccPersonUrl)) {
@@ -633,12 +635,12 @@ class StudentMutationResolver implements MutationResolverInterface
             $participant['writingTestResult'] = $input['writingTestResult'];
         }
 
-        if (isset($languageHouseUrl)) {
-            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'];
+        if (isset($input['languageHouseUrl'])) {
+            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $input['languageHouseUrl']])['hydra:member'];
             if (count($programs) > 0) {
                 $participant['program'] = '/programs/'.$programs[0]['id'];
             } else {
-                throw new Exception('Invalid request, '.$languageHouseUrl.' does not have an existing program (edu/program)!');
+                throw new Exception('Invalid request, '.$input['languageHouseUrl'].' does not have an existing program (edu/program)!');
             }
         }
 

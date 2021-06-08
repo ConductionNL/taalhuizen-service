@@ -735,20 +735,18 @@ class MrcService
 
     public function createEmployeeResource(array $employeeArray, array $contact, $employee, $employeeRaw)
     {
-        $resource = [
-            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] || null,
+        return [
+            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
-            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId() || null,
-            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked() || false,
-            'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia() || null,
-            'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates() || null,
+            'provider'               => (key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : isset($employee)) ? $employee->getProviderId() : null,
+            'hasPoliceCertificate'   => (key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : isset($employee)) ? $employee->getIsVOGChecked() : false,
+            'referrer'               => (key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : isset($employee)) ? $employee->getGotHereVia() : null,
+            'relevantCertificates'   => (key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : isset($employee)) ? $employee->getOtherRelevantCertificates() : null,
             'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
             'lastJob'                => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
             'dayTimeActivities'      => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
             'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
             'speakingLevel'          => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
         ];
-
-        return $resource;
     }
 }
