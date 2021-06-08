@@ -19,33 +19,24 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RegistrationMutationResolver implements MutationResolverInterface
 {
-    private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private RegistrationService $registrationService;
     private CCService $ccService;
     private StudentService $studentService;
     private EDUService $eduService;
-    private ParticipationService $participationService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         RegistrationService $registrationService,
         CCService $ccService,
         StudentService $studentService,
-        EDUService $eduService,
-        ParticipationService $participationService
+        EDUService $eduService
     ) {
-        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->registrationService = $registrationService;
         $this->ccService = $ccService;
         $this->studentService = $studentService;
         $this->eduService = $eduService;
-        $this->participationService = $participationService;
     }
 
     /**

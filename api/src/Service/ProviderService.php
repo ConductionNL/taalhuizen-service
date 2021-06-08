@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ProviderService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private EDUService $eduService;
     private EAVService $eavService;
@@ -18,13 +17,11 @@ class ProviderService
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EDUService $eduService,
         EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eduService = $eduService;
         $this->eavService = $eavService;
     }

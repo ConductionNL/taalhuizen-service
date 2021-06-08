@@ -19,7 +19,6 @@ class StudentService
     private CCService $ccService;
     private EDUService $eduService;
     private MrcService $mrcService;
-    private SerializerInterface $serializer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -28,7 +27,6 @@ class StudentService
         CCService $ccService,
         EDUService $eduService,
         MrcService $mrcService,
-        SerializerInterface $serializer
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -36,7 +34,6 @@ class StudentService
         $this->ccService = $ccService;
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
-        $this->serializer = $serializer;
     }
 
     public function saveStudent(array $person, array $participant, $languageHouseId = null, $languageHouseUrl = null)

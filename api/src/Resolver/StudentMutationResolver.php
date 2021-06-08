@@ -24,7 +24,6 @@ class StudentMutationResolver implements MutationResolverInterface
     private EDUService $eduService;
     private MrcService $mrcService;
     private EAVService $eavService;
-    private SerializerInterface $serializer;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -33,8 +32,7 @@ class StudentMutationResolver implements MutationResolverInterface
         CCService $ccService,
         EDUService $eduService,
         MrcService $mrcService,
-        EAVService $eavService,
-        SerializerInterface $serializer
+        EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
@@ -43,7 +41,6 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->eduService = $eduService;
         $this->mrcService = $mrcService;
         $this->eavService = $eavService;
-        $this->serializer = $serializer;
     }
 
     /**

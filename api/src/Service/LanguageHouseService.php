@@ -12,25 +12,19 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class LanguageHouseService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private EDUService $eduService;
-    private MrcService $mrcService;
     private EAVService $eavService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EDUService $eduService,
-        MrcService $mrcService,
         EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eduService = $eduService;
-        $this->mrcService = $mrcService;
         $this->eavService = $eavService;
     }
 
