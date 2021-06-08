@@ -8,8 +8,6 @@ use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use phpDocumentor\Reflection\Types\False_;
-use Ramsey\Uuid\Uuid;
 
 class ParticipationMutationResolver implements MutationResolverInterface
 {
@@ -120,6 +118,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
 
         $result = $this->getParticipationMentor($input);
+
         return $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']);
     }
 
@@ -128,6 +127,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
 
         $result = $this->getParticipationMentor($input);
+
         return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
     }
 
@@ -186,6 +186,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
 
         $result = $this->getParticipationGroup($input);
+
         return $this->participationService->addGroupToParticipation($groupUrl, $result['participation']);
     }
 
@@ -194,6 +195,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
 
         $result = $this->getParticipationGroup($input);
+
         return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
     }
 
@@ -234,7 +236,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $checkParticipation = $this->participationService->getParticipation($participationId);
 
         if (!isset($checkParticipation['participation'][$type])) {
-            throw new Exception('Warning, this participation has no ' . $type . '!');
+            throw new Exception('Warning, this participation has no '.$type.'!');
         }
 
         return $this->participationService->saveParticipation($result['participation'], null, $participationId);
@@ -277,25 +279,25 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         // Get all info from the dto for creating a Participation and return the body for this
         return [
-            'aanbiederId' => $resource->getAanbiederId() ? $aanbiederId : null,
-            'aanbiederName' => $resource->getAanbiederName() ?? null,
-            'aanbiederNote' => $resource->getAanbiederNote() ?? null,
-            'offerName' => $resource->getOfferName() ?? null,
-            'offerCourse' => $resource->getOfferCourse() ?? null,
-            'goal' => $resource->getOutComesGoal() ?? null,
-            'topic' => $resource->getOutComesTopic() ?? null,
-            'topicOther' => $resource->getOutComesTopicOther() ?? null,
-            'application' => $resource->getOutComesApplication() ?? null,
-            'applicationOther' => $resource->getOutComesApplicationOther() ?? null,
-            'level' => $resource->getOutComesLevel() ?? null,
-            'levelOther' => $resource->getOutComesLevelOther() ?? null,
-            'isFormal' => $resource->getDetailsIsFormal() ?? null,
-            'groupFormation' => $resource->getDetailsGroupFormation() ?? null,
-            'totalClassHours' => $resource->getDetailsTotalClassHours() ?? null,
+            'aanbiederId'              => $resource->getAanbiederId() ? $aanbiederId : null,
+            'aanbiederName'            => $resource->getAanbiederName() ?? null,
+            'aanbiederNote'            => $resource->getAanbiederNote() ?? null,
+            'offerName'                => $resource->getOfferName() ?? null,
+            'offerCourse'              => $resource->getOfferCourse() ?? null,
+            'goal'                     => $resource->getOutComesGoal() ?? null,
+            'topic'                    => $resource->getOutComesTopic() ?? null,
+            'topicOther'               => $resource->getOutComesTopicOther() ?? null,
+            'application'              => $resource->getOutComesApplication() ?? null,
+            'applicationOther'         => $resource->getOutComesApplicationOther() ?? null,
+            'level'                    => $resource->getOutComesLevel() ?? null,
+            'levelOther'               => $resource->getOutComesLevelOther() ?? null,
+            'isFormal'                 => $resource->getDetailsIsFormal() ?? null,
+            'groupFormation'           => $resource->getDetailsGroupFormation() ?? null,
+            'totalClassHours'          => $resource->getDetailsTotalClassHours() ?? null,
             'certificateWillBeAwarded' => $resource->getDetailsCertificateWillBeAwarded() ?? null,
-            'startDate' => $resource->getDetailsStartDate() ?? null,
-            'endDate' => $resource->getDetailsEndDate() ?? null,
-            'engagements' => $resource->getDetailsEngagements() ?? null,
+            'startDate'                => $resource->getDetailsStartDate() ?? null,
+            'endDate'                  => $resource->getDetailsEndDate() ?? null,
+            'engagements'              => $resource->getDetailsEngagements() ?? null,
         ];
     }
 
@@ -303,27 +305,27 @@ class ParticipationMutationResolver implements MutationResolverInterface
     {
         // Get all info from the input array for updating a Participation and return the body for this
         return [
-            'aanbiederId' => $input['aanbiederId'] ?? null,
-            'aanbiederName' => $input['aanbiederName'] ?? null,
-            'aanbiederNote' => $input['aanbiederNote'] ?? null,
-            'offerName' => $input['offerName'] ?? null,
-            'offerCourse' => $input['offerCourse'] ?? null,
-            'goal' => $input['outComesGoal'] ?? null,
-            'topic' => $input['outComesTopic'] ?? null,
-            'topicOther' => $input['outComesTopicOther'] ?? null,
-            'application' => $input['outComesApplication'] ?? null,
-            'applicationOther' => $input['outComesApplicationOther'] ?? null,
-            'level' => $input['outComesLevel'] ?? null,
-            'levelOther' => $input['outComesLevelOther'] ?? null,
-            'isFormal' => $input['detailsIsFormal'] ?? null,
-            'groupFormation' => $input['detailsGroupFormation'] ?? null,
-            'totalClassHours' => $input['detailsTotalClassHours'] ?? null,
-            'certificateWillBeAwarded' => $input['detailsCertificateWillBeAwarded'] ?? null,
-            'startDate' => $input['detailsStartDate'] ?? null,
-            'endDate' => $input['detailsEndDate'] ?? null,
-            'engagements' => $input['detailsEngagements'] ?? null,
-            'presenceStartDate' => $input['presenceStartDate'] ?? null,
-            'presenceEndDate' => $input['presenceEndDate'] ?? null,
+            'aanbiederId'                    => $input['aanbiederId'] ?? null,
+            'aanbiederName'                  => $input['aanbiederName'] ?? null,
+            'aanbiederNote'                  => $input['aanbiederNote'] ?? null,
+            'offerName'                      => $input['offerName'] ?? null,
+            'offerCourse'                    => $input['offerCourse'] ?? null,
+            'goal'                           => $input['outComesGoal'] ?? null,
+            'topic'                          => $input['outComesTopic'] ?? null,
+            'topicOther'                     => $input['outComesTopicOther'] ?? null,
+            'application'                    => $input['outComesApplication'] ?? null,
+            'applicationOther'               => $input['outComesApplicationOther'] ?? null,
+            'level'                          => $input['outComesLevel'] ?? null,
+            'levelOther'                     => $input['outComesLevelOther'] ?? null,
+            'isFormal'                       => $input['detailsIsFormal'] ?? null,
+            'groupFormation'                 => $input['detailsGroupFormation'] ?? null,
+            'totalClassHours'                => $input['detailsTotalClassHours'] ?? null,
+            'certificateWillBeAwarded'       => $input['detailsCertificateWillBeAwarded'] ?? null,
+            'startDate'                      => $input['detailsStartDate'] ?? null,
+            'endDate'                        => $input['detailsEndDate'] ?? null,
+            'engagements'                    => $input['detailsEngagements'] ?? null,
+            'presenceStartDate'              => $input['presenceStartDate'] ?? null,
+            'presenceEndDate'                => $input['presenceEndDate'] ?? null,
             'presenceEndParticipationReason' => $input['presenceEndParticipationReason'] ?? null,
         ];
     }
