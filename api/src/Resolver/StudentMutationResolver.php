@@ -191,6 +191,7 @@ class StudentMutationResolver implements MutationResolverInterface
     {
         $availabilityMemo = [];
         $motivationMemo = [];
+        $input['languageHouseUrl'] ?? $input['languageHouseUrl'] = null;
 
         if (isset($input['availabilityDetails'])) {
             if (isset($input['id'])) {

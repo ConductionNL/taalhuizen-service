@@ -226,6 +226,7 @@ class EDUService
     public function convertGroupObject(array $group, $aanbiederId = null): Group
     {
         $resource = new Group();
+        $resource->setAanbiederId($aanbiederId ?? $this->commonGroundService->getUuidFromUrl($group['course']['organization']));
         $resource->setGroupId($group['id']);
         $resource->setName($group['name']);
         $resource = $this->setGroupCourseDetails($group, $resource);
@@ -256,9 +257,7 @@ class EDUService
     {
         $group = $this->eavService->getObject('groups', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
 
-        $result = $this->convertGroupObject($group);
-
-        return $result;
+        return $this->convertGroupObject($group);
     }
 
     public function getGroups(?array $query = []): array

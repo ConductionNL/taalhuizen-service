@@ -64,7 +64,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!isset($result['errorMessage'])) {
             $result = array_merge($result, $this->makeGroup($course, $result['group']));
 
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $group['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
@@ -92,7 +92,7 @@ class GroupMutationResolver implements MutationResolverInterface
         if (!isset($result['errorMessage'])) {
             $result = array_merge($result, $this->makeGroup($course, $result['group'], $id));
 
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $groupArray['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
@@ -147,13 +147,11 @@ class GroupMutationResolver implements MutationResolverInterface
         $course['organization'] = $organization['@id'];
         if ($this->eduService->hasProgram($organization)) {
             $program = $this->eduService->getProgram($organization);
-            $course['programs'][0] = $program;
+            $course['programs'][0] = '/programs/'.$program['id'];
         }
         $course['additionalType'] = $group['typeCourse'];
         $course['timeRequired'] = (string) $group['totalClassHours'];
-        $course = $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
-
-        return $course;
+        return $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
     }
 
     public function makeGroup($course, $group, $groupId = null)
