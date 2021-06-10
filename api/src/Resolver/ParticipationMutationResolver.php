@@ -162,7 +162,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     public function setParticipationId(array $input)
     {
-        $participationId = explode('/', $input['participationId']);
+        if (isset($input['participationId'])) {
+            $id = $input['participationId'];
+        } else {
+            $id = $input['id'];
+        }
+        $participationId = explode('/', $id);
         $participationId = $this->isArray($participationId);
 
         return $participationId;
@@ -171,7 +176,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function setAanbiederId(?array $input, ?Participation $resource = null)
     {
         if ($resource) {
-            $aanbiederId = explode('/', $resource->setAanbiederId());
+            $aanbiederId = explode('/', $resource->getAanbiederId());
         } else {
             $aanbiederId = explode('/', $input['aanbiederId']);
         }
@@ -188,7 +193,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $groupId;
     }
 
-    public function isArray(string $id)
+    public function isArray($id)
     {
         if (is_array($id)) {
             $id = end($id);
