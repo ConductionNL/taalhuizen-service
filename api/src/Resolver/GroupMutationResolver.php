@@ -151,6 +151,7 @@ class GroupMutationResolver implements MutationResolverInterface
         }
         $course['additionalType'] = $group['typeCourse'];
         $course['timeRequired'] = (string) $group['totalClassHours'];
+
         return $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
     }
 

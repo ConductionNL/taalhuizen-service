@@ -171,6 +171,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
             $id = $input['id'];
         }
         $participationId = explode('/', $id);
+
         return $this->isArray($participationId);
     }
 
@@ -189,6 +190,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function setGroupId(array $input)
     {
         $groupId = explode('/', $input['groupId']);
+
         return $this->isArray($groupId);
     }
 
