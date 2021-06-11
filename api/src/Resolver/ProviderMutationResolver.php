@@ -73,6 +73,9 @@ class ProviderMutationResolver implements MutationResolverInterface
     public function deleteProvider(array $input): ?Provider
     {
         $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
+        }
 
         //delete userGroups
         $this->ucService->deleteUserGroups($id);

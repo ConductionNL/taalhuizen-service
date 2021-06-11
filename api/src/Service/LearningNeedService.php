@@ -118,7 +118,7 @@ class LearningNeedService
         if (isset($learningNeed['participations'])) {
             var_dump($learningNeed['participations']);
             foreach ($learningNeed['participations'] as $participationUrl) {
-                $this->participationService->deleteParticipation(null, $participationUrl);
+                $this->participationService->deleteParticipation(null, $participationUrl, true);
             }
         }
     }

@@ -161,7 +161,7 @@ class ParticipationService
     /**
      * @throws Exception
      */
-    public function deleteParticipation($id, $url = null): array
+    public function deleteParticipation($id, $url = null, $skipLearningNeed = false): array
     {
         $result = $this->getParticipation($id, $url);
 
@@ -169,7 +169,9 @@ class ParticipationService
             $participation = $result['participation'];
 
             // Remove this participation from the EAV/edu/learningNeed
-            $result = $this->removeLearningNeedFromParticipation($participation['learningNeed'], $participation['@eav']);
+            if (!$skipLearningNeed) {
+                $result = $this->removeLearningNeedFromParticipation($participation['learningNeed'], $participation['@eav']);
+            }
 
             // Remove this participation from the EAV/cc/organization
             $result = $this->removeAanbiederFromParticipation($participation['aanbieder'], $participation['@eav']);
@@ -189,15 +191,13 @@ class ParticipationService
     private function removeLearningNeedFromParticipation($learningNeedUrl, $participationUrl): array
     {
         $result = [];
-        if (!$participationUrl) {
-            if ($this->eavService->hasEavObject($learningNeedUrl)) {
-                $getLearningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
-                if (isset($getLearningNeed['participations'])) {
-                    $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function ($learningNeedParticipation) use ($participationUrl) {
-                        return $learningNeedParticipation != $participationUrl;
-                    }));
-                    $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
-                }
+        if ($this->eavService->hasEavObject($learningNeedUrl)) {
+            $getLearningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+            if (isset($getLearningNeed['participations'])) {
+                $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function ($learningNeedParticipation) use ($participationUrl) {
+                    return $learningNeedParticipation != $participationUrl;
+                }));
+                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
             }
         }
         // only works when participation is deleted after, because relation is not removed from the EAV participation object in here
