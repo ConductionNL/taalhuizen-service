@@ -313,11 +313,12 @@ class MrcService
 
     public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
     {
-        $resources = $this->checkIfUserExists($contactId, $username);
-        $employee->setUserId($resources[0]['id']);
+        $resource = $this->checkIfUserExists($contactId, $username);
+        if (isset($resource['id'])) {
+            $employee->setUserId($resource['id']);
+        }
         $userGroupIds = [];
-
-        foreach ($resources[0]['userGroups'] as $userGroup) {
+        foreach ($resource['userGroups'] as $userGroup) {
             $userGroupIds[] = $userGroup['id'];
         }
         $employee->setUserGroupIds($userGroupIds);
@@ -341,7 +342,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result, array $userRoleArray = []): Employee
+    public function createEmployeeObject(array $result, array $userRoleArray = [], $studentEmployee = false): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -355,7 +356,11 @@ class MrcService
             $employee->setUserRoles($userRoleArray);
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $result);
-        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['@id']), $result);
+        if (!$studentEmployee) {
+            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $result);
+        } else {
+            $employee = $this->relatedObjectsToEmployeeObject($employee, $result);
+        }
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($result['id']));
@@ -569,7 +574,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        // TODO fix that a student has a email for creating a user so this if statement can be removed:
+        // TODO fix that a student has an email for creating a user so this if statement can be removed:
         if (!$returnMrcObject) {
             $this->saveUser($employeeArray, $contact);
         }
@@ -633,7 +638,7 @@ class MrcService
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw);
+        $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
@@ -652,7 +657,7 @@ class MrcService
         }
 
         //set userRoleArray
-        $this->setUserRoleArray($employeeArray);
+        $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
         if ($returnMrcObject) {
@@ -735,20 +740,18 @@ class MrcService
 
     public function createEmployeeResource(array $employeeArray, array $contact, $employee, $employeeRaw)
     {
-        $resource = [
-            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] || null,
+        return [
+            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
-            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : $employee->getProviderId() || null,
-            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : $employee->getIsVOGChecked() || false,
-            'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : $employee->getGotHereVia() || null,
-            'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : $employee->getOtherRelevantCertificates() || null,
+            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : (isset($employee) ? $employee->getProviderId() : null),
+            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : false),
+            'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
+            'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : (isset($employee) ? $employee->getOtherRelevantCertificates() : null),
             'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,
             'lastJob'                => key_exists('lastJob', $employeeArray) ? $employeeArray['lastJob'] : null,
             'dayTimeActivities'      => key_exists('dayTimeActivities', $employeeArray) ? $employeeArray['dayTimeActivities'] : null,
             'dayTimeActivitiesOther' => key_exists('dayTimeActivitiesOther', $employeeArray) ? $employeeArray['dayTimeActivitiesOther'] : null,
             'speakingLevel'          => key_exists('speakingLevel', $employeeArray) ? $employeeArray['speakingLevel'] : null,
         ];
-
-        return $resource;
     }
 }

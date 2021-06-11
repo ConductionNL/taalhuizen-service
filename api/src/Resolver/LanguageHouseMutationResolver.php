@@ -61,9 +61,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     public function updateLanguageHouse(array $input): LanguageHouse
     {
         $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
+        }
         $type = 'Taalhuis';
 
-        $result = $this->ccService->updateOrganization(end($id), $input, $type);
+        $result = $this->ccService->updateOrganization($id, $input);
         $this->eduService->saveProgram($result);
         $this->ucService->createUserGroups($result, $type);
 
@@ -73,6 +76,9 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
         $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
+        }
 
         //delete userGroups
         $this->ucService->deleteUserGroups($id);
@@ -83,7 +89,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         //delete participants
         $programId = $this->eduService->deleteParticipants($id);
 
-        $this->ccService->deleteOrganization(end($id), $programId);
+        $this->ccService->deleteOrganization($id, $programId);
 
         return null;
     }
