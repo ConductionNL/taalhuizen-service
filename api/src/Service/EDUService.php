@@ -400,8 +400,8 @@ class EDUService
 
     public function deleteEducationEvents($participant): bool
     {
-        $educationEvents = $this->commonGroundService->getResource($participant['educationEvents']);
-        foreach ($educationEvents as $educationEvent) {
+        foreach ($participant['educationEvents'] as $educationEvent) {
+            $educationEvent = $this->commonGroundService->getResource($educationEvent);
             $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
         }
 
