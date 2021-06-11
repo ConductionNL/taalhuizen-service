@@ -43,7 +43,7 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
                     $resourceResult = $this->learningNeedService->handleResult($learningNeed, $studentId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                     $collection->add($resourceResult);
-                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                    $learningNeed = $learningNeed['@eav']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }

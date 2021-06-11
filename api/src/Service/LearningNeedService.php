@@ -69,8 +69,8 @@ class LearningNeedService
         $participant = $this->handleParticipantLearningNeeds($studentUrl);
 
         // Save the participant in EAV with the EAV/learningNeed connected to it
-        if (!in_array($learningNeed['@id'], $participant['learningNeeds'])) {
-            array_push($participant['learningNeeds'], $learningNeed['@id']);
+        if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
+            array_push($participant['learningNeeds'], $learningNeed['@eav']);
             $participant = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
 
             // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
@@ -110,11 +110,15 @@ class LearningNeedService
         return $result;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function handleDeletionParticipations($learningNeed)
     {
         if (isset($learningNeed['participations'])) {
+            var_dump($learningNeed['participations']);
             foreach ($learningNeed['participations'] as $participationUrl) {
-                $this->participationService->deleteParticipation(null, $participationUrl, true);
+                $this->participationService->deleteParticipation(null, $participationUrl);
             }
         }
     }

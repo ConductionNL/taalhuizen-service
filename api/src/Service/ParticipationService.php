@@ -100,15 +100,15 @@ class ParticipationService
         }
 
         // Connect the learningNeed in EAV to the EAV/participation
-        if (!in_array($participation['@id'], $learningNeed['participations'])) {
-            array_push($learningNeed['participations'], $participation['@id']);
+        if (!in_array($participation['@eav'], $learningNeed['participations'])) {
+            array_push($learningNeed['participations'], $participation['@eav']);
             $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
             $result['learningNeed'] = $learningNeed;
 
             // Update the participation to add the EAV/learningNeed to it
-            $updateParticipation['learningNeed'] = $learningNeed['@id'];
+            $updateParticipation['learningNeed'] = $learningNeed['@eav'];
             $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -140,8 +140,8 @@ class ParticipationService
         }
 
         // Connect the organization in EAV to the EAV/participation
-        if (!in_array($participation['@id'], $organization['participations'])) {
-            array_push($organization['participations'], $participation['@id']);
+        if (!in_array($participation['@eav'], $organization['participations'])) {
+            array_push($organization['participations'], $participation['@eav']);
             $organization = $this->eavService->saveObject($organization, 'organizations', 'cc', $aanbiederUrl);
 
             // Add $organization to the $result['organization'] because this is convenient when testing or debugging (mostly for us)
@@ -163,18 +163,22 @@ class ParticipationService
      */
     public function deleteParticipation($id, $url = null): array
     {
-        $participation = $this->getParticipation($id, $url)['participation'];
+        $result = $this->getParticipation($id, $url);
 
-        // Remove this participation from the EAV/edu/learningNeed
-        $result = $this->removeLearningNeedFromParticipation($participation['learningNeed'], $participation['@eav']);
+        if (isset($result['participation'])) {
+            $participation = $result['participation'];
 
-        // Remove this participation from the EAV/cc/organization
-        $result = $this->removeAanbiederFromParticipation($participation['aanbieder'], $participation['@eav']);
+            // Remove this participation from the EAV/edu/learningNeed
+            $result = $this->removeLearningNeedFromParticipation($participation['learningNeed'], $participation['@eav']);
 
-        // Delete the participation in EAV
-        $this->eavService->deleteObject($participation['eavId']);
-        // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
-        $result['participation'] = $participation;
+            // Remove this participation from the EAV/cc/organization
+            $result = $this->removeAanbiederFromParticipation($participation['aanbieder'], $participation['@eav']);
+
+            // Delete the participation in EAV
+            $this->eavService->deleteObject($participation['eavId']);
+            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+            $result['participation'] = $participation;
+        }
 
         return $result;
     }
@@ -234,6 +238,7 @@ class ParticipationService
                 $result['participation'] = $participation;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/participation!';
+                throw new Exception('Invalid request, '.$id.' is not an existing eav/participation!');
             }
         } elseif (isset($url)) {
             if ($this->eavService->hasEavObject($url)) {
@@ -241,6 +246,7 @@ class ParticipationService
                 $result['participation'] = $participation;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/participation!';
+                throw new Exception('Invalid request, '.$url.' is not an existing eav/participation!');
             }
         }
         if (isset($result['participation'])) {
@@ -344,8 +350,8 @@ class ParticipationService
         $employee = $this->getEmployeeParticipations($mentorUrl);
 
         // Save the employee in EAV with the EAV/participant connected to it
-        if (!in_array($participation['@id'], $employee['participations'])) {
-            array_push($employee['participations'], $participation['@id']);
+        if (!in_array($participation['@eav'], $employee['participations'])) {
+            array_push($employee['participations'], $participation['@eav']);
             $employee = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
 
             // Add $employee to the $result['employee'] because this is convenient when testing or debugging (mostly for us)
@@ -451,8 +457,8 @@ class ParticipationService
         $group['participations'] = $this->checkEAVGroup($groupUrl);
 
         // Save the group in EAV with the EAV/participant connected to it
-        if (!in_array($participation['@id'], $group['participations'])) {
-            $group['participations'][] = $participation['@id'];
+        if (!in_array($participation['@eav'], $group['participations'])) {
+            $group['participations'][] = $participation['@eav'];
             $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
             $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
             $group['participants'][] = '/participants/'.$participantId;
