@@ -163,7 +163,7 @@ class ParticipationService
      */
     public function deleteParticipation($id, $url = null): array
     {
-        $participation = $this->getParticipation($id, $url);
+        $participation = $this->getParticipation($id, $url)['participation'];
 
         // Remove this participation from the EAV/edu/learningNeed
         $result = $this->removeLearningNeedFromParticipation($participation['learningNeed'], $participation['@eav']);
@@ -259,12 +259,14 @@ class ParticipationService
         if ($this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['participations'] = [];
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $learningNeedId);
-            foreach ($learningNeed['participations'] as $participationUrl) {
-                $participation = $this->getParticipation(null, $participationUrl);
-                if (isset($participation['participation'])) {
-                    array_push($result['participations'], $participation['participation']);
-                } else {
-                    array_push($result['participations'], ['errorMessage' => $participation['errorMessage']]);
+            if (isset($learningNeed['participations'])) {
+                foreach ($learningNeed['participations'] as $participationUrl) {
+                    $participation = $this->getParticipation(null, $participationUrl);
+                    if (isset($participation['participation'])) {
+                        array_push($result['participations'], $participation['participation']);
+                    } else {
+                        array_push($result['participations'], ['errorMessage' => $participation['errorMessage']]);
+                    }
                 }
             }
         } else {
