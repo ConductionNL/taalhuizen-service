@@ -718,6 +718,10 @@ class StudentMutationResolver implements MutationResolverInterface
     private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
     {
         $employee = ['person' => $personUrl];
+        if (isset($input['contactDetails']['email'])) {
+            // set email for creating a user in mrcService
+            $employee['email'] = $input['contactDetails']['email'];
+        }
         $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
             $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);

@@ -342,7 +342,7 @@ class MrcService
         return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
     }
 
-    public function createEmployeeObject(array $result, array $userRoleArray = []): Employee
+    public function createEmployeeObject(array $result, array $userRoleArray = [], $studentEmployee = false): Employee
     {
         if ($this->eavService->hasEavObject($result['person'])) {
             $contact = $this->eavService->getObject('people', $result['person'], 'cc');
@@ -356,7 +356,11 @@ class MrcService
             $employee->setUserRoles($userRoleArray);
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $result);
-        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $result);
+        if (!$studentEmployee) {
+            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $result);
+        } else {
+            $employee = $this->relatedObjectsToEmployeeObject($employee, $result);
+        }
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($result['id']));
@@ -570,7 +574,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        // TODO fix that a student has a email for creating a user so this if statement can be removed:
+        // TODO fix that a student has an email for creating a user so this if statement can be removed:
         if (!$returnMrcObject) {
             $this->saveUser($employeeArray, $contact);
         }
@@ -634,7 +638,7 @@ class MrcService
     public function updateEmployee(string $id, array $employeeArray, $returnMrcObject = false, $studentEmployee = false)
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw);
+        $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
