@@ -329,28 +329,45 @@ class ParticipationService
         return $this->mrcService->getEmployee($aanbiederEmployeeId);
     }
 
+    /**
+     * @throws Exception
+     */
     public function addMentorToParticipation($mentorUrl, $participation): array
     {
         $result = [];
         // Make sure this participation has no mentor or group set
-        if (isset($participation['mentor']) || isset($participation['group'])) {
-            return ['errorMessage'=>'Warning, this participation already has a mentor or group set!'];
-        }
+        $this->checkMentorGroup($participation);
 
         // Check if mentor already has an EAV object
-        if ($this->eavService->hasEavObject($mentorUrl)) {
-            $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
-            $employee['participations'] = $getEmployee['participations'];
-        }
-        if (!isset($employee['participations'])) {
-            $employee['participations'] = [];
+        $employee = $this->getEmployeeParticipations($mentorUrl);
+
+        // Save the employee in EAV with the EAV/participant connected to it
+        if (!in_array($participation['@id'], $employee['participations'])) {
+            array_push($employee['participations'], $participation['@id']);
+            $employee = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
+
+            // Add $employee to the $result['employee'] because this is convenient when testing or debugging (mostly for us)
+            $result['employee'] = $employee;
+
+            // Update the participant to add the mrc/employee to it
+            $updateParticipation['mentor'] = $employee['@id'];
+            $updateParticipation['status'] = 'ACTIVE';
+            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+
+            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
+            $result['participation'] = $participation;
+
+            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $participant['mentor'] = $mentorUrl;
+            $this->commonGroundService->updateResource($participant, $learningNeed['participants'][0]);
         }
 
-        return $employee;
+        return $result;
     }
 
     public function getEmployeeParticipations($mentorUrl)
     {
+        // Check if mentor already has an EAV object
         if ($this->eavService->hasEavObject($mentorUrl)) {
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
             $employee['participations'] = $getEmployee['participations'];
@@ -365,18 +382,11 @@ class ParticipationService
     /**
      * @throws Exception
      */
-    public function removeMentorFromParticipation($mentorUrl, $participation)
+    public function removeMentorFromParticipation($mentorUrl, $participation): Participation
     {
         $result = [];
-        if (!isset($participation['mentor'])) {
-            return ['errorMessage' => 'Invalid request, this participation has no mentor!'];
-        }
-        if ($participation['mentor'] != $mentorUrl) {
-            return ['errorMessage' => 'Invalid request, this participation has a different mentor!'];
-        }
-        if (!$this->eavService->hasEavObject($mentorUrl)) {
-            return ['errorMessage' => 'Invalid request, '.$mentorUrl.' is not an existing eav/mrc/employee!'];
-        }
+
+        $this->errorRemoveMentorFromParticipation($mentorUrl, $participation);
 
         $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
         $participant['mentor'] = '';
@@ -397,11 +407,44 @@ class ParticipationService
     /**
      * @throws Exception
      */
+    public function errorRemoveMentorFromParticipation($mentorUrl, $participation)
+    {
+        $this->checkMentorInput($participation);
+        $this->checkMentor($mentorUrl, $participation);
+
+        if (!$this->eavService->hasEavObject($mentorUrl)) {
+            throw new Exception('Invalid request, '.$mentorUrl.' is not an existing eav/mrc/employee!');
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function checkMentorInput($participation)
+    {
+        if (!isset($participation['mentor'])) {
+            throw new Exception('Invalid request, this participation has no mentor!');
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function checkMentor($mentorUrl, $participation)
+    {
+        if ($participation['mentor'] != $mentorUrl) {
+            throw new Exception('Invalid request, this participation has a different mentor!');
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
     public function addGroupToParticipation($groupUrl, $participation): Participation
     {
         $result = [];
         // Make sure this participation has no mentor or group set
-        $this->checkMentor($participation);
+        $this->checkMentorGroup($participation);
         // Check if group already has an EAV object
         $group['participations'] = $this->checkEAVGroup($groupUrl);
 
@@ -431,7 +474,7 @@ class ParticipationService
     /**
      * @throws Exception
      */
-    public function checkMentor($participation)
+    public function checkMentorGroup($participation)
     {
         if (isset($participation['mentor']) || isset($participation['group'])) {
             throw new Exception('Warning, this participation already has a mentor or group set!');
