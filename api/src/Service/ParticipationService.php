@@ -315,6 +315,9 @@ class ParticipationService
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     public function addMentoredParticipationToEmployee($participationId, $aanbiederEmployeeId): Employee
     {
         $result = [];
@@ -335,6 +338,19 @@ class ParticipationService
         }
 
         // Check if mentor already has an EAV object
+        if ($this->eavService->hasEavObject($mentorUrl)) {
+            $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
+            $employee['participations'] = $getEmployee['participations'];
+        }
+        if (!isset($employee['participations'])) {
+            $employee['participations'] = [];
+        }
+
+        return $employee;
+    }
+
+    public function getEmployeeParticipations($mentorUrl)
+    {
         if ($this->eavService->hasEavObject($mentorUrl)) {
             $getEmployee = $this->eavService->getObject('employees', $mentorUrl, 'mrc');
             $employee['participations'] = $getEmployee['participations'];
@@ -375,8 +391,7 @@ class ParticipationService
             $result['employee'] = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
         }
         // Update eav/participation to remove the EAV/mrc/employee from it
-        $updateParticipation['mentor'] = null;
-        return $this->updateParticipation($updateParticipation);
+        return $this->updateParticipation($participation);
     }
 
     /**
@@ -388,7 +403,7 @@ class ParticipationService
         // Make sure this participation has no mentor or group set
         $this->checkMentor($participation);
         // Check if group already has an EAV object
-        $group['participations'] = $this->checkEAVGroup($participation);
+        $group['participations'] = $this->checkEAVGroup($groupUrl);
 
         // Save the group in EAV with the EAV/participant connected to it
         if (!in_array($participation['@id'], $group['participations'])) {
@@ -470,8 +485,7 @@ class ParticipationService
             $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
         }
         // Update eav/participation to remove the EAV/edu/group from it
-        $updateParticipation['group'] = null;
-        return $this->updateParticipation($updateParticipation);
+        return $this->updateParticipation($participation);
     }
 
     /**
@@ -754,6 +768,8 @@ class ParticipationService
 
     public function updateParticipation($participation): Participation
     {
+        $updateParticipation['group'] = null;
+        $updateParticipation['mentor'] = null;
         $updateParticipation['status'] = 'REFERRED';
         $updateParticipation['presenceEngagements'] = null;
         $updateParticipation['presenceStartDate'] = null;

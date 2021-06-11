@@ -115,6 +115,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return null;
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeMentorFromParticipation(array $input): Participation
     {
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
@@ -124,7 +127,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
     }
 
-    public function getParticipationMentor(array $input)
+    public function getParticipationMentor(array $input): array
     {
         $result['result'] = [];
 
@@ -168,9 +171,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
             $id = $input['id'];
         }
         $participationId = explode('/', $id);
-        $participationId = $this->isArray($participationId);
-
-        return $participationId;
+        return $this->isArray($participationId);
     }
 
     public function setAanbiederId(?array $input, ?Participation $resource = null)
@@ -188,9 +189,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function setGroupId(array $input)
     {
         $groupId = explode('/', $input['groupId']);
-        $groupId = $this->isArray($groupId);
-
-        return $groupId;
+        return $this->isArray($groupId);
     }
 
     public function isArray($id)
@@ -202,6 +201,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $id;
     }
 
+    /**
+     * @throws Exception
+     */
     public function addGroupToParticipation(array $input): Participation
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
@@ -211,6 +213,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->addGroupToParticipation($groupUrl, $result['participation']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeGroupFromParticipation(array $input): Participation
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
@@ -220,7 +225,10 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
     }
 
-    public function getParticipationGroup(array $input)
+    /**
+     * @throws Exception
+     */
+    public function getParticipationGroup(array $input): array
     {
         $result['result'] = [];
 
@@ -234,11 +242,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
 
         // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-
-        return $result;
+        return array_merge($result, $this->participationService->getParticipation($participationId));
     }
 
+    /**
+     * @throws Exception
+     */
     public function updateMentorGroupParticipation(array $input, $type): Participation
     {
         $result['result'] = [];
@@ -296,7 +305,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
     }
 
-    private function dtoToParticipation(Participation $resource, $aanbiederId)
+    private function dtoToParticipation(Participation $resource, $aanbiederId): array
     {
         // Get all info from the dto for creating a Participation and return the body for this
         return [
@@ -322,7 +331,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         ];
     }
 
-    private function inputToParticipation(array $input)
+    private function inputToParticipation(array $input): array
     {
         // Get all info from the input array for updating a Participation and return the body for this
         return [
