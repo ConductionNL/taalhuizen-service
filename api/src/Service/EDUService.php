@@ -56,13 +56,18 @@ class EDUService
     }
 
     //@todo uitwerken
-    public function saveProgram($organization)
+    public function saveProgram($organization, $update = false)
     {
-        $program = [];
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
         $program['provider'] = $organization['@id'];
 
-        $program = $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs']);
+        if ($update) {
+            $program = $program[0];
+            $program = $this->commonGroundService->updateResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $program['id']]);
+        } else {
+            $program = $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs']);
+        }
 
         return $program;
     }
@@ -185,11 +190,8 @@ class EDUService
         return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
     }
 
-    public function convertGroupObject(array $group, $aanbiederId = null): Group
+    public function setGroupCourseDetails($group, $resource)
     {
-        $resource = new Group();
-        $resource->setGroupId($group['id']);
-        $resource->setName($group['name']);
         if (isset($group['course'])) {
             $aanbieder = explode('/', $group['course']['organization']);
             if (is_array($aanbieder)) {
@@ -205,6 +207,29 @@ class EDUService
             $resource->setTypeCourse(null);
             $resource->setDetailsTotalClassHours(null);
         }
+
+        return $resource;
+    }
+
+    public function setGroupDetailsDates($group, $resource)
+    {
+        if (isset($group['endDate'])) {
+            $resource->setDetailsEndDate(new DateTime($group['endDate']));
+        }
+        if (isset($group['startDate'])) {
+            $resource->setDetailsStartDate(new DateTime($group['startDate']));
+        }
+
+        return $resource;
+    }
+
+    public function convertGroupObject(array $group, $aanbiederId = null): Group
+    {
+        $resource = new Group();
+        $resource->setAanbiederId($aanbiederId ?? $this->commonGroundService->getUuidFromUrl($group['course']['organization']));
+        $resource->setGroupId($group['id']);
+        $resource->setName($group['name']);
+        $resource = $this->setGroupCourseDetails($group, $resource);
         $resource->setOutComesGoal($group['goal']);
         $resource->setOutComesTopic($group['topic']);
         $resource->setOutComesTopicOther($group['topicOther']);
@@ -217,12 +242,7 @@ class EDUService
         $resource->setGeneralLocation($group['location']);
         $resource->setGeneralParticipantsMin($group['minParticipations']);
         $resource->setGeneralParticipantsMax($group['maxParticipations']);
-        if (isset($group['endDate'])) {
-            $resource->setDetailsEndDate(new DateTime($group['endDate']));
-        }
-        if (isset($group['startDate'])) {
-            $resource->setDetailsStartDate(new DateTime($group['startDate']));
-        }
+        $resource = $this->setGroupDetailsDates($group, $resource);
         $resource->setGeneralEvaluation($group['evaluation']);
         $resource->setAanbiederEmployeeIds($group['mentors']);
 
@@ -237,9 +257,7 @@ class EDUService
     {
         $group = $this->eavService->getObject('groups', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
 
-        $result = $this->convertGroupObject($group);
-
-        return $result;
+        return $this->convertGroupObject($group);
     }
 
     public function getGroups(?array $query = []): array
@@ -276,15 +294,7 @@ class EDUService
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
-                        if (!in_array($participation['group'], $groupUrls)) {
-                            array_push($groupUrls, $participation['group']);
-                            //get group
-                            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
-                            //handle result
-                            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
-                            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
-                            $watanders->add($resourceResult);
-                        }
+                        $watanders = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders);
                     }
                 } catch (Exception $e) {
                     continue;
@@ -294,6 +304,21 @@ class EDUService
         } else {
             // Do not throw an error, because we want to return an empty array in this case
             $result['message'] = 'Warning, '.$aanbiederId.' is not an existing eav/cc/organization!';
+        }
+
+        return $watanders;
+    }
+
+    public function checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders)
+    {
+        if (!in_array($participation['group'], $groupUrls)) {
+            array_push($groupUrls, $participation['group']);
+            //get group
+            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
+            //handle result
+            $resourceResult = $this->convertGroupObject($group, $aanbiederId);
+            $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
+            $watanders->add($resourceResult);
         }
 
         return $watanders;
@@ -351,5 +376,55 @@ class EDUService
         $groep['mentors'] = $employeeids;
 
         return $this->convertGroupObject($this->eavService->saveObject($groep, 'groups', 'edu', $groupUrl));
+    }
+
+    public function deleteParticipants($id): bool
+    {
+        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'][0];
+        $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
+
+        if ($participants > 0) {
+            foreach ($participants as $participant) {
+                $person = $this->commonGroundService->getResource($participant['person']);
+                $this->deleteEducationEvents($participant);
+                $this->deleteResults($participant);
+                $this->deleteParticipantGroups($participant);
+                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+                $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
+            }
+        }
+
+        return $program['id'];
+    }
+
+    public function deleteEducationEvents($participant): bool
+    {
+        foreach ($participant['educationEvents'] as $educationEvent) {
+            $educationEvent = $this->commonGroundService->getResource($educationEvent);
+            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
+        }
+
+        return false;
+    }
+
+    public function deleteResults($participant): bool
+    {
+        $results = $this->commonGroundService->getResource($participant['results']);
+        foreach ($results as $result) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
+        }
+
+        return false;
+    }
+
+    public function deleteParticipantGroups($participant): bool
+    {
+        $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
+        foreach ($participantGroups as $participantGroup) {
+            $this->deleteGroup($participantGroup['id']);
+        }
+
+        return false;
     }
 }

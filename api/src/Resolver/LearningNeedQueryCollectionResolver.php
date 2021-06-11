@@ -28,18 +28,13 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
-        if (key_exists('studentId', $context['args'])) {
-            $studentId = explode('/', $context['args']['studentId']);
-            if (is_array($studentId)) {
-                $studentId = end($studentId);
-            }
-        } else {
+
+        if (!key_exists('studentId', $context['args'])) {
             throw new Exception('The studentId was not specified');
         }
-
+        $studentId = $this->handleStudentId($context);
         // Get the learningNeeds of this student from EAV
         $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
-
         $collection = new ArrayCollection();
         if (isset($result['learningNeeds'])) {
             // Now put together the expected result for Lifely:
@@ -48,7 +43,7 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
                     $resourceResult = $this->learningNeedService->handleResult($learningNeed, $studentId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                     $collection->add($resourceResult);
-                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                    $learningNeed = $learningNeed['@eav']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }
@@ -59,5 +54,15 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
         }
 
         return $this->resolverService->createPaginator($collection, $context['args']);
+    }
+
+    public function handleStudentId($context)
+    {
+        $studentId = explode('/', $context['args']['studentId']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
+        }
+
+        return $studentId;
     }
 }

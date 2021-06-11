@@ -48,7 +48,7 @@ class ParticipationQueryCollectionResolver implements QueryCollectionResolverInt
                     $resourceResult = $this->participationService->handleResult($participation, $learningNeedId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($participation['id']));
                     $collection->add($resourceResult);
-                    $participation = $participation['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                    $participation = $participation['@eav']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }

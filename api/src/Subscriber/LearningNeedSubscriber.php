@@ -106,7 +106,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                 foreach ($result['learningNeeds'] as &$learningNeed) {
                     if (!isset($learningNeed['errorMessage'])) {
                         array_push($result['result'], $this->handleResult($learningNeed));
-                        $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds
+                        $learningNeed = $learningNeed['@eav']; // Can be removed to show the entire body of all the learningNeeds
                     }
                 }
             }
@@ -175,8 +175,8 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         }
 
         // Save the participant in EAV with the EAV/learningNeed connected to it
-        if (!in_array($learningNeed['@id'], $participant['learningNeeds'])) {
-            array_push($participant['learningNeeds'], $learningNeed['@id']);
+        if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
+            array_push($participant['learningNeeds'], $learningNeed['@eav']);
             $participant = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
 
             // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)

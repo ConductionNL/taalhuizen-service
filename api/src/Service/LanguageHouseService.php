@@ -7,31 +7,50 @@ use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\This;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LanguageHouseService
 {
     private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBag;
     private CommonGroundService $commonGroundService;
     private EDUService $eduService;
-    private MrcService $mrcService;
     private EAVService $eavService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
         EDUService $eduService,
-        MrcService $mrcService,
         EAVService $eavService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->parameterBag = $parameterBag;
         $this->eduService = $eduService;
-        $this->mrcService = $mrcService;
         $this->eavService = $eavService;
+    }
+
+    public function handleLanguagueHouseCC($languageHouse, $languageHouseWrc)
+    {
+        $languageHouseCCOrganization['name'] = $languageHouse['name'];
+        $languageHouseCCOrganization['type'] = 'Taalhuis';
+
+        if (isset($languageHouse['address'])) {
+            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
+            $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
+        }
+
+        if (isset($languageHouse['email'])) {
+            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
+            $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
+        }
+
+        if (isset($languageHouse['phoneNumber'])) {
+            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
+            $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+        }
+
+        //add source organization to cc organization
+        $languageHouseCCOrganization['sourceOrganization'] = $languageHouseWrc['@id'];
+
+        return $this->commonGroundService->saveResource($languageHouseCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
     }
 
     public function createLanguageHouse($languageHouse)
@@ -40,21 +59,7 @@ class LanguageHouseService
         $languageHouseWrcOrganization['name'] = $languageHouse['name'];
         $languageHouseWrc = $this->commonGroundService->saveResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations']);
 
-        $languageHouseCCOrganization['name'] = $languageHouse['name'];
-        $languageHouseCCOrganization['type'] = 'Taalhuis';
-
-        $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
-        $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
-
-        $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
-        $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
-
-        $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
-        $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
-
-        //add source organization to cc organization
-        $languageHouseCCOrganization['sourceOrganization'] = $languageHouseWrc['@id'];
-        $languageHouseCC = $this->commonGroundService->saveResource($languageHouseCCOrganization, ['component' => 'cc', 'type' => 'organizations']);
+        $languageHouseCC = $this->handleLanguagueHouseCC($languageHouse, $languageHouseWrc);
 
         //add contact to wrc organization
         $languageHouseWrcOrganization['contact'] = $languageHouseCC['@id'];
@@ -68,21 +73,31 @@ class LanguageHouseService
 
         //make Usergroups for roles
         //coordinator
-        $coordinator['organization'] = $languageHouseWrc['contact'];
-        $coordinator['name'] = 'TAALHUIS_COORDINATOR';
-        $coordinator['description'] = 'userGroup coordinator of '.$languageHouse['name'];
-        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
+        $this->createCoordinatorGroup($languageHouse, $languageHouseWrc);
 
         //employee
-        $employee['organization'] = $languageHouseWrc['contact'];
-        $employee['name'] = 'TAALHUIS_EMPLOYEE';
-        $employee['description'] = 'userGroup employee of '.$languageHouse['name'];
-        $this->commonGroundService->saveResource($employee, ['component' => 'uc', 'type' => 'groups']);
+        $this->createEmployeeGroup($languageHouse, $languageHouseWrc);
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)
         $result['languageHouse'] = $languageHouseCC;
 
         return $result;
+    }
+
+    public function createEmployeeGroup($languageHouse, $languageHouseWrc)
+    {
+        $employee['organization'] = $languageHouseWrc['contact'];
+        $employee['name'] = 'TAALHUIS_EMPLOYEE';
+        $employee['description'] = 'userGroup employee of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($employee, ['component' => 'uc', 'type' => 'groups']);
+    }
+
+    public function createCoordinatorGroup($languageHouse, $languageHouseWrc)
+    {
+        $coordinator['organization'] = $languageHouseWrc['contact'];
+        $coordinator['name'] = 'TAALHUIS_COORDINATOR';
+        $coordinator['description'] = 'userGroup coordinator of '.$languageHouse['name'];
+        $this->commonGroundService->saveResource($coordinator, ['component' => 'uc', 'type' => 'groups']);
     }
 
     public function getLanguageHouse($languageHouseId)
@@ -105,21 +120,25 @@ class LanguageHouseService
             // Update
             $languageHouseCCOrganization['name'] = $languageHouse['name'];
 
-            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
-            $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
-
-            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
-            $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
-
-            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
-            $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+            if (isset($languageHouse['address'])) {
+                $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
+                $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
+            }
+            if (isset($languageHouse['email'])) {
+                $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
+                $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
+            }
+            if (isset($languageHouse['phoneNumber'])) {
+                $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
+                $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
+            }
 
             $languageHouseCC = $this->commonGroundService->updateResource($languageHouseCCOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
 
             $languageHouseWrcOrganization['name'] = $languageHouse['name'];
             $languageHouseWrcOrganization['id'] = explode('/', $languageHouseCC['sourceOrganization']);
             $languageHouseWrcOrganization['id'] = end($languageHouseWrcOrganization['id']);
-            $providerWrc = $this->commonGroundService->updateResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $languageHouseWrcOrganization['id']]);
+            $this->commonGroundService->updateResource($languageHouseWrcOrganization, ['component' => 'wrc', 'type' => 'organizations', 'id' => $languageHouseWrcOrganization['id']]);
         }
 
         // Add $providerCC to the $result['providerCC'] because this is convenient when testing or debugging (mostly for us)

@@ -22,7 +22,7 @@ class UserQueryCollectionResolver implements QueryCollectionResolverInterface
     {
         $collection = new ArrayCollection();
 
-        //@TODO implement logic to find stuff and put it in the iterator
+        //@TODO implement logic to find stuff and put in the iterator
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
 }
