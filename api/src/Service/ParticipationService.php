@@ -238,6 +238,7 @@ class ParticipationService
                 $result['participation'] = $participation;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/participation!';
+
                 throw new Exception('Invalid request, '.$id.' is not an existing eav/participation!');
             }
         } elseif (isset($url)) {
@@ -246,6 +247,7 @@ class ParticipationService
                 $result['participation'] = $participation;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/participation!';
+
                 throw new Exception('Invalid request, '.$url.' is not an existing eav/participation!');
             }
         }
