@@ -12,44 +12,68 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class WRCService
 {
-    private $em;
-    private $commonGroundService;
-    private $params;
+    private EntityManagerInterface $em;
+    private CommonGroundService $commonGroundService;
 
-    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params)
+    public function __construct
+    (
+        EntityManagerInterface $em,
+        CommonGroundService $commonGroundService
+    )
     {
         $this->em = $em;
         $this->commonGroundService = $commonGroundService;
-        $this->params = $params;
     }
 
+    /**
+     * This function creates a wrc/organization with the given array.
+     *
+     * @param array $organizationArray Array with organizations data
+     * @return array|false Returns the created organization
+     */
     public function createOrganization(array $organizationArray)
     {
         $resource = [
             'name' => $organizationArray['name'],
         ];
-        $result = $this->commonGroundService->createResource($resource, ['component' => 'wrc', 'type' => 'organizations']);
-
-        return $result;
+        return $this->commonGroundService->createResource($resource, ['component' => 'wrc', 'type' => 'organizations']);
     }
 
+    /**
+     * This function saves a wrc/organization with the given arrays.
+     *
+     * @param array $ccOrganization Array with cc/organizations data
+     * @param array $organizationArray Array with wrc/organizations data
+     * @return array|false Returns the created organization
+     */
     public function saveOrganization(array $ccOrganization, array $organizationArray)
     {
         $organization = $this->commonGroundService->getResource($ccOrganization['sourceOrganization']);
         $resource = [
             'name' => $organizationArray['name'],
         ];
-        $result = $this->commonGroundService->updateResource($resource, ['component' => 'wrc', 'type' => 'organizations', 'id' => $organization['id']]);
-
-        return $result;
+        return $this->commonGroundService->updateResource($resource, ['component' => 'wrc', 'type' => 'organizations', 'id' => $organization['id']]);
     }
 
-    public function getOrganization($id)
+    /**
+     * This function fetches a wrc/organization with the given ID.
+     *
+     * @param string $id ID of the organization
+     * @return array|false|mixed|string|null Returns the fetched organization
+     */
+    public function getOrganization(string $id)
     {
         return $result = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'organizations', 'id' => $id]);
     }
 
-    public function setContact($input)
+    /**
+     * This function created a contact url for a student or aanbiederEmployee.
+     *
+     * @param array $input Array with students data or aanbiederEmployees data
+     * @return string Returns a contact url as string
+     * @throws \Exception
+     */
+    public function setContact(array $input): string
     {
         if (isset($input['studentId'])) {
             $id = $input['studentId'];
@@ -68,7 +92,13 @@ class WRCService
         return $contact;
     }
 
-    public function handleDocumentProps($input)
+    /**
+     * This function checks for a documents base64data.
+     *
+     * @param array $input Array with documents data
+     * @throws \Exception
+     */
+    public function handleDocumentProps(array $input)
     {
         $requiredProps = ['base64data', 'filename'];
         foreach ($requiredProps as $prop) {
@@ -79,11 +109,11 @@ class WRCService
     }
 
     /**
-     * @param array $input
+     * This function creates a document with the given data.
      *
-     * @throws Exception
-     *
-     * @return Document
+     * @param array $input Array with documents data
+     * @return \App\Entity\Document Returns a Document object
+     * @throws \Exception
      */
     public function createDocument(array $input): Document
     {
@@ -108,6 +138,13 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
+    /**
+     * This function gets the id from a document.
+     *
+     * @param array $input Array with documents data
+     * @return false|mixed|string Returns the documents ID
+     * @throws \Exception
+     */
     public function getDocumentId(array $input)
     {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
@@ -129,9 +166,13 @@ class WRCService
     }
 
     /**
-     * @throws Exception
+     * This function fetches the document with the given data.
+     *
+     * @param array $input Array with the documents data
+     * @return \App\Entity\Document Returns a Document object
+     * @throws \Exception
      */
-    public function downloadDocument($input): Document
+    public function downloadDocument(array $input): Document
     {
         $id = $this->getDocumentId($input);
 
@@ -144,12 +185,13 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
+
     /**
-     * @param array $input
+     * This function deletes a document with the given ID.
      *
-     * @throws Exception
-     *
-     * @return Document|null
+     * @param array $input Array with the documents data
+     * @return \App\Entity\Document|null Returns null
+     * @throws \Exception
      */
     public function removeDocument(array $input): ?Document
     {
@@ -165,9 +207,10 @@ class WRCService
     }
 
     /**
-     * @param array $document
+     * This function creates a Document object with the given data.
      *
-     * @return Document
+     * @param array $document Array with the documents data
+     * @return \App\Entity\Document Returns a Document object
      */
     public function createDocumentObject(array $document): Document
     {
@@ -188,12 +231,13 @@ class WRCService
         return $documentObject;
     }
 
+
     /**
-     * @param string $id
+     * This function fetches a document with the given ID.
      *
-     * @throws Exception
-     *
-     * @return Document
+     * @param string $id ID of the document
+     * @return \App\Entity\Document Returns a Document object
+     * @throws \Exception
      */
     public function getDocument(string $id): Document
     {
@@ -207,11 +251,11 @@ class WRCService
     }
 
     /**
-     * @param string|null $contact
+     * This function fetches documents for the given contact.
      *
-     * @throws Exception
-     *
-     * @return ArrayCollection
+     * @param string|null $contact Url of the contact
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection of fetched documents
+     * @throws \Exception
      */
     public function getDocuments(?string $contact = null): ArrayCollection
     {
