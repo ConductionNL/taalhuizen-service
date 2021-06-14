@@ -48,9 +48,10 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a user
+     * Creates a user.
      *
      * @param array $userArray the input data for the user
+     *
      * @return User The resulting user object
      */
     public function createUser(array $userArray): User
@@ -59,8 +60,10 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Updates a user
+     * Updates a user.
+     *
      * @param array $input The input data for the user
+     *
      * @return User The resulting user object
      */
     public function updateUser(array $input): User
@@ -72,9 +75,10 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Deletes a user
+     * Deletes a user.
      *
      * @param array $user The input data for the user
+     *
      * @return User|null The resulting user if the delete fails
      */
     public function deleteUser(array $user): ?User
@@ -87,11 +91,13 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Sets a new password for a user
+     * Sets a new password for a user.
      *
      * @param array $input The input for the user
-     * @return User The resulting user
+     *
      * @throws Exception Thrown if the JWT is invalid
+     *
+     * @return User The resulting user
      */
     public function resetPassword(array $input): User
     {
@@ -99,9 +105,10 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Logs in a user
+     * Logs in a user.
      *
      * @param array $user The username/password combination to log in the user
+     *
      * @return User The resulting user
      */
     public function login(array $user): User
@@ -114,8 +121,10 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Requests a password reset for a user
+     * Requests a password reset for a user.
+     *
      * @param array $input The input needed to retrieve a password reset token
+     *
      * @return User|null The resulting user object
      */
     public function requestPasswordReset(array $input): ?User
@@ -128,9 +137,11 @@ class UserMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Logs out the user by invalidating the user token
-     * @return User|null The result of the logout action, usually null
+     * Logs out the user by invalidating the user token.
+     *
      * @throws \Psr\Cache\InvalidArgumentException Thrown when the cache cannot invalidate the token
+     *
+     * @return User|null The result of the logout action, usually null
      */
     public function logout(): ?User
     {

@@ -12,6 +12,7 @@ class UserQueryCollectionResolver implements QueryCollectionResolverInterface
 
     /**
      * UserQueryCollectionResolver constructor.
+     *
      * @param ResolverService $resolverService
      */
     public function __construct(ResolverService $resolverService)
