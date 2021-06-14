@@ -10,6 +10,10 @@ class EmployeeQueryItemResolver implements QueryItemResolverInterface
 {
     private MrcService $mrcService;
 
+    /**
+     * EmployeeQueryItemResolver constructor.
+     * @param MrcService $mrcService
+     */
     public function __construct(MrcService $mrcService)
     {
         $this->mrcService = $mrcService;

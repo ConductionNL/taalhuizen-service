@@ -10,6 +10,10 @@ class UserQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private ResolverService $resolverService;
 
+    /**
+     * UserQueryCollectionResolver constructor.
+     * @param ResolverService $resolverService
+     */
     public function __construct(ResolverService $resolverService)
     {
         $this->resolverService = $resolverService;
