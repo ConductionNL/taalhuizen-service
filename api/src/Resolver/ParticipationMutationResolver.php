@@ -39,8 +39,6 @@ class ParticipationMutationResolver implements MutationResolverInterface
                 return $this->updateParticipation($context['info']->variableValues['input']);
             case 'removeParticipation':
                 return $this->removeParticipation($context['info']->variableValues['input']);
-            case 'addMentorToParticipation':
-                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             case 'updateMentorParticipation':
                 return $this->updateMentorGroupParticipation($context['info']->variableValues['input'], 'mentor');
             case 'removeMentorFromParticipation':
@@ -59,18 +57,21 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function createParticipation(Participation $resource): Participation
     {
         $result['result'] = [];
-
-        $aanbiederId = explode('/', $resource->getAanbiederId());
-        $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($aanbiederId)]);
-
-        $learningNeedId = explode('/', $resource->getLearningNeedId());
+        if ($resource->getAanbiederId()) {
+            $aanbiederId = $this->setAanbiederId(null, $resource);
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
+        }
+        if ($resource->getLearningNeedId()) {
+            $learningNeedId = $this->setLearningneedId($resource);
+        }
 
         // Transform DTO info to participation body...
-        $participation = $this->dtoToParticipation($resource, end($aanbiederId));
-        // Do some checks and error handling
-        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, end($learningNeedId)));
+        $participation = $this->dtoToParticipation($resource, $aanbiederId);
 
-        return $this->participationService->saveParticipation($result['participation'], end($learningNeedId));
+        // Do some checks and error handling
+        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, $learningNeedId));
+
+        return $this->participationService->saveParticipation($result['participation'], $learningNeedId);
     }
 
     public function updateParticipation(array $input): Participation
@@ -78,19 +79,20 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $result['result'] = [];
 
         $participationId = $this->setParticipationId($input);
+        $aanbiederId = $this->setAanbiederId($input);
 
         // If aanbiederId is set generate the url for it
         $aanbiederUrl = null;
-        if (isset($input['aanbiederId'])) {
-            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => end($input['aanbiederId'])]);
+        if (isset($aanbiederId)) {
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
 
         // Transform input info to participation body...
         $participation = $this->inputToParticipation($input);
         // Do some checks and error handling
-        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, end($participationId)));
+        $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, $participationId));
 
-        return $this->participationService->saveParticipation($result['participation'], null, end($participationId));
+        return $this->participationService->saveParticipation($result['participation'], null, $participationId);
     }
 
     public function removeParticipation(array $participation): ?Participation
@@ -98,7 +100,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         $result['result'] = [];
         $participationId = $this->setParticipationId($participation);
 
-        $result = array_merge($result, $this->participationService->deleteParticipation(end($participationId)));
+        $result = array_merge($result, $this->participationService->deleteParticipation($participationId));
 
         $result['result'] = false;
         if (isset($result['participation'])) {
@@ -113,15 +115,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function addMentorToParticipation(array $input): Participation
-    {
-        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
-
-        $result = $this->getParticipationMentor($input);
-
-        return $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']);
-    }
-
+    /**
+     * @throws Exception
+     */
     public function removeMentorFromParticipation(array $input): Participation
     {
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
@@ -131,7 +127,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
     }
 
-    public function getParticipationMentor(array $input)
+    public function getParticipationMentor(array $input): array
     {
         $result['result'] = [];
 
@@ -154,33 +150,62 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function setMentorId(array $input)
     {
         $mentorId = explode('/', $input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
+        $mentorId = $this->isArray($mentorId);
 
         return $mentorId;
     }
 
+    public function setLearningneedId(Participation $resource)
+    {
+        $learningNeedId = explode('/', $resource->getLearningNeedId());
+        $learningNeedId = $this->isArray($learningNeedId);
+
+        return $learningNeedId;
+    }
+
     public function setParticipationId(array $input)
     {
-        $participationId = explode('/', $input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
+        if (isset($input['participationId'])) {
+            $id = $input['participationId'];
+        } else {
+            $id = $input['id'];
         }
+        $participationId = explode('/', $id);
 
-        return $participationId;
+        return $this->isArray($participationId);
+    }
+
+    public function setAanbiederId(?array $input, ?Participation $resource = null)
+    {
+        if ($resource) {
+            $aanbiederId = explode('/', $resource->getAanbiederId());
+        } else {
+            $aanbiederId = explode('/', $input['aanbiederId']);
+        }
+        $aanbiederId = $this->isArray($aanbiederId);
+
+        return $aanbiederId;
     }
 
     public function setGroupId(array $input)
     {
         $groupId = explode('/', $input['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
-        }
 
-        return $groupId;
+        return $this->isArray($groupId);
     }
 
+    public function isArray($id)
+    {
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        return $id;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function addGroupToParticipation(array $input): Participation
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
@@ -190,6 +215,9 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->addGroupToParticipation($groupUrl, $result['participation']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeGroupFromParticipation(array $input): Participation
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
@@ -199,7 +227,10 @@ class ParticipationMutationResolver implements MutationResolverInterface
         return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
     }
 
-    public function getParticipationGroup(array $input)
+    /**
+     * @throws Exception
+     */
+    public function getParticipationGroup(array $input): array
     {
         $result['result'] = [];
 
@@ -213,11 +244,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
 
         // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-
-        return $result;
+        return array_merge($result, $this->participationService->getParticipation($participationId));
     }
 
+    /**
+     * @throws Exception
+     */
     public function updateMentorGroupParticipation(array $input, $type): Participation
     {
         $result['result'] = [];
@@ -275,7 +307,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
     }
 
-    private function dtoToParticipation(Participation $resource, $aanbiederId)
+    private function dtoToParticipation(Participation $resource, $aanbiederId): array
     {
         // Get all info from the dto for creating a Participation and return the body for this
         return [
@@ -301,7 +333,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
         ];
     }
 
-    private function inputToParticipation(array $input)
+    private function inputToParticipation(array $input): array
     {
         // Get all info from the input array for updating a Participation and return the body for this
         return [

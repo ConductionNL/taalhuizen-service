@@ -108,7 +108,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
         $participant['status'] = 'pending';
-        $return = $this->eduService->saveEavParticipant($participant);
+
+        return $this->eduService->saveEavParticipant($participant);
     }
 
     public function deleteRegistration(array $input): ?Registration
@@ -136,7 +137,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function acceptRegistration(array $input): Registration
+    public function acceptRegistration(array $input): object
     {
         $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
@@ -146,7 +147,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         $participant['status'] = 'accepted';
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
-        $resourceResult = $this->studentService->handleResult($student['person'], $participant, $student['employee'], $student['registrar'], true);
+        $student['participant'] = $participant;
+        $resourceResult = $this->studentService->handleResult($student, true);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;

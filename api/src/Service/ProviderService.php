@@ -30,14 +30,18 @@ class ProviderService
         $providerCCOrganization['name'] = $provider['name'];
         $providerCCOrganization['type'] = 'Aanbieder';
 
-        $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
-        $providerCCOrganization['addresses'][0] = $provider['address'];
-
-        $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
-        $providerCCOrganization['emails'][0]['email'] = $provider['email'];
-
-        $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
-        $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
+        if (isset($provider['address'])) {
+            $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
+            $providerCCOrganization['addresses'][0] = $provider['address'];
+        }
+        if (isset($provider['email'])) {
+            $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
+            $providerCCOrganization['emails'][0]['email'] = $provider['email'];
+        }
+        if (isset($provider['phoneNumber'])) {
+            $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
+            $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
+        }
 
         //add source organization to cc organization
         $providerCCOrganization['sourceOrganization'] = $providerWrc['@id'];
@@ -122,14 +126,18 @@ class ProviderService
             // Update
             $providerCCOrganization['name'] = $provider['name'];
 
-            $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
-            $providerCCOrganization['addresses'][0] = $provider['address'];
-
-            $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
-            $providerCCOrganization['emails'][0]['email'] = $provider['email'];
-
-            $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
-            $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
+            if (isset($provider['address'])) {
+                $providerCCOrganization['addresses'][0]['name'] = 'Address of '.$provider['name'];
+                $providerCCOrganization['addresses'][0] = $provider['address'];
+            }
+            if (isset($provider['email'])) {
+                $providerCCOrganization['emails'][0]['name'] = 'Email of '.$provider['name'];
+                $providerCCOrganization['emails'][0]['email'] = $provider['email'];
+            }
+            if (isset($provider['phoneNumber'])) {
+                $providerCCOrganization['telephones'][0]['name'] = 'Telephone of '.$provider['name'];
+                $providerCCOrganization['telephones'][0]['telephone'] = $provider['phoneNumber'];
+            }
 
             $providerCC = $this->commonGroundService->updateResource($providerCCOrganization, ['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
 
