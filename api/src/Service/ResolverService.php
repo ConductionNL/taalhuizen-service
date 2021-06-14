@@ -7,7 +7,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class ResolverService
 {
-    public function createPaginator(ArrayCollection $collection, array $args)
+    /**
+     * This function creates a paginator.
+     *
+     * @param \Doctrine\Common\Collections\ArrayCollection $collection An ArrayCollection where this paginator is ment for
+     * @param array $args Array of arguments the paginator uses
+     * @return \ApiPlatform\Core\DataProvider\ArrayPaginator Returns a ArrayPaginator
+     */
+    public function createPaginator(ArrayCollection $collection, array $args): ArrayPaginator
     {
         if (key_exists('first', $args)) {
             $maxItems = $args['first'];
