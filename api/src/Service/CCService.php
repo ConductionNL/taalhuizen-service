@@ -31,8 +31,10 @@ class CCService
     }
 
     /**
-     * Removes empty fields from an array recursively
+     * Removes empty fields from an array recursively.
+     *
      * @param array $array The array to clean
+     *
      * @return array The cleaned array
      */
     public function cleanResource(array $array): array
@@ -49,8 +51,9 @@ class CCService
     }
 
     /**
-     * @param array $result
+     * @param array  $result
      * @param string $type
+     *
      * @return LanguageHouse|Provider
      */
     public function createOrganizationObject(array $result, string $type)
@@ -82,8 +85,10 @@ class CCService
     }
 
     /**
-     * Fetches organizations from the contact catalogue and returns an collection of organizations
+     * Fetches organizations from the contact catalogue and returns an collection of organizations.
+     *
      * @param string $type The type of organization to fetch
+     *
      * @return ArrayCollection a collection of all organizations of the provided type
      */
     public function getOrganizations(string $type): ArrayCollection
@@ -104,9 +109,11 @@ class CCService
     }
 
     /**
-     * Fetches an organization from the contact catalogue and returns it as an object for the type of organization
-     * @param string $id The id of the organization to fetch
+     * Fetches an organization from the contact catalogue and returns it as an object for the type of organization.
+     *
+     * @param string $id   The id of the organization to fetch
      * @param string $type The type of organization
+     *
      * @return LanguageHouse|Provider The organization that has been fetched
      */
     public function getOrganization(string $id, string $type)
@@ -117,10 +124,11 @@ class CCService
     }
 
     /**
-     * Creates an organization in the contact catalogue
+     * Creates an organization in the contact catalogue.
      *
-     * @param array $organizationArray The array of the organization to save
-     * @param string $type The type of organization to save
+     * @param array  $organizationArray The array of the organization to save
+     * @param string $type              The type of organization to save
+     *
      * @return array|false The resulting organization in the contact catalogue
      */
     public function createOrganization(array $organizationArray, string $type)
@@ -150,10 +158,11 @@ class CCService
     }
 
     /**
-     * Updates an organization in the contact catalogue
+     * Updates an organization in the contact catalogue.
      *
-     * @param string $id The id of the organization to update
-     * @param array $organizationArray The updated properties of the organization to update
+     * @param string $id                The id of the organization to update
+     * @param array  $organizationArray The updated properties of the organization to update
+     *
      * @return array|false The updated organization object in the contact catalogue
      */
     public function updateOrganization(string $id, array $organizationArray)
@@ -181,10 +190,11 @@ class CCService
     }
 
     /**
-     * Deletes an organization
+     * Deletes an organization.
      *
-     * @param string $id The id of the organization to delete
+     * @param string $id        The id of the organization to delete
      * @param string $programId The program related to the organization
+     *
      * @return bool Whether or not the operation has been successful
      */
     public function deleteOrganization(string $id, string $programId): bool
@@ -205,8 +215,10 @@ class CCService
     }
 
     /**
-     * Converts an address array from an employee into a address array that the contact catalogue can work with
+     * Converts an address array from an employee into a address array that the contact catalogue can work with.
+     *
      * @param array $addressArray The address part from an employee array
+     *
      * @return array|null[] The resulting address array
      */
     public function convertAddress(array $addressArray): array
@@ -221,11 +233,14 @@ class CCService
     }
 
     /**
-     * Stores data for an employee in a person object in the contact catalogue
-     * @param array $employeeArray The employee object that was given as input
-     * @param Employee|null $employee The employee the data relates to
-     * @return array The resulting person array
+     * Stores data for an employee in a person object in the contact catalogue.
+     *
+     * @param array         $employeeArray The employee object that was given as input
+     * @param Employee|null $employee      The employee the data relates to
+     *
      * @throws \Exception Thrown if givenName is not provided
+     *
+     * @return array The resulting person array
      */
     public function employeeToPerson(array $employeeArray, ?Employee $employee = null): array
     {
@@ -259,11 +274,13 @@ class CCService
     }
 
     /**
-     * Creates a contact catalogue person for an employee object
+     * Creates a contact catalogue person for an employee object.
      *
      * @param array $employee The employee to create a person for
-     * @return array The resulting person
+     *
      * @throws \Exception
+     *
+     * @return array The resulting person
      */
     public function createPersonForEmployee(array $employee): array
     {
@@ -274,8 +291,10 @@ class CCService
     }
 
     /**
-     * Saves a person in the contact catalogue
+     * Saves a person in the contact catalogue.
+     *
      * @param array $person The person array to provide to the contact catalogue
+     *
      * @return array The result from the contact catalogue and EAV
      */
     public function createPerson(array $person): array
@@ -286,10 +305,11 @@ class CCService
     }
 
     /**
-     * Updates a person in the contac catalogue
+     * Updates a person in the contac catalogue.
      *
-     * @param string $id The id of the person to update
-     * @param array $person The updated data of the person
+     * @param string $id     The id of the person to update
+     * @param array  $person The updated data of the person
+     *
      * @return array The updated person object in the contact catalogue and EAV
      */
     public function updatePerson(string $id, array $person): array
@@ -302,10 +322,11 @@ class CCService
     }
 
     /**
-     * Saves a person in the EAV
+     * Saves a person in the EAV.
      *
-     * @param array $body The data to store in the EAV
-     * @param null $personUrl The url of the person to save
+     * @param array $body      The data to store in the EAV
+     * @param null  $personUrl The url of the person to save
+     *
      * @return array|false The resulting object in the EAV
      */
     public function saveEavPerson(array $body, $personUrl = null)
