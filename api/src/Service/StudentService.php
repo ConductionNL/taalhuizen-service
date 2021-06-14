@@ -36,11 +36,10 @@ class StudentService
      *
      * @return array Returns student
      */
-    public function getStudent(string $id, $studentUrl = null, $skipChecks = false): array
+    public function getStudent(string $id, $skipChecks = false): array
     {
-        if (isset($id)) {
-            $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-        }
+        $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
+
         if (!$skipChecks && !$this->commonGroundService->isResource($studentUrl)) {
             throw new Exception('Invalid request, studentId is not an existing student (edu/participant)!');
         }
@@ -246,16 +245,16 @@ class StudentService
      */
     public function getStudentsWithStatus(string $providerId, string $status): ArrayCollection
     {
-        $collection = new ArrayCollection();
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $providerId, 'cc')) {
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
             $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
             // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
-            $collection = $this->getStudentWithStatusFromParticipations($collection, $provider, $status);
+            $collection = $this->getStudentWithStatusFromParticipations($provider, $status);
         } else {
             // Do not throw an error, because we want to return an empty array in this case
             $result['message'] = 'Warning, '.$providerId.' is not an existing eav/cc/organization!';
+            $collection = new ArrayCollection($result);
         }
 
         return $collection;
@@ -270,8 +269,9 @@ class StudentService
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with students
      */
-    private function getStudentWithStatusFromParticipations(ArrayCollection $collection, array $provider, string $status): ArrayCollection
+    private function getStudentWithStatusFromParticipations(array $provider, string $status): ArrayCollection
     {
+        $collection = new ArrayCollection();
         // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
         $studentUrls = [];
         foreach ($provider['participations'] as $participationUrl) {
@@ -282,7 +282,7 @@ class StudentService
                 $participation = $this->eavService->getObject('participations', $participationUrl);
                 //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                 if ($participation['status'] == $status && isset($participation['learningNeed'])) {
-                    $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
+                    $collection = new ArrayCollection(array_merge($collection->toArray(), $this->getStudentFromLearningNeed($studentUrls, $participation['learningNeed']))->toArray());
                 }
 //                    else {
 //                        $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
@@ -309,8 +309,9 @@ class StudentService
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      */
-    private function getStudentFromLearningNeed(ArrayCollection $collection, array &$studentUrls, string $learningNeedUrl): ArrayCollection
+    private function getStudentFromLearningNeed( array &$studentUrls, string $learningNeedUrl): ArrayCollection
     {
+        $collection = new ArrayCollection();
         //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
         // Get eav/LearningNeed
         $learningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
@@ -431,7 +432,7 @@ class StudentService
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
 
         $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
+        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], ['yes' => $mrcEducations['followingEducationYes'], 'no' => $mrcEducations['followingEducationNo']]));
         $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
         $resource->setJobDetails($this->handleJobDetails($student['employee']));
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
@@ -563,7 +564,7 @@ class StudentService
      *
      * @return array Returns participants referrer details
      */
-    private function handleReferrerDetails(array $participant, $registrarPerson = null, $registrarOrganization = null): array
+    private function handleReferrerDetails(array $participant, ?array $registrarPerson = null, ?array $registrarOrganization = null): array
     {
         if (isset($registrarOrganization)) {
             return [
@@ -626,13 +627,13 @@ class StudentService
      * This function fetches educations from the given employee.
      *
      * @param array $employee           Array with employees data
-     * @param false $followingEducation Bool if the employee is following a education
+     * @param bool $followingEducation Bool if the employee is following a education
      *
      * @throws \Exception
      *
      * @return array|null[] Returns an array of educations
      */
-    public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
+    public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
         $educations = [
             'lastEducation'         => null,
@@ -693,8 +694,10 @@ class StudentService
      *
      * @return array Returns an array with education details
      */
-    private function handleEducationDetails(array $lastEducation, array $followingEducationYes, array $followingEducationNo): array
+    private function handleEducationDetails(array $lastEducation, array $followingEducations): array
     {
+        $followingEducationYes = $followingEducations['yes'];
+        $followingEducationNo = $followingEducations['no'];
         return [
             'lastFollowedEducation'                            => $lastEducation['iscedEducationLevelCode'] ?? null,
             'didGraduate'                                      => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
