@@ -23,10 +23,11 @@ class MrcService
 
     /**
      * MrcService constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param ParameterBagInterface $parameterBag
-     * @param UcService $ucService
+     * @param CommonGroundService    $commonGroundService
+     * @param ParameterBagInterface  $parameterBag
+     * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -39,13 +40,15 @@ class MrcService
         $this->ucService = $ucService;
         $this->bsService = new BsService($commonGroundService, $parameterBag);
         $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
-        $this->eavService = new EAVService($entityManager,$commonGroundService);
+        $this->eavService = new EAVService($entityManager, $commonGroundService);
     }
 
     /**
-     * Gets employees for an organization
+     * Gets employees for an organization.
+     *
      * @param string|null $languageHouseId The id of the language house to get the employees for
-     * @param string|null $providerId The id of the provider to get the employees for
+     * @param string|null $providerId      The id of the provider to get the employees for
+     *
      * @return ArrayCollection A collection of employees for the organization provided (or BISC if none is provided)
      */
     public function getEmployees(?string $languageHouseId = null, ?string $providerId = null): ArrayCollection
@@ -71,10 +74,13 @@ class MrcService
     }
 
     /**
-     * Fetches an employee from the EAV
+     * Fetches an employee from the EAV.
+     *
      * @param string $id The id of the employee to fetch
-     * @return array The resulting employee array
+     *
      * @throws Exception Thrown if the EAVservice is not called correctly
+     *
+     * @return array The resulting employee array
      */
     public function getEmployeeRaw(string $id): array
     {
@@ -82,10 +88,13 @@ class MrcService
     }
 
     /**
-     * Fetches an employee from the EAV and creates a employee object for it
+     * Fetches an employee from the EAV and creates a employee object for it.
+     *
      * @param string $id The id of the employee to fetch
-     * @return Employee The resulting employee object
+     *
      * @throws Exception Thrown if the EAVService is not called correctly
+     *
+     * @return Employee The resulting employee object
      */
     public function getEmployee(string $id): Employee
     {
@@ -95,8 +104,10 @@ class MrcService
     }
 
     /**
-     * Fetches an employee for a person in the contact catalogue
+     * Fetches an employee for a person in the contact catalogue.
+     *
      * @param string $personUrl
+     *
      * @return mixed|null
      */
     public function getEmployeeByPersonUrl(string $personUrl)
@@ -110,11 +121,12 @@ class MrcService
     }
 
     /**
-     * Creates competences for an employee
+     * Creates competences for an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param array|null $employee The existing employee in the mrc
+     * @param array      $employeeArray The input array for the employee
+     * @param string     $employeeId    The id of the employee
+     * @param array|null $employee      The existing employee in the mrc
+     *
      * @return array
      */
     public function createCompetences(array $employeeArray, string $employeeId, ?array $employee = []): array
@@ -145,11 +157,12 @@ class MrcService
     }
 
     /**
-     * Creates an object for the current education of an employee
+     * Creates an object for the current education of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
      * @return string The id of the education
      */
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
@@ -169,11 +182,12 @@ class MrcService
     }
 
     /**
-     * Creates an object for an unfinished education of an employee
+     * Creates an object for an unfinished education of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
      * @return string The id of the education
      */
     public function createUnfinishedEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
@@ -194,11 +208,12 @@ class MrcService
     }
 
     /**
-     * Creates an object for the course of an employee
+     * Creates an object for the course of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
      * @return string The id of the education
      */
     public function createCourse(array $employeeArray, string $employeeId, ?string $educationId = null): string
@@ -219,9 +234,11 @@ class MrcService
     }
 
     /**
-     * Get an education for an fetched employee object
-     * @param string $type The type of education to find
-     * @param array $educations The educations of the employee
+     * Get an education for an fetched employee object.
+     *
+     * @param string $type       The type of education to find
+     * @param array  $educations The educations of the employee
+     *
      * @return string|null The resulting education
      */
     public function getEducation(string $type, array $educations): ?string
@@ -245,6 +262,7 @@ class MrcService
                     break;
             }
         }
+
         return null;
     }
 
@@ -254,11 +272,12 @@ class MrcService
     // studentMutationResolver->getEmployeePropertiesFromCourseDetails)
 
     /**
-     * Creates educations for an employee
+     * Creates educations for an employee.
      *
-     * @param array $employeeArray The employee array to process
-     * @param string $employeeId The id of the employee
+     * @param array      $employeeArray      The employee array to process
+     * @param string     $employeeId         The id of the employee
      * @param array|null $existingEducations The educations already existing for the employee
+     *
      * @return array
      */
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
@@ -291,11 +310,12 @@ class MrcService
     }
 
     /**
-     * Creates interests for an employee
+     * Creates interests for an employee.
      *
-     * @param array $employeeArray The employee array to process
-     * @param string $employeeId The id of the employee
+     * @param array      $employeeArray     The employee array to process
+     * @param string     $employeeId        The id of the employee
      * @param array|null $existingInterests The interests already existing for the employee
+     *
      * @return string The id of the resulting interest
      */
     public function createInterests(array $employeeArray, string $employeeId, ?array $existingInterests = []): string
@@ -317,10 +337,11 @@ class MrcService
     }
 
     /**
-     * Stores the start date of an education
+     * Stores the start date of an education.
      *
-     * @param array $education The education to process
-     * @param Employee $employee The employee to update
+     * @param array    $education The education to process
+     * @param Employee $employee  The employee to update
+     *
      * @return Employee The updated employee
      */
     public function handleEducationStartDate(array $education, Employee $employee): Employee
@@ -341,10 +362,11 @@ class MrcService
     }
 
     /**
-     * Stores the start date of an education
+     * Stores the start date of an education.
      *
-     * @param array $education The education to process
-     * @param Employee $employee The employee to update
+     * @param array    $education The education to process
+     * @param Employee $employee  The employee to update
+     *
      * @return Employee The updated employee
      */
     public function handleEducationEndDate(array $education, Employee $employee): Employee
@@ -365,12 +387,14 @@ class MrcService
     }
 
     /**
-     * Sets the current education data for an employee
+     * Sets the current education data for an employee.
      *
-     * @param Employee $employee The employee to update
-     * @param array $education The education to process
-     * @return Employee The resulting employee
+     * @param Employee $employee  The employee to update
+     * @param array    $education The education to process
+     *
      * @throws Exception Thrown if the EAV is called incorrectly
+     *
+     * @return Employee The resulting employee
      */
     public function setCurrentEducation(Employee $employee, array $education): Employee
     {
@@ -387,12 +411,14 @@ class MrcService
     }
 
     /**
-     * Sets the current course for an employee
+     * Sets the current course for an employee.
      *
-     * @param Employee $employee The employee to update
-     * @param array $education The education to process
-     * @return Employee The resulting employee
+     * @param Employee $employee  The employee to update
+     * @param array    $education The education to process
+     *
      * @throws Exception Thrown if the EAV is called incorrectly
+     *
+     * @return Employee The resulting employee
      */
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
@@ -408,10 +434,11 @@ class MrcService
     }
 
     /**
-     * Checks if a user exists with the contact id or username provided
+     * Checks if a user exists with the contact id or username provided.
      *
      * @param string|null $contactId The contact id to find a user for
-     * @param string|null $username The username to find a user for
+     * @param string|null $username  The username to find a user for
+     *
      * @return array|null The resulting user array
      */
     public function checkIfUserExists(?string $contactId = null, ?string $username = null): ?array
@@ -431,11 +458,12 @@ class MrcService
     }
 
     /**
-     * Gets the user for an employee and stores the relevant data into the employee
+     * Gets the user for an employee and stores the relevant data into the employee.
      *
-     * @param Employee $employee The employee to update
+     * @param Employee    $employee  The employee to update
      * @param string|null $contactId The contact id of the user or employee
-     * @param string|null $username The username for the user
+     * @param string|null $username  The username for the user
+     *
      * @return Employee The updated employee
      */
     public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
@@ -454,11 +482,12 @@ class MrcService
     }
 
     /**
-     * Updates an user for an employee
+     * Updates an user for an employee.
      *
-     * @param string $userId The id of the user to update
-     * @param string|null $contact The contact of the user to update
-     * @param array $userGroupIds The user group ids of the user to update
+     * @param string      $userId       The id of the user to update
+     * @param string|null $contact      The contact of the user to update
+     * @param array       $userGroupIds The user group ids of the user to update
+     *
      * @return array The resulting user
      */
     public function updateUser(string $userId, ?string $contact = null, array $userGroupIds = []): array
@@ -478,13 +507,15 @@ class MrcService
     }
 
     /**
-     * Creates an employee object for a resulting employee from the MRC
+     * Creates an employee object for a resulting employee from the MRC.
      *
-     * @param array $employeeArray The resulting array for fetching an employee
-     * @param array $userRoleArray The user roles of the employee
-     * @param boolean $studentEmployee Whether or not the user is both student and employee
-     * @return Employee The resulting employee object
+     * @param array $employeeArray   The resulting array for fetching an employee
+     * @param array $userRoleArray   The user roles of the employee
+     * @param bool  $studentEmployee Whether or not the user is both student and employee
+     *
      * @throws Exception Thrown if the EAV is called incorrectly
+     *
+     * @return Employee The resulting employee object
      */
     public function createEmployeeObject(array $employeeArray, array $userRoleArray = [], bool $studentEmployee = false): Employee
     {
@@ -514,12 +545,14 @@ class MrcService
     }
 
     /**
-     * Stores the contact relating to an employee into the employee object
+     * Stores the contact relating to an employee into the employee object.
      *
      * @param Employee $employee The employee to store the data in
-     * @param array $contact The contact found
-     * @return Employee The updated employee
+     * @param array    $contact  The contact found
+     *
      * @throws Exception Thrown if the EAV is not correctly called
+     *
+     * @return Employee The updated employee
      */
     private function contactToEmployeeObject(Employee $employee, array $contact): Employee
     {
@@ -543,10 +576,11 @@ class MrcService
     }
 
     /**
-     * Stores the sub objects of a contact in an employee object
+     * Stores the sub objects of a contact in an employee object.
      *
      * @param Employee $employee The employee to store the data in
-     * @param array $contact The contact to store
+     * @param array    $contact  The contact to store
+     *
      * @return Employee The resulting employee object
      */
     private function contactObjectsToEmployeeObject(Employee $employee, array $contact): Employee
@@ -569,12 +603,14 @@ class MrcService
     }
 
     /**
-     * Stores data in an employee object
+     * Stores data in an employee object.
      *
-     * @param Employee $employee The employee to store the data in
-     * @param array $employeeResult The data to store
-     * @return Employee The updated employee object
+     * @param Employee $employee       The employee to store the data in
+     * @param array    $employeeResult The data to store
+     *
      * @throws Exception Thrown if the eav is called incorrectly
+     *
+     * @return Employee The updated employee object
      */
     private function resultToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
@@ -588,10 +624,11 @@ class MrcService
     }
 
     /**
-     * Stores subobjects of an mrc employee in the employee object
+     * Stores subobjects of an mrc employee in the employee object.
      *
-     * @param Employee $employee The employee to store
-     * @param array $employeeResult The data to store
+     * @param Employee $employee       The employee to store
+     * @param array    $employeeResult The data to store
+     *
      * @return Employee The resulting employee object
      */
     private function subObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
@@ -614,10 +651,11 @@ class MrcService
     }
 
     /**
-     * Stores the skills of an employee in the employee object
+     * Stores the skills of an employee in the employee object.
      *
-     * @param array $employeeResult The data to process
-     * @param Employee $employee The employee to store the data in
+     * @param array    $employeeResult The data to process
+     * @param Employee $employee       The employee to store the data in
+     *
      * @return Employee The resulting employee object
      */
     public function handleEmployeeSkills(array $employeeResult, Employee $employee): Employee
@@ -633,11 +671,14 @@ class MrcService
     }
 
     /**
-     * Stores the educations for an employee
-     * @param array $employeeResult The results for the employee
-     * @param Employee $employee The employee to store the data in
-     * @return Employee The resulting employee
+     * Stores the educations for an employee.
+     *
+     * @param array    $employeeResult The results for the employee
+     * @param Employee $employee       The employee to store the data in
+     *
      * @throws Exception Thrown when the EAV is called incorrectly
+     *
+     * @return Employee The resulting employee
      */
     public function handleEducationType(array $employeeResult, Employee $employee): Employee
     {
@@ -653,10 +694,11 @@ class MrcService
     }
 
     /**
-     * Stores related objects in an employee object
+     * Stores related objects in an employee object.
      *
-     * @param Employee $employee The employee to store the related objects in
-     * @param array $employeeResult The results to store
+     * @param Employee $employee       The employee to store the related objects in
+     * @param array    $employeeResult The results to store
+     *
      * @return Employee The resulting employee object
      */
     private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult)
@@ -672,8 +714,10 @@ class MrcService
     }
 
     /**
-     * Filters out fields from a resulting user role array to the array used by the employee object
+     * Filters out fields from a resulting user role array to the array used by the employee object.
+     *
      * @param array $userRoleArray The array to convert
+     *
      * @return array The converted array
      */
     public function convertUserRole(array $userRoleArray): array
@@ -685,8 +729,10 @@ class MrcService
     }
 
     /**
-     * Returns the url for the organization of an employee
+     * Returns the url for the organization of an employee.
+     *
      * @param array $employeeArray
+     *
      * @return string|null the url for the organization of the employee
      */
     public function handleUserOrganizationUrl(array $employeeArray)
@@ -703,10 +749,11 @@ class MrcService
     }
 
     /**
-     * Sets the user groups of a user from the input array for an employee
+     * Sets the user groups of a user from the input array for an employee.
      *
      * @param array $employeeArray The employee input array
-     * @param array $resource The resource to add the data to
+     * @param array $resource      The resource to add the data to
+     *
      * @return array The resulting resource array
      */
     public function handleUserGroups(array $employeeArray, array $resource): array
@@ -721,10 +768,11 @@ class MrcService
     }
 
     /**
-     * Creates a user for an employee
+     * Creates a user for an employee.
      *
      * @param array $employeeArray The employee input data
-     * @param array $contact The contact for the employee
+     * @param array $contact       The contact for the employee
+     *
      * @return array The resulting user array
      */
     public function createUser(array $employeeArray, array $contact): array
@@ -749,13 +797,16 @@ class MrcService
     }
 
     /**
-     * Gets the contact for an employee
-     * @param string $userId The user id of the employee
-     * @param array $employeeArray The input array for the employee
-     * @param Employee|null $employee The employee object of the employee
-     * @param bool $studentEmployee Whether or not the employee is also a student
-     * @return array The resulting contact
+     * Gets the contact for an employee.
+     *
+     * @param string        $userId          The user id of the employee
+     * @param array         $employeeArray   The input array for the employee
+     * @param Employee|null $employee        The employee object of the employee
+     * @param bool          $studentEmployee Whether or not the employee is also a student
+     *
      * @throws Exception Thrownt if the EAV is called incorrectly
+     *
+     * @return array The resulting contact
      */
     public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
     {
@@ -770,12 +821,13 @@ class MrcService
     }
 
     /**
-     * Saves the user for an employee
+     * Saves the user for an employee.
      *
-     * @param array $employeeArray The input array for an employee
-     * @param array $contact The contact for the employee
-     * @param bool $studentEmployee Whether or not the employee is also a student
-     * @param string|null $userId The user id of the employee
+     * @param array       $employeeArray   The input array for an employee
+     * @param array       $contact         The contact for the employee
+     * @param bool        $studentEmployee Whether or not the employee is also a student
+     * @param string|null $userId          The user id of the employee
+     *
      * @return array|null The resulting user object
      */
     public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?array
@@ -796,11 +848,13 @@ class MrcService
     }
 
     /**
-     * Sets the contact for an employee
+     * Sets the contact for an employee.
      *
      * @param array $employeeArray The input array for the employee
-     * @return array|false|mixed|string|null The resulting contact
+     *
      * @throws Exception
+     *
+     * @return array|false|mixed|string|null The resulting contact
      */
     public function setContact(array $employeeArray)
     {
@@ -812,12 +866,14 @@ class MrcService
     }
 
     /**
-     * Creates an employee
+     * Creates an employee.
      *
-     * @param array $employeeArray The input array of the employee
-     * @param bool $returnMrcObject Whether or not the raw mrc object has to be inputted
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @param array $employeeArray   The input array of the employee
+     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
+     *
      * @throws Exception
+     *
+     * @return Employee|array|false The resulting employee or raw mrc object
      */
     public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
     {
@@ -855,8 +911,10 @@ class MrcService
     }
 
     /**
-     * Fetches a user role of an employee
+     * Fetches a user role of an employee.
+     *
      * @param array $employeeArray The employee to fetch the user group for
+     *
      * @return array The resulting user role
      */
     public function handleUserRoleArray(array $employeeArray)
@@ -872,13 +930,15 @@ class MrcService
     }
 
     /**
-     * Saves the related user with the data from the contact of the employee
+     * Saves the related user with the data from the contact of the employee.
      *
-     * @param bool $studentEmployee Whether or not the employee is also a student
-     * @param Employee $employee The employee object the contact should relate to
-     * @param array $employeeArray The input data to update a contact
-     * @return array The resulting contact
+     * @param bool     $studentEmployee Whether or not the employee is also a student
+     * @param Employee $employee        The employee object the contact should relate to
+     * @param array    $employeeArray   The input data to update a contact
+     *
      * @throws Exception
+     *
+     * @return array The resulting contact
      */
     public function handleRetrievingContact(bool $studentEmployee, Employee $employee, array $employeeArray): array
     {
@@ -900,14 +960,16 @@ class MrcService
     }
 
     /**
-     * Updates an employee
+     * Updates an employee.
      *
-     * @param string $id The id of the employee to update
-     * @param array $employeeArray The input array for the employee to update
-     * @param false $returnMrcObject Whether or not the result should be a processed employee
-     * @param false $studentEmployee Whether or not the employee is also a student
-     * @return Employee|array The resulting employee
+     * @param string $id              The id of the employee to update
+     * @param array  $employeeArray   The input array for the employee to update
+     * @param false  $returnMrcObject Whether or not the result should be a processed employee
+     * @param false  $studentEmployee Whether or not the employee is also a student
+     *
      * @throws Exception
+     *
+     * @return Employee|array The resulting employee
      */
     public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
     {
@@ -942,8 +1004,10 @@ class MrcService
     }
 
     /**
-     * Sets the user role array of a user
+     * Sets the user role array of a user.
+     *
      * @param array $employeeArray The employee array to fetch the user groups for
+     *
      * @return array The resulting user role array
      */
     public function setUserRoleArray(array $employeeArray)
@@ -961,8 +1025,10 @@ class MrcService
     }
 
     /**
-     * Deletes the subobjects of an employee
+     * Deletes the subobjects of an employee.
+     *
      * @param array $employee
+     *
      * @return bool Whether or not the action has been succesful
      */
     public function deleteSubObjects(array $employee): bool
@@ -984,11 +1050,13 @@ class MrcService
     }
 
     /**
-     * Deletes an employee
+     * Deletes an employee.
      *
      * @param string $id The id of the employee to delete
-     * @return bool Whether the operation has been successful or not
+     *
      * @throws Exception
+     *
+     * @return bool Whether the operation has been successful or not
      */
     public function deleteEmployee(string $id): bool
     {
@@ -1002,8 +1070,9 @@ class MrcService
     }
 
     /**
-     * Saves the educations of an employee
-     * @param array $educations The educations to store
+     * Saves the educations of an employee.
+     *
+     * @param array  $educations The educations to store
      * @param string $employeeId The id of the employee the educations relate to
      */
     public function saveEmployeeEducations(array $educations, string $employeeId): void
@@ -1020,9 +1089,10 @@ class MrcService
     }
 
     /**
-     * Deletes all employees of an organization
+     * Deletes all employees of an organization.
      *
      * @param string $ccOrganizationId The organization to delete the employees of
+     *
      * @return bool Whether the operation has been successful or not
      */
     public function deleteEmployees(string $ccOrganizationId): bool
@@ -1041,12 +1111,13 @@ class MrcService
     }
 
     /**
-     * Creates a resource to save to the EAV for an employee
+     * Creates a resource to save to the EAV for an employee.
      *
-     * @param array $employeeArray The input array of the employee
-     * @param array $contact The contact of the employee
-     * @param Employee $employee The existing employee object
-     * @param array $employeeRaw The raw employee object
+     * @param array    $employeeArray The input array of the employee
+     * @param array    $contact       The contact of the employee
+     * @param Employee $employee      The existing employee object
+     * @param array    $employeeRaw   The raw employee object
+     *
      * @return array the resulting employee resource
      */
     public function createEmployeeResource(array $employeeArray, array $contact, Employee $employee, array $employeeRaw)
