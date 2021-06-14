@@ -14,12 +14,10 @@ class DocumentQueryItemResolver implements QueryItemResolverInterface
     private EntityManagerInterface $em;
     private WRCService $wrcService;
 
-    public function __construct
-    (
+    public function __construct(
         CommonGroundService $cgs,
         EntityManagerInterface $em
-    )
-    {
+    ) {
         $this->wrcService = new WRCService($em, $cgs);
     }
 
@@ -27,10 +25,13 @@ class DocumentQueryItemResolver implements QueryItemResolverInterface
      * This function fetches a document with the given ID.
      *
      * @inheritDoc
-     * @param object|null $item Object with the documents data
-     * @param array $context Context of the call
-     * @return \App\Entity\Document|object Returns a Document object
+     *
+     * @param object|null $item    Object with the documents data
+     * @param array       $context Context of the call
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document|object Returns a Document object
      */
     public function __invoke($item, array $context)
     {

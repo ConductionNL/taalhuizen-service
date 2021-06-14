@@ -7,7 +7,6 @@ use App\Service\ResolverService;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Util\Test;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryCollectionResolver implements QueryCollectionResolverInterface
@@ -16,8 +15,7 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
     private ResolverService $resolverService;
     private CommonGroundService $commonGroundService;
 
-    public function __construct
-    (
+    public function __construct(
         ResolverService $resolverService,
         CommonGroundService $commonGroundService
     ) {

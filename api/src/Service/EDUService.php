@@ -7,21 +7,17 @@ use App\Entity\StudentDossierEvent;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EDUService
 {
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
 
-    public function __construct
-    (
+    public function __construct(
         CommonGroundService $commonGroundService
-    )
-    {
+    ) {
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
     }
@@ -29,8 +25,9 @@ class EDUService
     /**
      * This function updates or creates a edu/participant with the given body.
      *
-     * @param array $body Array with data from the edu/participant
+     * @param array       $body           Array with data from the edu/participant
      * @param string|null $participantUrl Url of the edu/participant
+     *
      * @return array|false A edu/participant is returned from the EAV
      */
     public function saveEavParticipant(array $body, $participantUrl = null)
@@ -50,8 +47,9 @@ class EDUService
     /**
      * This function updates or creates a edu/result with the given body.
      *
-     * @param array $body Array with data from the edu/result
+     * @param array       $body      Array with data from the edu/result
      * @param string|null $resultUrl Url of the edu/result
+     *
      * @return array|false A edu/result is returned from the EAV
      */
     public function saveEavResult(array $body, $resultUrl = null)
@@ -73,8 +71,9 @@ class EDUService
     /**
      * This function updates or creates a edu/program that belongs to the given organization.
      *
-     * @param array $organization Array that holds data about the organization this program belongs to
-     * @param bool|false $update Bool if this program should be updated or not
+     * @param array      $organization Array that holds data about the organization this program belongs to
+     * @param bool|false $update       Bool if this program should be updated or not
+     *
      * @return array|false|mixed|string|null A edu/program is returned from the EAV
      */
     public function saveProgram(array $organization, $update = false)
@@ -97,6 +96,7 @@ class EDUService
      * This function fetches a single program that belongs to the given organization.
      *
      * @param array $organization The organization a program is getting fetched for
+     *
      * @return mixed A program is returned from the edu component
      */
     public function getProgram(array $organization)
@@ -108,6 +108,7 @@ class EDUService
      * This function checks if the given organization has a program or not.
      *
      * @param array $organization The organization that is getting checked for if it has a program or not
+     *
      * @return bool Returns a true or false depending if the given organization has a program or not
      */
     public function hasProgram(array $organization): bool
@@ -123,11 +124,13 @@ class EDUService
     /**
      * This function converts a EducationEvent to a StudentDossierEvent.
      *
-     * @param array $input Array of data that is being converted into the StudentDossierEvent
+     * @param array       $input        Array of data that is being converted into the StudentDossierEvent
      * @param string|null $employeeName Name of the creator that created the EducationEvent
-     * @param string|null $studentId ID of the student this StudentDossierEvent is being created for
-     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent object
+     * @param string|null $studentId    ID of the student this StudentDossierEvent is being created for
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent object
      */
     public function convertEducationEvent(array $input, string $employeeName = null, ?string $studentId = null): StudentDossierEvent
     {
@@ -149,8 +152,10 @@ class EDUService
      * This function fetches EducationEvents for the given person.
      *
      * @param string|null $person The person the education events are being fetched for
-     * @return \Doctrine\Common\Collections\ArrayCollection  Returns a ArrayCollection holding EducationEvents
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection holding EducationEvents
      */
     public function getEducationEvents(?string $person = null): ArrayCollection
     {
@@ -172,8 +177,10 @@ class EDUService
      * This function fetches a single education event with the given ID.
      *
      * @param string $id ID of the education event that will be fetched
-     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
      */
     public function getEducationEvent(string $id): StudentDossierEvent
     {
@@ -186,8 +193,10 @@ class EDUService
      * This function creates a StudentDossierEvent with the given array and converts it to a EducationEvent.
      *
      * @param array $studentDossierEventArray Array with data for the StudentDossierEvent
-     * @return \App\Entity\StudentDossierEvent Returns a EducationEvent
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a EducationEvent
      */
     public function createEducationEvent(array $studentDossierEventArray): StudentDossierEvent
     {
@@ -208,9 +217,10 @@ class EDUService
     /**
      * This function updates the participants of a event with the given participants.
      *
-     * @param array $event Array with data for a event
-     * @param string|null $studentId ID of a student who is a participant of the given event
-     * @param array|null $participants Array of edu/participants
+     * @param array       $event        Array with data for a event
+     * @param string|null $studentId    ID of a student who is a participant of the given event
+     * @param array|null  $participants Array of edu/participants
+     *
      * @return array Returns the given event
      */
     public function updateParticipants(array $event, ?string $studentId = null, ?array $participants = []): array
@@ -233,10 +243,12 @@ class EDUService
     /**
      * This function updates a StudentDossierEvent and converts it to a EducationEvent.
      *
-     * @param string $id ID of the EducationEvent that will be updated
-     * @param array $studentDossierEventArray Array that holds data for the StudentDossierEvent
-     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
+     * @param string $id                       ID of the EducationEvent that will be updated
+     * @param array  $studentDossierEventArray Array that holds data for the StudentDossierEvent
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
      */
     public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
     {
@@ -261,6 +273,7 @@ class EDUService
      * This function deletes a edu/education_event with the given ID.
      *
      * @param string $id ID of the EducationEvent
+     *
      * @return bool Returns a bool if the EducationEvent is deleted or not
      */
     public function deleteEducationEvent(string $id): bool
@@ -272,6 +285,7 @@ class EDUService
      * This function fetches edu_participants with the given query.
      *
      * @param array|null $additionalQuery
+     *
      * @return array Returns a array of fetched edu/participants
      */
     public function getParticipants(?array $additionalQuery = []): array
@@ -284,8 +298,9 @@ class EDUService
     /**
      * This function sets details to a course with the given group.
      *
-     * @param array $group Array that holds group data
+     * @param array $group    Array that holds group data
      * @param mixed $resource Mixed object where the groups data is added to
+     *
      * @return mixed Returns a mixed object as CourseDetails
      */
     public function setGroupCourseDetails(array $group, $resource)
@@ -312,10 +327,12 @@ class EDUService
     /**
      * THis function sets details start and end date from the given group.
      *
-     * @param array $group Array that holds group data
+     * @param array $group    Array that holds group data
      * @param mixed $resource Mixed object that the data is being set for
-     * @return mixed Returns a mixed object as GroupDetails
+     *
      * @throws \Exception
+     *
+     * @return mixed Returns a mixed object as GroupDetails
      */
     public function setGroupDetailsDates(array $group, $resource)
     {
@@ -332,10 +349,12 @@ class EDUService
     /**
      * This function converts a group array to a Group object.
      *
-     * @param array $group Array that holds the group data
-     * @param null $aanbiederId ID of the aanbieder this group belongs to
-     * @return \App\Entity\Group Returns a Group object
+     * @param array $group       Array that holds the group data
+     * @param null  $aanbiederId ID of the aanbieder this group belongs to
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a Group object
      */
     public function convertGroupObject(array $group, $aanbiederId = null): Group
     {
@@ -368,11 +387,13 @@ class EDUService
     }
 
     /**
-     * This function fetches a edu/group and converts it to a Group object
+     * This function fetches a edu/group and converts it to a Group object.
      *
      * @param string $id ID of the group that will be fetched
-     * @return \App\Entity\Group Returns a Group object
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a Group object
      */
     public function getGroup(string $id): Group
     {
@@ -385,8 +406,10 @@ class EDUService
      * This function fetches edu/groups and converts them into Group objects before returning them in a array.
      *
      * @param array|null $query Array with query params the fetched groups will be filtered on
-     * @return array Returns an array of fetched Group objects
+     *
      * @throws \Exception
+     *
+     * @return array Returns an array of fetched Group objects
      */
     public function getGroups(?array $query = []): array
     {
@@ -406,9 +429,11 @@ class EDUService
      * This function fetches groups with the given status.
      *
      * @param string $aanbiederId ID of the aanbieder these groups belong to
-     * @param string $status Status that the Groups participants need to have if the Group wants to be returned
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection of Groups
+     * @param string $status      Status that the Groups participants need to have if the Group wants to be returned
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection of Groups
      */
     public function getGroupsWithStatus(string $aanbiederId, string $status): ArrayCollection
     {
@@ -448,12 +473,14 @@ class EDUService
     /**
      * This function checks if a participation is in a group and if not adds them.
      *
-     * @param array $groupUrls Array of group urls
-     * @param array $participation Array with data of a participation
-     * @param string $aanbiederId ID of the aanbieder this participation belongs to
-     * @param mixed $participationObject Mixed object as Participation
-     * @return mixed
+     * @param array  $groupUrls           Array of group urls
+     * @param array  $participation       Array with data of a participation
+     * @param string $aanbiederId         ID of the aanbieder this participation belongs to
+     * @param mixed  $participationObject Mixed object as Participation
+     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function checkParticipationGroup(array $groupUrls, $participation, $aanbiederId, $participationObject)
     {
@@ -474,6 +501,7 @@ class EDUService
      * This function deletes a group with the given id.
      *
      * @param string $id ID of the group that will be deleted
+     *
      * @throws \Exception
      */
     public function deleteGroup(string $id)
@@ -505,9 +533,10 @@ class EDUService
     }
 
     /**
-     * This function removes a group from its participations
+     * This function removes a group from its participations.
      *
      * @param array $group Array of data from a group
+     *
      * @throws \Exception
      */
     public function removeGroupFromParticipation(array $group)
@@ -531,10 +560,12 @@ class EDUService
     /**
      * This function changes the mentors of a group with the given employee IDs.
      *
-     * @param string $groupId ID of the group which mentors will be changed
-     * @param array $employeeids IDs of the employees that will be the groups new mentor(s)
-     * @return \App\Entity\Group Returns a group object
+     * @param string $groupId     ID of the group which mentors will be changed
+     * @param array  $employeeids IDs of the employees that will be the groups new mentor(s)
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a group object
      */
     public function changeGroupTeachers(string $groupId, array $employeeids): Group
     {
@@ -548,8 +579,10 @@ class EDUService
      * This function deletes the participant and its subresources of the given ID.
      *
      * @param string $id ID of the participant that will be deleted
-     * @return bool Returns a bool if the participant is deleted or not
+     *
      * @throws \Exception
+     *
+     * @return bool Returns a bool if the participant is deleted or not
      */
     public function deleteParticipants(string $id): bool
     {
@@ -575,6 +608,7 @@ class EDUService
      * This function deletes the education events of the given participant.
      *
      * @param array $participant Array that holds data of the participant
+     *
      * @return bool Returns false
      */
     public function deleteEducationEvents(array $participant): bool
@@ -591,6 +625,7 @@ class EDUService
      * This function deletes results of the given participant.
      *
      * @param array $participant Array that holds data of the participant
+     *
      * @return bool Returns false
      */
     public function deleteResults(array $participant): bool
@@ -607,8 +642,10 @@ class EDUService
      * This function deletes the groups of the given participant.
      *
      * @param array $participant Array that holds data of the participant
-     * @return bool Returns false
+     *
      * @throws \Exception
+     *
+     * @return bool Returns false
      */
     public function deleteParticipantGroups(array $participant): bool
     {

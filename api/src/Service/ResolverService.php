@@ -11,7 +11,8 @@ class ResolverService
      * This function creates a paginator.
      *
      * @param \Doctrine\Common\Collections\ArrayCollection $collection An ArrayCollection where this paginator is ment for
-     * @param array $args Array of arguments the paginator uses
+     * @param array                                        $args       Array of arguments the paginator uses
+     *
      * @return \ApiPlatform\Core\DataProvider\ArrayPaginator Returns a ArrayPaginator
      */
     public function createPaginator(ArrayCollection $collection, array $args): ArrayPaginator

@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\TestResult;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class TestResultService
@@ -13,11 +12,9 @@ class TestResultService
     private EAVService $eavService;
     private EDUService $eduService;
 
-    public function __construct
-    (
+    public function __construct(
         CommonGroundService $commonGroundService
-    )
-    {
+    ) {
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
         $this->eduService = new EDUService($commonGroundService);
@@ -26,12 +23,14 @@ class TestResultService
     /**
      * This function updates or creates a test result with the given data.
      *
-     * @param array $testResult Array that holds the test results data
-     * @param array $memo Array that holds the memos data
-     * @param string $participationId ID of the participation
-     * @param string|null $testResultUrl Url of the test result as string
-     * @return array Returns the test result and memo in a array
+     * @param array       $testResult      Array that holds the test results data
+     * @param array       $memo            Array that holds the memos data
+     * @param string      $participationId ID of the participation
+     * @param string|null $testResultUrl   Url of the test result as string
+     *
      * @throws \Exception
+     *
+     * @return array Returns the test result and memo in a array
      */
     public function saveTestResult(array $testResult, array $memo, string $participationId, $testResultUrl = null): array
     {
@@ -68,9 +67,11 @@ class TestResultService
      * This function adds a participation to a test result.
      *
      * @param string $participationId ID of the participation
-     * @param array $testResult Array with data of the test result
-     * @return array Returns test result, participation an learning need in a array
+     * @param array  $testResult      Array with data of the test result
+     *
      * @throws \Exception
+     *
+     * @return array Returns test result, participation an learning need in a array
      */
     private function addParticipationToTestResult($participationId, $testResult)
     {
@@ -113,9 +114,10 @@ class TestResultService
     }
 
     /**
-     * This function deletes a test result
+     * This function deletes a test result.
      *
      * @param string $id ID of the test result that will be deleted
+     *
      * @throws \Exception
      */
     public function deleteTestResult(string $id)
@@ -143,6 +145,7 @@ class TestResultService
      * This function removes a test result from a participation.
      *
      * @param string $testResultUrl Url of the test result as string
+     *
      * @throws \Exception
      */
     private function removeTestResultFromParticipation(string $testResultUrl)
@@ -163,10 +166,12 @@ class TestResultService
     /**
      * This function fetches a test result from the given ID.
      *
-     * @param string $id ID of the test result that will be fetched
-     * @param null $url Url of the test result as string
-     * @return array Returns a test result and memo in a array
+     * @param string $id  ID of the test result that will be fetched
+     * @param null   $url Url of the test result as string
+     *
      * @throws \Exception
+     *
+     * @return array Returns a test result and memo in a array
      */
     public function getTestResult(string $id, $url = null): array
     {
@@ -199,8 +204,10 @@ class TestResultService
      * This function fetches the test results from the given participation ID.
      *
      * @param string $participationId ID of the participation
-     * @return array Returns test results in a array
+     *
      * @throws \Exception
+     *
+     * @return array Returns test results in a array
      */
     public function getTestResults(string $participationId): array
     {
@@ -222,11 +229,13 @@ class TestResultService
     /**
      * This function check the given test results values.
      *
-     * @param array $testResult Array with data of the test result
-     * @param string $participationId ID of the participation
-     * @param string|null $testResultUrl Url of the test result as string
-     * @return mixed Returns the test result as array
+     * @param array       $testResult      Array with data of the test result
+     * @param string      $participationId ID of the participation
+     * @param string|null $testResultUrl   Url of the test result as string
+     *
      * @throws \Exception
+     *
+     * @return mixed Returns the test result as array
      */
     public function checkTestResultValues(array $testResult, string $participationId, $testResultUrl = null)
     {
@@ -252,10 +261,10 @@ class TestResultService
     }
 
     /**
-     * This function converts the test result array to an TestResult object
+     * This function converts the test result array to an TestResult object.
      *
-     * @param array $testResult Array with data of the given test result
-     * @param array $memo Array with data of the given memo
+     * @param array       $testResult      Array with data of the given test result
+     * @param array       $memo            Array with data of the given memo
      * @param string|null $participationId ID of the participation as string
      *
      * @return \App\Entity\TestResult

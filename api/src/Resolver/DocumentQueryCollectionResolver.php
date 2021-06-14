@@ -16,12 +16,10 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
     private WRCService $wrcService;
     private ResolverService $resolverService;
 
-    public function __construct
-    (
+    public function __construct(
         CommonGroundService $cgs,
         EntityManagerInterface $em
-    )
-    {
+    ) {
         $this->cgs = $cgs;
         $this->wrcService = new WRCService($em, $cgs);
         $this->resolverService = new ResolverService();
@@ -31,10 +29,13 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
      * This function creates a paginator.
      *
      * @inheritDoc
+     *
      * @param iterable $collection Collection of documents
-     * @param array $context Context of the call
-     * @return iterable Returns a paginator
+     * @param array    $context    Context of the call
+     *
      * @throws \Exception
+     *
+     * @return iterable Returns a paginator
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
