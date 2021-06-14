@@ -15,7 +15,8 @@ class ParticipationQueryItemResolver implements QueryItemResolverInterface
 
     /**
      * ParticipationQueryItemResolver constructor.
-     * @param CommongroundService $commonGroundService
+     *
+     * @param CommongroundService  $commonGroundService
      * @param ParticipationService $participationService
      */
     public function __construct(CommongroundService $commonGroundService, ParticipationService $participationService)
@@ -25,7 +26,8 @@ class ParticipationQueryItemResolver implements QueryItemResolverInterface
     }
 
     /**
-     * Get a participation object with the given participationId
+     * Get a participation object with the given participationId.
+     *
      * @inheritDoc
      *
      * @throws Exception;

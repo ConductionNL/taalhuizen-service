@@ -18,9 +18,10 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
 
     /**
      * RegistrationQueryCollectionResolver constructor.
+     *
      * @param CommongroundService $commonGroundService
-     * @param StudentService $studentService
-     * @param ResolverService $resolverService
+     * @param StudentService      $studentService
+     * @param ResolverService     $resolverService
      */
     public function __construct(CommongroundService $commonGroundService, StudentService $studentService, ResolverService $resolverService)
     {
@@ -48,11 +49,13 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
     }
 
     /**
-     * Gets all the students with the languageHouseId
+     * Gets all the students with the languageHouseId.
      *
      * @param array $context The context data.
-     * @return ArrayCollection The resulting Student ArrayCollection object
+     *
      * @throws Exception
+     *
+     * @return ArrayCollection The resulting Student ArrayCollection object
      */
     public function students(array $context): ?ArrayCollection
     {

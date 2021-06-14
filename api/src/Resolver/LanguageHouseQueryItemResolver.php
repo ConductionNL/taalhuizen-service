@@ -12,6 +12,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
 
     /**
      * LanguageHouseQueryItemResolver constructor.
+     *
      * @param CCService $ccService
      */
     public function __construct(
@@ -21,7 +22,8 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
     }
 
     /**
-     * Get a LanguageHouse with the given id
+     * Get a LanguageHouse with the given id.
+     *
      * @inheritDoc
      */
     public function __invoke($item, array $context)
@@ -38,6 +40,7 @@ class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
         if (is_array($id)) {
             $id = end($id);
         }
+
         return $this->ccService->getOrganization($id, $type = 'Taalhuis');
     }
 }
