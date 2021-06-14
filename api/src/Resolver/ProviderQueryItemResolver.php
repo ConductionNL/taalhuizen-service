@@ -4,7 +4,6 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\CCService;
-use App\Service\ProviderService;
 use Exception;
 
 class ProviderQueryItemResolver implements QueryItemResolverInterface
