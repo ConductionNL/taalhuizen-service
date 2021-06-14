@@ -10,7 +10,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CCService
 {
