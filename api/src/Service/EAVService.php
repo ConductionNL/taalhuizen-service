@@ -11,6 +11,7 @@ class EAVService
 
     /**
      * EAVService constructor.
+     *
      * @param CommonGroundService $commonGroundService
      */
     public function __construct(CommonGroundService $commonGroundService)
@@ -24,11 +25,12 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * When updating an existing obejct the self or eavId is required.
      *
-     * @param array $body the body for creating or updating the object.
-     * @param string $entityName the name of the entity to save. Defined as EAV/entity in the eav-component.
+     * @param array       $body          the body for creating or updating the object.
+     * @param string      $entityName    the name of the entity to save. Defined as EAV/entity in the eav-component.
      * @param string|null $componentCode the component code of the entity to save. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $self the (component @id, not @eav) url to an existing object you want to update or create an eav object for.
-     * @param string|null $eavId the id of an eav object you want to update.
+     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to update or create an eav object for.
+     * @param string|null $eavId         the id of an eav object you want to update.
+     *
      * @return array|false the saved object.
      */
     public function saveObject(array $body, string $entityName, ?string $componentCode = 'eav', string $self = null, string $eavId = null)
@@ -50,9 +52,10 @@ class EAVService
      * A function for searching an object (with its extra variables that are defined in the eav-component) with the given query params.
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      *
-     * @param string $entityName the name of the entity to get. Defined as EAV/entity in the eav-component.
+     * @param string      $entityName    the name of the entity to get. Defined as EAV/entity in the eav-component.
      * @param string|null $componentCode the component code of the entity to get. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param array|null $query the search/query parameters.
+     * @param array|null  $query         the search/query parameters.
+     *
      * @return array the found object.
      */
     public function getObjectList(string $entityName, ?string $componentCode = 'eav', ?array $query = []): array
@@ -73,12 +76,14 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * The self or eavId is required to get an object from/with the eav-component.
      *
-     * @param string $entityName the name of the entity to get. Defined as EAV/entity in the eav-component.
-     * @param string|null $self the (component @id, not @eav) url to an existing object you want to get.
+     * @param string      $entityName    the name of the entity to get. Defined as EAV/entity in the eav-component.
+     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to get.
      * @param string|null $componentCode the component code of the entity to get. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $eavId the id of an eav object you want to get.
-     * @return array|false the object array.
+     * @param string|null $eavId         the id of an eav object you want to get.
+     *
      * @throws Exception
+     *
+     * @return array|false the object array.
      */
     public function getObject(string $entityName, string $self = null, ?string $componentCode = 'eav', string $eavId = null)
     {
@@ -105,12 +110,14 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * Only eavId or [entityName, self & componentCode] is required to use this function.
      *
-     * @param string|null $eavId the id of an eav object you want to delete.
-     * @param string|null $entityName the name of the entity to delete. Defined as EAV/entity in the eav-component.
-     * @param string|null $self the (component @id, not @eav) url to an existing object from which you want to delete all eav data.
+     * @param string|null $eavId         the id of an eav object you want to delete.
+     * @param string|null $entityName    the name of the entity to delete. Defined as EAV/entity in the eav-component.
+     * @param string|null $self          the (component @id, not @eav) url to an existing object from which you want to delete all eav data.
      * @param string|null $componentCode the component code of the entity to delete. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @return bool true if the eav object was deleted.
+     *
      * @throws Exception
+     *
+     * @return bool true if the eav object was deleted.
      */
     public function deleteObject(string $eavId = null, string $entityName = null, string $self = null, ?string $componentCode = 'eav'): bool
     {
@@ -132,12 +139,14 @@ class EAVService
      * And than either give an id in the url array or give a resource with an @id or id set.
      *
      * @param array|null $resource the resource you want to delete.
-     * @param array|null $url an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
-     * @param false $async async for the commongroundService->deleteResource function.
-     * @param bool $autowire autowire for the commongroundService->deleteResource function.
-     * @param bool $events events for the commongroundService->deleteResource function.
-     * @return bool true if the eav object and any object connected to this eav object was deleted.
+     * @param array|null $url      an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
+     * @param false      $async    async for the commongroundService->deleteResource function.
+     * @param bool       $autowire autowire for the commongroundService->deleteResource function.
+     * @param bool       $events   events for the commongroundService->deleteResource function.
+     *
      * @throws Exception
+     *
+     * @return bool true if the eav object and any object connected to this eav object was deleted.
      */
     public function deleteResource(?array $resource, array $url = null, bool $async = false, bool $autowire = true, bool $events = true): bool
     {
@@ -168,12 +177,14 @@ class EAVService
      * This function checks if there is an existing eav object connected to/for the object uri (or entityName + id + componentCode).
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      *
-     * @param string|null $uri the url to an object you want to check if it has an eav object connected to it in the eav-component.
-     * @param string|null $entityName the entity name of the object you want to check. Defined as EAV/entity in the eav-component.
-     * @param string|null $id the id to the object you want to check.
+     * @param string|null $uri           the url to an object you want to check if it has an eav object connected to it in the eav-component.
+     * @param string|null $entityName    the entity name of the object you want to check. Defined as EAV/entity in the eav-component.
+     * @param string|null $id            the id to the object you want to check.
      * @param string|null $componentCode the component code of the object you want to check. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @return bool true if there is an existing eav object for the given uri (or entityName + id + componentCode).
+     *
      * @throws Exception
+     *
+     * @return bool true if there is an existing eav object for the given uri (or entityName + id + componentCode).
      */
     public function hasEavObject(?string $uri, string $entityName = null, string $id = null, ?string $componentCode = 'eav'): bool
     {
