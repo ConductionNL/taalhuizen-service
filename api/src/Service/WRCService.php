@@ -8,19 +8,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class WRCService
 {
     private EntityManagerInterface $em;
     private CommonGroundService $commonGroundService;
 
-    public function __construct
-    (
+    public function __construct(
         EntityManagerInterface $em,
         CommonGroundService $commonGroundService
-    )
-    {
+    ) {
         $this->em = $em;
         $this->commonGroundService = $commonGroundService;
     }
@@ -29,6 +26,7 @@ class WRCService
      * This function creates a wrc/organization with the given array.
      *
      * @param array $organizationArray Array with organizations data
+     *
      * @return array|false Returns the created organization
      */
     public function createOrganization(array $organizationArray)
@@ -36,14 +34,16 @@ class WRCService
         $resource = [
             'name' => $organizationArray['name'],
         ];
+
         return $this->commonGroundService->createResource($resource, ['component' => 'wrc', 'type' => 'organizations']);
     }
 
     /**
      * This function saves a wrc/organization with the given arrays.
      *
-     * @param array $ccOrganization Array with cc/organizations data
+     * @param array $ccOrganization    Array with cc/organizations data
      * @param array $organizationArray Array with wrc/organizations data
+     *
      * @return array|false Returns the created organization
      */
     public function saveOrganization(array $ccOrganization, array $organizationArray)
@@ -52,6 +52,7 @@ class WRCService
         $resource = [
             'name' => $organizationArray['name'],
         ];
+
         return $this->commonGroundService->updateResource($resource, ['component' => 'wrc', 'type' => 'organizations', 'id' => $organization['id']]);
     }
 
@@ -59,6 +60,7 @@ class WRCService
      * This function fetches a wrc/organization with the given ID.
      *
      * @param string $id ID of the organization
+     *
      * @return array|false|mixed|string|null Returns the fetched organization
      */
     public function getOrganization(string $id)
@@ -70,8 +72,10 @@ class WRCService
      * This function created a contact url for a student or aanbiederEmployee.
      *
      * @param array $input Array with students data or aanbiederEmployees data
-     * @return string Returns a contact url as string
+     *
      * @throws \Exception
+     *
+     * @return string Returns a contact url as string
      */
     public function setContact(array $input): string
     {
@@ -96,6 +100,7 @@ class WRCService
      * This function checks for a documents base64data.
      *
      * @param array $input Array with documents data
+     *
      * @throws \Exception
      */
     public function handleDocumentProps(array $input)
@@ -112,8 +117,10 @@ class WRCService
      * This function creates a document with the given data.
      *
      * @param array $input Array with documents data
-     * @return \App\Entity\Document Returns a Document object
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document Returns a Document object
      */
     public function createDocument(array $input): Document
     {
@@ -142,8 +149,10 @@ class WRCService
      * This function gets the id from a document.
      *
      * @param array $input Array with documents data
-     * @return false|mixed|string Returns the documents ID
+     *
      * @throws \Exception
+     *
+     * @return false|mixed|string Returns the documents ID
      */
     public function getDocumentId(array $input)
     {
@@ -169,8 +178,10 @@ class WRCService
      * This function fetches the document with the given data.
      *
      * @param array $input Array with the documents data
-     * @return \App\Entity\Document Returns a Document object
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document Returns a Document object
      */
     public function downloadDocument(array $input): Document
     {
@@ -185,13 +196,14 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
-
     /**
      * This function deletes a document with the given ID.
      *
      * @param array $input Array with the documents data
-     * @return \App\Entity\Document|null Returns null
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document|null Returns null
      */
     public function removeDocument(array $input): ?Document
     {
@@ -210,6 +222,7 @@ class WRCService
      * This function creates a Document object with the given data.
      *
      * @param array $document Array with the documents data
+     *
      * @return \App\Entity\Document Returns a Document object
      */
     public function createDocumentObject(array $document): Document
@@ -231,13 +244,14 @@ class WRCService
         return $documentObject;
     }
 
-
     /**
      * This function fetches a document with the given ID.
      *
      * @param string $id ID of the document
-     * @return \App\Entity\Document Returns a Document object
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document Returns a Document object
      */
     public function getDocument(string $id): Document
     {
@@ -254,8 +268,10 @@ class WRCService
      * This function fetches documents for the given contact.
      *
      * @param string|null $contact Url of the contact
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection of fetched documents
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection of fetched documents
      */
     public function getDocuments(?string $contact = null): ArrayCollection
     {

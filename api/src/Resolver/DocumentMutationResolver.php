@@ -14,12 +14,10 @@ class DocumentMutationResolver implements MutationResolverInterface
     private CommonGroundService $cgs;
     private EntityManagerInterface $em;
 
-    public function __construct
-    (
+    public function __construct(
         CommonGroundService $cgs,
         EntityManagerInterface $em
-    )
-    {
+    ) {
         $this->wrcService = new WRCService($em, $cgs);
     }
 
@@ -27,10 +25,13 @@ class DocumentMutationResolver implements MutationResolverInterface
      * This function determines what function to execute next based on the context.
      *
      * @inheritDoc
-     * @param object|null $item Post object
-     * @param array $context Information about post
-     * @return \App\Entity\Document|object|null Returns a Document object
+     *
+     * @param object|null $item    Post object
+     * @param array       $context Information about post
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Document|object|null Returns a Document object
      */
     public function __invoke($item, array $context)
     {

@@ -15,12 +15,10 @@ class TestResultMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct
-    (
+    public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->testResultService = new TestResultService($commonGroundService);

@@ -6,7 +6,6 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
-use PHPUnit\Util\Test;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
@@ -14,8 +13,7 @@ class TestResultQueryItemResolver implements QueryItemResolverInterface
     private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct
-    (
+    public function __construct(
         CommongroundService $commonGroundService
     ) {
         $this->commonGroundService = $commonGroundService;
