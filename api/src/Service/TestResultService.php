@@ -22,7 +22,7 @@ class TestResultService
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($entityManager, $commonGroundService);
+        $this->eavService = new EAVService($commonGroundService);
         $this->eduService = new EDUService($entityManager, $commonGroundService);
     }
 

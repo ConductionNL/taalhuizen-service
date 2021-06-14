@@ -26,7 +26,7 @@ class EDUService
     {
         $this->entityManager = $em;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($em, $commonGroundService);
+        $this->eavService = new EAVService($commonGroundService);
     }
 
     /**
