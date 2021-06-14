@@ -43,7 +43,6 @@ class GraphQLSubscriber implements EventSubscriberInterface
     //@TODO Errors in correct format
     public function login(RequestEvent $event)
     {
-
         $content = json_decode($event->getRequest()->getContent(), true);
         $graphQL = Parser::parse($content['query']);
         if (
@@ -69,7 +68,7 @@ class GraphQLSubscriber implements EventSubscriberInterface
 
                         return;
                     }
-                    if (!$this->ucService->checkUserScopes($graphQL->definitions->offsetGet(0)->name->value ,$token)) {
+                    if (!$this->ucService->checkUserScopes($graphQL->definitions->offsetGet(0)->name->value, $token)) {
                         $result['errors'] = new Error("User doesn't have the proper rights to do this action");
                         $this->throwError($event, $result);
 

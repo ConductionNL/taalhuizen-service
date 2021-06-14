@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 class UcService
 {
@@ -378,6 +377,7 @@ class UcService
      * This function saves the scopes of the user to the cache for later validation.
      *
      * @param array $user user array retrieved from user component
+     *
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function saveUserScopesToCache(array $user)
@@ -385,16 +385,16 @@ class UcService
         $item = $this->cache->getItem('code_'.md5($user['id']));
         $scopes = $this->commonGroundService->getResource(['component' => 'uc', 'type' => "users/{$user['id']}/scopes"]);
         unset($scopes['name']);
-        $item->set( $scopes);
+        $item->set($scopes);
         $this->cache->save($item);
-
     }
 
     /**
      * Checks if the logged in user has the correct scope to access this call.
      *
      * @param string $route The graphQL route (what call is being used)
-     * @param string $jwt The JWT used as authentication
+     * @param string $jwt   The JWT used as authentication
+     *
      * @return bool Whether or not the user has the required scope for this call
      */
     public function checkUserScopes(string $route, string $jwt): bool
@@ -411,15 +411,16 @@ class UcService
         } else {
             return false;
         }
-
     }
 
     /**
      * Tries to get the user's scopes stored in the cache.
      *
      * @param string $jwt JWT used as authentication
-     * @return false|mixed either returns the cached scopes or false if not found.
+     *
      * @throws \Psr\Cache\InvalidArgumentException
+     *
+     * @return false|mixed either returns the cached scopes or false if not found.
      */
     public function getCachedScopes(string $jwt)
     {
@@ -437,11 +438,11 @@ class UcService
      * Converts the graphQL route to the scope version defined in the user component.
      *
      * @param string $route The graphQL route (what call is being used)
+     *
      * @return string returns the scope version of the given route as they are defined in the user component
      */
     public function convertRouteToScope(string $route): string
     {
-
         $splits = preg_split('/(?=[A-Z])/', $route);
 
         $switch = $this->checkIfSwitchIsRequired($splits);
@@ -457,26 +458,28 @@ class UcService
      * Converts the split graphQL route to the scope version defined in the user component.
      *
      * @param array $splits the split graphQL route
-     * @param bool $switch whether or not the splits array needs to be switched around to comply with the user component scope
+     * @param bool  $switch whether or not the splits array needs to be switched around to comply with the user component scope
+     *
      * @return string returns the scope
      */
     public function handleScopeStringCreation(array $splits, bool $switch): string
     {
-        $result = "";
+        $result = '';
         if (count($splits) > 1) {
-            foreach ($splits as $split){
+            foreach ($splits as $split) {
                 if ($split == end($splits)) {
-                    $result = $result . strtolower($split);
+                    $result = $result.strtolower($split);
                 } else {
-                    $result = $result . strtolower($split) . '.';
+                    $result = $result.strtolower($split).'.';
                 }
             }
             if (!$switch) {
-                $result = $result . '.read';
+                $result = $result.'.read';
             }
         } else {
-            $result = $splits[0] . '.read';
+            $result = $splits[0].'.read';
         }
+
         return $result;
     }
 
@@ -484,6 +487,7 @@ class UcService
      * Removes the last item of the array and puts it in front of the array to comply with the user component scope.
      *
      * @param array $splits the split graphQL route
+     *
      * @return array returns the reshuffled splits array
      */
     public function switchSplits(array $splits): array
@@ -498,6 +502,7 @@ class UcService
      * Checks if the splits array needs to be switched to comply with the user component scope.
      *
      * @param array $splits the split graphQL route
+     *
      * @return bool whether or not the splits array needs to be switched around
      */
     public function checkIfSwitchIsRequired(array $splits): bool
@@ -512,9 +517,10 @@ class UcService
     }
 
     /**
-     * Retrieves the user id from the JWT used for authentication
+     * Retrieves the user id from the JWT used for authentication.
      *
      * @param string $token the JWT used for authentication
+     *
      * @return string the user id retrieved from the JWT
      */
     public function getUserIdFromToken(string $token): string
