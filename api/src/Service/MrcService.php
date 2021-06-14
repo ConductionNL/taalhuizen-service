@@ -39,8 +39,8 @@ class MrcService
         $this->commonGroundService = $commonGroundService;
         $this->ucService = $ucService;
         $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
-        $this->eavService = new EAVService($entityManager, $commonGroundService);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
+        $this->eavService = new EAVService($commonGroundService);
     }
 
     /**
