@@ -21,13 +21,12 @@ class CCService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag
+        CommonGroundService $commonGroundService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($entityManager, $commonGroundService);
-        $this->wrcService = new WRCService($entityManager, $commonGroundService, $parameterBag);
+        $this->eavService = new EAVService($commonGroundService);
+        $this->wrcService = new WRCService($entityManager, $commonGroundService);
     }
 
     /**
