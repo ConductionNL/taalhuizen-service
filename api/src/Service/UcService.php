@@ -142,11 +142,11 @@ class UcService
     /**
      * Returns the environment of the user based upon the organization type.
      *
-     * @param string $type The type of the organization
+     * @param string|null $type The type of the organization
      *
      * @return string The user environment
      */
-    public function userEnvironmentEnum(string $type): string
+    public function userEnvironmentEnum(?string $type): string
     {
         if ($type == 'Taalhuis') {
             $result = 'TAALHUIS';
