@@ -4,21 +4,33 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\WRCService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class DocumentQueryItemResolver implements QueryItemResolverInterface
 {
+    private CommonGroundService $cgs;
+    private EntityManagerInterface $em;
     private WRCService $wrcService;
 
-    public function __construct(WRCService $wrcService)
+    public function __construct
+    (
+        CommonGroundService $cgs,
+        EntityManagerInterface $em
+    )
     {
-        $this->wrcService = $wrcService;
+        $this->wrcService = new WRCService($em, $cgs);
     }
 
     /**
-     * @inheritDoc
+     * This function fetches a document with the given ID.
      *
-     * @throws Exception
+     * @inheritDoc
+     * @param object|null $item Object with the documents data
+     * @param array $context Context of the call
+     * @return \App\Entity\Document|object Returns a Document object
+     * @throws \Exception
      */
     public function __invoke($item, array $context)
     {

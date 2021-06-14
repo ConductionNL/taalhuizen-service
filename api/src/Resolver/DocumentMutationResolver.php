@@ -5,19 +5,31 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Document;
 use App\Service\WRCService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DocumentMutationResolver implements MutationResolverInterface
 {
     private WRCService $wrcService;
+    private CommonGroundService $cgs;
+    private EntityManagerInterface $em;
 
-    public function __construct(WRCService $wrcService)
+    public function __construct
+    (
+        CommonGroundService $cgs,
+        EntityManagerInterface $em
+    )
     {
-        $this->wrcService = $wrcService;
+        $this->wrcService = new WRCService($em, $cgs);
     }
 
     /**
-     * @inheritDoc
+     * This function determines what function to execute next based on the context.
      *
+     * @inheritDoc
+     * @param object|null $item Post object
+     * @param array $context Information about post
+     * @return \App\Entity\Document|object|null Returns a Document object
      * @throws \Exception
      */
     public function __invoke($item, array $context)
