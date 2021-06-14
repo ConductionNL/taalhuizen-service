@@ -27,8 +27,10 @@ class RegistrationService
      * This function gets a cc/organization with the given languageHouseId.
      *
      * @param string $languageHouseId Id of the cc/organizations
-     * @return array A cc/organizations is returned from the CC
+     *
      * @throws Exception
+     *
+     * @return array A cc/organizations is returned from the CC
      */
     public function getRegistration(string $languageHouseId): array
     {
@@ -40,8 +42,9 @@ class RegistrationService
     /**
      * This function gets all cc/organizations with type->Taalhuis.
      *
-     * @return array cc/organizations are returned from the CC
      * @throws Exception
+     *
+     * @return array cc/organizations are returned from the CC
      */
     public function getRegistrations(): array
     {
@@ -54,8 +57,10 @@ class RegistrationService
      * This function deletes a Registration with the given student.
      *
      * @param array $student Array with data from the edu/participants
-     * @return array A Registration is returned from the CC
+     *
      * @throws Exception
+     *
+     * @return array A Registration is returned from the CC
      */
     public function deleteRegistration(array $student): array
     {
@@ -78,8 +83,10 @@ class RegistrationService
      * This function deletes a cc/organization with the given id.
      *
      * @param string $id Id of the cc/organizations
-     * @return bool
+     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function deleteOrganization(string $id): bool
     {
@@ -92,8 +99,10 @@ class RegistrationService
      * This function deletes a memo/memos with the given id.
      *
      * @param string $id Id of the memo/memos
-     * @return bool
+     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function deleteMemo(string $id): bool
     {
@@ -106,8 +115,10 @@ class RegistrationService
      * This function deletes the registrar person - cc/people with the given id.
      *
      * @param string $id Id of the cc/people
-     * @return bool
+     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function deleteRegistrarPerson(string $id): bool
     {
@@ -120,8 +131,10 @@ class RegistrationService
      * This function deletes the student person - eav/cc/people with the given id.
      *
      * @param string $id Id of the cc/people
-     * @return bool
+     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function deleteStudentPerson(string $id): bool
     {
@@ -135,8 +148,10 @@ class RegistrationService
      * This function deletes the participant - eav/edu/participants with the given id.
      *
      * @param string $id Id of the cc/people
-     * @return bool
+     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function deleteParticipant(string $id): bool
     {
@@ -150,8 +165,10 @@ class RegistrationService
      * This function convert the input to Person.
      *
      * @param array $student Array with data from the edu/participants
-     * @return array returns an array
+     *
      * @throws Exception
+     *
+     * @return array returns an array
      */
     private function inputToPerson(array $student): array
     {
@@ -167,10 +184,12 @@ class RegistrationService
     /**
      * This function sets the given person and student to PersonDetails.
      *
-     * @param array $person Array with data from the cc/people
+     * @param array $person  Array with data from the cc/people
      * @param array $student Array with data from the edu/participants
-     * @return array returns an array
+     *
      * @throws Exception
+     *
+     * @return array returns an array
      */
     private function getPersonPropertiesFromPersonDetails(array $person, array $student): array
     {
@@ -186,10 +205,12 @@ class RegistrationService
     /**
      * This function sets the given person and student to ContactDetails.
      *
-     * @param array $person Array with data from the cc/people
+     * @param array $person  Array with data from the cc/people
      * @param array $student Array with data from the edu/participants
-     * @return array returns an array
+     *
      * @throws Exception
+     *
+     * @return array returns an array
      */
     private function getPersonPropertiesFromContactDetails(array $person, array $student): array
     {
@@ -203,10 +224,12 @@ class RegistrationService
     /**
      * This function sets the given person and student to ReferrerDetails.
      *
-     * @param array $person Array with data from the cc/people
+     * @param array $person  Array with data from the cc/people
      * @param array $student Array with data from the edu/participants
-     * @return array returns an array
+     *
      * @throws Exception
+     *
+     * @return array returns an array
      */
     private function getPersonPropertiesFromReferrerDetails(array $person, array $student): array
     {
@@ -220,13 +243,15 @@ class RegistrationService
     /**
      * This function handles the Registration result.
      *
-     * @param array $registrationStudent Array with data from the registrationStudent
-     * @param array $registrationRegistrar Array with data from the registrationRegistrar
-     * @param string $languageHouseId Id of the cc/organization
-     * @param array $participant Array with data from the edu/participants
-     * @param array $memo Array with data from the memo
-     * @return Registration returns a Registration object
+     * @param array  $registrationStudent   Array with data from the registrationStudent
+     * @param array  $registrationRegistrar Array with data from the registrationRegistrar
+     * @param string $languageHouseId       Id of the cc/organization
+     * @param array  $participant           Array with data from the edu/participants
+     * @param array  $memo                  Array with data from the memo
+     *
      * @throws Exception
+     *
+     * @return Registration returns a Registration object
      */
     public function handleResult(array $registrationStudent, array $registrationRegistrar, string $languageHouseId, array $participant, array $memo): Registration
     {
@@ -247,6 +272,7 @@ class RegistrationService
      * This function checks the Registration values.
      *
      * @param array $input Array with data from the input
+     *
      * @throws Exception
      */
     public function checkRegistrationValues(array $input)

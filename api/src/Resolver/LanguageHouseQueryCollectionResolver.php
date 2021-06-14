@@ -16,8 +16,9 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
 
     /**
      * LanguageHouseQueryCollectionResolver constructor.
-     * @param CCService $ccService
-     * @param UcService $ucService
+     *
+     * @param CCService       $ccService
+     * @param UcService       $ucService
      * @param ResolverService $resolverService
      */
     public function __construct(
@@ -38,6 +39,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
         switch ($context['info']->operation->name->value) {
             case 'languageHouses':
                 $collection = $this->ccService->getOrganizations($type = 'Taalhuis');
+
                 return $this->resolverService->createPaginator($collection, $context['args']);
             case 'userRolesByLanguageHouses':
                 $collection = $this->ucService->getUserRolesByOrganization(
@@ -46,6 +48,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                         null,
                     'Taalhuis'
                 );
+
                 return $this->resolverService->createPaginator($collection, $context['args']);
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
