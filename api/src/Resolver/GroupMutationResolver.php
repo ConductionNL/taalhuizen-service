@@ -174,6 +174,13 @@ class GroupMutationResolver implements MutationResolverInterface
         return $this->eduService->changeGroupTeachers($groupId, $employeeIds);
     }
 
+    /**
+     * Creates an edu/course for a group.
+     *
+     * @param array $group the input data for a Group.
+     *
+     * @return array the created edu/course.
+     */
     public function createCourse(array $group): array
     {
         $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
@@ -190,7 +197,15 @@ class GroupMutationResolver implements MutationResolverInterface
         return $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
     }
 
-    public function makeGroup($course, $group, $groupId = null)
+    /**
+     * Makes a new edu/group object with the eav-component. Or updates an existing one.
+     *
+     * @param array $course the course this group is connected to.
+     * @param array $group the input data for a Group.
+     * @param string|null $groupId the id of an already existing group, to update it.
+     * @return array the result array, containing the created or updated group.
+     */
+    public function makeGroup(array $course, array $group, string $groupId = null): array
     {
         if (isset($groupId)) {
             //update
@@ -206,7 +221,14 @@ class GroupMutationResolver implements MutationResolverInterface
         return $result;
     }
 
-    public function dtoToGroup(Group $resource)
+    /**
+     * This function converts the input data for creating a Group from the DTO to a valid Group body.
+     *
+     * @param Group $resource the Group DTO input.
+     *
+     * @return array a valid group body.
+     */
+    public function dtoToGroup(Group $resource): array
     {
         $group = [];
         if ($resource->getGroupId()) {
@@ -240,7 +262,14 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function setAanbieder($resource, $group)
+    /**
+     * This function gets the aanbieder id from the given input Group DTO and adds it to the given group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group the group array.
+     * @return array the group body now containing the aanbiederId.
+     */
+    public function setAanbieder(Group $resource, array $group): array
     {
         $aanbieder = explode('/', $resource->getAanbiederId());
         if (is_array($aanbieder)) {
@@ -251,7 +280,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function setOutcomesOther($resource, $group)
+    /**
+     * This function checks if the topic, application and level 'other' inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group the group array.
+     *
+     * @return array a valid group body containing the other options if they where set in the input.
+     */
+    public function setOutcomesOther(Group $resource, array $group): array
     {
         if ($resource->getOutComesTopicOther()) {
             $group['topicOther'] = $resource->getOutComesTopicOther();
@@ -266,7 +304,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function setDetailDates($resource, $group)
+    /**
+     * This function checks if the startDate and endDate inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group the group array.
+     *
+     * @return array a valid group body containing the startDate and/or endDate if they where set in the input.
+     */
+    public function setDetailDates(Group $resource, array $group): array
     {
         if ($resource->getDetailsStartDate()) {
             $group['startDate'] = $resource->getDetailsStartDate();
@@ -278,7 +325,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function setParticipantLimits($resource, $group)
+    /**
+     * This function checks if the participantsMin and participantsMax inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group the group array.
+     *
+     * @return array a valid group body containing the participantsMin and/or participantsMax if they where set in the input.
+     */
+    public function setParticipantLimits(Group $resource, array $group): array
     {
         if ($resource->getGeneralParticipantsMin()) {
             $group['participantsMin'] = $resource->getGeneralParticipantsMin();
@@ -290,7 +346,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function setGroupAvailabilities($resource, $group)
+    /**
+     * This function checks if the availability and availabilityNotes inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group the group array.
+     *
+     * @return array a valid group body containing the availability and/or availabilityNotes if they where set in the input.
+     */
+    public function setGroupAvailabilities(Group $resource, array $group): array
     {
         if ($resource->getAvailability()) {
             $group['availability'] = $resource->getAvailability();
@@ -302,7 +367,14 @@ class GroupMutationResolver implements MutationResolverInterface
         return $group;
     }
 
-    public function checkGroupValues($group)
+    /**
+     * This function checks if the given group body is valid to use to create or update a Group.
+     *
+     * @param array $group the body of a Group.
+     *
+     * @return array the result array containing the group or an errorMessage.
+     */
+    public function checkGroupValues(array $group): array
     {
         $result = [];
         if ($group['topic'] == 'OTHER' && !isset($group['topicOther'])) {
