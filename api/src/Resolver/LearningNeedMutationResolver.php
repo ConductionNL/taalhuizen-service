@@ -20,12 +20,14 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * LearningNeedMutationResolver constructor.
      * @param EntityManagerInterface $entityManager
      * @param CommonGroundService $commonGroundService
+     * @param LearningNeedService $learningNeedService
      */
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService);
+        $this->learningNeedService = $learningNeedService;
+//        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService);
     }
 
     /**

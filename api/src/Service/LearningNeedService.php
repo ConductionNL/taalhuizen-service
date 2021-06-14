@@ -19,14 +19,16 @@ class LearningNeedService
      * LearningNeedService constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
+     * @param CommonGroundService $commonGroundService
+     * @param ParticipationService $participationService
      */
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService)
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParticipationService $participationService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
-        $this->participationService = new ParticipationService($entityManager, $commonGroundService);
+        $this->participationService = $participationService;
+//        $this->participationService = new ParticipationService($entityManager, $commonGroundService);
     }
 
     /**
