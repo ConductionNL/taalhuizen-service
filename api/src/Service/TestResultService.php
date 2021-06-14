@@ -9,21 +9,18 @@ use Exception;
 
 class TestResultService
 {
-    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EDUService $eduService;
 
     public function __construct
     (
-        EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService
     )
     {
-        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
-        $this->eduService = new EDUService($entityManager, $commonGroundService);
+        $this->eduService = new EDUService($commonGroundService);
     }
 
     /**

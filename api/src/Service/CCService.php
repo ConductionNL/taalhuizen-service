@@ -20,14 +20,12 @@ class CCService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        EAVService $eavService,
-        WRCService $wrcService
+        CommonGroundService $commonGroundService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = $eavService;
-        $this->wrcService = $wrcService;
+        $this->eavService = new EAVService($commonGroundService);
+        $this->wrcService = new WRCService($entityManager, $commonGroundService);
     }
 
     public function createOrganization(array $organizationArray, $type)
