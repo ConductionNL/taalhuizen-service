@@ -39,8 +39,10 @@ class StudentDossierEventMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a student dossier event
+     * Creates a student dossier event.
+     *
      * @param array $studentDossierEventArray The data for the student dossier event
+     *
      * @return StudentDossierEvent The resulting student dossier event
      */
     public function createStudentDossierEvent(array $studentDossierEventArray): StudentDossierEvent
@@ -49,8 +51,10 @@ class StudentDossierEventMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Updates a student dossier event
+     * Updates a student dossier event.
+     *
      * @param array $input The data for the student dossier event
+     *
      * @return StudentDossierEvent The resulting student dossier event
      */
     public function updateStudentDossierEvent(array $input): StudentDossierEvent
@@ -62,8 +66,10 @@ class StudentDossierEventMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Deletes a student dossier event
+     * Deletes a student dossier event.
+     *
      * @param array $studentDossierEvent The data to delete the student dossier event
+     *
      * @return StudentDossierEvent|null The resulting data
      */
     public function deleteStudentDossierEvent(array $studentDossierEvent): ?StudentDossierEvent

@@ -24,10 +24,11 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
 
     /**
      * LanguageHouseMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param ParameterBagInterface $parameterBagInterface
-     * @param UcService $ucService
+     * @param CommonGroundService    $commonGroundService
+     * @param ParameterBagInterface  $parameterBagInterface
+     * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,9 +63,10 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Create LanguageHouse
+     * Create LanguageHouse.
      *
      * @param array $languageHouseArray the resource data.
+     *
      * @return LanguageHouse The resulting LanguageHouse properties
      */
     public function createLanguageHouse(array $languageHouseArray): LanguageHouse
@@ -78,9 +80,10 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Update LanguageHouse
+     * Update LanguageHouse.
      *
      * @param array $input the input data.
+     *
      * @return LanguageHouse The resulting LanguageHouse properties
      */
     public function updateLanguageHouse(array $input): LanguageHouse
@@ -99,9 +102,10 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Delete LanguageHouse
+     * Delete LanguageHouse.
      *
      * @param array $input the input data.
+     *
      * @return ?LanguageHouse The resulting LanguageHouse properties
      */
     public function deleteLanguageHouse(array $input): ?LanguageHouse

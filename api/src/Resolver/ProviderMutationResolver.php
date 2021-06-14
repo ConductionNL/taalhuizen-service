@@ -24,10 +24,11 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     /**
      * ProviderMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param ParameterBagInterface $parameterBagInterface
-     * @param UcService $ucService
+     * @param CommonGroundService    $commonGroundService
+     * @param ParameterBagInterface  $parameterBagInterface
+     * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,9 +63,10 @@ class ProviderMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Create a Provider
+     * Create a Provider.
      *
      * @param array $providerArray the resource data.
+     *
      * @return Provider The resulting Provider properties
      */
     public function createProvider(array $providerArray): Provider
@@ -78,9 +80,10 @@ class ProviderMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Update a Provider
+     * Update a Provider.
      *
      * @param array $input the input data.
+     *
      * @return Provider The resulting Provider properties
      */
     public function updateProvider(array $input): Provider
@@ -99,9 +102,10 @@ class ProviderMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Delete a Provider
+     * Delete a Provider.
      *
      * @param array $input the input data.
+     *
      * @return Provider The resulting Provider properties
      */
     public function deleteProvider(array $input): ?Provider

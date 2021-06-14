@@ -30,10 +30,11 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
     /**
      * RegistrationMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param ParameterBagInterface $parameterBagInterface
-     * @param CommongroundService $commonGroundService
-     * @param StudentService $studentService
+     * @param ParameterBagInterface  $parameterBagInterface
+     * @param CommongroundService    $commonGroundService
+     * @param StudentService         $studentService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -44,7 +45,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->entityManager = $entityManager;
         $this->parameterBagInterface = $parameterBagInterface;
         $this->commonGroundService = $commonGroundService;
-        $this->registrationService = new RegistrationService($entityManager,$commonGroundService);
+        $this->registrationService = new RegistrationService($entityManager, $commonGroundService);
         $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
         $this->studentService = $studentService;
         $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
@@ -72,11 +73,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a registration
+     * Creates a registration.
      *
      * @param array $input the input data for the registration
-     * @return Registration The resulting registration object
+     *
      * @throws Exception
+     *
+     * @return Registration The resulting registration object
      */
     public function createRegistration(array $input): Registration
     {
@@ -115,9 +118,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Updates a program
+     * Updates a program.
      *
-     * @param array $input the input data for the registration
+     * @param array $input       the input data for the registration
      * @param array $participant the input data for the registration
      */
     public function updateProgram(array $input, array $participant)
@@ -132,12 +135,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a participant
+     * Creates a participant.
      *
-     * @param array $organization the organization data.
+     * @param array $organization        the organization data.
      * @param array $registrationStudent the registrationStudent data.
-     * @return array The resulting eav/participants object
+     *
      * @throws Exception
+     *
+     * @return array The resulting eav/participants object
      */
     public function createParticipant(array $organization, array $registrationStudent)
     {
@@ -149,11 +154,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Deletes a registration
+     * Deletes a registration.
      *
      * @param array $input the input data.
-     * @return ?Registration The resulting Registration object
+     *
      * @throws Exception
+     *
+     * @return ?Registration The resulting Registration object
      */
     public function deleteRegistration(array $input): ?Registration
     {
@@ -181,11 +188,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Accept a registration
+     * Accept a registration.
      *
      * @param array $input the input data.
-     * @return object The resulting Registration object
+     *
      * @throws Exception
+     *
+     * @return object The resulting Registration object
      */
     public function acceptRegistration(array $input): object
     {
@@ -205,13 +214,15 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Input to memo
+     * Input to memo.
      *
-     * @param array $input the input data.
-     * @param string|null $studentUrl The studentUrl
+     * @param array       $input           the input data.
+     * @param string|null $studentUrl      The studentUrl
      * @param string|null $organizationUrl The organizationUrl
-     * @return array The resulting memo properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting memo properties
      */
     private function inputToMemo(array $input, string $studentUrl = null, string $organizationUrl = null)
     {
@@ -224,11 +235,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Input to studentPerson
+     * Input to studentPerson.
      *
      * @param array $input the input data.
-     * @return array The resulting student properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting student properties
      */
     private function inputToStudentPerson(array $input)
     {
@@ -242,11 +255,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Input to RegistrarPerson
+     * Input to RegistrarPerson.
      *
      * @param array $input the input data.
-     * @return array The resulting registrar properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting registrar properties
      */
     private function inputToRegistrarPerson(array $input)
     {
@@ -260,14 +275,16 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get memo properties
+     * Get memo properties.
      *
-     * @param array $registration the registration data.
-     * @param string $memoInput the memo input.
-     * @param string $studentUrl the studentUrl.
+     * @param array  $registration    the registration data.
+     * @param string $memoInput       the memo input.
+     * @param string $studentUrl      the studentUrl.
      * @param string $organizationUrl the organizationUrl.
-     * @return array The resulting registration properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting registration properties
      */
     private function getMemoProperties(array $registration, string $memoInput, string $studentUrl, string $organizationUrl): array
     {
@@ -283,12 +300,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get Student properties
+     * Get Student properties.
      *
      * @param array $registration the registration data.
      * @param array $studentInput the student input.
-     * @return array The resulting registration properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting registration properties
      */
     private function getStudentProperties(array $registration, array $studentInput): array
     {
@@ -318,12 +337,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get Registrar properties
+     * Get Registrar properties.
      *
-     * @param array $registration the registration data.
+     * @param array $registration   the registration data.
      * @param array $registrarInput the registrar input.
-     * @return array The resulting registration properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting registration properties
      */
     private function getRegistrarProperties(array $registration, array $registrarInput): array
     {
@@ -352,12 +373,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Input to organization
+     * Input to organization.
      *
-     * @param array $input the input data.
+     * @param array       $input      the input data.
      * @param string|null $ccPersonId the cc/people id.
-     * @return array The resulting registration properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting registration properties
      */
     private function inputToOrganization(array $input, string $ccPersonId = null)
     {

@@ -12,6 +12,7 @@ class ReportQueryCollectionResolver implements QueryCollectionResolverInterface
 
     /**
      * ReportQueryCollectionResolver constructor.
+     *
      * @param ResolverService $resolverService
      */
     public function __construct(ResolverService $resolverService)

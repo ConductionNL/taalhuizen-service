@@ -66,8 +66,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if the students have a language house id.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null
      */
     public function students(array $context): ?ArrayCollection
     {
@@ -93,8 +95,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function handles the student collection query.
      *
      * @param array $query Array with query
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns ArrayCollection with students
      */
     public function handleStudentCollection(array $query): ArrayCollection
     {
@@ -116,8 +120,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if new referred students have a referred status.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
      */
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
@@ -137,8 +143,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if students have a active status.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
      */
     public function activeStudents(array $context): ?ArrayCollection
     {
@@ -158,8 +166,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if students have a completed status.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
      */
     public function completedStudents(array $context): ?ArrayCollection
     {
@@ -179,8 +189,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if students have a group.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
      */
     public function groupStudents(array $context): ?ArrayCollection
     {
@@ -205,8 +217,10 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
      * This function checks if student have a aanbieder employee.
      *
      * @param array $context Array with context
-     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     *
      * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
      */
     public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
     {
