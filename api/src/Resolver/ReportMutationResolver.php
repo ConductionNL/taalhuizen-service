@@ -25,19 +25,17 @@ class ReportMutationResolver implements MutationResolverInterface
     private LearningNeedService $learningNeedService;
     private SerializerInterface $serializer;
 
-
     public function __construct(
         CommonGroundService $commonGroundService,
         EntityManagerInterface $entityManager,
         MrcService $mrcService,
         SerializerInterface $serializer
-    )
-    {
+    ) {
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->eduService = new EDUService($commonGroundService);
         $this->mrcService = $mrcService;
-        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService, new ParticipationService($entityManager,$commonGroundService,$mrcService));
+        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService, new ParticipationService($entityManager, $commonGroundService, $mrcService));
         $this->serializer = $serializer;
     }
 
@@ -68,9 +66,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Cleans an employee resource
+     * Cleans an employee resource.
      *
      * @param array $employee The employee resource to clean
+     *
      * @return array The resulting employee
      */
     public function cleanEmployee(array $employee): array
@@ -81,8 +80,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Cleans a collection of employees
+     * Cleans a collection of employees.
+     *
      * @param ArrayCollection $employees The employees to clean
+     *
      * @return array The cleaned employees
      */
     public function cleanEmployees(ArrayCollection $employees): array
@@ -96,8 +97,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Cleans a participant
+     * Cleans a participant.
+     *
      * @param array $participant The participant to check
+     *
      * @return array The cleaned participant
      */
     public function cleanParticipant(array $participant): array
@@ -112,8 +115,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Clean multiple participants
+     * Clean multiple participants.
+     *
      * @param array $participants The participants to clean
+     *
      * @return array The cleaned participants
      */
     public function cleanParticipants(array $participants): array
@@ -127,8 +132,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a participants report
+     * Creates a participants report.
+     *
      * @param array $reportArray The data to convert into a report
+     *
      * @return Report The resulting report
      */
     public function downloadParticipantsReport(array $reportArray): Report
@@ -159,8 +166,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a volunteers report
+     * Creates a volunteers report.
+     *
      * @param array $reportArray The data to convert into a report
+     *
      * @return Report The resulting report
      */
     public function downloadVolunteersReport(array $reportArray): Report
@@ -188,9 +197,11 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Sets a program provider query
-     * @param array $reportArray The report data
-     * @param Report $report The report to update
+     * Sets a program provider query.
+     *
+     * @param array  $reportArray The report data
+     * @param Report $report      The report to update
+     *
      * @return array The resulting query
      */
     public function setProgramProviderQuery(array $reportArray, Report $report): array
@@ -210,8 +221,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a desired learning outcomes report
+     * Creates a desired learning outcomes report.
+     *
      * @param array $reportArray The report data
+     *
      * @return Report The resulting report
      */
     public function downloadDesiredLearningOutcomesReport(array $reportArray): Report
@@ -243,10 +256,12 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * fills the learning needs
-     * @param array $participants The participants for the learning needs
-     * @param string|null $dateFrom The date from which the data starts
-     * @param string|null $dateUntil The date on which the data ends
+     * fills the learning needs.
+     *
+     * @param array       $participants The participants for the learning needs
+     * @param string|null $dateFrom     The date from which the data starts
+     * @param string|null $dateUntil    The date on which the data ends
+     *
      * @return array The resulting data
      */
     public function fillLearningNeeds(array $participants, ?string $dateFrom, ?string $dateUntil): array
@@ -263,8 +278,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Fills the learning needs as an collection
+     * Fills the learning needs as an collection.
+     *
      * @param array $learningNeeds The learning needs as array
+     *
      * @return ArrayCollection The resulting collection
      */
     public function fillLearningNeedsCollection(array $learningNeeds)
@@ -282,8 +299,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates a report
+     * Creates a report.
+     *
      * @param array $reportArray The report data
+     *
      * @return Report The resulting report
      */
     public function createReport(array $reportArray): Report
@@ -295,8 +314,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Updates a report
+     * Updates a report.
+     *
      * @param array $input The input needed to create a report
+     *
      * @return Report The resulting report
      */
     public function updateReport(array $input): Report
@@ -310,8 +331,10 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Deletes a report
+     * Deletes a report.
+     *
      * @param array $report The data to delete the report
+     *
      * @return Report|null The result of the delete action
      */
     public function deleteReport(array $report): ?Report
@@ -320,11 +343,12 @@ class ReportMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Sets the dates for a report
+     * Sets the dates for a report.
      *
-     * @param Report $resource The report to set the dates in
-     * @param array $resourceArray The data to extract the dates from
-     * @return boolean Whether the operation has succeeded
+     * @param Report $resource      The report to set the dates in
+     * @param array  $resourceArray The data to extract the dates from
+     *
+     * @return bool Whether the operation has succeeded
      */
     public function setDate(Report $resource, array $resourceArray): bool
     {
