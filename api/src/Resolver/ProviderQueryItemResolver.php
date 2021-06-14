@@ -9,18 +9,20 @@ use Exception;
 
 class ProviderQueryItemResolver implements QueryItemResolverInterface
 {
-    private ProviderService $providerService;
     private CCService $ccService;
 
+    /**
+     * ProviderQueryItemResolver constructor.
+     * @param CCService $ccService
+     */
     public function __construct(
-        ProviderService $providerService,
         CCService $ccService
     ) {
-        $this->providerService = $providerService;
         $this->ccService = $ccService;
     }
 
     /**
+     * Get a Provider with the given id
      * @inheritDoc
      */
     public function __invoke($item, array $context)
@@ -37,7 +39,6 @@ class ProviderQueryItemResolver implements QueryItemResolverInterface
         if (is_array($id)) {
             $id = end($id);
         }
-
         return $this->ccService->getOrganization($id, $type = 'Aanbieder');
     }
 }

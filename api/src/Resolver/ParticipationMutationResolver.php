@@ -15,6 +15,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private ParticipationService $participationService;
 
+    /**
+     * ParticipationMutationResolver constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param CommongroundService $commonGroundService
+     * @param ParticipationService $participationService
+     */
     public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ParticipationService $participationService)
     {
         $this->entityManager = $entityManager;

@@ -16,6 +16,13 @@ class ProviderMutationResolver implements MutationResolverInterface
     private EDUService $eduService;
     private MrcService $mrcService;
 
+    /**
+     * ProviderMutationResolver constructor.
+     * @param CCService $ccService
+     * @param UcService $ucService
+     * @param EDUService $eduService
+     * @param MrcService $mrcService
+     */
     public function __construct(
         CCService $ccService,
         UcService $ucService,
@@ -48,6 +55,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Create a Provider
+     *
+     * @param array $providerArray the resource data.
+     * @return Provider The resulting Provider properties
+     */
     public function createProvider(array $providerArray): Provider
     {
         $type = 'Aanbieder';
@@ -58,6 +71,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Update a Provider
+     *
+     * @param array $input the input data.
+     * @return Provider The resulting Provider properties
+     */
     public function updateProvider(array $input): Provider
     {
         $id = explode('/', $input['id']);
@@ -73,6 +92,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Delete a Provider
+     *
+     * @param array $input the input data.
+     * @return Provider The resulting Provider properties
+     */
     public function deleteProvider(array $input): ?Provider
     {
         $id = explode('/', $input['id']);

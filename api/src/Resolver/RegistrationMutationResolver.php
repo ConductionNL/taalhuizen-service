@@ -28,6 +28,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private EDUService $eduService;
     private EAVService $eavService;
 
+    /**
+     * RegistrationMutationResolver constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param ParameterBagInterface $parameterBagInterface
+     * @param CommongroundService $commonGroundService
+     * @param CCService $ccService
+     * @param EAVService $eavService
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBagInterface,

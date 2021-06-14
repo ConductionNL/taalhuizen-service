@@ -16,6 +16,13 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     private MrcService $mrcService;
     private EDUService $eduService;
 
+    /**
+     * LanguageHouseMutationResolver constructor.
+     * @param CCService $ccService
+     * @param UcService $ucService
+     * @param MrcService $mrcService
+     * @param EDUService $eduService
+     */
     public function __construct(
         CCService $ccService,
         UcService $ucService,
@@ -48,6 +55,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Create LanguageHouse
+     *
+     * @param array $languageHouseArray the resource data.
+     * @return LanguageHouse The resulting LanguageHouse properties
+     */
     public function createLanguageHouse(array $languageHouseArray): LanguageHouse
     {
         $type = 'Taalhuis';
@@ -58,6 +71,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Update LanguageHouse
+     *
+     * @param array $input the input data.
+     * @return LanguageHouse The resulting LanguageHouse properties
+     */
     public function updateLanguageHouse(array $input): LanguageHouse
     {
         $id = explode('/', $input['id']);
@@ -73,6 +92,12 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Delete LanguageHouse
+     *
+     * @param array $input the input data.
+     * @return ?LanguageHouse The resulting LanguageHouse properties
+     */
     public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
         $id = explode('/', $input['id']);
