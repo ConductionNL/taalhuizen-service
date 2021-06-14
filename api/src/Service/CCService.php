@@ -26,7 +26,7 @@ class CCService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($entityManager,$commonGroundService);
+        $this->eavService = new EAVService($entityManager, $commonGroundService);
         $this->wrcService = new WRCService($entityManager, $commonGroundService, $parameterBag);
     }
 
