@@ -2,25 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\DossierRepository;
 use App\Resolver\StudentDossierEventMutationResolver;
 use App\Resolver\StudentDossierEventQueryCollectionResolver;
 use App\Resolver\StudentDossierEventQueryItemResolver;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -118,6 +112,22 @@ class StudentDossierEvent
      */
     private $studentDossierEventId;
 
+    /**
+     * @var string|null creator of this student Dossier.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $creatorGivenName;
+
+    /**
+     * @var string|null employeeId of this student Dossier.
+     *
+     * @Groups({"read"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $employeeId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -126,6 +136,7 @@ class StudentDossierEvent
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -185,6 +196,30 @@ class StudentDossierEvent
     public function setStudentDossierEventId(?string $studentDossierEventId): self
     {
         $this->studentDossierEventId = $studentDossierEventId;
+
+        return $this;
+    }
+
+    public function getCreatorGivenName(): ?string
+    {
+        return $this->creatorGivenName;
+    }
+
+    public function setCreatorGivenName(?string $creatorGivenName): self
+    {
+        $this->creatorGivenName = $creatorGivenName;
+
+        return $this;
+    }
+
+    public function getEmployeeId(): ?string
+    {
+        return $this->employeeId;
+    }
+
+    public function setEmployeeId(?string $employeeId): self
+    {
+        $this->employeeId = $employeeId;
 
         return $this;
     }

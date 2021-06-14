@@ -44,14 +44,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "addMentorTo" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
  *          "removeMentorFrom" = {
  *              "mutation" = ParticipationMutationResolver::class,
  *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
@@ -310,6 +302,7 @@ class Participation
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
@@ -9,8 +8,6 @@ use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class ParticipationMutationResolver implements MutationResolverInterface
 {
@@ -18,7 +15,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ParticipationService $participationService){
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ParticipationService $participationService)
+    {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->participationService = $participationService;
@@ -26,25 +24,21 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke($item, array $context)
     {
-//        var_dump($context['info']->operation->name->value);
-//        var_dump($context['info']->variableValues);
-//        var_dump(get_class($item));
         if (!$item instanceof Participation && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createParticipation':
                 return $this->createParticipation($item);
             case 'updateParticipation':
                 return $this->updateParticipation($context['info']->variableValues['input']);
             case 'removeParticipation':
                 return $this->removeParticipation($context['info']->variableValues['input']);
-            case 'addMentorToParticipation':
-                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             case 'updateMentorParticipation':
                 return $this->updateMentorGroupParticipation($context['info']->variableValues['input'], 'mentor');
             case 'removeMentorFromParticipation':
@@ -63,23 +57,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
     public function createParticipation(Participation $resource): Participation
     {
         $result['result'] = [];
-
-        // If aanbiederId is set generate the url for it
-        $aanbiederUrl = null;
         if ($resource->getAanbiederId()) {
-            $aanbiederId = explode('/',$resource->getAanbiederId());
-            if (is_array($aanbiederId)) {
-                $aanbiederId = end($aanbiederId);
-            }
+            $aanbiederId = $this->setAanbiederId(null, $resource);
             $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
         if ($resource->getLearningNeedId()) {
-            $learningNeedId = explode('/',$resource->getLearningNeedId());
-            if (is_array($learningNeedId)) {
-                $learningNeedId = end($learningNeedId);
-            }
-        } else {
-            throw new Exception('Invalid request, learningNeedId is not set!');
+            $learningNeedId = $this->setLearningneedId($resource);
         }
 
         // Transform DTO info to participation body...
@@ -88,145 +71,68 @@ class ParticipationMutationResolver implements MutationResolverInterface
         // Do some checks and error handling
         $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, $learningNeedId));
 
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Save Participation and connect eav/learningNeed to it
-            $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], $learningNeedId));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->participationService->handleResult($result['participation'], $resource->getLearningNeedId());
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['participation']['id']));
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        return $resourceResult;
+        return $this->participationService->saveParticipation($result['participation'], $learningNeedId);
     }
 
     public function updateParticipation(array $input): Participation
     {
         $result['result'] = [];
 
-        $participationId = explode('/',$input['id']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $aanbiederId = $this->setAanbiederId($input);
+
         // If aanbiederId is set generate the url for it
         $aanbiederUrl = null;
-        if (isset($input['aanbiederId'])) {
-            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['aanbiederId']]);
-        }
-        if (!isset($input['learningNeedId'])) {
-            $input['learningNeedId'] = null;
+        if (isset($aanbiederId)) {
+            $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
         }
 
         // Transform input info to participation body...
         $participation = $this->inputToParticipation($input);
-
         // Do some checks and error handling
         $result = array_merge($result, $this->participationService->checkParticipationValues($participation, $aanbiederUrl, null, $participationId));
 
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Save Participation
-            $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], null, $participationId));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->participationService->handleResult($result['participation'], $input['learningNeedId']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['participation']['id']));
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
+        return $this->participationService->saveParticipation($result['participation'], null, $participationId);
     }
 
     public function removeParticipation(array $participation): ?Participation
     {
         $result['result'] = [];
-
-        if (isset($participation['id'])) {
-            $participationId = explode('/',$participation['id']);
-            if (is_array($participationId)) {
-                $participationId = end($participationId);
-            }
-        } else {
-            throw new Exception('No id was specified!');
-        }
+        $participationId = $this->setParticipationId($participation);
 
         $result = array_merge($result, $this->participationService->deleteParticipation($participationId));
 
-        $result['result'] = False;
-        if (isset($result['participation'])){
-            $result['result'] = True;
+        $result['result'] = false;
+        if (isset($result['participation'])) {
+            $result['result'] = true;
         }
 
         // If any error was caught throw it
         if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return null;
     }
 
-    public function addMentorToParticipation(array $input): Participation
-    {
-        $result['result'] = [];
-
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $mentorId = explode('/',$input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
-        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
-
-        // Do check if mentorUrl exists
-        // todo: Maybe also check if this employee is an aanbieder employee?
-        if (!$this->commonGroundService->isResource($mentorUrl)) {
-            throw new Exception('Invalid request, aanbiederEmployeeId is not an existing mrc/employee!');
-        }
-
-        // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Add Mentor to Participation
-            $result = array_merge($result, $this->participationService->addMentorToParticipation($mentorUrl, $result['participation']));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            if (!isset($result['errorMessage'])) {
-                $resourceResult = $this->participationService->handleResult($result['participation']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
-    }
-
+    /**
+     * @throws Exception
+     */
     public function removeMentorFromParticipation(array $input): Participation
     {
+        $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $this->setMentorId($input)]);
+
+        $result = $this->getParticipationMentor($input);
+
+        return $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']);
+    }
+
+    public function getParticipationMentor(array $input): array
+    {
         $result['result'] = [];
 
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $mentorId = explode('/',$input['aanbiederEmployeeId']);
-        if (is_array($mentorId)) {
-            $mentorId = end($mentorId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $mentorId = $this->setMentorId($input);
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $mentorId]);
 
         // Do check if mentorUrl exists
@@ -237,79 +143,99 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
         // Get the participation
         $result = array_merge($result, $this->participationService->getParticipation($participationId));
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Remove Mentor from Participation
-            $result = array_merge($result, $this->participationService->removeMentorFromParticipation($mentorUrl, $result['participation']));
 
-            // Now put together the expected result in $result['result'] for Lifely:
-            if (!isset($result['errorMessage'])) {
-                $resourceResult = $this->participationService->handleResult($result['participation']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
+        return $result;
     }
 
+    public function setMentorId(array $input)
+    {
+        $mentorId = explode('/', $input['aanbiederEmployeeId']);
+        $mentorId = $this->isArray($mentorId);
+
+        return $mentorId;
+    }
+
+    public function setLearningneedId(Participation $resource)
+    {
+        $learningNeedId = explode('/', $resource->getLearningNeedId());
+        $learningNeedId = $this->isArray($learningNeedId);
+
+        return $learningNeedId;
+    }
+
+    public function setParticipationId(array $input)
+    {
+        if (isset($input['participationId'])) {
+            $id = $input['participationId'];
+        } else {
+            $id = $input['id'];
+        }
+        $participationId = explode('/', $id);
+
+        return $this->isArray($participationId);
+    }
+
+    public function setAanbiederId(?array $input, ?Participation $resource = null)
+    {
+        if ($resource) {
+            $aanbiederId = explode('/', $resource->getAanbiederId());
+        } else {
+            $aanbiederId = explode('/', $input['aanbiederId']);
+        }
+        $aanbiederId = $this->isArray($aanbiederId);
+
+        return $aanbiederId;
+    }
+
+    public function setGroupId(array $input)
+    {
+        $groupId = explode('/', $input['groupId']);
+
+        return $this->isArray($groupId);
+    }
+
+    public function isArray($id)
+    {
+        if (is_array($id)) {
+            $id = end($id);
+        }
+
+        return $id;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function addGroupToParticipation(array $input): Participation
     {
-        $result['result'] = [];
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
 
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $groupId = explode('/',$input['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
-        }
-        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
+        $result = $this->getParticipationGroup($input);
 
-        // Do check if $groupUrl exists
-        if (!$this->commonGroundService->isResource($groupUrl)) {
-            throw new Exception('Invalid request, groupId is not an existing edu/group!');
-        }
-
-        // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Add Group to Participation
-            $result = array_merge($result, $this->participationService->addGroupToParticipation($groupUrl, $result['participation']));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            if (!isset($result['errorMessage'])) {
-                $resourceResult = $this->participationService->handleResult($result['participation']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
+        return $this->participationService->addGroupToParticipation($groupUrl, $result['participation']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function removeGroupFromParticipation(array $input): Participation
+    {
+        $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $this->setGroupId($input)]);
+
+        $result = $this->getParticipationGroup($input);
+
+        return $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getParticipationGroup(array $input): array
     {
         $result['result'] = [];
 
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
-        $groupId = explode('/',$input['groupId']);
-        if (is_array($groupId)) {
-            $groupId = end($groupId);
-        }
+        $participationId = $this->setParticipationId($input);
+        $groupId = $this->setGroupId($input);
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
 
         // Do check if groupUrl exists
@@ -318,59 +244,22 @@ class ParticipationMutationResolver implements MutationResolverInterface
         }
 
         // Get the participation
-        $result = array_merge($result, $this->participationService->getParticipation($participationId));
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Remove Group from Participation
-            $result = array_merge($result, $this->participationService->removeGroupFromParticipation($groupUrl, $result['participation']));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            if (!isset($result['errorMessage'])) {
-                $resourceResult = $this->participationService->handleResult($result['participation']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
+        return array_merge($result, $this->participationService->getParticipation($participationId));
     }
 
+    /**
+     * @throws Exception
+     */
     public function updateMentorGroupParticipation(array $input, $type): Participation
     {
         $result['result'] = [];
 
-        $participationId = explode('/',$input['participationId']);
-        if (is_array($participationId)) {
-            $participationId = end($participationId);
-        }
+        $participationId = $this->setParticipationId($input);
 
         // check for valid datetimes
-        if (isset($input['presenceStartDate'])) {
-            try {
-                new \DateTime($input['presenceStartDate']);
-            } catch (Exception $e) {
-                throw new Exception('presenceStartDate: Failed to parse string to DateTime.');
-            }
-        }
-        if (isset($input['presenceEndDate'])) {
-            try {
-                new \DateTime($input['presenceEndDate']);
-            } catch (Exception $e) {
-                throw new Exception('presenceEndDate: Failed to parse string to DateTime.');
-            }
-        }
-
-        // check for valid enum
-        if (isset($input['presenceEndParticipationReason'])) {
-            $presenceEndParticipationReasonEnum = ["MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"];
-            if (!in_array($input['presenceEndParticipationReason'], $presenceEndParticipationReasonEnum)) {
-                throw new Exception('presenceEndParticipationReason: The selected value is not a valid option.');
-            }
-        }
+        $this->checkDateTimes($input);
+        $this->checkPresenceEndDate($input);
+        $this->checkValidEnums($input);
 
         // Do some checks and error handling
         $result = array_merge($result, $this->participationService->checkParticipationValues($input, null, null, $participationId));
@@ -378,77 +267,98 @@ class ParticipationMutationResolver implements MutationResolverInterface
         // Make sure this participation actually has a mentor/group connected to it
         $checkParticipation = $this->participationService->getParticipation($participationId);
 
-        if (!isset($result['errorMessage'])) {
-            if (!isset($checkParticipation['participation'][$type])) {
-                throw new Exception('Warning, this participation has no '.$type.'!');
+        if (!isset($checkParticipation['participation'][$type])) {
+            throw new Exception('Warning, this participation has no '.$type.'!');
+        }
+
+        return $this->participationService->saveParticipation($result['participation'], null, $participationId);
+    }
+
+    private function checkDateTimes(array $input)
+    {
+        if (isset($input['presenceStartDate'])) {
+            try {
+                new \DateTime($input['presenceStartDate']);
+            } catch (Exception $e) {
+                throw new Exception('presenceStartDate: Failed to parse string to DateTime.');
             }
-            // No errors so lets continue... to:
-            // update participation
-            $result = array_merge($result, $this->participationService->saveParticipation($result['participation'], null, $participationId));
-
-            // Now put together the expected result in $result['result'] for Lifely:
-            $resourceResult = $this->participationService->handleResult($result['participation']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($participationId));
         }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
     }
 
-    private function dtoToParticipation(Participation $resource, $aanbiederId) {
+    private function checkPresenceEndDate(array $input)
+    {
+        if (isset($input['presenceEndDate'])) {
+            try {
+                new \DateTime($input['presenceEndDate']);
+            } catch (Exception $e) {
+                throw new Exception('presenceEndDate: Failed to parse string to DateTime.');
+            }
+        }
+    }
+
+    private function checkValidEnums(array $input)
+    {
+        // check for valid enum
+        if (isset($input['presenceEndParticipationReason'])) {
+            $presenceEndParticipationReasonEnum = ['MOVED', 'JOB', 'ILLNESS', 'DEATH', 'COMPLETED_SUCCESSFULLY', 'FAMILY_CIRCUMSTANCES', 'DOES_NOT_MEET_EXPECTATIONS', 'OTHER'];
+            if (!in_array($input['presenceEndParticipationReason'], $presenceEndParticipationReasonEnum)) {
+                throw new Exception('presenceEndParticipationReason: The selected value is not a valid option.');
+            }
+        }
+    }
+
+    private function dtoToParticipation(Participation $resource, $aanbiederId): array
+    {
         // Get all info from the dto for creating a Participation and return the body for this
-        // note: everything is nullabel in the dto, but eav doesn't like values set to null
-        if ($resource->getAanbiederId()) { $participation['aanbiederId'] = $aanbiederId; }
-        if ($resource->getAanbiederName()) { $participation['aanbiederName'] = $resource->getAanbiederName(); }
-        if ($resource->getAanbiederNote()) { $participation['aanbiederNote'] = $resource->getAanbiederNote(); }
-        if ($resource->getOfferName()) { $participation['offerName'] = $resource->getOfferName(); }
-        if ($resource->getOfferCourse()) { $participation['offerCourse'] = $resource->getOfferCourse(); }
-        if ($resource->getOutComesGoal()) { $participation['goal'] = $resource->getOutComesGoal(); }
-        if ($resource->getOutComesTopic()) { $participation['topic'] = $resource->getOutComesTopic(); }
-        if ($resource->getOutComesTopicOther()) { $participation['topicOther'] = $resource->getOutComesTopicOther(); }
-        if ($resource->getOutComesApplication()) {  $participation['application'] = $resource->getOutComesApplication(); }
-        if ($resource->getOutComesApplicationOther()) { $participation['applicationOther'] = $resource->getOutComesApplicationOther(); }
-        if ($resource->getOutComesLevel()) { $participation['level'] = $resource->getOutComesLevel(); }
-        if ($resource->getOutComesLevelOther()) { $participation['levelOther'] = $resource->getOutComesLevelOther(); }
-        if (!is_null($resource->getDetailsIsFormal())) { $participation['isFormal'] = $resource->getDetailsIsFormal(); }
-        if ($resource->getDetailsGroupFormation()) { $participation['groupFormation'] = $resource->getDetailsGroupFormation(); }
-        if ($resource->getDetailsTotalClassHours()) { $participation['totalClassHours'] = $resource->getDetailsTotalClassHours(); }
-        if (!is_null($resource->getDetailsCertificateWillBeAwarded())) { $participation['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded(); }
-        if ($resource->getDetailsStartDate()) { $participation['startDate'] = $resource->getDetailsStartDate()->format('d-m-Y H:i:s'); }
-        if ($resource->getDetailsEndDate()) { $participation['endDate'] = $resource->getDetailsEndDate()->format('d-m-Y H:i:s'); }
-        if ($resource->getDetailsEngagements()) { $participation['engagements'] = $resource->getDetailsEngagements(); }
-        return $participation;
+        return [
+            'aanbiederId'              => $resource->getAanbiederId() ? $aanbiederId : null,
+            'aanbiederName'            => $resource->getAanbiederName() ?? null,
+            'aanbiederNote'            => $resource->getAanbiederNote() ?? null,
+            'offerName'                => $resource->getOfferName() ?? null,
+            'offerCourse'              => $resource->getOfferCourse() ?? null,
+            'goal'                     => $resource->getOutComesGoal() ?? null,
+            'topic'                    => $resource->getOutComesTopic() ?? null,
+            'topicOther'               => $resource->getOutComesTopicOther() ?? null,
+            'application'              => $resource->getOutComesApplication() ?? null,
+            'applicationOther'         => $resource->getOutComesApplicationOther() ?? null,
+            'level'                    => $resource->getOutComesLevel() ?? null,
+            'levelOther'               => $resource->getOutComesLevelOther() ?? null,
+            'isFormal'                 => $resource->getDetailsIsFormal() ?? null,
+            'groupFormation'           => $resource->getDetailsGroupFormation() ?? null,
+            'totalClassHours'          => $resource->getDetailsTotalClassHours() ?? null,
+            'certificateWillBeAwarded' => $resource->getDetailsCertificateWillBeAwarded() ?? null,
+            'startDate'                => $resource->getDetailsStartDate() ?? null,
+            'endDate'                  => $resource->getDetailsEndDate() ?? null,
+            'engagements'              => $resource->getDetailsEngagements() ?? null,
+        ];
     }
 
-    private function inputToParticipation(array $input) {
+    private function inputToParticipation(array $input): array
+    {
         // Get all info from the input array for updating a Participation and return the body for this
-        // note: everything is nullabel in the dto, but eav doesn't like values set to null
-        if (isset($input['aanbiederId'])) { $participation['aanbiederId'] = $input['aanbiederId']; }
-        if (isset($input['aanbiederName'])) { $participation['aanbiederName'] = $input['aanbiederName']; }
-        if (isset($input['aanbiederNote'])) { $participation['aanbiederNote'] = $input['aanbiederNote']; }
-        if (isset($input['offerName'])) { $participation['offerName'] = $input['offerName']; }
-        if (isset($input['offerCourse'])) { $participation['offerCourse'] = $input['offerCourse']; }
-        if (isset($input['outComesGoal'])) { $participation['goal'] = $input['outComesGoal']; }
-        if (isset($input['outComesTopic'])) { $participation['topic'] = $input['outComesTopic']; }
-        if (isset($input['outComesTopicOther'])) { $participation['topicOther'] = $input['outComesTopicOther']; }
-        if (isset($input['outComesApplication'])) {  $participation['application'] = $input['outComesApplication']; }
-        if (isset($input['outComesApplicationOther'])) { $participation['applicationOther'] = $input['outComesApplicationOther']; }
-        if (isset($input['outComesLevel'])) { $participation['level'] = $input['outComesLevel']; }
-        if (isset($input['outComesLevelOther'])) { $participation['levelOther'] = $input['outComesLevelOther']; }
-        if (isset($input['detailsIsFormal'])) { $participation['isFormal'] = $input['detailsIsFormal']; }
-        if (isset($input['detailsGroupFormation'])) { $participation['groupFormation'] = $input['detailsGroupFormation']; }
-        if (isset($input['detailsTotalClassHours'])) { $participation['totalClassHours'] = $input['detailsTotalClassHours']; }
-        if (isset($input['detailsCertificateWillBeAwarded'])) { $participation['certificateWillBeAwarded'] = $input['detailsCertificateWillBeAwarded']; }
-        if (isset($input['detailsStartDate'])) { $participation['startDate'] = $input['detailsStartDate']; }
-        if (isset($input['detailsEndDate'])) { $participation['endDate'] = $input['detailsEndDate']; }
-        if (isset($input['detailsEngagements'])) { $participation['engagements'] = $input['detailsEngagements']; }
-        if (isset($input['presenceStartDate'])) { $participation['presenceStartDate'] = $input['presenceStartDate']; }
-        if (isset($input['presenceEndDate'])) { $participation['presenceEndDate'] = $input['presenceEndDate']; }
-        if (isset($input['presenceEndParticipationReason'])) { $participation['presenceEndParticipationReason'] = $input['presenceEndParticipationReason']; }
-        return $participation;
+        return [
+            'aanbiederId'                    => $input['aanbiederId'] ?? null,
+            'aanbiederName'                  => $input['aanbiederName'] ?? null,
+            'aanbiederNote'                  => $input['aanbiederNote'] ?? null,
+            'offerName'                      => $input['offerName'] ?? null,
+            'offerCourse'                    => $input['offerCourse'] ?? null,
+            'goal'                           => $input['outComesGoal'] ?? null,
+            'topic'                          => $input['outComesTopic'] ?? null,
+            'topicOther'                     => $input['outComesTopicOther'] ?? null,
+            'application'                    => $input['outComesApplication'] ?? null,
+            'applicationOther'               => $input['outComesApplicationOther'] ?? null,
+            'level'                          => $input['outComesLevel'] ?? null,
+            'levelOther'                     => $input['outComesLevelOther'] ?? null,
+            'isFormal'                       => $input['detailsIsFormal'] ?? null,
+            'groupFormation'                 => $input['detailsGroupFormation'] ?? null,
+            'totalClassHours'                => $input['detailsTotalClassHours'] ?? null,
+            'certificateWillBeAwarded'       => $input['detailsCertificateWillBeAwarded'] ?? null,
+            'startDate'                      => $input['detailsStartDate'] ?? null,
+            'endDate'                        => $input['detailsEndDate'] ?? null,
+            'engagements'                    => $input['detailsEngagements'] ?? null,
+            'presenceStartDate'              => $input['presenceStartDate'] ?? null,
+            'presenceEndDate'                => $input['presenceEndDate'] ?? null,
+            'presenceEndParticipationReason' => $input['presenceEndParticipationReason'] ?? null,
+        ];
     }
 }

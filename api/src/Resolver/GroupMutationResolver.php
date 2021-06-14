@@ -1,38 +1,32 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Group;
 use App\Service\EAVService;
 use App\Service\EDUService;
-use App\Entity\LanguageHouse;
-use App\Entity\User;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class GroupMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private EAVService $eavService;
     private EDUService $eduService;
     private CommonGroundService $commonGroundService;
 
-    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService, CommonGroundService $commonGroundService){
+    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService, CommonGroundService $commonGroundService)
+    {
         $this->entityManager = $entityManager;
         $this->eavService = $eavService;
         $this->eduService = $eduService;
         $this->commonGroundService = $commonGroundService;
     }
+
     /**
      * @inheritDoc
      */
@@ -44,7 +38,7 @@ class GroupMutationResolver implements MutationResolverInterface
         /**@todo: changeTeacher,
          * done: create, update, remove
          */
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createGroup':
                 return $this->createGroup($item);
             case 'updateGroup':
@@ -65,29 +59,27 @@ class GroupMutationResolver implements MutationResolverInterface
         $group = $this->dtoToGroup($input);
         $course = $this->createCourse($group);
 
-        $result = array_merge($result,$this->checkGroupValues($group));
+        $result = array_merge($result, $this->checkGroupValues($group));
 
         if (!isset($result['errorMessage'])) {
+            $result = array_merge($result, $this->makeGroup($course, $result['group']));
 
-            $result = array_merge($result, $this->makeGroup($course, $group));
-
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $group['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
 
-        if (isset($result['errorMessage'])){
+        if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return $resourceResult;
     }
 
     public function updateGroup(array $groupArray): Group
     {
-        $id = explode('/',$groupArray['id']);
+        $id = explode('/', $groupArray['id']);
         $id = end($id);
-        $aanbiederId = explode('/',$groupArray['aanbiederId']);
-        $groupArray['aanbiederId'] = end($aanbiederId);
         $result['result'] = [];
 
         $groupArray = array_merge(
@@ -95,27 +87,27 @@ class GroupMutationResolver implements MutationResolverInterface
             $groupArray
         );
         $course = $this->createCourse($groupArray);
-        $result = array_merge($result,$this->checkGroupValues($groupArray));
+        $result = array_merge($result, $this->checkGroupValues($groupArray));
 
         if (!isset($result['errorMessage'])) {
+            $result = array_merge($result, $this->makeGroup($course, $result['group'], $id));
 
-            $result = array_merge($result, $this->makeGroup($course, $groupArray, $id));
-
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $groupArray['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
 
-        if (isset($result['errorMessage'])){
+        if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return $resourceResult;
     }
 
     public function removeGroup($group): ?Group
     {
         if (isset($group['id'])) {
-            $groupId = explode('/',$group['id']);
+            $groupId = explode('/', $group['id']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
@@ -131,188 +123,168 @@ class GroupMutationResolver implements MutationResolverInterface
     public function changeTeachersOfTheGroup($input): ?Group
     {
         if (isset($input['id'])) {
-            $groupId = explode('/',$input['id']);
+            $groupId = explode('/', $input['id']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
         } else {
             throw new Exception('No id was specified!');
         }
-        if (isset($input['aanbiederEmployeeIds'])){
+        if (isset($input['aanbiederEmployeeIds'])) {
             $employeeIds = $input['aanbiederEmployeeIds'];
-        }else{
+        } else {
             throw new Exception('No EmployeeIds were specified!');
         }
-        return $this->eduService->changeGroupTeachers($groupId,$employeeIds);
+
+        return $this->eduService->changeGroupTeachers($groupId, $employeeIds);
     }
 
-    public function createCourse($group){
-        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations','id' => $group['aanbiederId']]);
+    public function createCourse($group)
+    {
+        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
         $course = [];
-        $course['name'] = 'course of '. $organization['name'];
+        $course['name'] = 'course of '.$organization['name'];
         $course['organization'] = $organization['@id'];
-        if ($this->eduService->hasProgram($organization)){
+        if ($this->eduService->hasProgram($organization)) {
             $program = $this->eduService->getProgram($organization);
-            $course['programs'][0] = $program;
+            $course['programs'][0] = '/programs/'.$program['id'];
         }
         $course['additionalType'] = $group['typeCourse'];
-        $course['timeRequired'] = (string)$group['detailsTotalClassHours'];
-        $course = $this->commonGroundService->saveResource($course,['component' => 'edu', 'type' => 'courses']);
-        return $course;
+        $course['timeRequired'] = (string) $group['totalClassHours'];
+
+        return $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
     }
 
-    public function makeGroup($course,$group,$groupId = null)
+    public function makeGroup($course, $group, $groupId = null)
     {
-        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
-        $now = $now->format('d-m-Y H:i:s');
-
-        foreach($group as $key=>$value)
-        {
-            switch($key){
-                case 'outComesGoal':
-                    $group['goal'] = $value;
-                    break;
-                case 'aanbiederId':
-                    $group['aanbiederId'] = $value;
-                    break;
-                case 'id':
-                    $group['groupId'] = $value;
-                    break;
-                case 'outComesTopic':
-                    $group['topic'] = $value;
-                    break;
-                case 'outComesTopicOther':
-                    $group['topicOther'] = $value;
-                    break;
-                case 'outComesApplication':
-                    $group['application'] = $value;
-                    break;
-                case 'outComesApplicationOther':
-                    $group['applicationOther'] = $value;
-                    break;
-                case 'outComesLevel':
-                    $group['level'] = $value;
-                    break;
-                case 'outComesLevelOther':
-                    $group['levelOther'] = $value;
-                    break;
-                case 'detailsIsFormal':
-                    $group['isFormal'] = (bool)$value;
-                    break;
-                case 'detailsCertificateWillBeAwarded':
-                    $group['certificateWillBeAwarded'] = (bool)$value;
-                    break;
-                case 'detailsStartDate':
-                    if($value instanceof DateTime){
-                        $value = $value->format("YmdHis");
-                    }
-                    $group['startDate'] = $value;
-                    break;
-                case 'detailsEndDate':
-
-                    if($value instanceof DateTime){
-                        $value = $value->format("YmdHis");
-                    }
-                    $group['endDate'] = $value;
-                    break;
-                case 'generalLocation':
-                    $group['location'] = $value;
-                    break;
-                case 'generalParticipantsMin':
-                    $group['participantsMin'] = $value;
-                    break;
-                case 'generalParticipantsMax':
-                    $group['participantsMax'] = $value;
-                    break;
-                case 'generalEvaluation':
-                    $group['evaluation'] = $value;
-                    break;
-                case 'aanbiederEmployeeIds':
-                    $group['mentors'] = $value;
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (isset($groupId)){
+        if (isset($groupId)) {
             //update
-            $group['course'] ='/courses/'.$course['id'];
-
-//            $group['dateModified'] = $now;
-           // var_dump($group);
-            $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
-        }else{
+            $group['course'] = '/courses/'.$course['id'];
+            $group = $this->eavService->saveObject($group, 'groups', 'edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
+        } else {
             //create
-            $group['course'] ='/courses/'.$course['id'];
-         //   var_dump($group);
-            $group = $this->eavService->saveObject($group,'groups','edu');
+            $group['course'] = '/courses/'.$course['id'];
+            $group = $this->eavService->saveObject($group, 'groups', 'edu');
         }
         $result['group'] = $group;
+
         return $result;
     }
 
-    public function dtoToGroup(Group $resource){
-        if ($resource->getGroupId()){
+    public function dtoToGroup(Group $resource)
+    {
+        $group = [];
+        if ($resource->getGroupId()) {
             $group['GroupId'] = $resource->getGroupId();
         }
-        $aanbieder = explode('/', $resource->getAanbiederId());
-        if (is_array($aanbieder)) $aanbieder = end($aanbieder);
-        $group['aanbiederId'] = $aanbieder;
+        //set aanbieder
+        $group = $this->setAanbieder($resource, $group);
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
-        $group['outComesGoal'] = $resource->getOutComesGoal();
-        $group['outComesTopic'] = $resource->getOutComesTopic();
-        if ($resource->getOutComesTopicOther()){
-            $group['outComesTopicOther'] = $resource->getOutComesTopicOther();
-        }
-        $group['outComesApplication'] = $resource->getOutComesApplication();
-        if ($resource->getOutComesApplicationOther()){
-            $group['outComesApplicationOther'] = $resource->getOutComesApplicationOther();
-        }
-        $group['outComesLevel'] = $resource->getOutComesLevel();
-        if ($resource->getOutComesLevelOther()){
-            $group['outComesLevelOther'] = $resource->getOutComesLevelOther();
-        }
-        $group['detailsIsFormal'] = $resource->getDetailsIsFormal();
-        $group['detailsTotalClassHours'] = $resource->getDetailsTotalClassHours();
-        $group['detailsCertificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
-        if ($resource->getDetailsStartDate()) {
-            $group['detailsStartDate'] = $resource->getDetailsStartDate();
-        }
-        if ($resource->getDetailsEndDate()){
-            $group['detailsEndDate'] = $resource->getDetailsEndDate();
-        }
-        if ($resource->getAvailability()){
-            $group['availability'] = $resource->getAvailability();
-        }
-        if ($resource->getAvailabilityNotes()){
-            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
-        }
-        $group['generalLocation'] = $resource->getGeneralLocation();
-        if ($resource->getGeneralParticipantsMin()) {
-            $group['generalParticipantsMin'] = $resource->getGeneralParticipantsMin();
-        }
-        if ($resource->getGeneralParticipantsMax()){
-            $group['generalParticipantsMax'] = $resource->getGeneralParticipantsMax();
-        }
-        if ($resource->getGeneralEvaluation()){
-            $group['generalEvaluation'] = $resource->getGeneralEvaluation();
+        $group['goal'] = $resource->getOutComesGoal();
+        $group['topic'] = $resource->getOutComesTopic();
+        $group['application'] = $resource->getOutComesApplication();
+        $group['level'] = $resource->getOutComesLevel();
+        //set outcomes other
+        $group = $this->setOutcomesOther($resource, $group);
+        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
+        $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
+        $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
+        // set detail dates
+        $group = $this->setDetailDates($resource, $group);
+        // set availabilities
+        $group = $this->setGroupAvailabilities($resource, $group);
+        $group['location'] = $resource->getGeneralLocation();
+        //set participant limits
+        $group = $this->setParticipantLimits($resource, $group);
+        if ($resource->getGeneralEvaluation()) {
+            $group['evaluation'] = $resource->getGeneralEvaluation();
         }
         $group['mentors'] = $resource->getAanbiederEmployeeIds();
+
         return $group;
     }
 
-    public function checkGroupValues($group){
-        $result = [];
-        if ($group['outComesTopic'] == 'OTHER' && !isset($group['outComesTopicOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
-        }elseif ($group['outComesApplication'] == 'OTHER' && !isset($group['outComesApplicationOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
-        }elseif ($group['outComesLevel'] == 'OTHER' && !isset($group['outComesLevelOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+    public function setAanbieder($resource, $group)
+    {
+        $aanbieder = explode('/', $resource->getAanbiederId());
+        if (is_array($aanbieder)) {
+            $aanbieder = end($aanbieder);
         }
-        $result['group'] = $group;
-        return $result;
+        $group['aanbiederId'] = $aanbieder;
+
+        return $group;
     }
 
+    public function setOutcomesOther($resource, $group)
+    {
+        if ($resource->getOutComesTopicOther()) {
+            $group['topicOther'] = $resource->getOutComesTopicOther();
+        }
+        if ($resource->getOutComesApplicationOther()) {
+            $group['applicationOther'] = $resource->getOutComesApplicationOther();
+        }
+        if ($resource->getOutComesLevelOther()) {
+            $group['levelOther'] = $resource->getOutComesLevelOther();
+        }
+
+        return $group;
+    }
+
+    public function setDetailDates($resource, $group)
+    {
+        if ($resource->getDetailsStartDate()) {
+            $group['startDate'] = $resource->getDetailsStartDate();
+        }
+        if ($resource->getDetailsEndDate()) {
+            $group['endDate'] = $resource->getDetailsEndDate();
+        }
+
+        return $group;
+    }
+
+    public function setParticipantLimits($resource, $group)
+    {
+        if ($resource->getGeneralParticipantsMin()) {
+            $group['participantsMin'] = $resource->getGeneralParticipantsMin();
+        }
+        if ($resource->getGeneralParticipantsMax()) {
+            $group['participantsMax'] = $resource->getGeneralParticipantsMax();
+        }
+
+        return $group;
+    }
+
+    public function setGroupAvailabilities($resource, $group)
+    {
+        if ($resource->getAvailability()) {
+            $group['availability'] = $resource->getAvailability();
+        }
+        if ($resource->getAvailabilityNotes()) {
+            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
+        }
+
+        return $group;
+    }
+
+    public function checkGroupValues($group)
+    {
+        $result = [];
+        if ($group['topic'] == 'OTHER' && !isset($group['topicOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
+        } elseif ($group['application'] == 'OTHER' && !isset($group['applicationOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
+        } elseif ($group['level'] == 'OTHER' && !isset($group['levelOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+        }
+        if ($group['startDate'] instanceof DateTime) {
+            $group['startDate'] = $group['startDate']->format('YmdHis');
+        }
+        if ($group['endDate'] instanceof DateTime) {
+            $group['endDate'] = $group['endDate']->format('YmdHis');
+        }
+        $result['group'] = $group;
+
+        return $result;
+    }
 }

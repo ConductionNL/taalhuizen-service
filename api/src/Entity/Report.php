@@ -7,7 +7,6 @@ use App\Repository\ReportRepository;
 use App\Resolver\ReportMutationResolver;
 use App\Resolver\ReportQueryCollectionResolver;
 use App\Resolver\ReportQueryItemResolver;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -128,6 +127,7 @@ class Report
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

@@ -22,8 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read" = false
  *          },
  *          "userRolesBy" = {
- *              "item_query" = ProviderQueryItemResolver::class,
- *              "read" = false
+ *              "collection_query" = ProviderQueryCollectionResolver::class
  *          },
  *          "collection_query" = {
  *              "collection_query" = ProviderQueryCollectionResolver::class
@@ -49,6 +48,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  * )
  *
+ * @ApiFilter(SearchFilter::class, properties={"providerId": "exact"})
  * @ORM\Entity(repositoryClass=ProviderRepository::class)
  */
 class Provider
@@ -72,12 +72,12 @@ class Provider
      *     max = 255
      * )
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @var string The Telephone of this Provider.
+     * @var string|null The Telephone of this Provider.
      *
      * @Assert\Length(
      *     max = 255
@@ -85,10 +85,10 @@ class Provider
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $phoneNumber;
+    private ?string $phoneNumber;
 
     /**
-     * @var string The Email of this Provider.
+     * @var string|null The Email of this Provider.
      *
      * @Assert\Length(
      *     max = 2550
@@ -96,7 +96,7 @@ class Provider
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $email;
+    private ?string $email;
 
     /**
      * @var array|null The address of this Aanbieder.
@@ -117,6 +117,14 @@ class Provider
      */
     private $type;
 
+    /**
+     * @var string The id of the cc/organization of a provider.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $providerId;
+
     public function getId(): ?UuidInterface
     {
         return $this->id;
@@ -125,6 +133,7 @@ class Provider
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -188,4 +197,15 @@ class Provider
         return $this;
     }
 
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
 }

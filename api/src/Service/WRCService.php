@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Service;
 
 use App\Entity\Document;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -25,13 +23,25 @@ class WRCService
         $this->params = $params;
     }
 
-    public function saveOrganization(array $body, $contact = null)
+    public function createOrganization(array $organizationArray)
     {
-        if (isset($body['address'])) unset($body['address']);
-        if (isset($body['email'])) unset($body['email']);
-        if (isset($body['phoneNumber'])) unset($body['phoneNumber']);
-        if (isset($contact)) $body['contact'] = $contact;
-        return $this->commonGroundService->saveResource($body, ['component' => 'wrc', 'type' => 'organizations']);
+        $resource = [
+            'name' => $organizationArray['name'],
+        ];
+        $result = $this->commonGroundService->createResource($resource, ['component' => 'wrc', 'type' => 'organizations']);
+
+        return $result;
+    }
+
+    public function saveOrganization(array $ccOrganization, array $organizationArray)
+    {
+        $organization = $this->commonGroundService->getResource($ccOrganization['sourceOrganization']);
+        $resource = [
+            'name' => $organizationArray['name'],
+        ];
+        $result = $this->commonGroundService->updateResource($resource, ['component' => 'wrc', 'type' => 'organizations', 'id' => $organization['id']]);
+
+        return $result;
     }
 
     public function getOrganization($id)
@@ -39,28 +49,13 @@ class WRCService
         return $result = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'organizations', 'id' => $id]);
     }
 
-    /**
-     * @param array $input
-     * @return Document
-     * @throws Exception
-     */
-    public function createDocument(array $input): Document
+    public function setContact($input)
     {
-        $requiredProps = ['base64data', 'filename'];
-        foreach ($requiredProps as $prop) {
-            if (!isset($input[$prop])) {
-                throw new Exception('No ' . $prop . ' has been given');
-            }
-        }
-        if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
-            throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
-        }
         if (isset($input['studentId'])) {
             $id = $input['studentId'];
             $idArray = explode('/', $id);
             $id = end($idArray);
             $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
-
         } elseif (isset($input['aanbiederEmployeeId'])) {
             $id = $input['aanbiederEmployeeId'];
             $idArray = explode('/', $id);
@@ -70,13 +65,39 @@ class WRCService
             throw new Exception('No studentId or aanbiederEmployeetId given');
         }
 
-        if ($this->commonGroundService->isResource($contact)) {
-            $document['name'] = $input['filename'];
-            $document['base64'] = $input['base64data'];
-            $document['contact'] = $contact;
-        } else {
-            throw new Exception('The person (cc/person) of the given id does not exist!');
+        return $contact;
+    }
+
+    public function handleDocumentProps($input)
+    {
+        $requiredProps = ['base64data', 'filename'];
+        foreach ($requiredProps as $prop) {
+            if (!isset($input[$prop])) {
+                throw new Exception('No '.$prop.' has been given');
+            }
         }
+    }
+
+    /**
+     * @param array $input
+     *
+     * @throws Exception
+     *
+     * @return Document
+     */
+    public function createDocument(array $input): Document
+    {
+        $this->handleDocumentProps($input);
+        if (isset($input['studentId']) && isset($input['aanbiederEmployeeId'])) {
+            throw new Exception('Both studentId and aanbiederEmployeeId are given, please give one type of id');
+        }
+
+        //set contact
+        $contact = $this->setContact($input);
+
+        $document['name'] = $input['filename'];
+        $document['base64'] = $input['base64data'];
+        $document['contact'] = $contact;
 
         try {
             $document = $this->commonGroundService->saveResource($document, ['component' => 'wrc', 'type' => 'documents']);
@@ -87,10 +108,7 @@ class WRCService
         return $this->createDocumentObject($document);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function downloadDocument($input): Document
+    public function getDocumentId(array $input)
     {
         if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
             throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
@@ -106,6 +124,16 @@ class WRCService
             $idArray = explode('/', $id);
             $id = end($idArray);
         }
+
+        return $id;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function downloadDocument($input): Document
+    {
+        $id = $this->getDocumentId($input);
 
         try {
             $document = $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'wrc', 'type' => 'documents', 'id' => $id]));
@@ -114,32 +142,22 @@ class WRCService
         }
 
         return $this->createDocumentObject($document);
-
     }
 
     /**
      * @param array $input
-     * @return Document|null
+     *
      * @throws Exception
+     *
+     * @return Document|null
      */
     public function removeDocument(array $input): ?Document
     {
-        if (isset($input['studentDocumentId']) && isset($input['aanbiederEmployeeDocumentId'])) {
-            throw new Exception('Both studentDocumentId and aanbiederEmployeeDocumentId are given, please give one type of id');
-        }
-        if (isset($input['studentDocumentId'])) {
-            $id = $input['studentDocumentId'];
-        } elseif (isset($input['aanbiederEmployeeDocumentId'])) {
-            $id = $input['aanbiederEmployeeDocumentId'];
-        } else {
-            throw new Exception('No studentDocumentId or aanbiederEmployeeDocumentId given');
-        }
-        if (strpos($id, '/') !== false) {
-            $idArray = explode('/', $id);
-            $id = end($idArray);
-        }
+        $id = $this->getDocumentId($input);
+
         try {
             $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'documents', 'id' => $id]);
+
             return null;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -148,6 +166,7 @@ class WRCService
 
     /**
      * @param array $document
+     *
      * @return Document
      */
     public function createDocumentObject(array $document): Document
@@ -156,7 +175,7 @@ class WRCService
         $documentObject->setFilename(isset($document['name']) ? $document['name'] : null);
         $documentObject->setBase64data(isset($document['base64']) ? $document['base64'] : null);
         $documentObject->setDateCreated(isset($document['dateCreated']) ? $document['dateCreated'] : null);
-        if(isset($document['contact'])){
+        if (isset($document['contact'])) {
             $contactArray = explode('/', $document['contact']);
             $contact = end($contactArray);
             strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentId($contact) : $documentObject->setAanbiederEmployeeId($contact);
@@ -171,8 +190,10 @@ class WRCService
 
     /**
      * @param string $id
-     * @return Document
+     *
      * @throws Exception
+     *
+     * @return Document
      */
     public function getDocument(string $id): Document
     {
@@ -187,8 +208,10 @@ class WRCService
 
     /**
      * @param string|null $contact
-     * @return ArrayCollection
+     *
      * @throws Exception
+     *
+     * @return ArrayCollection
      */
     public function getDocuments(?string $contact = null): ArrayCollection
     {
@@ -203,8 +226,7 @@ class WRCService
         foreach ($documents as $document) {
             $documentObjects->add($this->createDocumentObject($document));
         }
+
         return $documentObjects;
     }
-
-
 }
