@@ -16,7 +16,8 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
 
     /**
      * LearningNeedQueryCollectionResolver constructor.
-     * @param ResolverService $resolverService
+     *
+     * @param ResolverService     $resolverService
      * @param LearningNeedService $learningNeedService
      */
     public function __construct(ResolverService $resolverService, LearningNeedService $learningNeedService)
