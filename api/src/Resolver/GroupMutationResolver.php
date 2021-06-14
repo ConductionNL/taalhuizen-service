@@ -19,25 +19,24 @@ class GroupMutationResolver implements MutationResolverInterface
     private EDUService $eduService;
     private CommonGroundService $commonGroundService;
 
-    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService, CommonGroundService $commonGroundService)
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService)
     {
         $this->entityManager = $entityManager;
-        $this->eavService = $eavService;
-        $this->eduService = $eduService;
+        $this->eavService = new EAVService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService);
         $this->commonGroundService = $commonGroundService;
     }
 
     /**
      * @inheritDoc
+     *
+     * @throws Exception
      */
     public function __invoke($item, array $context)
     {
         if (!$item instanceof Group && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        /**@todo: changeTeacher,
-         * done: create, update, remove
-         */
         switch ($context['info']->operation->name->value) {
             case 'createGroup':
                 return $this->createGroup($item);
@@ -52,6 +51,15 @@ class GroupMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Creates a new Group.
+     *
+     * @param Group $input the input data for the new Group.
+     *
+     * @throws Exception
+     *
+     * @return Group the created Group
+     */
     public function createGroup(Group $input): Group
     {
         $result['result'] = [];
@@ -76,6 +84,15 @@ class GroupMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
+    /**
+     * Updates an existing Group.
+     *
+     * @param array $groupArray the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group the updated Group.
+     */
     public function updateGroup(array $groupArray): Group
     {
         $id = explode('/', $groupArray['id']);
@@ -104,7 +121,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function removeGroup($group): ?Group
+    /**
+     * Deletes a Group.
+     *
+     * @param array $group the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group|null null if successful.
+     */
+    public function removeGroup(array $group): ?Group
     {
         if (isset($group['id'])) {
             $groupId = explode('/', $group['id']);
@@ -120,7 +146,16 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function changeTeachersOfTheGroup($input): ?Group
+    /**
+     * Changes the teachers of a group.
+     *
+     * @param array $input the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group|null the updated Group.
+     */
+    public function changeTeachersOfTheGroup(array $input): ?Group
     {
         if (isset($input['id'])) {
             $groupId = explode('/', $input['id']);
@@ -139,7 +174,7 @@ class GroupMutationResolver implements MutationResolverInterface
         return $this->eduService->changeGroupTeachers($groupId, $employeeIds);
     }
 
-    public function createCourse($group)
+    public function createCourse(array $group): array
     {
         $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
         $course = [];
