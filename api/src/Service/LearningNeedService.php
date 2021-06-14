@@ -25,7 +25,7 @@ class LearningNeedService
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
-        $this->participationService = new ParticipationService();
+        $this->participationService = new ParticipationService($entityManager, $commonGroundService);
     }
 
     /**
