@@ -33,17 +33,24 @@ class UcService
     private RequestStack $requestStack;
     private CacheInterface $cache;
 
+    /**
+     * UcService constructor.
+     *
+     * @param CommonGroundService    $commonGroundService
+     * @param EntityManagerInterface $entityManager
+     * @param ParameterBagInterface  $parameterBag
+     * @param RequestStack           $requestStack
+     * @param CacheInterface         $cache
+     */
     public function __construct(
-        BsService $bsService,
-        CCService $ccService,
         CommonGroundService $commonGroundService,
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         RequestStack $requestStack,
         CacheInterface $cache
     ) {
-        $this->bsService = $bsService;
-        $this->ccService = $ccService;
+        $this->bsService = new BsService($commonGroundService, $parameterBag);
+        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
@@ -51,18 +58,115 @@ class UcService
         $this->cache = $cache;
     }
 
-    public function getUser(string $id): User
+    /**
+     * Writes a temporary file in the component file system.
+     *
+     * @param string $contents The contents of the file to write
+     * @param string $type     The type of file to write
+     *
+     * @return string The location of the written file
+     */
+    public function writeFile(string $contents, string $type): string
     {
-        $userArray = $this->getUserArray($id);
+        $stamp = microtime().getmypid();
+        file_put_contents(dirname(__FILE__, 3).'/var/'.$type.'-'.$stamp, $contents);
 
-        return $this->createUserObject($userArray, $this->commonGroundService->getResource($userArray['person']));
+        return dirname(__FILE__, 3).'/var/'.$type.'-'.$stamp;
     }
 
-    public function getUserArray(string $id): array
+    /**
+     * Removes (temporary) files from the filesystem.
+     *
+     * @param array $files An array of file paths of files to delete
+     */
+    public function removeFiles(array $files): void
     {
-        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        foreach ($files as $filename) {
+            unlink($filename);
+        }
     }
 
+    /**
+     * Creates a RS512-signed JWT token for a provided payload.
+     *
+     * @param array $payload The payload to encode
+     *
+     * @return string The resulting JWT token
+     */
+    public function createJWTToken(array $payload): string
+    {
+        $algorithmManager = new AlgorithmManager([new RS512()]);
+        $pem = $this->writeFile(base64_decode($this->parameterBag->get('private_key')), 'pem');
+        $jwk = JWKFactory::createFromKeyFile($pem);
+        $this->removeFiles([$pem]);
+
+        $jwsBuilder = new JWSBuilder($algorithmManager);
+        $jws = $jwsBuilder
+            ->create()
+            ->withPayload(json_encode($payload))
+            ->addSignature($jwk, ['alg' => 'RS512'])
+            ->build();
+
+        $serializer = new CompactSerializer();
+
+        return $serializer->serialize($jws, 0);
+    }
+
+    /**
+     * Validates a JWT token with the public key stored in the component.
+     *
+     * @param string $jws The signed JWT token to validate
+     *
+     * @throws \Exception Thrown when the JWT token could not be verified
+     *
+     * @return array The payload of a verified JWT token
+     */
+    public function validateJWTAndGetPayload(string $jws): array
+    {
+        $serializer = new CompactSerializer();
+        $jwt = $serializer->unserialize($jws);
+
+        $algorithmManager = new AlgorithmManager([new RS512()]);
+        $pem = $this->writeFile(base64_decode($this->parameterBag->get('public_key')), 'pem');
+        $public = JWKFactory::createFromKeyFile($pem);
+        $this->removeFiles([$pem]);
+
+        $jwsVerifier = new JWSVerifier($algorithmManager);
+        if ($jwsVerifier->verifyWithKey($jwt, $public, 0)) {
+            return json_decode($jwt->getPayload(), true);
+        }
+
+        throw new \Exception('Token could not be verified');
+    }
+
+    /**
+     * Returns the environment of the user based upon the organization type.
+     *
+     * @param string|null $type The type of the organization
+     *
+     * @return string The user environment
+     */
+    public function userEnvironmentEnum(?string $type): string
+    {
+        if ($type == 'Taalhuis') {
+            $result = 'TAALHUIS';
+        } elseif ($type == 'Aanbieder') {
+            $result = 'AANBIEDER';
+        } else {
+            $result = 'BISC';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Takes a raw user array and a raw contact array and makes a user object out of it.
+     *
+     * @param array $raw     The raw user array
+     * @param array $contact The raw contact array
+     *
+     * @return User The resulting user object
+     */
     public function createUserObject(array $raw, array $contact): User
     {
         $user = new User();
@@ -90,19 +194,55 @@ class UcService
         return $user;
     }
 
-    public function userEnvironmentEnum($type): string
+    /**
+     * Fetches a user from the user component and returns the raw array.
+     *
+     * @param string $id The id of the user to fetch
+     *
+     * @return array The raw array of the result
+     */
+    public function getUserArray(string $id): array
     {
-        if ($type == 'Taalhuis') {
-            $result = 'TAALHUIS';
-        } elseif ($type == 'Aanbieder') {
-            $result = 'AANBIEDER';
-        } else {
-            $result = 'BISC';
-        }
-
-        return $result;
+        return $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
 
+    /**
+     * Fetches a user from the user component and returns it as a user object.
+     *
+     * @param string $id The id of the user to fetch
+     *
+     * @return User The user returned
+     */
+    public function getUser(string $id): User
+    {
+        $userArray = $this->getUserArray($id);
+
+        return $this->createUserObject($userArray, $this->commonGroundService->getResource($userArray['person']));
+    }
+
+    /**
+     * Fetches all users, or all users that fit the query provided and returns them as an array.
+     *
+     * @param array|null $query The query the users returned should fit
+     *
+     * @return array The array of user arrays of found users
+     */
+    public function getUsers(?array $query = []): array
+    {
+        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], $query)['hydra:member'];
+    }
+
+    /**
+     * Updates the contact of an employee based upon the user id.
+     *
+     * @param string        $id            The user array of the employee
+     * @param array         $employeeArray The employee array of the employee to edit
+     * @param Employee|null $employee      The employee object of the employee to edit
+     *
+     * @throws \Exception
+     *
+     * @return array The resulting contact array for the updated employee
+     */
     public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
     {
         $personId = explode('/', $this->getUserArray($id)['person']);
@@ -113,99 +253,101 @@ class UcService
         return $result;
     }
 
-    public function writeFile(string $contents, string $type): string
+    /**
+     * Finds a user in an array of users and returns its ID.
+     *
+     * @param array  $users The array of users to search through
+     * @param string $email The email address of the user to find
+     *
+     * @return string|null The id of found user, null if user doesn't exist
+     */
+    private function findUser(array $users, string $email): ?string
     {
-        $stamp = microtime().getmypid();
-        file_put_contents(dirname(__FILE__, 3).'/var/'.$type.'-'.$stamp, $contents);
-
-        return dirname(__FILE__, 3).'/var/'.$type.'-'.$stamp;
-    }
-
-    public function removeFiles(array $files): void
-    {
-        foreach ($files as $filename) {
-            unlink($filename);
-        }
-    }
-
-    public function createJWTToken(array $payload): string
-    {
-        $algorithmManager = new AlgorithmManager([new RS512()]);
-        $pem = $this->writeFile(base64_decode($this->parameterBag->get('private_key')), 'pem');
-        $jwk = JWKFactory::createFromKeyFile($pem);
-        $this->removeFiles([$pem]);
-
-        $jwsBuilder = new JWSBuilder($algorithmManager);
-        $jws = $jwsBuilder
-            ->create()
-            ->withPayload(json_encode($payload))
-            ->addSignature($jwk, ['alg' => 'RS512'])
-            ->build();
-
-        $serializer = new CompactSerializer();
-
-        return $serializer->serialize($jws, 0);
-    }
-
-    public function validateJWTAndGetPayload(string $jws): array
-    {
-        $serializer = new CompactSerializer();
-        $jwt = $serializer->unserialize($jws);
-
-        $algorithmManager = new AlgorithmManager([new RS512()]);
-        $pem = $this->writeFile(base64_decode($this->parameterBag->get('public_key')), 'pem');
-        $public = JWKFactory::createFromKeyFile($pem);
-        $this->removeFiles([$pem]);
-
-        $jwsVerifier = new JWSVerifier($algorithmManager);
-        if ($jwsVerifier->verifyWithKey($jwt, $public, 0)) {
-            return json_decode($jwt->getPayload(), true);
-        }
-
-        throw new \Exception('Token could not be verified');
-    }
-
-    public function getUsers(?array $query = []): array
-    {
-        return $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], $query)['hydra:member'];
-    }
-
-    public function requestPasswordReset(string $email, bool $sendEmail = true): string
-    {
-        $time = new DateTime();
-        $expiry = new DateTime('+4 hours');
-
-        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
-
-        $found = false;
         foreach ($users as $user) {
             if ($user['username'] == $email) {
-                $found = true;
-                $userId = $user['id'];
+                return $user['id'];
             }
         }
-        if (!$found) {
-            return '';
-        }
 
-        $jwtBody = [
-            'userId' => $userId,
-            'email'  => $email,
-            'type'   => 'passwordReset',
-            'iss'    => $this->parameterBag->get('app_url'),
-            'ias'    => $time->getTimestamp(),
-            'exp'    => $expiry->getTimestamp(),
-        ];
-
-        $token = $this->createJWTToken($jwtBody);
-
-        if ($sendEmail) {
-            $this->bsService->sendPasswordResetMail($email, $token);
-        }
-
-        return $token;
+        return null;
     }
 
+    /**
+     * Creates a user from the data provided, and stores it in the user component.
+     *
+     * @param array $userArray The array of parameters provided
+     *
+     * @return User The resulting user
+     */
+    public function createUser(array $userArray): User
+    {
+        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
+        $resource = [
+            'username'     => key_exists('username', $userArray) ? $userArray['username'] : null,
+            'password'     => key_exists('password', $userArray) ? $userArray['password'] : null,
+            'locale'       => 'nl',
+            'person'       => $contact['@id'],
+            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
+        ];
+
+        if (!$resource['username'] || !$resource['password']) {
+            throw new BadRequestException('Cannot create a user without both a username and password');
+        }
+        $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
+        $user = new User();
+
+        return $this->createUserObject($result, $contact);
+    }
+
+    /**
+     * Updates a user in the user component with the data provided.
+     *
+     * @param string $id        The id of the user to update
+     * @param array  $userArray The data provided to update the user
+     *
+     * @return User The resulting user
+     */
+    public function updateUser(string $id, array $userArray): User
+    {
+        $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        $resource['username'] = key_exists('username', $userArray) ? $userArray['username'] : null;
+        $resource['password'] = key_exists('password', $userArray) ? $userArray['password'] : null;
+
+        $contact = $this->commonGroundService->getResource($resource['person']);
+
+        if (key_exists('email', $userArray)) {
+            $contact = $this->ccService->updatePerson($contact['id'], ['emails' => [['name' => 'email', 'email' => $userArray['email']]]]);
+        }
+
+        $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
+
+        if (isset($resource['password'])) {
+            $this->bsService->sendPasswordChangedEmail($result['username'], $contact);
+        }
+
+        return $this->createUserObject($result, $contact);
+    }
+
+    /**
+     * Deletes a user.
+     *
+     * @param string $id The id of the user to remove
+     *
+     * @return bool Whether or not the action has been successful
+     */
+    public function deleteUser(string $id): bool
+    {
+        return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
+    }
+
+    /**
+     * Logs in a user with username and password.
+     *
+     * @param string $username The username of the user to login
+     * @param string $password The password of the user to login
+     *
+     * @return string A JWT token for the user that is logged in
+     */
     public function login(string $username, string $password): string
     {
         $user = [
@@ -228,6 +370,72 @@ class UcService
         return $this->createJWTToken($jwtBody);
     }
 
+    /**
+     * Creates a password reset token for a user with provided email.
+     *
+     * @param string $email     The email of the user that needs a password reset
+     * @param bool   $sendEmail Whether or not an email has to be send for this reset (for example, a new user gets the link otherwise, so then an email is not send to prevent double emails)
+     *
+     * @return string The reset token
+     */
+    public function createPasswordResetToken(string $email, bool $sendEmail = true): string
+    {
+        $time = new DateTime();
+        $expiry = new DateTime('+4 hours');
+        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
+        $userId = $this->findUser($users, $email);
+
+        if (!$userId) {
+            return '';
+        }
+
+        $jwtBody = [
+            'userId' => $userId,
+            'email'  => $email,
+            'type'   => 'passwordReset',
+            'iss'    => $this->parameterBag->get('app_url'),
+            'ias'    => $time->getTimestamp(),
+            'exp'    => $expiry->getTimestamp(),
+        ];
+
+        $token = $this->createJWTToken($jwtBody);
+
+        if ($sendEmail) {
+            $this->bsService->sendPasswordResetMail($email, $token);
+        }
+
+        return $token;
+    }
+
+    /**
+     * Updates a user password if a token has been provided.
+     *
+     * @param string $email    The email address of the user to update
+     * @param string $token    The password reset token for the user
+     * @param string $password The new password for the user
+     *
+     * @throws \Exception Thrown when the email address provided in the request does not match the email address provided in the token
+     *
+     * @return User The resulting user object
+     */
+    public function updatePasswordWithToken(string $email, string $token, string $password): User
+    {
+        $tokenEmail = $this->validateJWTAndGetPayload($token);
+        if ($tokenEmail['email'] != $email) {
+            throw new AccessDeniedHttpException('Provided email does not match email from token');
+        }
+        $userId = $tokenEmail['userId'];
+
+        return $this->updateUser($userId, ['password' => $password]);
+    }
+
+    /**
+     * Logs out the user that has been logged in.
+     *
+     * @throws \Psr\Cache\InvalidArgumentException Errors if the token cannot be invalidated in the cache
+     *
+     * @return bool Whether or not the user has been logged out
+     */
     public function logout(): bool
     {
         $token = $this->requestStack->getCurrentRequest()->headers->get('Authorization');
@@ -247,61 +455,16 @@ class UcService
         return true;
     }
 
-    public function updatePasswordWithToken(string $email, string $token, string $password): User
-    {
-        $tokenEmail = $this->validateJWTAndGetPayload($token);
-        if ($tokenEmail['email'] != $email) {
-            throw new AccessDeniedHttpException('Provided email does not match email from token');
-        }
-        $userId = $tokenEmail['userId'];
-
-        return $this->updateUser($userId, ['password' => $password]);
-    }
-
-    public function createUser(array $userArray): User
-    {
-        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
-        $resource = [
-            'username'     => key_exists('username', $userArray) ? $userArray['username'] : null,
-            'password'     => key_exists('password', $userArray) ? $userArray['password'] : null,
-            'locale'       => 'nl',
-            'person'       => $contact['@id'],
-            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
-        ];
-
-        if (!$resource['username'] || !$resource['password']) {
-            throw new BadRequestException('Cannot create a user without both a username and password');
-        }
-        $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
-        $user = new User();
-
-        return $this->createUserObject($result, $contact);
-    }
-
-    public function updateUser(string $id, array $userArray): User
-    {
-        $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
-        $resource['username'] = key_exists('username', $userArray) ? $userArray['username'] : null;
-        $resource['password'] = key_exists('password', $userArray) ? $userArray['password'] : null;
-
-        $contact = $this->commonGroundService->getResource($resource['person']);
-
-        if (key_exists('email', $userArray)) {
-            $contact = $this->ccService->updatePerson($contact['id'], ['emails' => [['name' => 'email', 'email' => $userArray['email']]]]);
-        }
-
-        $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
-
-        if (isset($resource['password'])) {
-            $this->bsService->sendPasswordChangedEmail($result['username'], $contact);
-        }
-
-        return $this->createUserObject($result, $contact);
-    }
-
+    /**
+     * Takes an array of user group ids and validates if the groups exist in the user component.
+     *
+     * @param array $usergroupIds The user group ids to check
+     *
+     * @return array The ids of the valid groups in the provided set of arrays
+     */
     public function validateUserGroups(array $usergroupIds)
     {
-        $vaildGroups = [];
+        $validGroups = [];
         //check if groups exist
         foreach ($usergroupIds as $userGroupId) {
             $userGroupId = explode('/', $userGroupId);
@@ -311,20 +474,29 @@ class UcService
 
             $userGroupUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'groups', 'id' => $userGroupId]);
             if ($this->commonGroundService->isResource($userGroupUrl)) {
-                array_push($vaildGroups, $userGroupId);
+                array_push($validGroups, $userGroupId);
             }
         }
-        $usergroupIds = $vaildGroups;
+        $usergroupIds = $validGroups;
 
         return $usergroupIds;
     }
 
-    public function createTaalhuisCoordinatorGroup(array $result, array $userGroups, ?array $userGroupCoordinator = null): array
+    /**
+     * Creates a coordinator group for a language house.
+     *
+     * @param array      $languageHouse        The language house to create the user group for
+     * @param array      $userGroups           The user groups that already exist for the language house
+     * @param array|null $userGroupCoordinator The existing coordinator user group
+     *
+     * @return array The user groups that exist for the language house
+     */
+    public function createTaalhuisCoordinatorGroup(array $languageHouse, array $userGroups, array $userGroupCoordinator): array
     {
         $coordinator = [
-            'organization' => $result['@id'],
+            'organization' => $languageHouse['@id'],
             'name'         => 'TAALHUIS_COORDINATOR',
-            'description'  => 'UserGroup coordinator of '.$result['name'],
+            'description'  => 'UserGroup coordinator of '.$languageHouse['name'],
         ];
         if ($userGroupCoordinator) {
             $userGroups[] = $this->commonGroundService->updateResource($coordinator, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
@@ -335,12 +507,21 @@ class UcService
         return $userGroups;
     }
 
-    public function createTaalhuisEmployeeGroup(array $result, array $userGroups, ?array $userGroupEmployee = null): array
+    /**
+     * Creates a employee group for a language house.
+     *
+     * @param array      $languageHouse     The language house to create the user group for
+     * @param array      $userGroups        The user groups that already exist for the language house
+     * @param array|null $userGroupEmployee The existing employee user group
+     *
+     * @return array The user groups that exist for the language house
+     */
+    public function createTaalhuisEmployeeGroup(array $languageHouse, array $userGroups, array $userGroupEmployee): array
     {
         $employee = [
-            'organization' => $result['@id'],
+            'organization' => $languageHouse['@id'],
             'name'         => 'TAALHUIS_EMPLOYEE',
-            'description'  => 'UserGroup employee of '.$result['name'],
+            'description'  => 'UserGroup employee of '.$languageHouse['name'],
         ];
         if ($userGroupEmployee) {
             $userGroups[] = $this->commonGroundService->updateResource($employee, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupEmployee['id']]);
@@ -351,27 +532,61 @@ class UcService
         return $userGroups;
     }
 
-    public function createTaalhuizenUserGroups(array $result, array $userGroups, bool $update): array
+    /**
+     * Finds user groups in an array of user groups by their name.
+     *
+     * @param array  $userGroups The user group array
+     * @param string $name       The name to look for
+     *
+     * @return array The existing user group (if it exists)
+     */
+    private function findUserGroupsByName(array $userGroups, string $name): ?array
     {
-        if ($update) {
-            $userGroupCoordinator = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][0];
-            $userGroupEmployee = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][1];
-        } else {
-            $userGroupCoordinator = null;
-            $userGroupEmployee = null;
+        foreach ($userGroups as $userGroup) {
+            if ($userGroup['name'] == $name) {
+                return $userGroup;
+            }
         }
-        $userGroups = $this->createTaalhuisCoordinatorGroup($result, $userGroups, $userGroupCoordinator);
-        $userGroups = $this->createTaalhuisEmployeeGroup($result, $userGroups, $userGroupEmployee);
+
+        return [];
+    }
+
+    /**
+     * Creates the user groups for a language house.
+     *
+     * @param array $languageHouse The language house the groups have to be created for
+     * @param array $userGroups    The user groups that already exist for the language house
+     *
+     * @return array The user groups that exist for the language house
+     */
+    public function createTaalhuisUserGroups(array $languageHouse, array $userGroups): array
+    {
+        $existingUserGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $languageHouse['@id']])['hydra:member'];
+
+        $userGroupCoordinator = $this->findUserGroupsByName($existingUserGroups, 'TAALHUIS_COORDINATOR');
+        $userGroupEmployee = $this->findUserGroupsByName($existingUserGroups, 'TAALHUIS_EMPLOYEE');
+
+        $userGroups = $this->createTaalhuisCoordinatorGroup($languageHouse, $userGroups, $userGroupCoordinator);
+        $userGroups = $this->createTaalhuisEmployeeGroup($languageHouse, $userGroups, $userGroupEmployee);
 
         return $userGroups;
     }
 
-    public function createProviderCoordinatorUserGroup(array $result, array $userGroups, ?array $userGroupCoordinator = null): array
+    /**
+     * Creates a coordinator user group for a provider.
+     *
+     * @param array $provider             The provider to create the user group for
+     * @param array $userGroups           The existing user groups of the provider
+     * @param array $userGroupCoordinator The existing coordinator user group
+     *
+     * @return array The user groups that exist for the provider
+     */
+    public function createProviderCoordinatorUserGroup(array $provider, array $userGroups, array $userGroupCoordinator): array
     {
         $coordinator = [
-            'organization' => $result['@id'],
+            'organization' => $provider['@id'],
             'name'         => 'AANBIEDER_COORDINATOR',
-            'description'  => 'UserGroup coordinator of '.$result['name'],
+            'description'  => 'UserGroup coordinator of '.$provider['name'],
         ];
         if ($userGroupCoordinator) {
             $userGroups[] = $this->commonGroundService->updateResource($coordinator, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupCoordinator['id']]);
@@ -382,12 +597,21 @@ class UcService
         return $userGroups;
     }
 
-    public function createProviderMentorUserGroup(array $result, array $userGroups, ?array $userGroupMentor = null): array
+    /**
+     * Creates a mentor user group for a provider.
+     *
+     * @param array $provider        The provider to create the user group for
+     * @param array $userGroups      The existing user groups of the provider
+     * @param array $userGroupMentor The existing mentor user group
+     *
+     * @return array The user groups that exist for the provider
+     */
+    public function createProviderMentorUserGroup(array $provider, array $userGroups, array $userGroupMentor): array
     {
         $mentor = [
-            'organization' => $result['@id'],
+            'organization' => $provider['@id'],
             'name'         => 'AANBIEDER_MENTOR',
-            'description'  => 'UserGroup mentor of '.$result['name'],
+            'description'  => 'UserGroup mentor of '.$provider['name'],
         ];
         if ($userGroupMentor) {
             $userGroups[] = $this->commonGroundService->updateResource($mentor, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupMentor['id']]);
@@ -398,12 +622,21 @@ class UcService
         return $userGroups;
     }
 
-    public function createProviderVolunteerUserGroup(array $result, array $userGroups, ?array $userGroupVolunteer = null): array
+    /**
+     * Creates a volunteer user group for a provider.
+     *
+     * @param array $provider           The provider to create the user group for
+     * @param array $userGroups         The existing user groups of the provider
+     * @param array $userGroupVolunteer The existing volunteer user group
+     *
+     * @return array
+     */
+    public function createProviderVolunteerUserGroup(array $provider, array $userGroups, array $userGroupVolunteer): array
     {
         $volunteer = [
-            'organization' => $result['@id'],
+            'organization' => $provider['@id'],
             'name'         => 'AANBIEDER_VOLUNTEER',
-            'description'  => 'UserGroup volunteer of '.$result['name'],
+            'description'  => 'UserGroup volunteer of '.$provider['name'],
         ];
         if ($userGroupVolunteer) {
             $userGroups[] = $this->commonGroundService->updateResource($volunteer, ['component' => 'uc', 'type' => 'groups', 'id' => $userGroupVolunteer['id']]);
@@ -414,41 +647,56 @@ class UcService
         return $userGroups;
     }
 
-    public function createProviderUserGroups(array $result, array $userGroups, bool $update): array
+    /**
+     * Creates the required user groups for a provider.
+     *
+     * @param array $provider   The provider to create the user groups for
+     * @param array $userGroups The existing user groups of a provider
+     *
+     * @return array The now existing user groups of the provider
+     */
+    public function createProviderUserGroups(array $provider, array $userGroups): array
     {
-        if ($update) {
-            $userGroupCoordinator = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][0];
-            $userGroupMentor = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][1];
-            $userGroupVolunteer = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $result['@id']])['hydra:member'][2];
-        } else {
-            $userGroupCoordinator = null;
-            $userGroupMentor = null;
-            $userGroupVolunteer = null;
-        }
-        $userGroups = $this->createProviderCoordinatorUserGroup($result, $userGroups, $userGroupCoordinator);
-        $userGroups = $this->createProviderMentorUserGroup($result, $userGroups, $userGroupMentor);
-        $userGroups = $this->createProviderVolunteerUserGroup($result, $userGroups, $userGroupVolunteer);
+        $existingUserGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $provider['@id']])['hydra:member'];
+
+        $userGroupCoordinator = $this->findUserGroupsByName($existingUserGroups, 'AANBIEDER_COORDINATOR');
+        $userGroupMentor = $this->findUserGroupsByName($existingUserGroups, 'AANBIEDER_MENTOR');
+        $userGroupVolunteer = $this->findUserGroupsByName($existingUserGroups, 'AANBIEDER_VOLUNTEER');
+
+        $userGroups = $this->createProviderCoordinatorUserGroup($provider, $userGroups, $userGroupCoordinator);
+        $userGroups = $this->createProviderMentorUserGroup($provider, $userGroups, $userGroupMentor);
+        $userGroups = $this->createProviderVolunteerUserGroup($provider, $userGroups, $userGroupVolunteer);
 
         return $userGroups;
     }
 
-    public function createUserGroups(array $result, $type, $update = false): array
+    /**
+     * Creates the user groups for an organization.
+     *
+     * @param array  $organization The organization to create user groups for
+     * @param string $type         The type of organization
+     *
+     * @return array
+     */
+    public function createUserGroups(array $organization, string $type): array
     {
         $userGroups = [];
         if ($type == 'Taalhuis') {
-            $userGroups = $this->createTaalhuizenUserGroups($result, $userGroups, $update);
+            $userGroups = $this->createTaalhuisUserGroups($organization, $userGroups);
         } else {
-            $userGroups = $this->createProviderUserGroups($result, $userGroups, $update);
+            $userGroups = $this->createProviderUserGroups($organization, $userGroups);
         }
 
         return $userGroups;
     }
 
-    public function deleteUser(string $id): bool
-    {
-        return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
-    }
-
+    /**
+     * Deletes the user groups for an organization.
+     *
+     * @param string $ccOrganizationId The id of the organization for which the user groups should be removed
+     *
+     * @return bool Whether or not the operations have passed
+     */
     public function deleteUserGroups(string $ccOrganizationId): bool
     {
         $userGroups = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'groups'], ['organization' => $ccOrganizationId])['hydra:member'];
@@ -458,10 +706,56 @@ class UcService
             }
         }
 
-        return false;
+        return true;
     }
 
-    public function getUserRolesByOrganization($organizationId, $type): ArrayCollection
+    /**
+     * Fetches the user roles for an organization and returns them as array.
+     *
+     * @param string $organizationId The id of the organization for which the user roles should be fetched
+     *
+     * @return array The user roles for this organization as raw array
+     */
+    public function getUserRoles(string $organizationId): array
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$organizationId]);
+
+        return $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
+    }
+
+    /**
+     * Creates a user role object from a raw array.
+     *
+     * @param array  $userRoleArray The raw array of the user role object
+     * @param string $type          The type of organization
+     *
+     * @return LanguageHouse|Provider
+     */
+    public function createUserRoleObject(array $userRoleArray, string $type)
+    {
+        if ($type == 'Taalhuis') {
+            $organization = new LanguageHouse();
+        } else {
+            $organization = new Provider();
+        }
+
+        $organization->setName($userRoleArray['name']);
+        $this->entityManager->persist($organization);
+        $organization->setId(Uuid::fromString($userRoleArray['id']));
+        $this->entityManager->persist($organization);
+
+        return $organization;
+    }
+
+    /**
+     * Fetches the user roles for an organization and returns them as collection.
+     *
+     * @param string $organizationId The organization to fetch the user roles for
+     * @param string $type           The type of organization
+     *
+     * @return ArrayCollection The collection of user roles for the organization
+     */
+    public function getUserRolesByOrganization(string $organizationId, string $type): ArrayCollection
     {
         $id = explode('/', $organizationId);
         $userRoles = new ArrayCollection();
@@ -473,29 +767,5 @@ class UcService
         }
 
         return $userRoles;
-    }
-
-    public function getUserRoles($id): array
-    {
-        $organizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type'=>'organizations', 'id'=>$id]);
-        $userRolesByLanguageHouse = $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'groups'], ['organization'=>$organizationUrl])['hydra:member'];
-
-        return $userRolesByLanguageHouse;
-    }
-
-    public function createUserRoleObject(array $result, $type)
-    {
-        if ($type == 'Taalhuis') {
-            $organization = new LanguageHouse();
-        } else {
-            $organization = new Provider();
-        }
-
-        $organization->setName($result['name']);
-        $this->entityManager->persist($organization);
-        $organization->setId(Uuid::fromString($result['id']));
-        $this->entityManager->persist($organization);
-
-        return $organization;
     }
 }

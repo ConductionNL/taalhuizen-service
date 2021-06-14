@@ -14,6 +14,12 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
     private ResolverService $resolverService;
     private LearningNeedService $learningNeedService;
 
+    /**
+     * LearningNeedQueryCollectionResolver constructor.
+     *
+     * @param ResolverService     $resolverService
+     * @param LearningNeedService $learningNeedService
+     */
     public function __construct(ResolverService $resolverService, LearningNeedService $learningNeedService)
     {
         $this->resolverService = $resolverService;
@@ -56,7 +62,14 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
         return $this->resolverService->createPaginator($collection, $context['args']);
     }
 
-    public function handleStudentId($context)
+    /**
+     * This function gets the student (edu/participant) id from the given input context.
+     *
+     * @param array $context the context from the api call.
+     *
+     * @return string the student id.
+     */
+    public function handleStudentId(array $context): string
     {
         $studentId = explode('/', $context['args']['studentId']);
         if (is_array($studentId)) {

@@ -47,7 +47,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
                     key_exists('providerId', $context['args']) ?
                         $context['args']['providerId'] :
                         null,
-                    $type = 'Aanbieder'
+                    'Aanbieder'
                 );
                 return $this->resolverService->createPaginator($collection, $context['args']);
             default:

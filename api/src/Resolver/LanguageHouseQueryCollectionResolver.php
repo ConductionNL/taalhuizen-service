@@ -44,7 +44,7 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                     key_exists('languageHouseId', $context['args']) ?
                         $context['args']['languageHouseId'] :
                         null,
-                    $type = 'Taalhuis'
+                    'Taalhuis'
                 );
                 return $this->resolverService->createPaginator($collection, $context['args']);
             default:
