@@ -19,8 +19,8 @@ class LearningNeedService
      * LearningNeedService constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param ParticipationService $participationService
+     * @param CommonGroundService    $commonGroundService
+     * @param ParticipationService   $participationService
      */
     public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParticipationService $participationService)
     {

@@ -18,9 +18,10 @@ class LearningNeedMutationResolver implements MutationResolverInterface
 
     /**
      * LearningNeedMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param LearningNeedService $learningNeedService
+     * @param CommonGroundService    $commonGroundService
+     * @param LearningNeedService    $learningNeedService
      */
     public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService)
     {
@@ -56,8 +57,10 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * Creates a new LearningNeed.
      *
      * @param LearningNeed $resource the input data for the new LearningNeed.
-     * @return LearningNeed the created LearningNeed.
+     *
      * @throws Exception
+     *
+     * @return LearningNeed the created LearningNeed.
      */
     public function createLearningNeed(LearningNeed $resource): LearningNeed
     {
@@ -102,6 +105,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * This function gets the learningNeed id from the given input array.
      *
      * @param array $input the input data for a LearningNeed.
+     *
      * @return string the id of the learningNeed.
      */
     public function handleLearningNeedId(array $input): string
@@ -122,8 +126,10 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * Updates an existing LearningNeed.
      *
      * @param array $input the input data for a LearningNeed.
-     * @return LearningNeed the updated LearningNeed.
+     *
      * @throws Exception
+     *
+     * @return LearningNeed the updated LearningNeed.
      */
     public function updateLearningNeed(array $input): LearningNeed
     {
@@ -162,8 +168,10 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * Deletes a LearningNeed.
      *
      * @param array $learningNeed the input data for a LearningNeed.
-     * @return LearningNeed|null null if successful.
+     *
      * @throws Exception
+     *
+     * @return LearningNeed|null null if successful.
      */
     public function removeLearningNeed(array $learningNeed): ?LearningNeed
     {
@@ -200,6 +208,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * This function converts the input data for creating a LearningNeed from the DTO to a valid learningNeed body.
      *
      * @param LearningNeed $resource the LearningNeed DTO input.
+     *
      * @return array a valid learningNeed body.
      */
     private function dtoToLearningNeed(LearningNeed $resource): array
@@ -230,8 +239,9 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * This function checks if the topic, application and level 'other' inputs are set when creating a new LearningNeed.
      * For each one that is set, it will be added to the learningNeed array.
      *
-     * @param LearningNeed $resource the LearningNeed DTO input.
-     * @param array $learningNeed the learningNeed array.
+     * @param LearningNeed $resource     the LearningNeed DTO input.
+     * @param array        $learningNeed the learningNeed array.
+     *
      * @return array a valid learningNeed body containing the other options if they where set in the input.
      */
     public function handleOutcomeOthersDTO(LearningNeed $resource, array $learningNeed): array
@@ -253,8 +263,9 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * This function checks if the topic, application and level 'other' inputs are set when updating a LearningNeed.
      * For each one that is set, it will be added to the learningNeed array.
      *
-     * @param array $input the input data for a LearningNeed.
+     * @param array $input        the input data for a LearningNeed.
      * @param array $learningNeed the learningNeed array.
+     *
      * @return array a valid learningNeed body containing the other options if they where set in the input.
      */
     public function handleOutcomeOthers(array $input, array $learningNeed): array
@@ -276,6 +287,7 @@ class LearningNeedMutationResolver implements MutationResolverInterface
      * This function converts the input data for updating a LearningNeed from the input array to a valid learningNeed body.
      *
      * @param array $input the input data for a LearningNeed.
+     *
      * @return array a valid learningNeed body.
      */
     private function inputToLearningNeed(array $input): array
