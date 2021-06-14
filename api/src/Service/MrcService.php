@@ -870,27 +870,19 @@ class MrcService
      * Creates an employee.
      *
      * @param array $employeeArray   The input array of the employee
-     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
      *
      * @throws Exception
      *
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @return array The resulting employee or raw mrc object
      */
-    public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
+    public function createEmployee(array $employeeArray): array
     {
         //set contact
         $contact = $this->setContact($employeeArray);
-
-        // TODO fix that a student has an email for creating a user so this if statement can be removed:
-        if (!$returnMrcObject) {
-            $this->saveUser($employeeArray, $contact);
-        }
-
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
-
         $resource = $this->ccService->cleanResource($resource);
-
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
+
         if (key_exists('targetGroupPreferences', $employeeArray)) {
             $this->createCompetences($employeeArray, $result['id'], $result);
         }
@@ -904,11 +896,15 @@ class MrcService
         }
         $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-        if ($returnMrcObject) {
             return $result;
-        }
+    }
 
-        return $this->createEmployeeObject($result, $userRoleArray ?? []);
+    public function createEmployeeToObject(array $employeeArray): Employee
+    {
+        $contact = $this->setContact($employeeArray);
+        $this->saveUser($employeeArray, $contact);
+
+        $this->createEmployeeObject($this->createEmployee($employeeArray))
     }
 
     /**
