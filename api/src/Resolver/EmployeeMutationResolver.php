@@ -62,7 +62,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
      */
     public function createEmployee(array $employeeArray): Employee
     {
-        return $this->mrcService->createEmployee($employeeArray);
+        return $this->mrcService->createEmployeeToObject($employeeArray);
     }
 
     /**

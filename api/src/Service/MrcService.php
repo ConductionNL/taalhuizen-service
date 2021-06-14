@@ -896,15 +896,21 @@ class MrcService
         }
         $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-            return $result;
+        return $result;
     }
 
+    /**
+     * Creates an employee as an object
+     * @param array $employeeArray The input array
+     * @return Employee The resulting employee object
+     * @throws Exception Any error underway
+     */
     public function createEmployeeToObject(array $employeeArray): Employee
     {
         $contact = $this->setContact($employeeArray);
         $this->saveUser($employeeArray, $contact);
 
-        $this->createEmployeeObject($this->createEmployee($employeeArray))
+        return $this->createEmployeeObject($this->createEmployee($employeeArray));
     }
 
     /**
