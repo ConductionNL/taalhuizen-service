@@ -309,7 +309,7 @@ class StudentService
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      */
-    private function getStudentFromLearningNeed( array &$studentUrls, string $learningNeedUrl): ArrayCollection
+    private function getStudentFromLearningNeed(array &$studentUrls, string $learningNeedUrl): ArrayCollection
     {
         $collection = new ArrayCollection();
         //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
@@ -627,7 +627,7 @@ class StudentService
      * This function fetches educations from the given employee.
      *
      * @param array $employee           Array with employees data
-     * @param bool $followingEducation Bool if the employee is following a education
+     * @param bool  $followingEducation Bool if the employee is following a education
      *
      * @throws \Exception
      *
@@ -698,6 +698,7 @@ class StudentService
     {
         $followingEducationYes = $followingEducations['yes'];
         $followingEducationNo = $followingEducations['no'];
+
         return [
             'lastFollowedEducation'                            => $lastEducation['iscedEducationLevelCode'] ?? null,
             'didGraduate'                                      => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
