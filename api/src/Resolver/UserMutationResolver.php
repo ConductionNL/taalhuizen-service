@@ -85,7 +85,7 @@ class UserMutationResolver implements MutationResolverInterface
     public function requestPasswordReset(array $input): ?User
     {
         $userObject = new User();
-        $userObject->setToken($this->ucService->requestPasswordReset($input['email']));
+        $userObject->setToken($this->ucService->createPasswordResetToken($input['email']));
         $this->entityManager->persist($userObject);
 
         return $userObject;
