@@ -13,6 +13,11 @@ class RegistrationQueryItemResolver implements QueryItemResolverInterface
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
 
+    /**
+     * RegistrationQueryItemResolver constructor.
+     * @param CommongroundService $commonGroundService
+     * @param StudentService $studentService
+     */
     public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
     {
         $this->commonGroundService = $commonGroundService;
