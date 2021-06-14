@@ -13,10 +13,11 @@ class TestResultQueryItemResolver implements QueryItemResolverInterface
     private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(CommongroundService $commonGroundService, TestResultService $testResultService)
-    {
+    public function __construct(
+        CommongroundService $commonGroundService
+    ) {
         $this->commonGroundService = $commonGroundService;
-        $this->testResultService = $testResultService;
+        $this->testResultService = new TestResultService($commonGroundService);
     }
 
     /**

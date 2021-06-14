@@ -7,27 +7,30 @@ use App\Entity\StudentDossierEvent;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EDUService
 {
-    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ParameterBagInterface $params;
     private EAVService $eavService;
 
-    public function __construct(EntityManagerInterface $em, CommonGroundService $commonGroundService, ParameterBagInterface $params, EAVService $eavService)
-    {
-        $this->entityManager = $em;
+    public function __construct(
+        CommonGroundService $commonGroundService
+    ) {
         $this->commonGroundService = $commonGroundService;
-        $this->params = $params;
-        $this->eavService = $eavService;
+        $this->eavService = new EAVService($commonGroundService);
     }
 
-    public function saveEavParticipant($body, $participantUrl = null)
+    /**
+     * This function updates or creates a edu/participant with the given body.
+     *
+     * @param array       $body           Array with data from the edu/participant
+     * @param string|null $participantUrl Url of the edu/participant
+     *
+     * @return array|false A edu/participant is returned from the EAV
+     */
+    public function saveEavParticipant(array $body, $participantUrl = null)
     {
         // Save the edu/participant in EAV
         if (isset($participantUrl)) {
@@ -41,7 +44,15 @@ class EDUService
         return $person;
     }
 
-    public function saveEavResult($body, $resultUrl = null)
+    /**
+     * This function updates or creates a edu/result with the given body.
+     *
+     * @param array       $body      Array with data from the edu/result
+     * @param string|null $resultUrl Url of the edu/result
+     *
+     * @return array|false A edu/result is returned from the EAV
+     */
+    public function saveEavResult(array $body, $resultUrl = null)
     {
         // Save the edu/result in EAV
         if (isset($resultUrl)) {
@@ -56,7 +67,16 @@ class EDUService
     }
 
     //@todo uitwerken
-    public function saveProgram($organization, $update = false)
+
+    /**
+     * This function updates or creates a edu/program that belongs to the given organization.
+     *
+     * @param array      $organization Array that holds data about the organization this program belongs to
+     * @param bool|false $update       Bool if this program should be updated or not
+     *
+     * @return array|false|mixed|string|null A edu/program is returned from the EAV
+     */
+    public function saveProgram(array $organization, $update = false)
     {
         $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
@@ -72,12 +92,26 @@ class EDUService
         return $program;
     }
 
-    public function getProgram($organization)
+    /**
+     * This function fetches a single program that belongs to the given organization.
+     *
+     * @param array $organization The organization a program is getting fetched for
+     *
+     * @return mixed A program is returned from the edu component
+     */
+    public function getProgram(array $organization)
     {
         return $result = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'][0];
     }
 
-    public function hasProgram($organization)
+    /**
+     * This function checks if the given organization has a program or not.
+     *
+     * @param array $organization The organization that is getting checked for if it has a program or not
+     *
+     * @return bool Returns a true or false depending if the given organization has a program or not
+     */
+    public function hasProgram(array $organization): bool
     {
         $result = $this->commonGroundService->getResource(['component' => 'edu', 'type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'];
         if (count($result) > 1) {
@@ -87,6 +121,17 @@ class EDUService
         return false;
     }
 
+    /**
+     * This function converts a EducationEvent to a StudentDossierEvent.
+     *
+     * @param array       $input        Array of data that is being converted into the StudentDossierEvent
+     * @param string|null $employeeName Name of the creator that created the EducationEvent
+     * @param string|null $studentId    ID of the student this StudentDossierEvent is being created for
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent object
+     */
     public function convertEducationEvent(array $input, string $employeeName = null, ?string $studentId = null): StudentDossierEvent
     {
         $studentDossierEvent = new StudentDossierEvent();
@@ -103,6 +148,15 @@ class EDUService
         return $studentDossierEvent;
     }
 
+    /**
+     * This function fetches EducationEvents for the given person.
+     *
+     * @param string|null $person The person the education events are being fetched for
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection holding EducationEvents
+     */
     public function getEducationEvents(?string $person = null): ArrayCollection
     {
         //@TODO: This has to be knotted to the event more properly
@@ -119,6 +173,15 @@ class EDUService
         return $collection;
     }
 
+    /**
+     * This function fetches a single education event with the given ID.
+     *
+     * @param string $id ID of the education event that will be fetched
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
+     */
     public function getEducationEvent(string $id): StudentDossierEvent
     {
         $result = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
@@ -126,6 +189,15 @@ class EDUService
         return $this->convertEducationEvent($result);
     }
 
+    /**
+     * This function creates a StudentDossierEvent with the given array and converts it to a EducationEvent.
+     *
+     * @param array $studentDossierEventArray Array with data for the StudentDossierEvent
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a EducationEvent
+     */
     public function createEducationEvent(array $studentDossierEventArray): StudentDossierEvent
     {
         $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']]);
@@ -142,6 +214,15 @@ class EDUService
         return $this->convertEducationEvent($result, $contact['givenName'], $studentDossierEventArray['studentId']);
     }
 
+    /**
+     * This function updates the participants of a event with the given participants.
+     *
+     * @param array       $event        Array with data for a event
+     * @param string|null $studentId    ID of a student who is a participant of the given event
+     * @param array|null  $participants Array of edu/participants
+     *
+     * @return array Returns the given event
+     */
     public function updateParticipants(array $event, ?string $studentId = null, ?array $participants = []): array
     {
         if ($studentId) {
@@ -159,6 +240,16 @@ class EDUService
         return $event;
     }
 
+    /**
+     * This function updates a StudentDossierEvent and converts it to a EducationEvent.
+     *
+     * @param string $id                       ID of the EducationEvent that will be updated
+     * @param array  $studentDossierEventArray Array that holds data for the StudentDossierEvent
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
+     */
     public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
     {
         $resource = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
@@ -178,11 +269,25 @@ class EDUService
         return $this->convertEducationEvent($resource, $contact['givenName'], $studentId);
     }
 
+    /**
+     * This function deletes a edu/education_event with the given ID.
+     *
+     * @param string $id ID of the EducationEvent
+     *
+     * @return bool Returns a bool if the EducationEvent is deleted or not
+     */
     public function deleteEducationEvent(string $id): bool
     {
         return $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
     }
 
+    /**
+     * This function fetches edu_participants with the given query.
+     *
+     * @param array|null $additionalQuery
+     *
+     * @return array Returns a array of fetched edu/participants
+     */
     public function getParticipants(?array $additionalQuery = []): array
     {
         $query = array_merge($additionalQuery, ['limit' => 1000]);
@@ -190,7 +295,15 @@ class EDUService
         return $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], $query)['hydra:member'];
     }
 
-    public function setGroupCourseDetails($group, $resource)
+    /**
+     * This function sets details to a course with the given group.
+     *
+     * @param array $group    Array that holds group data
+     * @param mixed $resource Mixed object where the groups data is added to
+     *
+     * @return mixed Returns a mixed object as CourseDetails
+     */
+    public function setGroupCourseDetails(array $group, $resource)
     {
         if (isset($group['course'])) {
             $aanbieder = explode('/', $group['course']['organization']);
@@ -211,7 +324,17 @@ class EDUService
         return $resource;
     }
 
-    public function setGroupDetailsDates($group, $resource)
+    /**
+     * THis function sets details start and end date from the given group.
+     *
+     * @param array $group    Array that holds group data
+     * @param mixed $resource Mixed object that the data is being set for
+     *
+     * @throws \Exception
+     *
+     * @return mixed Returns a mixed object as GroupDetails
+     */
+    public function setGroupDetailsDates(array $group, $resource)
     {
         if (isset($group['endDate'])) {
             $resource->setDetailsEndDate(new DateTime($group['endDate']));
@@ -223,6 +346,16 @@ class EDUService
         return $resource;
     }
 
+    /**
+     * This function converts a group array to a Group object.
+     *
+     * @param array $group       Array that holds the group data
+     * @param null  $aanbiederId ID of the aanbieder this group belongs to
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a Group object
+     */
     public function convertGroupObject(array $group, $aanbiederId = null): Group
     {
         $resource = new Group();
@@ -253,6 +386,15 @@ class EDUService
         return $resource;
     }
 
+    /**
+     * This function fetches a edu/group and converts it to a Group object.
+     *
+     * @param string $id ID of the group that will be fetched
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a Group object
+     */
     public function getGroup(string $id): Group
     {
         $group = $this->eavService->getObject('groups', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
@@ -260,6 +402,15 @@ class EDUService
         return $this->convertGroupObject($group);
     }
 
+    /**
+     * This function fetches edu/groups and converts them into Group objects before returning them in a array.
+     *
+     * @param array|null $query Array with query params the fetched groups will be filtered on
+     *
+     * @throws \Exception
+     *
+     * @return array Returns an array of fetched Group objects
+     */
     public function getGroups(?array $query = []): array
     {
         $groups = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'groups'], $query)['hydra:member'];
@@ -274,9 +425,19 @@ class EDUService
         return $results;
     }
 
-    public function getGroupsWithStatus($aanbiederId, $status): ArrayCollection
+    /**
+     * This function fetches groups with the given status.
+     *
+     * @param string $aanbiederId ID of the aanbieder these groups belong to
+     * @param string $status      Status that the Groups participants need to have if the Group wants to be returned
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection of Groups
+     */
+    public function getGroupsWithStatus(string $aanbiederId, string $status): ArrayCollection
     {
-        $watanders = new ArrayCollection();
+        $groups = new ArrayCollection();
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
             //get provider
@@ -294,7 +455,7 @@ class EDUService
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
-                        $watanders = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders);
+                        $groups = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId, $groups);
                     }
                 } catch (Exception $e) {
                     continue;
@@ -306,10 +467,22 @@ class EDUService
             $result['message'] = 'Warning, '.$aanbiederId.' is not an existing eav/cc/organization!';
         }
 
-        return $watanders;
+        return $groups;
     }
 
-    public function checkParticipationGroup($groupUrls, $participation, $aanbiederId, $watanders)
+    /**
+     * This function checks if a participation is in a group and if not adds them.
+     *
+     * @param array  $groupUrls           Array of group urls
+     * @param array  $participation       Array with data of a participation
+     * @param string $aanbiederId         ID of the aanbieder this participation belongs to
+     * @param mixed  $participationObject Mixed object as Participation
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    public function checkParticipationGroup(array $groupUrls, $participation, $aanbiederId, $participationObject)
     {
         if (!in_array($participation['group'], $groupUrls)) {
             array_push($groupUrls, $participation['group']);
@@ -318,13 +491,20 @@ class EDUService
             //handle result
             $resourceResult = $this->convertGroupObject($group, $aanbiederId);
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
-            $watanders->add($resourceResult);
+            $participationObject->add($resourceResult);
         }
 
-        return $watanders;
+        return $participationObject;
     }
 
-    public function deleteGroup($id)
+    /**
+     * This function deletes a group with the given id.
+     *
+     * @param string $id ID of the group that will be deleted
+     *
+     * @throws \Exception
+     */
+    public function deleteGroup(string $id)
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]);
 
@@ -352,7 +532,14 @@ class EDUService
         }
     }
 
-    public function removeGroupFromParticipation($group)
+    /**
+     * This function removes a group from its participations.
+     *
+     * @param array $group Array of data from a group
+     *
+     * @throws \Exception
+     */
+    public function removeGroupFromParticipation(array $group)
     {
         foreach ($group['participations'] as $participationUrl) {
             if ($this->eavService->hasEavObject($participationUrl)) {
@@ -370,7 +557,17 @@ class EDUService
         }
     }
 
-    public function changeGroupTeachers($groupId, $employeeids): Group
+    /**
+     * This function changes the mentors of a group with the given employee IDs.
+     *
+     * @param string $groupId     ID of the group which mentors will be changed
+     * @param array  $employeeids IDs of the employees that will be the groups new mentor(s)
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\Group Returns a group object
+     */
+    public function changeGroupTeachers(string $groupId, array $employeeids): Group
     {
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
         $groep['mentors'] = $employeeids;
@@ -378,7 +575,16 @@ class EDUService
         return $this->convertGroupObject($this->eavService->saveObject($groep, 'groups', 'edu', $groupUrl));
     }
 
-    public function deleteParticipants($id): bool
+    /**
+     * This function deletes the participant and its subresources of the given ID.
+     *
+     * @param string $id ID of the participant that will be deleted
+     *
+     * @throws \Exception
+     *
+     * @return bool Returns a bool if the participant is deleted or not
+     */
+    public function deleteParticipants(string $id): bool
     {
         $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
         $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'][0];
@@ -398,7 +604,14 @@ class EDUService
         return $program['id'];
     }
 
-    public function deleteEducationEvents($participant): bool
+    /**
+     * This function deletes the education events of the given participant.
+     *
+     * @param array $participant Array that holds data of the participant
+     *
+     * @return bool Returns false
+     */
+    public function deleteEducationEvents(array $participant): bool
     {
         foreach ($participant['educationEvents'] as $educationEvent) {
             $educationEvent = $this->commonGroundService->getResource($educationEvent);
@@ -408,7 +621,14 @@ class EDUService
         return false;
     }
 
-    public function deleteResults($participant): bool
+    /**
+     * This function deletes results of the given participant.
+     *
+     * @param array $participant Array that holds data of the participant
+     *
+     * @return bool Returns false
+     */
+    public function deleteResults(array $participant): bool
     {
         $results = $this->commonGroundService->getResource($participant['results']);
         foreach ($results as $result) {
@@ -418,7 +638,16 @@ class EDUService
         return false;
     }
 
-    public function deleteParticipantGroups($participant): bool
+    /**
+     * This function deletes the groups of the given participant.
+     *
+     * @param array $participant Array that holds data of the participant
+     *
+     * @throws \Exception
+     *
+     * @return bool Returns false
+     */
+    public function deleteParticipantGroups(array $participant): bool
     {
         $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
         foreach ($participantGroups as $participantGroup) {

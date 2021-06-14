@@ -45,7 +45,16 @@ class LearningNeedQueryItemResolver implements QueryItemResolverInterface
         return $resourceResult;
     }
 
-    public function handleLearningNeedId($context)
+    /**
+     * This function gets the LearningNeed id from the given input context.
+     *
+     * @param array $context the context from the api call.
+     *
+     * @throws Exception
+     *
+     * @return string the LearningNeed id.
+     */
+    public function handleLearningNeedId(array $context): string
     {
         if (key_exists('learningNeedId', $context['info']->variableValues)) {
             $learningNeedId = $context['info']->variableValues['learningNeedId'];

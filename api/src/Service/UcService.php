@@ -51,7 +51,7 @@ class UcService
         CacheInterface $cache
     ) {
         $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;

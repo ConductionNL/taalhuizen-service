@@ -4,23 +4,26 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\CCService;
-use App\Service\ProviderService;
 use Exception;
 
 class ProviderQueryItemResolver implements QueryItemResolverInterface
 {
-    private ProviderService $providerService;
     private CCService $ccService;
 
+    /**
+     * ProviderQueryItemResolver constructor.
+     *
+     * @param CCService $ccService
+     */
     public function __construct(
-        ProviderService $providerService,
         CCService $ccService
     ) {
-        $this->providerService = $providerService;
         $this->ccService = $ccService;
     }
 
     /**
+     * Get a Provider with the given id.
+     *
      * @inheritDoc
      */
     public function __invoke($item, array $context)
