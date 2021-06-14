@@ -14,17 +14,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class EDUService
 {
-    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
 
     public function __construct
     (
-        EntityManagerInterface $em,
         CommonGroundService $commonGroundService
     )
     {
-        $this->entityManager = $em;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
     }
