@@ -10,19 +10,33 @@ use Exception;
 class TestResultService
 {
     private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EDUService $eduService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService, EDUService $eduService)
+    public function __construct
+    (
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService
+    )
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = $eavService;
-        $this->eduService = $eduService;
+        $this->eavService = new EAVService($entityManager, $commonGroundService);
+        $this->eduService = new EDUService($entityManager, $commonGroundService);
     }
 
-    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultUrl = null)
+    /**
+     * This function updates or creates a test result with the given data.
+     *
+     * @param array $testResult Array that holds the test results data
+     * @param array $memo Array that holds the memos data
+     * @param string $participationId ID of the participation
+     * @param string|null $testResultUrl Url of the test result as string
+     * @return array Returns the test result and memo in a array
+     * @throws \Exception
+     */
+    public function saveTestResult(array $testResult, array $memo, string $participationId, $testResultUrl = null): array
     {
         if (isset($participationId)) {
             // Create
@@ -53,6 +67,14 @@ class TestResultService
         ];
     }
 
+    /**
+     * This function adds a participation to a test result.
+     *
+     * @param string $participationId ID of the participation
+     * @param array $testResult Array with data of the test result
+     * @return array Returns test result, participation an learning need in a array
+     * @throws \Exception
+     */
     private function addParticipationToTestResult($participationId, $testResult)
     {
         // Check if participation already has testResults
@@ -93,7 +115,13 @@ class TestResultService
         ];
     }
 
-    public function deleteTestResult($id)
+    /**
+     * This function deletes a test result
+     *
+     * @param string $id ID of the test result that will be deleted
+     * @throws \Exception
+     */
+    public function deleteTestResult(string $id)
     {
         $testResultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
         // Check if this testResult exists
@@ -114,7 +142,13 @@ class TestResultService
         $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
     }
 
-    private function removeTestResultFromParticipation($testResultUrl)
+    /**
+     * This function removes a test result from a participation.
+     *
+     * @param string $testResultUrl Url of the test result as string
+     * @throws \Exception
+     */
+    private function removeTestResultFromParticipation(string $testResultUrl)
     {
         $testResult = $this->eavService->getObject('results', $testResultUrl, 'edu');
         if ($this->eavService->hasEavObject($testResult['participation'])) {
@@ -129,7 +163,15 @@ class TestResultService
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
     }
 
-    public function getTestResult($id, $url = null)
+    /**
+     * This function fetches a test result from the given ID.
+     *
+     * @param string $id ID of the test result that will be fetched
+     * @param null $url Url of the test result as string
+     * @return array Returns a test result and memo in a array
+     * @throws \Exception
+     */
+    public function getTestResult(string $id, $url = null): array
     {
         if (isset($id)) {
             $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
@@ -156,7 +198,14 @@ class TestResultService
         ];
     }
 
-    public function getTestResults($participationId)
+    /**
+     * This function fetches the test results from the given participation ID.
+     *
+     * @param string $participationId ID of the participation
+     * @return array Returns test results in a array
+     * @throws \Exception
+     */
+    public function getTestResults(string $participationId): array
     {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
@@ -173,7 +222,16 @@ class TestResultService
         return $testResults;
     }
 
-    public function checkTestResultValues($testResult, $participationId, $testResultUrl = null)
+    /**
+     * This function check the given test results values.
+     *
+     * @param array $testResult Array with data of the test result
+     * @param string $participationId ID of the participation
+     * @param string|null $testResultUrl Url of the test result as string
+     * @return mixed Returns the test result as array
+     * @throws \Exception
+     */
+    public function checkTestResultValues(array $testResult, string $participationId, $testResultUrl = null)
     {
         if (isset($testResultUrl) && !$this->commonGroundService->isResource($testResultUrl)) {
             throw new Exception('Invalid request, testResultId is not an existing edu/result!');
@@ -196,7 +254,16 @@ class TestResultService
         return $testResult;
     }
 
-    public function handleResult($testResult, $memo, $participationId = null)
+    /**
+     * This function converts the test result array to an TestResult object
+     *
+     * @param array $testResult Array with data of the given test result
+     * @param array $memo Array with data of the given memo
+     * @param string|null $participationId ID of the participation as string
+     *
+     * @return \App\Entity\TestResult
+     */
+    public function handleResult(array $testResult, array $memo, $participationId = null): TestResult
     {
         // Put together the expected result for Lifely:
         $resource = new TestResult();
