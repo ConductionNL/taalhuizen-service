@@ -24,9 +24,16 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
     }
 
     /**
+     * This function determines what function to execute next based on the context.
+     *
      * @inheritDoc
      *
-     * @throws Exception;
+     * @param object|null $item    Post object
+     * @param array       $context Information about post
+     *
+     * @throws \Exception
+     *
+     * @return iterable|object|null Returns a iterable
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
@@ -55,6 +62,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
     }
 
+    /**
+     * This function checks if the students have a language house id.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null
+     */
     public function students(array $context): ?ArrayCollection
     {
         if (key_exists('languageHouseId', $context['args'])) {
@@ -75,7 +91,16 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->handleStudentCollection($query);
     }
 
-    public function handleStudentCollection($query)
+    /**
+     * This function handles the student collection query.
+     *
+     * @param array $query Array with query
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns ArrayCollection with students
+     */
+    public function handleStudentCollection(array $query): ArrayCollection
     {
         $students = $this->studentService->getStudents($query);
 
@@ -91,6 +116,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $collection;
     }
 
+    /**
+     * This function checks if new referred students have a referred status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
         if (key_exists('providerId', $context['args'])) {
@@ -105,6 +139,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');
     }
 
+    /**
+     * This function checks if students have a active status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function activeStudents(array $context): ?ArrayCollection
     {
         if (key_exists('providerId', $context['args'])) {
@@ -119,6 +162,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');
     }
 
+    /**
+     * This function checks if students have a completed status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function completedStudents(array $context): ?ArrayCollection
     {
         if (key_exists('providerId', $context['args'])) {
@@ -133,6 +185,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');
     }
 
+    /**
+     * This function checks if students have a group.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function groupStudents(array $context): ?ArrayCollection
     {
         if (key_exists('groupId', $context['args'])) {
@@ -152,6 +213,15 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->handleStudentCollection($query);
     }
 
+    /**
+     * This function checks if student have a aanbieder employee.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
     {
         if (key_exists('aanbiederEmployeeId', $context['args'])) {
