@@ -14,7 +14,8 @@ class EmployeeMutationResolver implements MutationResolverInterface
     private MrcService $mrcService;
     private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService, ParticipationService $participationService){
+    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService, ParticipationService $participationService)
+    {
         $this->entityManager = $entityManager;
         $this->mrcService = $mrcService;
         $this->participationService = $participationService;
@@ -64,10 +65,9 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     public function addMentorToParticipation(array $input): Employee
     {
-        $participationId = explode('/',$input['participationId']);
-        $aanbiederEmployeeId = explode('/',$input['aanbiederEmployeeId']);
+        $participationId = explode('/', $input['participationId']);
+        $aanbiederEmployeeId = explode('/', $input['aanbiederEmployeeId']);
 
         return $this->participationService->addMentoredParticipationToEmployee(end($participationId), end($aanbiederEmployeeId));
     }
-
 }

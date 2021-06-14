@@ -181,8 +181,9 @@ class StudentService
         ];
     }
 
-    private function getStudentEmployee(array $person, $skipChecks = false): array
+    private function getStudentEmployee(array $person, $skipChecks = false)
     {
+        $employee = null;
         $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['person' => $person['@id']])['hydra:member'];
         if (count($employees) > 0) {
             $employee = $employees[0];
@@ -394,9 +395,9 @@ class StudentService
         return [
             'givenName'      => $person['givenName'] ?? null,
             'additionalName' => $person['additionalName'] ?? null,
-            'familyName' => $person['familyName'] ?? null,
-            'gender' => $person['gender'] ? $person['gender'] : 'X',
-            'birthday' => $person['birthday'] ?? null,
+            'familyName'     => $person['familyName'] ?? null,
+            'gender'         => $person['gender'] ? $person['gender'] : 'X',
+            'birthday'       => $person['birthday'] ?? null,
         ];
     }
 

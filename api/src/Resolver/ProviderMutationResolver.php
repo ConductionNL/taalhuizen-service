@@ -60,10 +60,13 @@ class ProviderMutationResolver implements MutationResolverInterface
 
     public function updateProvider(array $input): Provider
     {
-        $type = 'Aanbieder';
         $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
+        }
+        $type = 'Aanbieder';
 
-        $result = $this->ccService->updateOrganization(end($id), $input, $type);
+        $result = $this->ccService->updateOrganization($id, $input);
         $this->eduService->saveProgram($result);
         $this->ucService->createUserGroups($result, $type);
 
@@ -73,6 +76,9 @@ class ProviderMutationResolver implements MutationResolverInterface
     public function deleteProvider(array $input): ?Provider
     {
         $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
+        }
 
         //delete userGroups
         $this->ucService->deleteUserGroups($id);
@@ -83,7 +89,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         //delete participants
         $programId = $this->eduService->deleteParticipants($id);
 
-        $this->ccService->deleteOrganization(end($id), $programId);
+        $this->ccService->deleteOrganization($id, $programId);
 
         return null;
     }

@@ -33,17 +33,17 @@ class LanguageHouseService
         $languageHouseCCOrganization['type'] = 'Taalhuis';
 
         if (isset($languageHouse['address'])) {
-            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
             $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
         }
 
         if (isset($languageHouse['email'])) {
-            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
             $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
         }
 
         if (isset($languageHouse['phoneNumber'])) {
-            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $languageHouse['name'];
+            $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
             $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
         }
 
@@ -121,15 +121,15 @@ class LanguageHouseService
             $languageHouseCCOrganization['name'] = $languageHouse['name'];
 
             if (isset($languageHouse['address'])) {
-                $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['addresses'][0]['name'] = 'Address of '.$languageHouse['name'];
                 $languageHouseCCOrganization['addresses'][0] = $languageHouse['address'];
             }
             if (isset($languageHouse['email'])) {
-                $languageHouseCCOrganization['emails'][0]['name'] = 'Email of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['emails'][0]['name'] = 'Email of '.$languageHouse['name'];
                 $languageHouseCCOrganization['emails'][0]['email'] = $languageHouse['email'];
             }
             if (isset($languageHouse['phoneNumber'])) {
-                $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of ' . $languageHouse['name'];
+                $languageHouseCCOrganization['telephones'][0]['name'] = 'Telephone of '.$languageHouse['name'];
                 $languageHouseCCOrganization['telephones'][0]['telephone'] = $languageHouse['phoneNumber'];
             }
 
