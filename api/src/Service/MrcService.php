@@ -349,6 +349,7 @@ class MrcService
         } else {
             $contact = $this->commonGroundService->getResource($result['person']);
         }
+
         $employee = new Employee();
         $employee = $this->contactToEmployeeObject($employee, $contact);
         $employee = $this->resultToEmployeeObject($employee, $result);
@@ -356,11 +357,7 @@ class MrcService
             $employee->setUserRoles($userRoleArray);
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $result);
-        if (!$studentEmployee) {
-            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $result);
-        } else {
-            $employee = $this->relatedObjectsToEmployeeObject($employee, $result);
-        }
+        $employee = $this->relatedObjectsToEmployeeObject($employee, $result);
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($result['id']));
