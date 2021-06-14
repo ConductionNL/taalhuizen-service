@@ -10,6 +10,10 @@ class ReportQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private ResolverService $resolverService;
 
+    /**
+     * ReportQueryCollectionResolver constructor.
+     * @param ResolverService $resolverService
+     */
     public function __construct(ResolverService $resolverService)
     {
         $this->resolverService = $resolverService;
