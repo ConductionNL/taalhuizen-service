@@ -869,7 +869,7 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
@@ -896,14 +896,18 @@ class MrcService
         }
         $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
+
         return $result;
     }
 
     /**
-     * Creates an employee as an object
+     * Creates an employee as an object.
+     *
      * @param array $employeeArray The input array
-     * @return Employee The resulting employee object
+     *
      * @throws Exception Any error underway
+     *
+     * @return Employee The resulting employee object
      */
     public function createEmployeeToObject(array $employeeArray): Employee
     {
@@ -967,7 +971,7 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param boolean  $studentEmployee Whether or not the employee is also a student
+     * @param bool   $studentEmployee Whether or not the employee is also a student
      *
      * @throws Exception
      *
@@ -998,8 +1002,8 @@ class MrcService
         $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-            return $result;
 
+        return $result;
     }
 
     public function updateEmployeeToObject(string $id, array $employeeArray, bool $studentEmployee = false): Employee
