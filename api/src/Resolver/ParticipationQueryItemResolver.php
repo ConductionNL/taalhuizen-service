@@ -13,6 +13,12 @@ class ParticipationQueryItemResolver implements QueryItemResolverInterface
     private CommonGroundService $commonGroundService;
     private ParticipationService $participationService;
 
+    /**
+     * ParticipationQueryItemResolver constructor.
+     *
+     * @param CommongroundService  $commonGroundService
+     * @param ParticipationService $participationService
+     */
     public function __construct(CommongroundService $commonGroundService, ParticipationService $participationService)
     {
         $this->commonGroundService = $commonGroundService;
@@ -20,6 +26,8 @@ class ParticipationQueryItemResolver implements QueryItemResolverInterface
     }
 
     /**
+     * Get a participation object with the given participationId.
+     *
      * @inheritDoc
      *
      * @throws Exception;

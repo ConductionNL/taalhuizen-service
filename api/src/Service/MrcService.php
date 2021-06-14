@@ -524,6 +524,7 @@ class MrcService
         } else {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         }
+
         $employee = new Employee();
         $employee = $this->contactToEmployeeObject($employee, $contact);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
@@ -1114,9 +1115,9 @@ class MrcService
      * Creates a resource to save to the EAV for an employee.
      *
      * @param array         $employeeArray The input array of the employee
-     * @param array         $contact The contact of the employee
-     * @param Employee|null $employee The existing employee object
-     * @param array|null    $employeeRaw The raw employee object
+     * @param array         $contact       The contact of the employee
+     * @param Employee|null $employee      The existing employee object
+     * @param array|null    $employeeRaw   The raw employee object
      *
      * @return array the resulting employee resource
      */

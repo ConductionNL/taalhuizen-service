@@ -20,19 +20,25 @@ class ParticipationService
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        EAVService $eavService,
         MrcService $mrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = $eavService;
+        $this->eavService = new EAVService($commonGroundService);
         $this->mrcService = $mrcService;
     }
 
     /**
+     * @param array  $participation   Array with data from the eav/participation
+     * @param string $participationId Id of the eav/participation
+     *
      * @throws Exception
+     *
+     * This function handles getting a eav/participation with the given Id.
+     *
+     * @return array|false A eav/participation is returned from the EAV
      */
-    public function handleGettingParticipation($participation, $participationId)
+    public function handleGettingParticipation(array $participation, string $participationId)
     {
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
@@ -55,9 +61,17 @@ class ParticipationService
     }
 
     /**
+     * This function saves a eav/participation with the given participation and Id's.
+     *
+     * @param array       $participation   Array with data from the eav/participation
+     * @param string|null $learningNeedId  Id of the eav/learningNeed
+     * @param string|null $participationId Id of the eav/participation
+     *
      * @throws Exception
+     *
+     * @return Participation A eav/participation is returned from the EAV
      */
-    public function saveParticipation($participation, $learningNeedId = null, $participationId = null): Participation
+    public function saveParticipation(array $participation, string $learningNeedId = null, string $participationId = null): Participation
     {
         // Save the participation in EAV
         $participation = $this->handleGettingParticipation($participation, $participationId);
@@ -82,9 +96,16 @@ class ParticipationService
     }
 
     /**
+     * This function adds a eav/learningNeeds to a eav/participation with the given learningNeedId and participation.
+     *
+     * @param string $learningNeedId Id of the eav/learningNeed
+     * @param array  $participation  Array with data from the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
-    private function addLearningNeedToParticipation($learningNeedId, $participation): array
+    private function addLearningNeedToParticipation(string $learningNeedId, array $participation): array
     {
         $result = [];
         // should already be checked but just in case:
@@ -119,9 +140,16 @@ class ParticipationService
     }
 
     /**
+     * This function adds a cc/organizations to a eav/participation with the given aanbiederId and participation.
+     *
+     * @param string $aanbiederId   Id of the cc/organization
+     * @param array  $participation Array with data from the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
-    private function addAanbiederToParticipation($aanbiederId, $participation): array
+    private function addAanbiederToParticipation(string $aanbiederId, array $participation): array
     {
         $result = [];
         $aanbiederUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
@@ -159,9 +187,17 @@ class ParticipationService
     }
 
     /**
+     * This function deletes a eav/participation with the given id or url.
+     *
+     * @param string      $id               Id of the eav/participation
+     * @param string|null $url              Url of the eav/participation
+     * @param bool|false  $skipLearningNeed If true
+     *
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
-    public function deleteParticipation($id, $url = null, $skipLearningNeed = false): array
+    public function deleteParticipation(string $id, string $url = null, bool $skipLearningNeed = false): array
     {
         $result = $this->getParticipation($id, $url);
 
@@ -186,9 +222,16 @@ class ParticipationService
     }
 
     /**
+     * This function deletes a eav/learningNeeds from a eav/participation with the given learningNeedUrl and participationUrl.
+     *
+     * @param string $learningNeedUrl  Url of the eav/learningNeed
+     * @param string $participationUrl Url of the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A eav/learningNeed is returned from the EAV
      */
-    private function removeLearningNeedFromParticipation($learningNeedUrl, $participationUrl): array
+    private function removeLearningNeedFromParticipation(string $learningNeedUrl, string $participationUrl): array
     {
         $result = [];
         if ($this->eavService->hasEavObject($learningNeedUrl)) {
@@ -205,9 +248,16 @@ class ParticipationService
     }
 
     /**
+     * This function deletes a cc/organizations from a eav/participation with the given aanbiederUrl and participationUrl.
+     *
+     * @param string $aanbiederUrl     Url of the cc/organization
+     * @param string $participationUrl Url of the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A cc/organization is returned from the CC
      */
-    private function removeAanbiederFromParticipation($aanbiederUrl, $participationUrl): array
+    private function removeAanbiederFromParticipation(string $aanbiederUrl, string $participationUrl): array
     {
         $result = [];
         if (isset($aanbiederUrl)) {
@@ -226,30 +276,23 @@ class ParticipationService
     }
 
     /**
+     * This function gets a eav/participation with the given id or url.
+     *
+     * @param string      $id  Id of the eav/participation
+     * @param string|null $url Url of the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
-    public function getParticipation($id, $url = null): array
+    public function getParticipation(string $id, string $url = null): array
     {
         $result = [];
         // Get the participation from EAV and add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         if (isset($id)) {
-            if ($this->eavService->hasEavObject(null, 'participations', $id)) {
-                $participation = $this->eavService->getObject('participations', null, 'eav', $id);
-                $result['participation'] = $participation;
-            } else {
-                $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/participation!';
-
-                throw new Exception('Invalid request, '.$id.' is not an existing eav/participation!');
-            }
+            $result['participation'] = $this->getParticipationId($id);
         } elseif (isset($url)) {
-            if ($this->eavService->hasEavObject($url)) {
-                $participation = $this->eavService->getObject('participations', $url);
-                $result['participation'] = $participation;
-            } else {
-                $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/participation!';
-
-                throw new Exception('Invalid request, '.$url.' is not an existing eav/participation!');
-            }
+            $result['participation'] = $this->getParticipationUrl($url);
         }
         if (isset($result['participation'])) {
             $result = array_merge($result, $this->updateParticipationStatus($result['participation']));
@@ -259,9 +302,57 @@ class ParticipationService
     }
 
     /**
+     * This function gets a eav/participation with the given id.
+     *
+     * @param string $id Id of the eav/participation
+     *
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
-    public function getParticipations($learningNeedId): array
+    public function getParticipationId(string $id): array
+    {
+        if ($this->eavService->hasEavObject(null, 'participations', $id)) {
+            $participation = $this->eavService->getObject('participations', null, 'eav', $id);
+            $result['participation'] = $participation;
+        } else {
+            throw new Exception('Invalid request, '.$id.' is not an existing eav/participation!');
+        }
+
+        return $participation;
+    }
+
+    /**
+     * This function gets a eav/participation with the given url.
+     *
+     * @param string $url Url of the eav/participation
+     *
+     * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
+     */
+    public function getParticipationUrl(string $url): array
+    {
+        if ($this->eavService->hasEavObject($url)) {
+            $participation = $this->eavService->getObject('participations', $url);
+            $result['participation'] = $participation;
+        } else {
+            throw new Exception('Invalid request, '.$url.' is not an existing eav/participation!');
+        }
+
+        return $result['participation'];
+    }
+
+    /**
+     * This function gets all eav/participations from a eav/learningNeeds with the given learningNeedId.
+     *
+     * @param string $learningNeedId Id of the eav/learningNeed
+     *
+     * @throws Exception
+     *
+     * @return array eav/participations are returned from the EAV
+     */
+    public function getParticipations(string $learningNeedId): array
     {
         // Get the eav/LearningNeed participations from EAV and add the $participations @id's to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
@@ -285,7 +376,16 @@ class ParticipationService
         return $result;
     }
 
-    public function handleParticipationStatus($participation): array
+    /**
+     * This function handles the eav/participations status.
+     *
+     * @param array $participation Array with data from the eav/participation
+     *
+     * @throws Exception
+     *
+     * @return array A eav/participation - status is returned.
+     */
+    public function handleParticipationStatus(array $participation): array
     {
         if ((isset($participation['mentor']) || isset($participation['group']))) {
             $updateParticipation['status'] = 'ACTIVE';
@@ -307,7 +407,16 @@ class ParticipationService
         return $updateParticipation;
     }
 
-    public function updateParticipationStatus($participation): array
+    /**
+     * This function updates the eav/participations status.
+     *
+     * @param array $participation Array with data from the eav/participation
+     *
+     * @throws Exception
+     *
+     * @return array A eav/participation is returned from EAV
+     */
+    public function updateParticipationStatus(array $participation): array
     {
         $result = [];
 
@@ -326,9 +435,16 @@ class ParticipationService
     }
 
     /**
+     * This function adds a mrc/employee to the eav/participations with the given participationId and aanbiederEmployeeId.
+     *
+     * @param string $participationId     Id of the eav/participation
+     * @param string $aanbiederEmployeeId Id of the mrc/employee
+     *
      * @throws Exception
+     *
+     * @return Employee A mrc/employee is returned from MRC
      */
-    public function addMentoredParticipationToEmployee($participationId, $aanbiederEmployeeId): Employee
+    public function addMentoredParticipationToEmployee(string $participationId, string $aanbiederEmployeeId): Employee
     {
         $result = [];
         $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
@@ -340,9 +456,16 @@ class ParticipationService
     }
 
     /**
+     * This function adds a mrc/employee to the eav/participations with the given mentorUrl and participation.
+     *
+     * @param string $mentorUrl     Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
+     *
+     * @return array A mrc/employees and eav/participations are returned from MRC and EAV
      */
-    public function addMentorToParticipation($mentorUrl, $participation): array
+    public function addMentorToParticipation(string $mentorUrl, array $participation): array
     {
         $result = [];
         // Make sure this participation has no mentor or group set
@@ -375,7 +498,16 @@ class ParticipationService
         return $result;
     }
 
-    public function getEmployeeParticipations($mentorUrl)
+    /**
+     * This function gets all eav/participations from a mrc/employee with the given mentorUrl.
+     *
+     * @param string $mentorUrl Url of the mrc/employees
+     *
+     * @throws Exception
+     *
+     * @return array The participations of a mrc/employees are returned from MRC
+     */
+    public function getEmployeeParticipations(string $mentorUrl): array
     {
         // Check if mentor already has an EAV object
         if ($this->eavService->hasEavObject($mentorUrl)) {
@@ -390,9 +522,16 @@ class ParticipationService
     }
 
     /**
+     * This function removes the mrc/employee from the eav/participations with the given mentorUrl and participation.
+     *
+     * @param string $mentorUrl     Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
      */
-    public function removeMentorFromParticipation($mentorUrl, $participation): Participation
+    public function removeMentorFromParticipation(string $mentorUrl, array $participation): Participation
     {
         $result = [];
 
@@ -415,9 +554,14 @@ class ParticipationService
     }
 
     /**
+     * This function checks valid mentorUrl and participation.
+     *
+     * @param string $mentorUrl     Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function errorRemoveMentorFromParticipation($mentorUrl, $participation)
+    public function errorRemoveMentorFromParticipation(string $mentorUrl, array $participation)
     {
         $this->checkMentorInput($participation);
         $this->checkMentor($mentorUrl, $participation);
@@ -428,9 +572,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if there is a mentor with the given participation.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkMentorInput($participation)
+    public function checkMentorInput(array $participation)
     {
         if (!isset($participation['mentor'])) {
             throw new Exception('Invalid request, this participation has no mentor!');
@@ -438,9 +586,14 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the given mentorUrl is connected to the given participation.
+     *
+     * @param string $mentorUrl     Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkMentor($mentorUrl, $participation)
+    public function checkMentor(string $mentorUrl, array $participation)
     {
         if ($participation['mentor'] != $mentorUrl) {
             throw new Exception('Invalid request, this participation has a different mentor!');
@@ -448,9 +601,16 @@ class ParticipationService
     }
 
     /**
+     * This function adds a group to a eav/participations with the given groupUrl and participation.
+     *
+     * @param string $groupUrl      Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
      */
-    public function addGroupToParticipation($groupUrl, $participation): Participation
+    public function addGroupToParticipation(string $groupUrl, array $participation): Participation
     {
         $result = [];
         // Make sure this participation has no mentor or group set
@@ -482,6 +642,10 @@ class ParticipationService
     }
 
     /**
+     * This function checks if there is a mentor or group set to the eav/participations with the given participation.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
     public function checkMentorGroup($participation)
@@ -491,7 +655,16 @@ class ParticipationService
         }
     }
 
-    public function checkEAVGroup($groupUrl)
+    /**
+     * This function checks if there is a eav/groups set to the edu/groups with the given groupUrl.
+     *
+     * @param string $groupUrl Url of the mrc/employees
+     *
+     * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
+     */
+    public function checkEAVGroup(string $groupUrl): Participation
     {
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
@@ -512,9 +685,16 @@ class ParticipationService
     }
 
     /**
+     * This function removes a eav/groups from a eav/participations with the given groupUrl and participation.
+     *
+     * @param string $groupUrl      Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
      */
-    public function removeGroupFromParticipation($groupUrl, $participation): Participation
+    public function removeGroupFromParticipation(string $groupUrl, array $participation): Participation
     {
         $result = [];
         $this->errorRemoveGroupFromParticipation($groupUrl, $participation);
@@ -542,9 +722,14 @@ class ParticipationService
     }
 
     /**
+     * This function checks a eav/edu/groups from a eav/participations with the given groupUrl and participation.
+     *
+     * @param string $groupUrl      Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function errorRemoveGroupFromParticipation($groupUrl, $participation)
+    public function errorRemoveGroupFromParticipation(string $groupUrl, array $participation)
     {
         $this->checkGroupInput($participation);
         $this->checkGroup($groupUrl, $participation);
@@ -555,9 +740,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if a eav/participations has a eav/edu/groups with the given participation.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkGroupInput($participation)
+    public function checkGroupInput(array $participation)
     {
         if (!isset($participation['group'])) {
             throw new Exception('Invalid request, this participation has no group!');
@@ -565,9 +754,14 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the eav/participations -> group is the same as the given groupUrl.
+     *
+     * @param string $groupUrl      Url of the mrc/employees
+     * @param array  $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkGroup($groupUrl, $participation)
+    public function checkGroup(string $groupUrl, array $participation)
     {
         if ($participation['group'] != $groupUrl) {
             throw new Exception('Invalid request, this participation has a different group!');
@@ -575,9 +769,18 @@ class ParticipationService
     }
 
     /**
+     * This function checks the eav/participations values.
+     *
+     * @param array       $participation   Array with data from the eav/participations
+     * @param string      $aanbiederUrl    Url of the cc/organizations
+     * @param string      $learningNeedId  Id of the eav/learningNeeds
+     * @param string|null $participationId Id of the eav/participations
+     *
      * @throws Exception
+     *
+     * @return array A eav/participations is returned from EAV
      */
-    public function checkParticipationValues($participation, $aanbiederUrl, $learningNeedId, $participationId = null): array
+    public function checkParticipationValues(array $participation, string $aanbiederUrl, string $learningNeedId, string $participationId = null): array
     {
         $result = [];
         $this->checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId);
@@ -592,9 +795,16 @@ class ParticipationService
     }
 
     /**
+     * This function checks the eav/participations required fields.
+     *
+     * @param array       $participation   Array with data from the eav/participations
+     * @param string      $aanbiederUrl    Url of the cc/organizations
+     * @param string      $learningNeedId  Id of the eav/learningNeeds
+     * @param string|null $participationId Id of the eav/participations
+     *
      * @throws Exception
      */
-    public function checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId = null)
+    public function checkParticipationRequiredFields(array $participation, string $aanbiederUrl, string $learningNeedId, string $participationId = null)
     {
         $this->checkAanbieder($participation);
         $this->checkTopic($participation);
@@ -606,9 +816,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the aanbiederId and aanbiederName are both set.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkAanbieder($participation)
+    public function checkAanbieder(array $participation)
     {
         if (isset($participation['aanbiederId']) && isset($participation['aanbiederName'])) {
             throw new Exception('Invalid request, aanbiederId and aanbiederName are both set! Please only give one of the two.');
@@ -616,9 +830,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the outComesTopicOther is set.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkTopic($participation)
+    public function checkTopic(array $participation)
     {
         if (isset($participation['topicOther']) && $participation['topicOther'] == 'OTHER' && !isset($participation['topicOther'])) {
             throw new Exception('Invalid request, outComesTopicOther is not set!');
@@ -626,9 +844,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the outComesApplicationOther is set.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkApplication($participation)
+    public function checkApplication(array $participation)
     {
         if (isset($participation['application']) && $participation['application'] == 'OTHER' && !isset($participation['applicationOther'])) {
             throw new Exception('Invalid request, outComesApplicationOther is not set!');
@@ -636,9 +858,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the outComesLevelOther is set.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkLevel($participation)
+    public function checkLevel(array $participation)
     {
         if (isset($participation['level']) && $participation['level'] == 'OTHER' && !isset($participation['levelOther'])) {
             throw new Exception('Invalid request, outComesLevelOther is not set!');
@@ -646,19 +872,27 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the aanbiederUrl is an existing cc/organization.
+     *
+     * @param string $aanbiederUrl Url of the cc/organizations
+     *
      * @throws Exception
      */
-    public function checkAanbiederUrl($aanbiederUrl)
+    public function checkAanbiederUrl(string $aanbiederUrl)
     {
         if (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
-            throw new Exception('Invalid request, aanbiederId is not an existing cc/organization!');
+            throw new Exception('Invalid request, aanbiederUrl is not an existing cc/organization!');
         }
     }
 
     /**
+     * This function checks if the participationId is an existing eav/participation.
+     *
+     * @param string $participationId Id of the eav/participations
+     *
      * @throws Exception
      */
-    public function checkParticipationId($participationId)
+    public function checkParticipationId(string $participationId)
     {
         if (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');
@@ -666,9 +900,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks if the learningNeedId is an existing eav/learning_need.
+     *
+     * @param string $learningNeedId Id of the eav/learningNeeds
+     *
      * @throws Exception
      */
-    public function checkLearningNeedId($learningNeedId)
+    public function checkLearningNeedId(string $learningNeedId)
     {
         if (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             throw new Exception('Invalid request, learningNeedId is not an existing eav/learning_need!');
@@ -676,9 +914,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks the dates of the eav/participations.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkParticipationValuesDates(&$participation)
+    public function checkParticipationValuesDates(array &$participation)
     {
         if (isset($participation['startDate']) && isset($participation['endDate'])) {
             if ($participation['startDate'] instanceof \DateTime && $participation['endDate'] instanceof \DateTime) {
@@ -699,9 +941,13 @@ class ParticipationService
     }
 
     /**
+     * This function checks the presence dates of the eav/participations.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
      * @throws Exception
      */
-    public function checkParticipationValuesPresenceDates(&$participation)
+    public function checkParticipationValuesPresenceDates(array &$participation)
     {
         if (isset($participation['presenceStartDate']) && isset($participation['presenceEndDate'])) {
             if ($participation['presenceStartDate'] instanceof \DateTime && $participation['presenceEndDate'] instanceof \DateTime) {
@@ -721,7 +967,17 @@ class ParticipationService
         }
     }
 
-    public function handleResult($participation, $learningNeedId = null): Participation
+    /**
+     * This function handles the eav/participations result.
+     *
+     * @param array       $participation  Array with data from the eav/participations
+     * @param string|null $learningNeedId Id of the eav/learningNeeds
+     *
+     * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
+     */
+    public function handleResult(array $participation, string $learningNeedId = null): Participation
     {
         // Put together the expected result for Lifely:
         $resource = new Participation();
@@ -761,7 +1017,17 @@ class ParticipationService
         return $resource;
     }
 
-    public function handleParticipationDates($resource, $participation)
+    /**
+     * This function handles the eav/participations dates.
+     *
+     * @param Participation $resource      Object with data from the eav/participations
+     * @param array         $participation Array with data from the eav/participations
+     *
+     * @throws Exception
+     *
+     * @return array A eav/participations is returned from EAV
+     */
+    public function handleParticipationDates(Participation $resource, array $participation): array
     {
         if (isset($participation['startDate'])) {
             $resource->setDetailsStartDate(new \DateTime($participation['startDate']));
@@ -780,7 +1046,17 @@ class ParticipationService
         return $participation;
     }
 
-    public function handleResultJson($participation, $learningNeedId = null): array
+    /**
+     * This function handles the eav/participations result in Json.
+     *
+     * @param array       $participation  Array with data from the eav/participations
+     * @param string|null $learningNeedId Id of the eav/learningNeeds
+     *
+     * @throws Exception
+     *
+     * @return array A eav/participations resource result is returned in Json
+     */
+    public function handleResultJson(array $participation, string $learningNeedId = null): array
     {
         $resource['id'] = '/participations/'.$participation['id'];
         if (isset($participation['status'])) {
@@ -819,7 +1095,16 @@ class ParticipationService
         return $resource;
     }
 
-    public function updateParticipation($participation): Participation
+    /**
+     * This function handles a update from the eav/participations.
+     *
+     * @param array $participation Array with data from the eav/participations
+     *
+     * @throws Exception
+     *
+     * @return Participation A eav/participations is returned from EAV
+     */
+    public function updateParticipation(array $participation): Participation
     {
         $updateParticipation['group'] = null;
         $updateParticipation['mentor'] = null;
