@@ -76,7 +76,7 @@ class EmployeeMutationResolver implements MutationResolverInterface
     {
         $id = explode('/', $input['id']);
 
-        return $this->mrcService->updateEmployee(end($id), $input);
+        return $this->mrcService->updateEmployeeToObject(end($id), $input);
     }
 
     /**

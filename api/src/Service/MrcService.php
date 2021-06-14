@@ -965,14 +965,13 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param false  $returnMrcObject Whether or not the result should be a processed employee
-     * @param false  $studentEmployee Whether or not the employee is also a student
+     * @param boolean  $studentEmployee Whether or not the employee is also a student
      *
      * @throws Exception
      *
-     * @return Employee|array The resulting employee
+     * @return array The resulting employee
      */
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
+    public function updateEmployee(string $id, array $employeeArray, bool $studentEmployee = false): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
         $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
@@ -997,11 +996,13 @@ class MrcService
         $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-        if ($returnMrcObject) {
             return $result;
-        }
 
-        return $this->createEmployeeObject($result, $userRoleArray);
+    }
+
+    public function updateEmployeeToObject(string $id, array $employeeArray, bool $studentEmployee = false): Employee
+    {
+        return $this->createEmployeeObject($this->updateEmployee($id, $employeeArray, $studentEmployee));
     }
 
     /**

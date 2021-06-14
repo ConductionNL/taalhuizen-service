@@ -32,7 +32,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = new StudentService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->eduService = new EDUService($commonGroundService);
         $this->mrcService = $mrcService;
     }
@@ -157,7 +157,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
-        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true, true);
+        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true);
 
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
