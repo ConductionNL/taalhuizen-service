@@ -15,6 +15,12 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     private UcService $ucService;
     private ResolverService $resolverService;
 
+    /**
+     * ProviderQueryCollectionResolver constructor.
+     * @param CCService $ccService
+     * @param UcService $ucService
+     * @param ResolverService $resolverService
+     */
     public function __construct(
         CCService $ccService,
         UcService $ucService,
@@ -35,7 +41,6 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
         switch ($context['info']->operation->name->value) {
             case 'providers':
                 $collection = $this->ccService->getOrganizations($type = 'Aanbieder');
-
                 return $this->resolverService->createPaginator($collection, $context['args']);
             case 'userRolesByProviders':
                 $collection = $this->ucService->getUserRolesByOrganization(
@@ -44,9 +49,7 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
                         null,
                     'Aanbieder'
                 );
-
                 return $this->resolverService->createPaginator($collection, $context['args']);
-
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
         }

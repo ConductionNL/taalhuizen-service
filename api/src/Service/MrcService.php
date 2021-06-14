@@ -524,6 +524,7 @@ class MrcService
         } else {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         }
+
         $employee = new Employee();
         $employee = $this->contactToEmployeeObject($employee, $contact);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);

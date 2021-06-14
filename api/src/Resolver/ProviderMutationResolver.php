@@ -8,24 +8,37 @@ use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\MrcService;
 use App\Service\UcService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
+    private EntityManagerInterface $entityManager;
+    private CommonGroundService $commonGroundService;
+    private ParameterBagInterface $parameterBagInterface;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
     private MrcService $mrcService;
 
+    /**
+     * ProviderMutationResolver constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param CommonGroundService $commonGroundService
+     * @param ParameterBagInterface $parameterBagInterface
+     * @param UcService $ucService
+     */
     public function __construct(
-        CCService $ccService,
-        UcService $ucService,
-        EDUService $eduService,
-        MrcService $mrcService
+        EntityManagerInterface $entityManager,
+        CommonGroundService $commonGroundService,
+        ParameterBagInterface $parameterBagInterface,
+        UcService $ucService
     ) {
-        $this->ccService = $ccService;
+        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
         $this->ucService = $ucService;
-        $this->eduService = $eduService;
-        $this->mrcService = $mrcService;
+        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
     }
 
     /**
@@ -48,6 +61,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Create a Provider
+     *
+     * @param array $providerArray the resource data.
+     * @return Provider The resulting Provider properties
+     */
     public function createProvider(array $providerArray): Provider
     {
         $type = 'Aanbieder';
@@ -58,6 +77,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Update a Provider
+     *
+     * @param array $input the input data.
+     * @return Provider The resulting Provider properties
+     */
     public function updateProvider(array $input): Provider
     {
         $id = explode('/', $input['id']);
@@ -73,6 +98,12 @@ class ProviderMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Delete a Provider
+     *
+     * @param array $input the input data.
+     * @return Provider The resulting Provider properties
+     */
     public function deleteProvider(array $input): ?Provider
     {
         $id = explode('/', $input['id']);
