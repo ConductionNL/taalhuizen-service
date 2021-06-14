@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Employee;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
@@ -433,78 +434,9 @@ class MrcService
         return $employee;
     }
 
-    /**
-     * Checks if a user exists with the contact id or username provided.
-     *
-     * @param string|null $contactId The contact id to find a user for
-     * @param string|null $username  The username to find a user for
-     *
-     * @return array|null The resulting user array
-     */
-    public function checkIfUserExists(?string $contactId = null, ?string $username = null): ?array
-    {
-        if ($contactId) {
-            $resources = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $contactId])['hydra:member'];
-        } elseif ($username) {
-            $resources = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => $username])['hydra:member'];
-        } else {
-            throw new Error('either contactId or username should be given');
-        }
-        if (count($resources) > 0) {
-            return $resources[0];
-        }
 
-        return null;
-    }
 
-    /**
-     * Gets the user for an employee and stores the relevant data into the employee.
-     *
-     * @param Employee    $employee  The employee to update
-     * @param string|null $contactId The contact id of the user or employee
-     * @param string|null $username  The username for the user
-     *
-     * @return Employee The updated employee
-     */
-    public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
-    {
-        $resource = $this->checkIfUserExists($contactId, $username);
-        if (isset($resource['id'])) {
-            $employee->setUserId($resource['id']);
-        }
-        $userGroupIds = [];
-        foreach ($resource['userGroups'] as $userGroup) {
-            $userGroupIds[] = $userGroup['id'];
-        }
-        $employee->setUserGroupIds($userGroupIds);
 
-        return $employee;
-    }
-
-    /**
-     * Updates an user for an employee.
-     *
-     * @param string      $userId       The id of the user to update
-     * @param string|null $contact      The contact of the user to update
-     * @param array       $userGroupIds The user group ids of the user to update
-     *
-     * @return array The resulting user
-     */
-    public function updateUser(string $userId, ?string $contact = null, array $userGroupIds = []): array
-    {
-        $user = ['userGroups' => []];
-        if ($contact) {
-            $user['person'] = $contact;
-        }
-        foreach ($userGroupIds as $userGroupId) {
-            $user['userGroups'][] = "/groups/$userGroupId";
-        }
-        if ($user['userGroups'] == []) {
-            unset($user['userGroups']);
-        }
-
-        return $this->commonGroundService->updateResource($user, ['component' => 'uc', 'type' => 'users', 'id' => $userId]);
-    }
 
     /**
      * Creates an employee object for a resulting employee from the MRC.
@@ -533,7 +465,7 @@ class MrcService
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         if (!$studentEmployee) {
-            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
+            $employee = $this->relatedObjectsToEmployeeObject($this->ucService->getEmployeeUser($employee, $contact['id']), $employeeArray);
         } else {
             $employee = $this->relatedObjectsToEmployeeObject($employee, $employeeArray);
         }
@@ -561,7 +493,7 @@ class MrcService
         $employee->setAdditionalName($contact['additionalName']);
         $employee->setFamilyName($contact['familyName']);
         $employee->setGender($contact['gender'] ?: 'X');
-        $employee->setDateOfBirth(new \DateTime($contact['birthday']));
+        $employee->setDateOfBirth(new DateTime($contact['birthday']));
         if (key_exists('availability', $contact)) {
             $employee->setAvailability($contact['availability']);
         }
@@ -618,8 +550,8 @@ class MrcService
         $employee->setIsVOGChecked($employeeResult['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($employeeResult['relevantCertificates']);
         $employee->setGotHereVia($employeeResult['referrer']);
-        $employee->setDateCreated(new \DateTime($employeeResult['dateCreated']));
-        $employee->setDateModified(new \DateTime($employeeResult['dateModified']));
+        $employee->setDateCreated(new DateTime($employeeResult['dateCreated']));
+        $employee->setDateModified(new DateTime($employeeResult['dateModified']));
 
         return $employee;
     }
@@ -714,157 +646,7 @@ class MrcService
         return $employee;
     }
 
-    /**
-     * Filters out fields from a resulting user role array to the array used by the employee object.
-     *
-     * @param array $userRoleArray The array to convert
-     *
-     * @return array The converted array
-     */
-    public function convertUserRole(array $userRoleArray): array
-    {
-        return [
-            'id'   => $userRoleArray['id'],
-            'name' => $userRoleArray['name'],
-        ];
-    }
 
-    /**
-     * Returns the url for the organization of an employee.
-     *
-     * @param array $employeeArray
-     *
-     * @return string|null the url for the organization of the employee
-     */
-    public function handleUserOrganizationUrl(array $employeeArray)
-    {
-        if (key_exists('languageHouseId', $employeeArray)) {
-            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
-        } elseif (key_exists('providerId', $employeeArray)) {
-            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]);
-        } else {
-            $organizationUrl = null;
-        }
-
-        return $organizationUrl;
-    }
-
-    /**
-     * Sets the user groups of a user from the input array for an employee.
-     *
-     * @param array $employeeArray The employee input array
-     * @param array $resource      The resource to add the data to
-     *
-     * @return array The resulting resource array
-     */
-    public function handleUserGroups(array $employeeArray, array $resource): array
-    {
-        if (key_exists('userGroupIds', $employeeArray)) {
-            foreach ($employeeArray['userGroupIds'] as $userGroupId) {
-                $resource['userGroups'][] = "/groups/$userGroupId";
-            }
-        }
-
-        return $resource;
-    }
-
-    /**
-     * Creates a user for an employee.
-     *
-     * @param array $employeeArray The employee input data
-     * @param array $contact       The contact for the employee
-     *
-     * @return array The resulting user array
-     */
-    public function createUser(array $employeeArray, array $contact): array
-    {
-        $organizationUrl = $this->handleUserOrganizationUrl($employeeArray);
-
-        $resource = [
-            'username'     => $employeeArray['email'],
-            'person'       => $contact['@id'],
-            'password'     => 'ThisIsATemporaryPassword',
-            'organization' => $organizationUrl ?? null,
-        ];
-
-        $resource = $this->handleUserGroups($employeeArray, $resource);
-
-        $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
-
-        $token = $this->ucService->createPasswordResetToken($resource['username'], false);
-        $this->bsService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
-
-        return $result;
-    }
-
-    /**
-     * Gets the contact for an employee.
-     *
-     * @param string        $userId          The user id of the employee
-     * @param array         $employeeArray   The input array for the employee
-     * @param Employee|null $employee        The employee object of the employee
-     * @param bool          $studentEmployee Whether or not the employee is also a student
-     *
-     * @throws Exception Thrownt if the EAV is called incorrectly
-     *
-     * @return array The resulting contact
-     */
-    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
-    {
-        if (isset($studentEmployee) && isset($employeeArray['person'])) {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        // if this person does not exist we should not create it here, but before we update the student employee object!
-        } else {
-            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
-        }
-
-        return $contact;
-    }
-
-    /**
-     * Saves the user for an employee.
-     *
-     * @param array       $employeeArray   The input array for an employee
-     * @param array       $contact         The contact for the employee
-     * @param bool        $studentEmployee Whether or not the employee is also a student
-     * @param string|null $userId          The user id of the employee
-     *
-     * @return array|null The resulting user object
-     */
-    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?array
-    {
-        if ((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))) {
-            if (isset($user)) {
-                $employeeArray['userId'] = $user['id'];
-            } elseif (isset($userId)) {
-                $employeeArray['userId'] = $userId;
-            }
-
-            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
-        } elseif (!$studentEmployee) {
-            return $this->createUser($employeeArray, $contact);
-        }
-
-        return null;
-    }
-
-    /**
-     * Sets the contact for an employee.
-     *
-     * @param array $employeeArray The input array for the employee
-     *
-     * @throws Exception
-     *
-     * @return array|false|mixed|string|null The resulting contact
-     */
-    public function setContact(array $employeeArray)
-    {
-        if (isset($employeeArray['person'])) {
-            return  $this->commonGroundService->getResource($employeeArray['person']);
-        } else {
-            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
-        }
-    }
 
     /**
      * Creates an employee.
@@ -878,7 +660,7 @@ class MrcService
     public function createEmployee(array $employeeArray): array
     {
         //set contact
-        $contact = $this->setContact($employeeArray);
+        $contact = $this->ucService->setEmployeeContact($employeeArray);
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
         $resource = $this->ccService->cleanResource($resource);
         $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
@@ -911,8 +693,8 @@ class MrcService
      */
     public function createEmployeeToObject(array $employeeArray): Employee
     {
-        $contact = $this->setContact($employeeArray);
-        $this->saveUser($employeeArray, $contact);
+        $contact = $this->ucService->setEmployeeContact($employeeArray);
+        $this->ucService->saveEmployeeUser($employeeArray, $contact);
 
         return $this->createEmployeeObject($this->createEmployee($employeeArray));
     }
@@ -928,7 +710,7 @@ class MrcService
     {
         if (key_exists('userGroupIds', $employeeArray)) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
-            $userRoleArray = $this->convertUserRole($userRole);
+            $userRoleArray = $this->ucService->convertUserRole($userRole);
         } else {
             $userRoleArray = [];
         }
@@ -959,8 +741,8 @@ class MrcService
             if (empty($userId)) {
                 $userId = $employeeArray['userId'];
             }
-            $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+            $contact = $this->ucService->getEmployeeContact($userId, $employeeArray, $employee, $studentEmployee);
+            $this->ucService->saveEmployeeUser($employeeArray, $contact, $studentEmployee, $userId);
         }
 
         return $contact;
@@ -999,38 +781,26 @@ class MrcService
         }
 
         //set userRoleArray
-        $userRoleArray = $this->setUserRoleArray($employeeArray);
+        $userRoleArray = $this->ucService->setEmployeeUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
 
         return $result;
     }
 
-    public function updateEmployeeToObject(string $id, array $employeeArray, bool $studentEmployee = false): Employee
-    {
-        return $this->createEmployeeObject($this->updateEmployee($id, $employeeArray, $studentEmployee));
-    }
-
     /**
-     * Sets the user role array of a user.
-     *
-     * @param array $employeeArray The employee array to fetch the user groups for
-     *
-     * @return array The resulting user role array
+     * Updates an employee
+     * @param string $id
+     * @param array $employeeArray
+     * @return Employee
+     * @throws Exception
      */
-    public function setUserRoleArray(array $employeeArray)
+    public function updateEmployeeToObject(string $id, array $employeeArray): Employee
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
-            $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
-            $userRoleArray = $this->convertUserRole($userRole);
-        } elseif (isset($user) && key_exists('userGroups', $user) && count($user['userGroups']) > 0) {
-            $userRoleArray = $this->convertUserRole($user['userGroups'][0]);
-        } else {
-            $userRoleArray = [];
-        }
-
-        return $userRoleArray;
+        return $this->createEmployeeObject($this->updateEmployee($id, $employeeArray));
     }
+
+
 
     /**
      * Deletes the subobjects of an employee.
