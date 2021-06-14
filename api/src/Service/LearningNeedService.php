@@ -4,26 +4,42 @@ namespace App\Service;
 
 use App\Entity\LearningNeed;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class LearningNeedService
 {
     private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService, ParticipationService $participationService)
+    /**
+     * LearningNeedService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param CommonGroundService $commonGroundService
+     */
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService)
     {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = $eavService;
-        $this->participationService = $participationService;
+        $this->eavService = new EAVService($commonGroundService);
+        $this->participationService = new ParticipationService();
     }
 
-    public function saveLearningNeed($learningNeed, $studentUrl = null, $learningNeedId = null)
+    /**
+     * Saves a learningNeed in eav-component using the eavService.
+     *
+     * @param array $learningNeed the body of the learningNeed.
+     * @param string|null $studentUrl the url to the student (edu/participant) this learningNeed is for. In order to connect them.
+     * @param string|null $learningNeedId the id of a already existing learningNeed for updating it.
+     * @return array the created or update learningNeed.
+     * @throws Exception
+     */
+    public function saveLearningNeed(array $learningNeed, string $studentUrl = null, string $learningNeedId = null): array
     {
-        $now = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
+        $now = new DateTime('now', new \DateTimeZone('Europe/Paris'));
         $now = $now->format('d-m-Y H:i:s');
 
         // Save the learningNeed in EAV
@@ -49,7 +65,15 @@ class LearningNeedService
         return $result;
     }
 
-    public function handleParticipantLearningNeeds($studentUrl)
+    /**
+     * This function creates and returns a body for an (student/) edu/participant with a learningNeeds array in it used to save this in the eav-component.
+     * If the given studentUrl already has an eav object the learningNeeds connected to this student will be returned in this array.
+     *
+     * @param string $studentUrl the edu/participant url of a student.
+     * @return array the body for an (student/) edu/participant with a learningNeeds array in it.
+     * @throws Exception
+     */
+    public function handleParticipantLearningNeeds(string $studentUrl): array
     {
         if ($this->eavService->hasEavObject($studentUrl)) {
             $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
@@ -62,7 +86,15 @@ class LearningNeedService
         return $participant;
     }
 
-    public function addStudentToLearningNeed($studentUrl, $learningNeed)
+    /**
+     * This function connects a student and a learningNeed with the use of the eav-component/eavService.
+     *
+     * @param string $studentUrl the edu/participant url of a student.
+     * @param array $learningNeed the body of the learningNeed.
+     * @return array a result array with the participant and learningNeed in it.
+     * @throws Exception
+     */
+    public function addStudentToLearningNeed(string $studentUrl, array $learningNeed): array
     {
         $result = [];
         // Check if student already has an EAV object
@@ -95,7 +127,15 @@ class LearningNeedService
         return $result;
     }
 
-    public function handleLearningNeedParticipants($learningNeed, $result)
+    /**
+     * This function removes all participants from an eav/edu/learningNeed and add the urls of the removed objects to the given result array.
+     *
+     * @param array $learningNeed the body of the learningNeed.
+     * @param array $result the result to which the urls of the removed edu/participants will be added.
+     * @return array the result array with all participant urls that got removed.
+     * @throws Exception
+     */
+    public function removeParticipantsFromLearningNeed(array $learningNeed, array $result): array
     {
         if (isset($learningNeed['participants'])) {
             foreach ($learningNeed['participants'] as $studentUrl) {
@@ -111,19 +151,29 @@ class LearningNeedService
     }
 
     /**
-     * @throws \Exception
+     * Deletes all participations of a learningNeed using the participationService->deleteParticipation function.
+     *
+     * @param array $learningNeed the body of a learningNeed.
+     * @throws Exception
      */
-    public function handleDeletionParticipations($learningNeed)
+    public function deleteLearningNeedParticipations(array $learningNeed): void
     {
         if (isset($learningNeed['participations'])) {
-            var_dump($learningNeed['participations']);
             foreach ($learningNeed['participations'] as $participationUrl) {
                 $this->participationService->deleteParticipation(null, $participationUrl, true);
             }
         }
     }
 
-    public function deleteLearningNeed($id)
+    /**
+     * Deletes a learningNeed with the given id.
+     * This also deletes any connected Participations and the connection between this learningNeed and the student (edu/participant) in the eav-component.
+     *
+     * @param string $id the id of the learningNeed you want to delete.
+     * @return array the result array with info of the delete learningNeed an the participant(s) of this learningNeed. Or an errorMessage.
+     * @throws Exception
+     */
+    public function deleteLearningNeed(string $id): array
     {
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             $result['participants'] = [];
@@ -131,9 +181,9 @@ class LearningNeedService
             $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
 
             // Remove this learningNeed from all EAV/edu/participants
-            $result = $this->handleLearningNeedParticipants($learningNeed, $result);
+            $result = $this->removeParticipantsFromLearningNeed($learningNeed, $result);
 
-            $this->handleDeletionParticipations($learningNeed);
+            $this->deleteLearningNeedParticipations($learningNeed);
 
             // Delete the learningNeed in EAV
             $this->eavService->deleteObject($learningNeed['eavId']);
@@ -146,7 +196,15 @@ class LearningNeedService
         return $result;
     }
 
-    public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl)
+    /**
+     * This function removes a learningNeed from a student (edu/participant) in the eav-component with the EAVService.
+     *
+     * @param string $learningNeedUrl the learningNeed url that will be removed from this student.
+     * @param string $studentUrl the edu/participant url of the student.
+     * @return array the result array with the edu/participant in it of which the learningNeed got removed.
+     * @throws Exception
+     */
+    public function removeLearningNeedFromStudent(string $learningNeedUrl, string $studentUrl): array
     {
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
@@ -162,7 +220,16 @@ class LearningNeedService
         return $result;
     }
 
-    public function getLearningNeed($id, $url = null)
+    /**
+     * This function gets and returns a learningNeed object from the eav-component with the EAVService.
+     * It is recommended to use the id, but can also be used with an url instead.
+     *
+     * @param string $id the id of the learningNeed (eav).
+     * @param string|null $url an url of the learningNeed (eav url).
+     * @return array the result array containing the learningNeed or an errorMessage.
+     * @throws Exception
+     */
+    public function getLearningNeed(string $id, string $url = null): array
     {
         $result = [];
         // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -185,7 +252,17 @@ class LearningNeedService
         return $result;
     }
 
-    public function getLearningNeeds($studentId, $dateFrom = null, $dateUntil = null)
+    /**
+     * This function gets and returns all learningNeeds from a student, from the eav-component using the EAVService.
+     * Can be used with dateFrom and dateUntil to get all learningNeeds created, after, before or between two dates.
+     *
+     * @param string $studentId the id of a student (edu/participant) to get all learningNeeds from.
+     * @param string|null $dateFrom a DateTime string.
+     * @param string|null $dateUntil a DateTime string.
+     * @return array the result array containing the learningNeeds or an message/errorMessage.
+     * @throws Exception
+     */
+    public function getLearningNeeds(string $studentId, string $dateFrom = null, string $dateUntil = null): array
     {
         // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
@@ -194,15 +271,15 @@ class LearningNeedService
             $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
             if (isset($participant['learningNeeds'])) {
                 if (isset($dateFrom)) {
-                    $dateFrom = new \DateTime($dateFrom);
+                    $dateFrom = new DateTime($dateFrom);
                     $dateFrom->format('Y-m-d H:i:s');
                 }
                 if (isset($dateUntil)) {
-                    $dateUntil = new \DateTime($dateUntil);
+                    $dateUntil = new DateTime($dateUntil);
                     $dateUntil->format('Y-m-d H:i:s');
                 }
                 foreach ($participant['learningNeeds'] as $learningNeedUrl) {
-                    $result = $this->updateParticipantLearningNeeds($result, $learningNeedUrl, $dateUntil, $dateFrom);
+                    $result = $this->getStudentLearningNeed($result, $learningNeedUrl, $dateUntil, $dateFrom);
                 }
             }
         } else {
@@ -213,12 +290,23 @@ class LearningNeedService
         return $result;
     }
 
-    public function updateParticipantLearningNeeds($result, $learningNeedUrl, $dateUntil, $dateFrom)
+    /**
+     * This function gets a learningNeed and if the dateUntil or dateFrom is given also checks if it was created after, before or between these dates.
+     * The learningNeed will be added to the given result array that should contain a ['learningNeeds'] array (can be empty []).
+     *
+     * @param array $result the result array containing a ['learningNeeds'], to which a new learningNeed can be added.
+     * @param string $learningNeedUrl the url of a learningNeed to get.
+     * @param DateTime|null $dateUntil a date until DateTime object.
+     * @param DateTime|null $dateFrom a date from DateTime object.
+     * @return array the result array containing learningNeeds with the newly gotten learningNeed or an errorMessage. Unless it was created outside the given dates.
+     * @throws Exception
+     */
+    public function getStudentLearningNeed(array $result, string $learningNeedUrl, ?DateTime $dateUntil, ?DateTime $dateFrom): array
     {
         $learningNeed = $this->getLearningNeed(null, $learningNeedUrl);
         if (isset($learningNeed['learningNeed'])) {
             if (isset($dateFrom) || isset($dateUntil)) {
-                $dateCreated = new \DateTime($learningNeed['learningNeed']['dateCreated']);
+                $dateCreated = new DateTime($learningNeed['learningNeed']['dateCreated']);
                 $dateCreated->format('Y-m-d H:i:s');
                 if ((isset($dateFrom) && isset($dateUntil) && $dateCreated > $dateFrom && $dateCreated < $dateUntil)
                     || (isset($dateFrom) && !isset($dateUntil) && $dateCreated > $dateFrom)
@@ -235,7 +323,17 @@ class LearningNeedService
         return $result;
     }
 
-    public function checkLearningNeedValues($learningNeed, $studentUrl, $learningNeedId = null)
+    /**
+     * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update an LearningNeed.
+     * It also cleans up some values in the learningNeed body that we might not want in there when saving the learningNeed.
+     *
+     * @param array $learningNeed the body of an learningNeed.
+     * @param string $studentUrl the student url (edu/participant).
+     * @param string|null $learningNeedId the id of an already existing learningNeed, for updating it.
+     * @return array the result array containing the learningNeed or an errorMessage.
+     * @throws Exception
+     */
+    public function checkLearningNeedValues(array $learningNeed, string $studentUrl, string $learningNeedId = null): array
     {
         $result = [];
         if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['topicOther'])) {
@@ -261,7 +359,17 @@ class LearningNeedService
         return $result;
     }
 
-    public function setResourceParticipations($resource, $learningNeed, $skipParticipations)
+    /**
+     * This function sets the participations of a LearningNeed DTO object to return after an api call is done on this DTO.
+     * If no participations are present in the learningNeed the participations will be set to an empty array.
+     *
+     * @param LearningNeed $resource a LearningNeed DTO object.
+     * @param array $learningNeed the body of a learningNeed (that might contain participations).
+     * @param bool $skipParticipations if set to true the participations of this LearningNeed DTO will be set to an empty array instead.
+     * @return LearningNeed the updated LearningNeed DTO object with participations set.
+     * @throws Exception
+     */
+    public function setResourceParticipations(LearningNeed $resource, array $learningNeed, bool $skipParticipations): LearningNeed
     {
         if (!$skipParticipations && isset($learningNeed['participations'])) {
             foreach ($learningNeed['participations'] as &$participation) {
@@ -278,7 +386,16 @@ class LearningNeedService
         return $resource;
     }
 
-    public function handleResult($learningNeed, $studentId = null, $skipParticipations = false)
+    /**
+     * this function creates, sets and returns a LearningNeed DTO object to return after an api call is done on this DTO.
+     *
+     * @param array $learningNeed the body of a learningNeed.
+     * @param string|null $studentId the id of a student (edu/participant) this learningNeed is connected to.
+     * @param false $skipParticipations if set to true the participations of this LearningNeed DTO will be set to an empty array.
+     * @return LearningNeed a LearningNeed DTO object with all info from the given learningNeed array set.
+     * @throws Exception
+     */
+    public function handleResult(array $learningNeed, string $studentId = null, bool $skipParticipations = false): LearningNeed
     {
         $resource = new LearningNeed();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
