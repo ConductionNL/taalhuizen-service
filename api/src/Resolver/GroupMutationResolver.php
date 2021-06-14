@@ -200,9 +200,10 @@ class GroupMutationResolver implements MutationResolverInterface
     /**
      * Makes a new edu/group object with the eav-component. Or updates an existing one.
      *
-     * @param array $course the course this group is connected to.
-     * @param array $group the input data for a Group.
+     * @param array       $course  the course this group is connected to.
+     * @param array       $group   the input data for a Group.
      * @param string|null $groupId the id of an already existing group, to update it.
+     *
      * @return array the result array, containing the created or updated group.
      */
     public function makeGroup(array $course, array $group, string $groupId = null): array
@@ -266,7 +267,8 @@ class GroupMutationResolver implements MutationResolverInterface
      * This function gets the aanbieder id from the given input Group DTO and adds it to the given group array.
      *
      * @param Group $resource the Group DTO input.
-     * @param array $group the group array.
+     * @param array $group    the group array.
+     *
      * @return array the group body now containing the aanbiederId.
      */
     public function setAanbieder(Group $resource, array $group): array
@@ -285,7 +287,7 @@ class GroupMutationResolver implements MutationResolverInterface
      * For each one that is set, it will be added to the group array.
      *
      * @param Group $resource the Group DTO input.
-     * @param array $group the group array.
+     * @param array $group    the group array.
      *
      * @return array a valid group body containing the other options if they where set in the input.
      */
@@ -309,7 +311,7 @@ class GroupMutationResolver implements MutationResolverInterface
      * For each one that is set, it will be added to the group array.
      *
      * @param Group $resource the Group DTO input.
-     * @param array $group the group array.
+     * @param array $group    the group array.
      *
      * @return array a valid group body containing the startDate and/or endDate if they where set in the input.
      */
@@ -330,7 +332,7 @@ class GroupMutationResolver implements MutationResolverInterface
      * For each one that is set, it will be added to the group array.
      *
      * @param Group $resource the Group DTO input.
-     * @param array $group the group array.
+     * @param array $group    the group array.
      *
      * @return array a valid group body containing the participantsMin and/or participantsMax if they where set in the input.
      */
@@ -351,7 +353,7 @@ class GroupMutationResolver implements MutationResolverInterface
      * For each one that is set, it will be added to the group array.
      *
      * @param Group $resource the Group DTO input.
-     * @param array $group the group array.
+     * @param array $group    the group array.
      *
      * @return array a valid group body containing the availability and/or availabilityNotes if they where set in the input.
      */
