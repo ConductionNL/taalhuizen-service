@@ -345,10 +345,10 @@ class LearningNeedService
     }
 
     /**
-     * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update an LearningNeed.
+     * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update a LearningNeed.
      * It also cleans up some values in the learningNeed body that we might not want in there when saving the learningNeed.
      *
-     * @param array       $learningNeed   the body of an learningNeed.
+     * @param array       $learningNeed   the body of a learningNeed.
      * @param string      $studentUrl     the student url (edu/participant).
      * @param string|null $learningNeedId the id of an already existing learningNeed, for updating it.
      *
