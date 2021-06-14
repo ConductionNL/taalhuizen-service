@@ -17,9 +17,10 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     /**
      * EmployeeMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param MrcService $mrcService
-     * @param ParticipationService $participationService
+     * @param MrcService             $mrcService
+     * @param ParticipationService   $participationService
      */
     public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService, ParticipationService $participationService)
     {
@@ -51,11 +52,13 @@ class EmployeeMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Creates an employee
+     * Creates an employee.
      *
      * @param array $employeeArray The input data for an employee
-     * @return Employee The resulting employee
+     *
      * @throws Exception Thrown when the EAV cannot handle the employee
+     *
+     * @return Employee The resulting employee
      */
     public function createEmployee(array $employeeArray): Employee
     {
@@ -64,8 +67,10 @@ class EmployeeMutationResolver implements MutationResolverInterface
 
     /**
      * @param array $input The input data for the employee
-     * @return Employee The resulting employee
+     *
      * @throws Exception Thrown when the EAV cannot handle the employee
+     *
+     * @return Employee The resulting employee
      */
     public function updateEmployee(array $input): Employee
     {
@@ -75,10 +80,13 @@ class EmployeeMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Deletes a user
+     * Deletes a user.
+     *
      * @param array $input The data needed to delete the employee
-     * @return Employee|null The resulting employee (usually null)
+     *
      * @throws Exception Thrown when the EAV cannot handle the deletion of the employee
+     *
+     * @return Employee|null The resulting employee (usually null)
      */
     public function deleteEmployee(array $input): ?Employee
     {
@@ -89,10 +97,13 @@ class EmployeeMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Adds an employee as mentor to a participation
+     * Adds an employee as mentor to a participation.
+     *
      * @param array $input The inputted data needed to perform this operation
-     * @return Employee The resulting employee object
+     *
      * @throws Exception Thrown if the EAV cannot handle the action
+     *
+     * @return Employee The resulting employee object
      */
     public function addMentorToParticipation(array $input): Employee
     {

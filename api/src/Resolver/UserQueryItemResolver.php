@@ -14,8 +14,9 @@ class UserQueryItemResolver implements QueryItemResolverInterface
 
     /**
      * UserQueryItemResolver constructor.
+     *
      * @param RequestStack $requestStack
-     * @param UcService $ucService
+     * @param UcService    $ucService
      */
     public function __construct(RequestStack $requestStack, UcService $ucService)
     {
@@ -45,8 +46,10 @@ class UserQueryItemResolver implements QueryItemResolverInterface
     }
 
     /**
-     * Gets the user by id
+     * Gets the user by id.
+     *
      * @param string $id The id of the user to get
+     *
      * @return User The resulting user object
      */
     public function getUser(string $id): User
@@ -58,9 +61,11 @@ class UserQueryItemResolver implements QueryItemResolverInterface
     }
 
     /**
-     * Gets the current logged in user
-     * @return User The user that is currently logged in
+     * Gets the current logged in user.
+     *
      * @throws \Exception Thrown when the JWT token is not valid
+     *
+     * @return User The user that is currently logged in
      */
     public function getCurrentUser(): User
     {
