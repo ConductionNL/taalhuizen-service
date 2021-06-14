@@ -28,7 +28,6 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->learningNeedService = $learningNeedService;
-//        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService);
     }
 
     /**
