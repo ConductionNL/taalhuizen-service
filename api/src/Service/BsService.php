@@ -12,7 +12,8 @@ class BsService
 
     /**
      * BsService constructor.
-     * @param CommonGroundService $commonGroundService
+     *
+     * @param CommonGroundService   $commonGroundService
      * @param ParameterBagInterface $parameterBag
      */
     public function __construct(CommonGroundService $commonGroundService, ParameterBagInterface $parameterBag)
@@ -22,7 +23,7 @@ class BsService
     }
 
     /**
-     * Sends a password reset email
+     * Sends a password reset email.
      *
      * @param string $email The email address to send the mail to
      * @param string $token The reset token to send the mail in
@@ -43,10 +44,10 @@ class BsService
     }
 
     /**
-     * Sends a mail when the password of a user has changed
+     * Sends a mail when the password of a user has changed.
      *
      * @param string $username The username of the user that has been changed (and their e-mail address)
-     * @param array $contact The contact of the user that has been changed
+     * @param array  $contact  The contact of the user that has been changed
      */
     public function sendPasswordChangedEmail(string $username, array $contact): void
     {
@@ -64,10 +65,11 @@ class BsService
     }
 
     /**
-     * Sends an invitation for a user/employee
-     * @param string $email The email address to send the e-mail to
-     * @param string $token The token to create a new password
-     * @param array $contact The contact for the user
+     * Sends an invitation for a user/employee.
+     *
+     * @param string      $email           The email address to send the e-mail to
+     * @param string      $token           The token to create a new password
+     * @param array       $contact         The contact for the user
      * @param string|null $organizationUrl The organization url for the organization that the new user relates to
      */
     public function sendInvitation(string $email, string $token, array $contact, string $organizationUrl = null): void
