@@ -25,25 +25,23 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UcService
 {
-    private BsService $bsService;
     private CCService $ccService;
     private CommonGroundService $commonGroundService;
     private EntityManagerInterface $entityManager;
     private ParameterBagInterface $parameterBag;
     private RequestStack $requestStack;
     private CacheInterface $cache;
+    private BsService $bsService;
 
     public function __construct(
-        BsService $bsService,
-        CCService $ccService,
         CommonGroundService $commonGroundService,
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         RequestStack $requestStack,
         CacheInterface $cache
     ) {
-        $this->bsService = $bsService;
-        $this->ccService = $ccService;
+        $this->bsService = new BsService($commonGroundService, $parameterBag);
+        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
