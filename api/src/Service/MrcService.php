@@ -434,10 +434,6 @@ class MrcService
         return $employee;
     }
 
-
-
-
-
     /**
      * Creates an employee object for a resulting employee from the MRC.
      *
@@ -646,8 +642,6 @@ class MrcService
         return $employee;
     }
 
-
-
     /**
      * Creates an employee.
      *
@@ -789,18 +783,19 @@ class MrcService
     }
 
     /**
-     * Updates an employee
+     * Updates an employee.
+     *
      * @param string $id
-     * @param array $employeeArray
-     * @return Employee
+     * @param array  $employeeArray
+     *
      * @throws Exception
+     *
+     * @return Employee
      */
     public function updateEmployeeToObject(string $id, array $employeeArray): Employee
     {
         return $this->createEmployeeObject($this->updateEmployee($id, $employeeArray));
     }
-
-
 
     /**
      * Deletes the subobjects of an employee.

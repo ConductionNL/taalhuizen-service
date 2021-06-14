@@ -770,7 +770,6 @@ class UcService
         return $userRoles;
     }
 
-
     /**
      * Filters out fields from a resulting user role array to the array used by the employee object.
      *
@@ -970,7 +969,7 @@ class UcService
     {
         if (isset($studentEmployee) && isset($employeeArray['person'])) {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
-            // if this person does not exist we should not create it here, but before we update the student employee object!
+        // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
             $contact = $userId ? $this->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         }
