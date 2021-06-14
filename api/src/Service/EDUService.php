@@ -16,19 +16,16 @@ class EDUService
 {
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ParameterBagInterface $params;
     private EAVService $eavService;
 
     public function __construct
     (
         EntityManagerInterface $em,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $params
+        CommonGroundService $commonGroundService
     )
     {
         $this->entityManager = $em;
         $this->commonGroundService = $commonGroundService;
-        $this->params = $params;
         $this->eavService = new EAVService($em, $commonGroundService);
     }
 
