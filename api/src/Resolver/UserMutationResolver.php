@@ -113,6 +113,7 @@ class UserMutationResolver implements MutationResolverInterface
      */
     public function login(array $user): User
     {
+
         $userObject = new User();
         $userObject->setToken($this->ucService->login($user['username'], $user['password']));
         $this->entityManager->persist($userObject);
