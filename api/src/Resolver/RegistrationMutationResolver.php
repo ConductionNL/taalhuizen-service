@@ -33,24 +33,22 @@ class RegistrationMutationResolver implements MutationResolverInterface
      * @param EntityManagerInterface $entityManager
      * @param ParameterBagInterface $parameterBagInterface
      * @param CommongroundService $commonGroundService
-     * @param CCService $ccService
-     * @param EAVService $eavService
+     * @param StudentService $studentService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBagInterface,
         CommonGroundService $commonGroundService,
-        CCService $ccService,
-        EAVService $eavService
+        StudentService $studentService
     ) {
         $this->entityManager = $entityManager;
         $this->parameterBagInterface = $parameterBagInterface;
         $this->commonGroundService = $commonGroundService;
         $this->registrationService = new RegistrationService($entityManager,$commonGroundService);
-        $this->ccService = $ccService;
-        $this->studentService = new StudentService($entityManager,$commonGroundService,$eavService);
-        $this->eduService = new EDUService($entityManager,$commonGroundService,$parameterBagInterface,$eavService);
-        $this->eavService = $eavService;
+        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->studentService = $studentService;
+        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->eavService = new EAVService($commonGroundService);
     }
 
     /**
