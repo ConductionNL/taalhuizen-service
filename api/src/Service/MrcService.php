@@ -1113,14 +1113,14 @@ class MrcService
     /**
      * Creates a resource to save to the EAV for an employee.
      *
-     * @param array    $employeeArray The input array of the employee
-     * @param array    $contact       The contact of the employee
-     * @param Employee $employee      The existing employee object
-     * @param array    $employeeRaw   The raw employee object
+     * @param array         $employeeArray The input array of the employee
+     * @param array         $contact The contact of the employee
+     * @param Employee|null $employee The existing employee object
+     * @param array|null    $employeeRaw The raw employee object
      *
      * @return array the resulting employee resource
      */
-    public function createEmployeeResource(array $employeeArray, array $contact, Employee $employee, array $employeeRaw)
+    public function createEmployeeResource(array $employeeArray, array $contact, ?Employee $employee, ?array $employeeRaw)
     {
         return [
             'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] ?? null,
