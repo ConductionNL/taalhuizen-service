@@ -10,21 +10,26 @@ use Ramsey\Uuid\Uuid;
 
 class StudentQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $commonGroundService;
     private StudentService $studentService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
+    public function __construct(StudentService $studentService)
     {
-        $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
     }
 
     /**
+     * This function fetches a student with the given ID.
+     *
      * @inheritDoc
      *
-     * @throws Exception;
+     * @param object|null $item    Object with the students data
+     * @param array       $context Context of the call
+     *
+     * @throws \Exception
+     *
+     * @return object Returns a student object
      */
-    public function __invoke($item, array $context)
+    public function __invoke($item, array $context): object
     {
         if (key_exists('studentId', $context['info']->variableValues)) {
             $studentId = $context['info']->variableValues['studentId'];
