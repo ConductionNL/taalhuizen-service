@@ -138,11 +138,13 @@ class EAVService
      * This function expects you to always give an component & type in the url array that matches the EAV/entity in the eav-component.
      * And than either give an id in the url array or give a resource with an @id or id set.
      *
-     * @param array|null $resource the resource you want to delete.
-     * @param array|null $url an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
+     * @param array|null $resource               the resource you want to delete.
+     * @param array|null $url                    an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
      * @param array|null $deleteResourceSettings an array that can be used to set the params for the commongroundService->deleteResource function. Default: async = false, autowire = true, events = true.
-     * @return bool true if the eav object and any object connected to this eav object was deleted.
+     *
      * @throws Exception
+     *
+     * @return bool true if the eav object and any object connected to this eav object was deleted.
      */
     public function deleteResource(?array $resource, array $url = null, array $deleteResourceSettings = null): bool
     {
@@ -174,9 +176,9 @@ class EAVService
     private function checkDeleteResourceSettings(array $deleteResourceSettings): array
     {
         return [
-            'async' => $deleteResourceSettings['async'] ?? false,
+            'async'    => $deleteResourceSettings['async'] ?? false,
             'autowire' => $deleteResourceSettings['autowire'] ?? true,
-            'events' => $deleteResourceSettings['events'] ?? true,
+            'events'   => $deleteResourceSettings['events'] ?? true,
         ];
     }
 
