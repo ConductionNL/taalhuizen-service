@@ -243,26 +243,19 @@ class RegistrationService
     /**
      * This function handles the Registration result.
      *
-     * @param array  $registrationStudent   Array with data from the registrationStudent
-     * @param array  $registrationRegistrar Array with data from the registrationRegistrar
-     * @param string $languageHouseId       Id of the cc/organization
-     * @param array  $participant           Array with data from the edu/participants
-     * @param array  $memo                  Array with data from the memo
-     *
-     * @throws Exception
-     *
+     * @param array $registration Array with data from the registration
      * @return Registration returns a Registration object
      */
-    public function handleResult(array $registrationStudent, array $registrationRegistrar, string $languageHouseId, array $participant, array $memo): Registration
+    public function handleResult(array $registration): Registration
     {
         $resource = new Registration();
         //@todo: setLanguageHouseId has to be set to the taalhuis where the student is referred to
         //@todo: remove address setRegistrar
-        $resource->setLanguageHouseId($languageHouseId);
-        $resource->setStudent($registrationStudent);
-        $resource->setRegistrar($registrationRegistrar);
-        $resource->setMemo($memo['description']);
-        $resource->setStudentId($participant['id']);
+        $resource->setLanguageHouseId($registration['languageHouseId']);
+        $resource->setStudent($registration['student']);
+        $resource->setRegistrar($registration['registration']);
+        $resource->setMemo($registration['memo']);
+        $resource->setStudentId($registration['participant']['id']);
         $this->entityManager->persist($resource);
 
         return $resource;
