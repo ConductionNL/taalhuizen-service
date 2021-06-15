@@ -113,7 +113,6 @@ class CCServiceTest extends KernelTestCase
 
         $this->assertIsObject($taalHuisOrganizations);
         $this->assertIsObject($organizations);
-
     }
 
     public function testDeleteOrganization()
@@ -135,5 +134,4 @@ class CCServiceTest extends KernelTestCase
     public function testUpdatePerson()
     {
     }
-
 }
