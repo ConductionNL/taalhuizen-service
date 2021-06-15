@@ -4,12 +4,10 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\EDUService;
-use App\Service\StudentService;
 
 class GroupQueryItemResolver implements QueryItemResolverInterface
 {
     private EDUService $eduService;
-    private StudentService $studentService;
 
     public function __construct(EDUService $eduService)
     {

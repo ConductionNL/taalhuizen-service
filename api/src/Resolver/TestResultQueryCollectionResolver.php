@@ -5,6 +5,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\TestResultService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ramsey\Uuid\Uuid;
 
@@ -12,10 +13,13 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
 {
     private TestResultService $testResultService;
     private ResolverService $resolverService;
+    private CommonGroundService $commonGroundService;
 
-    public function __construct(TestResultService $testResultService, ResolverService $resolverService)
-    {
-        $this->testResultService = $testResultService;
+    public function __construct(
+        ResolverService $resolverService,
+        CommonGroundService $commonGroundService
+    ) {
+        $this->testResultService = new TestResultService($commonGroundService);
         $this->resolverService = $resolverService;
     }
 

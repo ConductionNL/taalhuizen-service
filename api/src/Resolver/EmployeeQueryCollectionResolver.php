@@ -11,6 +11,12 @@ class EmployeeQueryCollectionResolver implements QueryCollectionResolverInterfac
     private MrcService $mrcService;
     private ResolverService $resolverService;
 
+    /**
+     * EmployeeQueryCollectionResolver constructor.
+     *
+     * @param MrcService      $mrcService
+     * @param ResolverService $resolverService
+     */
     public function __construct(MrcService $mrcService, ResolverService $resolverService)
     {
         $this->mrcService = $mrcService;

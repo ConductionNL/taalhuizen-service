@@ -6,23 +6,36 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private WRCService $wrcService;
     private CommonGroundService $cgs;
+    private EntityManagerInterface $em;
+    private WRCService $wrcService;
     private ResolverService $resolverService;
 
-    public function __construct(WRCService $wrcService, CommonGroundService $cgs, ResolverService $resolverService)
-    {
-        $this->wrcService = $wrcService;
+    public function __construct(
+        CommonGroundService $cgs,
+        EntityManagerInterface $em
+    ) {
         $this->cgs = $cgs;
-        $this->resolverService = $resolverService;
+        $this->wrcService = new WRCService($em, $cgs);
+        $this->resolverService = new ResolverService();
     }
 
     /**
+     * This function creates a paginator.
+     *
      * @inheritDoc
+     *
+     * @param iterable $collection Collection of documents
+     * @param array    $context    Context of the call
+     *
+     * @throws \Exception
+     *
+     * @return iterable Returns a paginator
      */
     public function __invoke(iterable $collection, array $context): iterable
     {

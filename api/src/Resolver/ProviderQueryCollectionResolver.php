@@ -15,6 +15,13 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     private UcService $ucService;
     private ResolverService $resolverService;
 
+    /**
+     * ProviderQueryCollectionResolver constructor.
+     *
+     * @param CCService       $ccService
+     * @param UcService       $ucService
+     * @param ResolverService $resolverService
+     */
     public function __construct(
         CCService $ccService,
         UcService $ucService,
@@ -42,11 +49,10 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
                     key_exists('providerId', $context['args']) ?
                         $context['args']['providerId'] :
                         null,
-                    $type = 'Aanbieder'
+                    'Aanbieder'
                 );
 
                 return $this->resolverService->createPaginator($collection, $context['args']);
-
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
         }
