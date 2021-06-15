@@ -798,7 +798,7 @@ class MrcService
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->createPasswordResetToken($resource['username'], false);
-        $this->bsService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
+        $this->bsService->sendInvitation($token, ['username' => $resource['username'], 'contact' => $contact, 'organization' => $organizationUrl]);
 
         return $result;
     }
