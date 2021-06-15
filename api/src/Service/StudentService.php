@@ -32,9 +32,9 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @return array Returns student
      *@throws Exception
      *
+     * @return array Returns student
      */
     public function getStudent(string $id, bool $skipChecks = false): array
     {
@@ -61,9 +61,9 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @return array Returns array with students subresources
      *@throws Exception
      *
+     * @return array Returns array with students subresources
      */
     private function getStudentObjects($studentUrl = null, $skipChecks = false): array
     {
@@ -101,9 +101,9 @@ class StudentService
      * @param array $participant Array with participants data
      * @param false $skipChecks  Bool if code should skip checks or not
      *
-     * @return array Returns person as array
      *@throws Exception
      *
+     * @return array Returns person as array
      */
     private function getStudentPerson(array $participant, $skipChecks = false): array
     {
@@ -193,9 +193,9 @@ class StudentService
      * @param array $person     Array with persons data
      * @param false $skipChecks Bool if code should skip checks or not
      *
-     * @return array|false|mixed|null Returns the employee as array
      *@throws Exception
      *
+     * @return array|false|mixed|null Returns the employee as array
      */
     private function getStudentEmployee(array $person, $skipChecks = false)
     {
@@ -217,9 +217,9 @@ class StudentService
      * @param array $query         Array with query params
      * @param bool  $registrations Bool for if there are registrations
      *
-     * @return array Returns an array of students
      *@throws Exception
      *
+     * @return array Returns an array of students
      */
     public function getStudents(array $query, bool $registrations = false): array
     {
@@ -240,9 +240,9 @@ class StudentService
      * @param string $providerId ID of the provider
      * @param string $status     A possible status for a student
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with Student objects
      *@throws Exception
      *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with Student objects
      */
     public function getStudentsWithStatus(string $providerId, string $status): ArrayCollection
     {
@@ -305,9 +305,9 @@ class StudentService
      * @param array                                        $studentUrls     Array of student urls
      * @param string                                       $learningNeedUrl URL of the learning need
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      *@throws Exception
      *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      */
     private function getStudentFromLearningNeed(ArrayCollection $collection, array &$studentUrls, string $learningNeedUrl): ArrayCollection
     {
@@ -372,9 +372,9 @@ class StudentService
      * @param array $student      Array with students data
      * @param false $registration
      *
-     * @return object Returns Student object
      * @throws Exception
      *
+     * @return object Returns Student object
      */
     public function handleResult(array $student, bool $registration = false): object
     {
@@ -628,9 +628,9 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     * @return array|null[] Returns an array of educations
      *@throws Exception
      *
+     * @return array|null[] Returns an array of educations
      */
     public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
     {

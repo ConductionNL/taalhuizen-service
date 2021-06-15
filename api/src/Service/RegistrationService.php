@@ -243,7 +243,7 @@ class RegistrationService
     /**
      * This function handles the Registration result.
      *
-     * @param array  $registration   Array with data from the registrationStudent, registrationRegistrar, cc/organization, edu/participant & the memo
+     * @param array $registration Array with data from the registrationStudent, registrationRegistrar, cc/organization, edu/participant & the memo
      *
      * @throws Exception
      *
