@@ -18,6 +18,11 @@ class CCService
     private EAVService $eavService;
     private WRCService $wrcService;
 
+    /**
+     * CCService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param CommonGroundService $commonGroundService
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService

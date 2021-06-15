@@ -15,6 +15,10 @@ class EDUService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
 
+    /**
+     * EDUService constructor.
+     * @param CommonGroundService $commonGroundService
+     */
     public function __construct(
         CommonGroundService $commonGroundService
     ) {
