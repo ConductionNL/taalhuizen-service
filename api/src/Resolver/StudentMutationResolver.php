@@ -614,7 +614,7 @@ class StudentMutationResolver implements MutationResolverInterface
      * This function sets the persons children properties from the given general details.
      *
      * @param array $personData
-     * @param null $updatePerson Bool if person should be updated
+     * @param null  $updatePerson Bool if person should be updated
      *
      * @return array Returns person array with children properties
      */
@@ -988,8 +988,9 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function set employee properties from given education details.
      *
-     * @param array $employee Array with employee data
+     * @param array $employee      Array with employee data
      * @param array $educationData
+     *
      * @return array Returns employee array
      */
     private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
@@ -1113,8 +1114,9 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function retrieves employee properties from course details.
      *
-     * @param array $employee Array with employee data
+     * @param array $employee   Array with employee data
      * @param array $courseData
+     *
      * @return array Returns employee array
      */
     private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
