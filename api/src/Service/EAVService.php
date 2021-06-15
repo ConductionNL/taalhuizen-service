@@ -139,17 +139,15 @@ class EAVService
      * And than either give an id in the url array or give a resource with an @id or id set.
      *
      * @param array|null $resource the resource you want to delete.
-     * @param array|null $url      an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
-     * @param false      $async    async for the commongroundService->deleteResource function.
-     * @param bool       $autowire autowire for the commongroundService->deleteResource function.
-     * @param bool       $events   events for the commongroundService->deleteResource function.
-     *
-     * @throws Exception
-     *
+     * @param array|null $url an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
+     * @param array|null $deleteResourceSettings an array that can be used to set the params for the commongroundService->deleteResource function. Default: async = false, autowire = true, events = true.
      * @return bool true if the eav object and any object connected to this eav object was deleted.
+     * @throws Exception
      */
-    public function deleteResource(?array $resource, array $url = null, bool $async = false, bool $autowire = true, bool $events = true): bool
+    public function deleteResource(?array $resource, array $url = null, array $deleteResourceSettings = null): bool
     {
+        $deleteResourceSettings = $this->checkDeleteResourceSettings($deleteResourceSettings);
+
         if (!isset($url['component']) || !isset($url['type'])) {
             throw new Exception('[EAVService] needs a component and a type in $url to delete the eav Object of a resource!');
         }
@@ -165,12 +163,21 @@ class EAVService
         } else {
             $eavResult = true;
         }
-        $result = $this->commonGroundService->deleteResource($resource, $url, $async, $autowire, $events);
+        $result = $this->commonGroundService->deleteResource($resource, $url, $deleteResourceSettings['async'], $deleteResourceSettings['autowire'], $deleteResourceSettings['events']);
         if ($eavResult and $result) {
             return true;
         }
 
         return false;
+    }
+
+    private function checkDeleteResourceSettings(array $deleteResourceSettings): array
+    {
+        return [
+            'async' => $deleteResourceSettings['async'] ?? false,
+            'autowire' => $deleteResourceSettings['autowire'] ?? true,
+            'events' => $deleteResourceSettings['events'] ?? true,
+        ];
     }
 
     /**
