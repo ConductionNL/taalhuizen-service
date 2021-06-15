@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1623784757">
-  <project timestamp="1623784757">
+<coverage generated="1623785827">
+  <project timestamp="1623785827">
     <file name="/srv/api/src/Service/BsService.php">
       <class name="App\Service\BsService" namespace="global">
         <metrics complexity="5" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="37" coveredstatements="12" elements="41" coveredelements="14"/>
@@ -50,14 +50,14 @@
     </file>
     <file name="/srv/api/src/Service/CCService.php">
       <class name="App\Service\CCService" namespace="global">
-        <metrics complexity="51" methods="14" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="112" coveredstatements="23" elements="126" coveredelements="26"/>
+        <metrics complexity="51" methods="14" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="112" coveredstatements="39" elements="126" coveredelements="42"/>
       </class>
-      <line num="28" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
-      <line num="32" type="stmt" count="5"/>
-      <line num="33" type="stmt" count="5"/>
-      <line num="34" type="stmt" count="5"/>
-      <line num="35" type="stmt" count="5"/>
-      <line num="36" type="stmt" count="5"/>
+      <line num="28" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
+      <line num="32" type="stmt" count="6"/>
+      <line num="33" type="stmt" count="6"/>
+      <line num="34" type="stmt" count="6"/>
+      <line num="35" type="stmt" count="6"/>
+      <line num="36" type="stmt" count="6"/>
       <line num="45" type="method" name="cleanResource" visibility="public" complexity="4" crap="20" count="0"/>
       <line num="47" type="stmt" count="0"/>
       <line num="48" type="stmt" count="0"/>
@@ -65,24 +65,24 @@
       <line num="50" type="stmt" count="0"/>
       <line num="51" type="stmt" count="0"/>
       <line num="55" type="stmt" count="0"/>
-      <line num="64" type="method" name="createOrganizationObject" visibility="public" complexity="2" crap="6" count="0"/>
-      <line num="66" type="stmt" count="0"/>
+      <line num="64" type="method" name="createOrganizationObject" visibility="public" complexity="2" crap="2.00" count="1"/>
+      <line num="66" type="stmt" count="1"/>
       <line num="67" type="stmt" count="0"/>
-      <line num="69" type="stmt" count="0"/>
-      <line num="73" type="stmt" count="0"/>
-      <line num="74" type="stmt" count="0"/>
-      <line num="75" type="stmt" count="0"/>
-      <line num="76" type="stmt" count="0"/>
-      <line num="77" type="stmt" count="0"/>
-      <line num="79" type="stmt" count="0"/>
-      <line num="80" type="stmt" count="0"/>
-      <line num="81" type="stmt" count="0"/>
-      <line num="82" type="stmt" count="0"/>
-      <line num="83" type="stmt" count="0"/>
-      <line num="85" type="stmt" count="0"/>
-      <line num="86" type="stmt" count="0"/>
-      <line num="87" type="stmt" count="0"/>
-      <line num="89" type="stmt" count="0"/>
+      <line num="69" type="stmt" count="1"/>
+      <line num="73" type="stmt" count="1"/>
+      <line num="74" type="stmt" count="1"/>
+      <line num="75" type="stmt" count="1"/>
+      <line num="76" type="stmt" count="1"/>
+      <line num="77" type="stmt" count="1"/>
+      <line num="79" type="stmt" count="1"/>
+      <line num="80" type="stmt" count="1"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="82" type="stmt" count="1"/>
+      <line num="83" type="stmt" count="1"/>
+      <line num="85" type="stmt" count="1"/>
+      <line num="86" type="stmt" count="1"/>
+      <line num="87" type="stmt" count="1"/>
+      <line num="89" type="stmt" count="1"/>
       <line num="99" type="method" name="getOrganizations" visibility="public" complexity="3" crap="12" count="0"/>
       <line num="101" type="stmt" count="0"/>
       <line num="103" type="stmt" count="0"/>
@@ -178,15 +178,15 @@
       <line num="348" type="stmt" count="0"/>
       <line num="351" type="stmt" count="0"/>
       <line num="354" type="stmt" count="0"/>
-      <metrics loc="356" ncloc="243" classes="1" methods="14" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="112" coveredstatements="23" elements="126" coveredelements="26"/>
+      <metrics loc="356" ncloc="243" classes="1" methods="14" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="112" coveredstatements="39" elements="126" coveredelements="42"/>
     </file>
     <file name="/srv/api/src/Service/EAVService.php">
       <class name="App\Service\EAVService" namespace="global">
         <metrics complexity="29" methods="8" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="71" coveredstatements="11" elements="79" coveredelements="12"/>
       </class>
-      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
-      <line num="19" type="stmt" count="5"/>
-      <line num="20" type="stmt" count="5"/>
+      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
+      <line num="19" type="stmt" count="6"/>
+      <line num="20" type="stmt" count="6"/>
       <line num="35" type="method" name="saveObject" visibility="public" complexity="5" crap="5.73" count="1"/>
       <line num="37" type="stmt" count="1"/>
       <line num="38" type="stmt" count="0"/>
@@ -2300,10 +2300,10 @@
       <class name="App\Service\WRCService" namespace="global">
         <metrics complexity="36" methods="13" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="82" coveredstatements="5" elements="95" coveredelements="7"/>
       </class>
-      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
-      <line num="21" type="stmt" count="5"/>
-      <line num="22" type="stmt" count="5"/>
-      <line num="23" type="stmt" count="5"/>
+      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
+      <line num="21" type="stmt" count="6"/>
+      <line num="22" type="stmt" count="6"/>
+      <line num="23" type="stmt" count="6"/>
       <line num="32" type="method" name="createOrganization" visibility="public" complexity="1" crap="1" count="1"/>
       <line num="35" type="stmt" count="1"/>
       <line num="38" type="stmt" count="1"/>
@@ -2397,6 +2397,6 @@
       <line num="290" type="stmt" count="0"/>
       <metrics loc="292" ncloc="193" classes="1" methods="13" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="82" coveredstatements="5" elements="95" coveredelements="7"/>
     </file>
-    <metrics files="14" loc="6623" ncloc="4405" classes="14" methods="260" coveredmethods="19" conditionals="0" coveredconditionals="0" statements="2052" coveredstatements="168" elements="2312" coveredelements="187"/>
+    <metrics files="14" loc="6623" ncloc="4405" classes="14" methods="260" coveredmethods="19" conditionals="0" coveredconditionals="0" statements="2052" coveredstatements="184" elements="2312" coveredelements="203"/>
   </project>
 </coverage>

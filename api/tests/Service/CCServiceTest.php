@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Provider;
 use App\Service\CCService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -47,6 +48,18 @@ class CCServiceTest extends KernelTestCase
         $array = $this->ccService->createOrganization($providerArray, 'Aanbieder');
 
         $this->assertIsArray($array);
+
+        return $array;
+    }
+
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testCreateOrganizationObject($organization)
+    {
+        $object = $this->ccService->createOrganizationObject($organization, 'Aanbieder');
+
+        $this->assertInstanceOf(Provider::class, $object);
     }
 
     public function testConvertAddress()
@@ -58,10 +71,6 @@ class CCServiceTest extends KernelTestCase
     }
 
     public function testDeleteOrganization()
-    {
-    }
-
-    public function testCreateOrganizationObject()
     {
     }
 
