@@ -294,8 +294,9 @@ class CCService
      *
      * @param array $person The person array to provide to the contact catalogue
      *
-     * @return array The result from the contact catalogue and EAV
      * @throws Exception
+     *
+     * @return array The result from the contact catalogue and EAV
      */
     public function createPerson(array $person): array
     {
@@ -307,11 +308,12 @@ class CCService
     /**
      * Updates a person in the contac catalogue.
      *
-     * @param string $id The id of the person to update
-     * @param array $person The updated data of the person
+     * @param string $id     The id of the person to update
+     * @param array  $person The updated data of the person
+     *
+     * @throws Exception
      *
      * @return array The updated person object in the contact catalogue and EAV
-     * @throws Exception
      */
     public function updatePerson(string $id, array $person): array
     {
@@ -325,11 +327,12 @@ class CCService
     /**
      * Saves a person in the EAV.
      *
-     * @param array $body The data to store in the EAV
-     * @param null $personUrl The url of the person to save
+     * @param array $body      The data to store in the EAV
+     * @param null  $personUrl The url of the person to save
+     *
+     * @throws Exception
      *
      * @return array The resulting object in the EAV
-     * @throws Exception
      */
     public function saveEavPerson(array $body, $personUrl = null): array
     {

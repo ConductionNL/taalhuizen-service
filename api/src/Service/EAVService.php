@@ -25,11 +25,12 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * When updating an existing obejct the self or eavId is required.
      *
-     * @param array $body the body for creating or updating the object. This body should contain at least the entityName and could also contain the componentCode (default = 'eav'). Defined as EAV/entity with type in the eav-component.
+     * @param array $body    the body for creating or updating the object. This body should contain at least the entityName and could also contain the componentCode (default = 'eav'). Defined as EAV/entity with type in the eav-component.
      * @param array $eavInfo an array containing at least an $eavInfo['entityName'] (example='people') and could also contain the $eavInfo['componentCode'] (default = 'eav', example='cc'). Defined as EAV/entity type in the eav-component. Can also be used to update an existing eav object with $eavInfo['self'] = the (component @id, not @eav) url to an existing object. Or with $eavInfo['eavId'] = the id of an eav object.
      *
-     * @return array the saved object.
      * @throws Exception
+     *
+     * @return array the saved object.
      */
     public function saveObject(array $body, array $eavInfo): array
     {
