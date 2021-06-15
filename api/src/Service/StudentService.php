@@ -36,7 +36,7 @@ class StudentService
      *
      * @return array Returns student
      */
-    public function getStudent(string $id, $studentUrl = null, $skipChecks = false): array
+    public function getStudent(string $id, bool $skipChecks = false): array
     {
         if (isset($id)) {
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
@@ -319,7 +319,7 @@ class StudentService
             if (!in_array($learningNeed['participants'][0], $studentUrls)) {
                 $studentUrls[] = $learningNeed['participants'][0];
                 // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
-                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
+                $student = $this->getStudent($this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]), true);
                 if ($student['participant']['status'] == 'accepted') {
                     // Handle Result
                     $resourceResult = $this->handleResult($student);
