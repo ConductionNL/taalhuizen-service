@@ -7,6 +7,7 @@ use App\Entity\StudentDossierEvent;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -14,10 +15,19 @@ class EDUService
 {
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private EntityManagerInterface $entityManager;
 
+    /**
+     * EDUService constructor.
+     *
+     * @param CommonGroundService    $commonGroundService
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
-        CommonGroundService $commonGroundService
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
     }
@@ -28,17 +38,19 @@ class EDUService
      * @param array       $body           Array with data from the edu/participant
      * @param string|null $participantUrl Url of the edu/participant
      *
-     * @return array|false A edu/participant is returned from the EAV
+     * @throws \Exception
+     *
+     * @return array A edu/participant is returned from the EAV
      */
-    public function saveEavParticipant(array $body, $participantUrl = null)
+    public function saveEavParticipant(array $body, $participantUrl = null): array
     {
         // Save the edu/participant in EAV
         if (isset($participantUrl)) {
             // Update
-            $person = $this->eavService->saveObject($body, 'participants', 'edu', $participantUrl);
+            $person = $this->eavService->saveObject($body, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $participantUrl]);
         } else {
             // Create
-            $person = $this->eavService->saveObject($body, 'participants', 'edu');
+            $person = $this->eavService->saveObject($body, ['entityName' => 'participants', 'componentCode' => 'edu']);
         }
 
         return $person;
@@ -50,23 +62,23 @@ class EDUService
      * @param array       $body      Array with data from the edu/result
      * @param string|null $resultUrl Url of the edu/result
      *
-     * @return array|false A edu/result is returned from the EAV
+     * @throws \Exception
+     *
+     * @return array A edu/result is returned from the EAV
      */
-    public function saveEavResult(array $body, $resultUrl = null)
+    public function saveEavResult(array $body, $resultUrl = null): array
     {
         // Save the edu/result in EAV
         if (isset($resultUrl)) {
             // Update
-            $result = $this->eavService->saveObject($body, 'results', 'edu', $resultUrl);
+            $result = $this->eavService->saveObject($body, ['entityName' => 'results', 'componentCode' => 'edu', 'self' => $resultUrl]);
         } else {
             // Create
-            $result = $this->eavService->saveObject($body, 'results', 'edu');
+            $result = $this->eavService->saveObject($body, ['entityName' => 'results', 'componentCode' => 'edu']);
         }
 
         return $result;
     }
-
-    //@todo uitwerken
 
     /**
      * This function updates or creates a edu/program that belongs to the given organization.
@@ -76,7 +88,7 @@ class EDUService
      *
      * @return array|false|mixed|string|null A edu/program is returned from the EAV
      */
-    public function saveProgram(array $organization, $update = false)
+    public function saveProgram(array $organization, bool $update = false)
     {
         $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
@@ -397,7 +409,7 @@ class EDUService
      */
     public function getGroup(string $id): Group
     {
-        $group = $this->eavService->getObject('groups', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
+        $group = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id])]);
 
         return $this->convertGroupObject($group);
     }
@@ -442,7 +454,7 @@ class EDUService
         if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
             //get provider
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
-            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            $provider = $this->eavService->getObject(['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $providerUrl]);
             // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
             $groupUrls = [];
             //$provider['participations'] contain all participations urls
@@ -451,7 +463,7 @@ class EDUService
                     //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                    if ($this->eavService->hasEavObject($participationUrl)) {
                     // Get eav/Participation
-                    $participation = $this->eavService->getObject('participations', $participationUrl);
+                    $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
@@ -487,7 +499,7 @@ class EDUService
         if (!in_array($participation['group'], $groupUrls)) {
             array_push($groupUrls, $participation['group']);
             //get group
-            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
+            $group = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $participation['group']]);
             //handle result
             $resourceResult = $this->convertGroupObject($group, $aanbiederId);
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
@@ -513,7 +525,7 @@ class EDUService
             throw new Exception('Invalid request, groupId is not an existing edu/group!');
         }
         if ($this->eavService->hasEavObject($groupUrl)) {
-            $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $groep = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]);
             // Remove this group from the eav/participation
             if (isset($groep['participations']) && !empty($groep['participations'])) {
                 $this->removeGroupFromParticipation($groep);
@@ -543,7 +555,7 @@ class EDUService
     {
         foreach ($group['participations'] as $participationUrl) {
             if ($this->eavService->hasEavObject($participationUrl)) {
-                $participation = $this->eavService->getObject('participations', $participationUrl);
+                $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                 if (isset($participation['group'])) {
                     $updateParticipation['group'] = null;
                     $updateParticipation['status'] = 'REFERRED';
@@ -551,7 +563,7 @@ class EDUService
                     $updateParticipation['presenceStartDate'] = null;
                     $updateParticipation['presenceEndDate'] = null;
                     $updateParticipation['presenceEndParticipationReason'] = null;
-                    $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participationUrl);
+                    $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participationUrl]);
                 }
             }
         }
@@ -572,7 +584,7 @@ class EDUService
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
         $groep['mentors'] = $employeeids;
 
-        return $this->convertGroupObject($this->eavService->saveObject($groep, 'groups', 'edu', $groupUrl));
+        return $this->convertGroupObject($this->eavService->saveObject($groep, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]));
     }
 
     /**

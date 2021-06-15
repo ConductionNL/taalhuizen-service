@@ -17,16 +17,16 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class TaalhuisSubscriber implements EventSubscriberInterface
 {
-    private $em;
+    private $entityManager;
     private $params;
     private $commonGroundService;
     private $ccService;
     private $wrcService;
     private $eduService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService, WRCService $wrcService, EDUService $eduService)
+    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $params, CommongroundService $commonGroundService, CCService $ccService, WRCService $wrcService, EDUService $eduService)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->params = $params;
         $this->commonGroundService = $commonGroundService;
         $this->ccService = $ccService;

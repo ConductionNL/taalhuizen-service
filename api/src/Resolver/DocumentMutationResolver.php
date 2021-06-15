@@ -12,13 +12,13 @@ class DocumentMutationResolver implements MutationResolverInterface
 {
     private WRCService $wrcService;
     private CommonGroundService $cgs;
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         CommonGroundService $cgs,
-        EntityManagerInterface $em
+        EntityManagerInterface $entityManager
     ) {
-        $this->wrcService = new WRCService($em, $cgs);
+        $this->wrcService = new WRCService($entityManager, $cgs);
     }
 
     /**
