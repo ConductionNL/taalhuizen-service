@@ -152,6 +152,7 @@ jobs:
               if: (success() || failure())
               run: docker-compose down
     test:
+        needs: build
         runs-on: ubuntu-latest
         steps:
             - name: Show present docker images
