@@ -320,10 +320,10 @@ class StudentMutationResolver implements MutationResolverInterface
             $person = $this->getPersonPropertiesFromPersonDetails($person, $input['personDetails']);
         }
         if (isset($input['contactDetails'])) {
-            $person = $this->getPersonPropertiesFromContactDetails($person, $input['contactDetails'], $updatePerson);
+            $person = $this->getPersonPropertiesFromContactDetails(['person' => $person, 'details' => $input['contactDetails']], $updatePerson);
         }
         if (isset($input['generalDetails'])) {
-            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson);
+            $person = $this->getPersonPropertiesFromGeneralDetails(['person' => $person, 'details' => $input['generalDetails']], $updatePerson);
         }
         if (isset($input['backgroundDetails'])) {
             $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
@@ -396,20 +396,19 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function passes given contact details to the person array.
      *
-     * @param array $person         Array with persons data
-     * @param array $contactDetails Array with contact details data
-     * @param null  $updatePerson   Bool if person should be updated
+     * @param array $personData
+     * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns a person array with civic integration details
      */
-    private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
+    private function getPersonPropertiesFromContactDetails(array $personData, $updatePerson = null): array
     {
-        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
-        $person = $this->getPersonEmailsFromContactDetails($person, $contactDetails, $personName);
-        $person = $this->getPersonTelephonesFromContactDetails($person, $contactDetails, $personName);
-        $person = $this->getPersonAdressesFromContactDetails($person, $contactDetails, $personName);
+        $personName = $personData['person']['givenName'] ? $personData['person']['familyName'] ? $personData['person']['givenName'].' '.$personData['person']['familyName'] : $personData['person']['givenName'] : '';
+        $personData['person'] = $this->getPersonEmailsFromContactDetails($personData['person'], $personData['details'], $personName);
+        $personData['person'] = $this->getPersonTelephonesFromContactDetails($personData['person'], $personData['details'], $personName);
+        $personData['person'] = $this->getPersonAdressesFromContactDetails($personData['person'], $personData['details'], $personName);
         if (isset($updatePerson)) {
-            $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
+            $person = $this->updatePersonContactDetailsSubobjects($personData['person'], $updatePerson);
         }
 
         //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
@@ -557,31 +556,31 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function updates the person with the given general details.
      *
-     * @param array $person         Array with persons data
-     * @param array $generalDetails Array with general details data
-     * @param null  $updatePerson   Bool if person should be updated or not
+     * @param array $personData
+     * @param null $updatePerson Bool if person should be updated or not
      *
      * @return array Returns a person with properties from general details
      */
-    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    private function getPersonPropertiesFromGeneralDetails(array $personData, $updatePerson = null): array
     {
-        if (isset($generalDetails['countryOfOrigin'])) {
-            $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
+//        $generalDetails = $personData['details'];
+        if (isset($personData['details']['countryOfOrigin'])) {
+            $personData['person'] = $this->setPersonBirthplaceFromCountryOfOrigin($personData['person'], $personData['details']['countryOfOrigin'], $updatePerson);
         }
         //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
-        if (isset($generalDetails['nativeLanguage'])) {
-            $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
+        if (isset($personData['details']['nativeLanguage'])) {
+            $personData['person']['primaryLanguage'] = $personData['details']['nativeLanguage'];
         }
-        if (isset($generalDetails['otherLanguages'])) {
-            $person['speakingLanguages'] = explode(',', $generalDetails['otherLanguages']);
+        if (isset($personData['details']['otherLanguages'])) {
+            $personData['person']['speakingLanguages'] = explode(',', $personData['details']['otherLanguages']);
         }
         //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
-        if (isset($generalDetails['familyComposition'])) {
-            $person['maritalStatus'] = $generalDetails['familyComposition'];
+        if (isset($personData['details']['familyComposition'])) {
+            $personData['person']['maritalStatus'] = $personData['details']['familyComposition'];
         }
 
         // Create the children of this person
-        return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
+        return $this->setPersonChildrenFromGeneralDetails(['person' => $personData['person'], 'details' => $personData['details']], $updatePerson);
     }
 
     /**
@@ -613,14 +612,15 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets the persons children properties from the given general details.
      *
-     * @param array $person         Array with persons data
-     * @param array $generalDetails Array with general details data
-     * @param null  $updatePerson   Bool if person should be updated
+     * @param array $personData
+     * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns person array with children properties
      */
-    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    private function setPersonChildrenFromGeneralDetails(array $personData, $updatePerson = null): array
     {
+        $person = $personData['person'];
+        $generalDetails = $personData['generalDetails'];
         if (isset($generalDetails['childrenCount'])) {
             $childrenCount = (int) $generalDetails['childrenCount'];
         }
@@ -971,10 +971,10 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, ['lastEducation' => $educations['lastEducation'], 'followingEducation' => $educations['followingEducation'], 'details' => $input['educationDetails']]);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $educations['course']);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, ['course' => $educations['course'], 'details' => $input['courseDetails']]);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
@@ -989,15 +989,15 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function set employee properties from given education details.
      *
-     * @param array $employee           Array with employee data
-     * @param array $educationDetails   Array with education details
-     * @param null  $lastEducation      Bool if this is the last education or not
-     * @param null  $followingEducation Bool if employee is following education or not
-     *
+     * @param array $employee Array with employee data
+     * @param array $educationData
      * @return array Returns employee array
      */
-    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
     {
+        $educationDetails = $educationData['details'];
+        $lastEducation = $educationData['lastEducation'];
+        $followingEducation = $educationData['followingEducation'];
         if (isset($educationDetails['lastFollowedEducation'])) {
             $employee['educations'][] = $this->getLastEducationFromEducationDetails($educationDetails, $lastEducation);
         }
@@ -1114,14 +1114,14 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function retrieves employee properties from course details.
      *
-     * @param array      $employee      Array with employee data
-     * @param array|null $courseDetails Array with course details
-     * @param array|null $course        Array with course
-     *
+     * @param array $employee Array with employee data
+     * @param array $courseData
      * @return array Returns employee array
      */
-    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
+        $courseDetails = $courseData['details'];
+        $course = $courseData['course'];
         if (isset($courseDetails['isFollowingCourseRightNow'])) {
             if (isset($course['id'])) {
                 $newEducation['id'] = $course['id'];
