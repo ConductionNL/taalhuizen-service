@@ -27,14 +27,17 @@
 
     <coverage>
         <include>
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">api/src/Service</directory>
         </include>
 
         <exclude>
-            <directory suffix=".php">src/DataFixtures</directory>
-            <directory suffix=".php">src/Entity</directory>
-            <directory suffix=".php">src/Repository</directory>
-            <file>src/Kernel.php</file>
+            <directory suffix=".php">api/src/DataFixtures</directory>
+            <directory suffix=".php">api/src/Entity</directory>
+            <directory suffix=".php">api/src/Repository</directory>
+            <file>api/src/Kernel.php</file>
+            <file>.editorconfig</file>
+            <file>.env</file>
+            <file>.gitattributes</file>
         </exclude>
     </coverage>
 </phpunit>
