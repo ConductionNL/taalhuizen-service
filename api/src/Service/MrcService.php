@@ -1090,28 +1090,6 @@ class MrcService
     }
 
     /**
-     * Deletes all employees of an organization.
-     *
-     * @param string $ccOrganizationId The organization to delete the employees of
-     *
-     * @return bool Whether the operation has been successful or not
-     */
-    public function deleteEmployees(string $ccOrganizationId): bool
-    {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
-
-        if ($employees > 0) {
-            foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Creates a resource to save to the EAV for an employee.
      *
      * @param array         $employeeArray The input array of the employee
