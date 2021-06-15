@@ -669,12 +669,12 @@ class StudentService
                 $educations['lastEducation'] = $education;
                 break;
             case 'followingEducationNo':
-                if ($educations['followingEducationYes'] == []  && $educations['followingEducationNo'] == []) {
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
                     $educations['followingEducationNo'] = $education;
                 }
                 break;
             case 'followingEducationYes':
-                if ($educations['followingEducationYes'] == []  && $educations['followingEducationNo'] == []) {
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
                     $educations['followingEducationYes'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 }
                 break;
