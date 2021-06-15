@@ -18,14 +18,6 @@ class CCServiceTest extends KernelTestCase
         parent::setUp();
     }
 
-    public function testCleanResource()
-    {
-    }
-
-    public function testGetOrganization()
-    {
-    }
-
     public function testEmployeeToPerson()
     {
     }
@@ -62,12 +54,66 @@ class CCServiceTest extends KernelTestCase
         $this->assertInstanceOf(Provider::class, $object);
     }
 
-    public function testConvertAddress()
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testGetOrganization($organization)
     {
+        $object = $this->ccService->getOrganization($organization['id'], 'Aanbieder');
+        $this->assertInstanceOf(Provider::class, $object);
     }
 
-    public function testUpdateOrganization()
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testCleanResource($array)
     {
+        $result = $this->ccService->cleanResource($array);
+
+        $this->assertIsArray($result);
+    }
+
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testUpdateOrganization($organization)
+    {
+        $array = [
+            'name'        => 'test provider',
+            'email'       => 'test@email.com',
+            'phoneNumber' => '0612345678',
+            'address'     => [
+                'street'            => 'test',
+                'houseNumber'       => '412',
+                'houseNumberSuffix' => 'b',
+                'postalCode'        => '1234AB',
+                'locality'          => 'Almere',
+            ],
+        ];
+
+        $result = $this->ccService->updateOrganization($organization['id'], $array);
+
+        $this->assertIsArray($result);
+    }
+
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testConvertAddress($organization)
+    {
+        $result = $this->ccService->convertAddress($organization['addresses'][0]);
+
+        $this->assertIsArray($result);
+    }
+
+    public function testGetOrganizations()
+    {
+        $taalHuisOrganizations = $this->ccService->getOrganizations('Taalhuis');
+        $organizations = $this->ccService->getOrganizations('none');
+
+        $this->assertIsObject($taalHuisOrganizations);
+        $this->assertIsObject($organizations);
+
     }
 
     public function testDeleteOrganization()
@@ -90,7 +136,4 @@ class CCServiceTest extends KernelTestCase
     {
     }
 
-    public function testGetOrganizations()
-    {
-    }
 }
