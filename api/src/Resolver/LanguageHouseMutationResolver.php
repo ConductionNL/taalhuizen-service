@@ -14,27 +14,32 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
+    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
+    private ParameterBagInterface $parameterBagInterface;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
+    private MrcService $mrcService;
 
     /**
      * LanguageHouseMutationResolver constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param CommonGroundService    $commonGroundService
+     * @param ParameterBagInterface  $parameterBagInterface
      * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
+        ParameterBagInterface $parameterBagInterface,
         UcService $ucService
     ) {
-        $this->commonGroundService = $commonGroundService;
         $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($commonGroundService);
+        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
     }
 
     /**
@@ -114,7 +119,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $this->ucService->deleteUserGroups($id);
 
         //delete employees
-        $this->deleteEmployees($id);
+        $this->mrcService->deleteEmployees($id);
 
         //delete participants
         $programId = $this->eduService->deleteParticipants($id);
@@ -122,27 +127,5 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         $this->ccService->deleteOrganization($id, $programId);
 
         return null;
-    }
-
-    /**
-     * Deletes all employees of an organization.
-     *
-     * @param string $ccOrganizationId The organization to delete the employees of
-     *
-     * @return bool Whether the operation has been successful or not
-     */
-    public function deleteEmployees(string $ccOrganizationId): bool
-    {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
-
-        if ($employees > 0) {
-            foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
-            }
-        }
-
-        return true;
     }
 }
