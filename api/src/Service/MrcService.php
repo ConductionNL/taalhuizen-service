@@ -10,7 +10,6 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MrcService
 {
@@ -24,23 +23,19 @@ class MrcService
     /**
      * MrcService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBag
-     * @param UcService              $ucService
+     * @param LayerService $layerService
+     * @param UcService    $ucService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
+        LayerService $layerService,
         UcService $ucService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
-        $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->eavService = new EAVService($commonGroundService);
+        $this->bsService = $layerService->bsService;
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eavService = new EAVService($layerService->commonGroundService);
     }
 
     /**
@@ -798,7 +793,7 @@ class MrcService
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->createPasswordResetToken($resource['username'], false);
-        $this->bsService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
+        $this->bsService->sendInvitation($token, ['username' => $resource['username'], 'contact' => $contact, 'organization' => $organizationUrl]);
 
         return $result;
     }
@@ -875,14 +870,13 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
-     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @return array The resulting employee or raw mrc object
      */
-    public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
+    public function createEmployeeArray(array $employeeArray): array
     {
         //set contact
         $contact = $this->setContact($employeeArray);
@@ -908,13 +902,26 @@ class MrcService
         if (key_exists('educations', $employeeArray)) {
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
-        $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        if ($returnMrcObject) {
-            return $result;
-        }
+        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
 
-        return $this->createEmployeeObject($result, $userRoleArray ?? []);
+        return $result;
+    }
+
+    /**
+     * Creates an employee.
+     *
+     * @param array $employeeArray The input array of the employee
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee or raw mrc object
+     */
+    public function createEmployee(array $employeeArray): Employee
+    {
+        $employee = $this->createEmployeeArray($employeeArray);
+
+        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
     /**
@@ -971,17 +978,16 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param false  $returnMrcObject Whether or not the result should be a processed employee
-     * @param false  $studentEmployee Whether or not the employee is also a student
+     * @param bool   $studentEmployee Whether or not the employee is also a student
      *
      * @throws Exception
      *
-     * @return Employee|array The resulting employee
+     * @return array The resulting employee
      */
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
+    public function updateEmployeeArray(string $id, array $employeeArray, bool $studentEmployee = false): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
+        $employee = $this->createEmployeeObject($employeeRaw, []);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
@@ -1000,14 +1006,28 @@ class MrcService
         }
 
         //set userRoleArray
-        $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        if ($returnMrcObject) {
-            return $result;
-        }
+        $result['userRoleArray'] = $this->setUserRoleArray($employeeArray);
 
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $result;
+    }
+
+    /**
+     * Updates an employee.
+     *
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee
+     */
+    public function updateEmployee(string $id, array $employeeArray): Employee
+    {
+        $employee = $this->updateEmployeeArray($id, $employeeArray);
+
+        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
     /**

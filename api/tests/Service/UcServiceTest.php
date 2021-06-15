@@ -12,8 +12,7 @@ class UcServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->ucService = $this->serviceContainer->get(UcService::class);
         parent::setUp();
     }

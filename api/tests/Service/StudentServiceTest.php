@@ -12,8 +12,7 @@ class StudentServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->studentService = $this->serviceContainer->get(StudentService::class);
         parent::setUp();
     }
