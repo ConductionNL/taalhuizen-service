@@ -14,6 +14,13 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
     private UcService $ucService;
     private ResolverService $resolverService;
 
+    /**
+     * LanguageHouseQueryCollectionResolver constructor.
+     *
+     * @param CCService       $ccService
+     * @param UcService       $ucService
+     * @param ResolverService $resolverService
+     */
     public function __construct(
         CCService $ccService,
         UcService $ucService,
@@ -45,7 +52,6 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
                 return $this->resolverService->createPaginator($collection, $context['args']);
             default:
                 return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
-
         }
     }
 }

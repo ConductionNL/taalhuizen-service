@@ -39,8 +39,8 @@ class MrcService
         $this->commonGroundService = $commonGroundService;
         $this->ucService = $ucService;
         $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
-        $this->eavService = new EAVService($entityManager, $commonGroundService);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
+        $this->eavService = new EAVService($commonGroundService);
     }
 
     /**
@@ -524,6 +524,7 @@ class MrcService
         } else {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         }
+
         $employee = new Employee();
         $employee = $this->contactToEmployeeObject($employee, $contact);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);

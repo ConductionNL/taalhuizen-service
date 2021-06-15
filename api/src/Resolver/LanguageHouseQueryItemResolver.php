@@ -4,23 +4,26 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\CCService;
-use App\Service\LanguageHouseService;
 use Exception;
 
 class LanguageHouseQueryItemResolver implements QueryItemResolverInterface
 {
-    private LanguageHouseService $languageHouseService;
     private CCService $ccService;
 
+    /**
+     * LanguageHouseQueryItemResolver constructor.
+     *
+     * @param CCService $ccService
+     */
     public function __construct(
-        LanguageHouseService $languageHouseService,
         CCService $ccService
     ) {
-        $this->languageHouseService = $languageHouseService;
         $this->ccService = $ccService;
     }
 
     /**
+     * Get a LanguageHouse with the given id.
+     *
      * @inheritDoc
      */
     public function __invoke($item, array $context)
