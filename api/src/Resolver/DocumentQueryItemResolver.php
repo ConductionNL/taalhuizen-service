@@ -10,15 +10,13 @@ use Exception;
 
 class DocumentQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $cgs;
-    private EntityManagerInterface $em;
     private WRCService $wrcService;
 
     public function __construct(
-        CommonGroundService $cgs,
-        EntityManagerInterface $em
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
-        $this->wrcService = new WRCService($em, $cgs);
+        $this->wrcService = new WRCService($entityManager, $commonGroundService);
     }
 
     /**

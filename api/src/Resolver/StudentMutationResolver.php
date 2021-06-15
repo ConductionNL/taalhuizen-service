@@ -32,8 +32,8 @@ class StudentMutationResolver implements MutationResolverInterface
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->studentService = new StudentService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
-        $this->eduService = new EDUService($commonGroundService);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->mrcService = $mrcService;
     }
 

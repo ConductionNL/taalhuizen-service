@@ -44,6 +44,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->registrationService = new RegistrationService($entityManager, $commonGroundService);
         $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->studentService = new StudentService($entityManager, $commonGroundService);
+
         $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->eavService = new EAVService($commonGroundService);
     }

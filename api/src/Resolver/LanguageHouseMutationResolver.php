@@ -27,19 +27,19 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
      *
      * @param EntityManagerInterface $entityManager
      * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBagInterface
+     * @param ParameterBagInterface  $parameterBag
      * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBagInterface,
+        ParameterBagInterface $parameterBag,
         UcService $ucService
     ) {
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->ucService = $ucService;
-        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
-        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBag, $ucService);
     }
 
     /**
