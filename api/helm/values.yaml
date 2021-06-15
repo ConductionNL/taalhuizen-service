@@ -21,6 +21,7 @@ settings:
   cache: false
   type: component
   id: 
+  internal: false
   replicaCount: 1
   corsAllowOrigin: ['*']
   trustedHosts: '^.+$'
@@ -58,7 +59,7 @@ redis:
   redisPort: 6379
   usePassword: false
   enabled: true
-
+  
 commonground:
   eherkenning:
     location: https://taalhuizen-bisc.commonground.nu/eherkenning
@@ -90,7 +91,7 @@ postgresql:
   # Persistent Volume Storage configuration.
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
-    enabled: false
+    enabled: true
   pullPolicy: IfNotPresent
 #  image:
 #    repository: postgres

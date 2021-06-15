@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\TestResult;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class TestResultService
@@ -13,11 +14,12 @@ class TestResultService
     private EDUService $eduService;
 
     public function __construct(
-        CommonGroundService $commonGroundService
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
-        $this->eduService = new EDUService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
     }
 
     /**
