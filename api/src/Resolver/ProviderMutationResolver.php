@@ -6,11 +6,9 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
 use App\Service\CCService;
 use App\Service\EDUService;
-use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
@@ -23,8 +21,8 @@ class ProviderMutationResolver implements MutationResolverInterface
      * ProviderMutationResolver constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
-     * @param UcService $ucService
+     * @param CommonGroundService    $commonGroundService
+     * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -101,8 +99,9 @@ class ProviderMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
-     * @return Provider The resulting Provider properties
      * @throws \Exception
+     *
+     * @return Provider The resulting Provider properties
      */
     public function deleteProvider(array $input): ?Provider
     {
