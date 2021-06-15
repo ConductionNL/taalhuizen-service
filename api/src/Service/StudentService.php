@@ -635,10 +635,10 @@ class StudentService
     public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
     {
         $educations = [
-            'lastEducation'         => null,
-            'followingEducationNo'  => null,
-            'followingEducationYes' => null,
-            'course'                => null,
+            'lastEducation'         => [],
+            'followingEducationNo'  => [],
+            'followingEducationYes' => [],
+            'course'                => [],
         ];
 
         if (isset($employee['educations'])) {

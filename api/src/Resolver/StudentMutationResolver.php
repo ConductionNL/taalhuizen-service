@@ -103,7 +103,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $participant = $this->eduService->saveEavParticipant($participant);
 
         $employee = $this->inputToEmployee($input, $person['@id']);
-        // Save mrc/employee
+        // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
         $employee = $this->mrcService->createEmployee($employee, true);
 
         // Then save memos
@@ -962,7 +962,7 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @return array Returns employee array
      */
-    private function inputToEmployee(array $input, $personUrl, $updateEmployee = null): array
+    private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
     {
         $employee = ['person' => $personUrl];
         if (isset($input['contactDetails']['email'])) {

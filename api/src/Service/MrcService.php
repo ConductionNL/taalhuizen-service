@@ -539,7 +539,7 @@ class MrcService
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         if (!$studentEmployee) {
-            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
+            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray['email']);
         } else {
             $employee = $this->relatedObjectsToEmployeeObject($employee, $employeeArray);
         }
@@ -847,7 +847,7 @@ class MrcService
             }
 
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
-        } elseif (!$studentEmployee) {
+        } elseif (isset($employeeArray['email'])) {
             return $this->createUser($employeeArray, $contact);
         }
 
@@ -887,10 +887,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        // TODO fix that a student has an email for creating a user so this if statement can be removed:
-        if (!$returnMrcObject) {
-            $this->saveUser($employeeArray, $contact);
-        }
+        $this->saveUser($employeeArray, $contact);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 

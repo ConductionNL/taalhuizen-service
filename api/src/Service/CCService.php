@@ -348,7 +348,7 @@ class CCService
             $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         } else {
             // Create
-            $person = $this->eavService->saveObject($body, ['entityName' => 'groups', 'componentCode' => 'edu']);
+            $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc']);
         }
 
         return $person;
