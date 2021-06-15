@@ -475,9 +475,7 @@ class MrcService
     public function getUser(Employee $employee, ?string $contactId = null, ?string $username = null): Employee
     {
         $resource = $this->checkIfUserExists($contactId, $username);
-        var_dump('getUser');
         if (isset($resource['id'])) {
-            var_dump('setUserId: '. $resource['id']);
             $employee->setUserId($resource['id']);
         }
         $userGroupIds = [];
@@ -836,10 +834,8 @@ class MrcService
             } elseif (isset($userId)) {
                 $employeeArray['userId'] = $userId;
             }
-            var_dump('UPDATE_USER');
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
         } elseif (isset($employeeArray['email'])) {
-            var_dump('CREATE_USER');
             return $this->createUser($employeeArray, $contact);
         }
 
@@ -879,7 +875,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        var_dump($this->saveUser($employeeArray, $contact)['id']);
+        $this->saveUser($employeeArray, $contact);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
@@ -891,6 +887,9 @@ class MrcService
         }
         if (key_exists('volunteeringPreference', $employeeArray)) {
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
+        }
+        if(key_exists('currentEducation', $employeeArray)){
+            $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
 
         // Saves lastEducation, followingEducation and course for student as employee
@@ -969,6 +968,7 @@ class MrcService
         $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
         key_exists('targetGroupPreferences', $employeeArray) ? $this->createCompetences($employeeArray, $result['id'], $result) : null;
         key_exists('volunteeringPreference', $employeeArray) ? $this->createInterests($employeeArray, $result['id'], $result['interests']) : null;
+        key_exists('currentEducation', $employeeArray) ? $this->createEducations($employeeArray, $result['id'], $result['educations']) : null;
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)) {

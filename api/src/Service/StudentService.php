@@ -664,7 +664,6 @@ class StudentService
      */
     private function setEducationType(array $educations, array $education): array
     {
-        var_dump('educationId: '.$education['id']);
         switch ($education['description']) {
             case 'lastEducation':
                 $educations['lastEducation'] = $education;
