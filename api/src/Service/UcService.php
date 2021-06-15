@@ -287,6 +287,7 @@ class UcService
             'password'     => key_exists('password', $userArray) ? $userArray['password'] : null,
             'locale'       => 'nl',
             'person'       => $contact['@id'],
+            'userGroups'   => ['/groups/4bb4d846-a263-45c7-8cb7-4e88c81a01ef'],
             'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
         ];
 
