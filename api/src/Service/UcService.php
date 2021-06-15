@@ -36,9 +36,9 @@ class UcService
     /**
      * UcService constructor.
      *
-     * @param RequestStack           $requestStack
-     * @param CacheInterface         $cache
-     * @param LayerService           $layerService
+     * @param RequestStack   $requestStack
+     * @param CacheInterface $cache
+     * @param LayerService   $layerService
      */
     public function __construct(
         RequestStack $requestStack,

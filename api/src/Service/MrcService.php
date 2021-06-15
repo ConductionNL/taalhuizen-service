@@ -10,7 +10,6 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MrcService
 {
@@ -24,14 +23,13 @@ class MrcService
     /**
      * MrcService constructor.
      *
-     * @param LayerService  $layerService
-     * @param UcService     $ucService
+     * @param LayerService $layerService
+     * @param UcService    $ucService
      */
     public function __construct(
         LayerService $layerService,
         UcService $ucService
     ) {
-
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
