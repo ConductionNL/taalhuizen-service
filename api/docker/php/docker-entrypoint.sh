@@ -78,7 +78,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 			bin/console app:publiccode:update --location=/srv/api/public/schema/ --spec-version=0.2
 
 			echo "Run unit tests"
-			php ./vendor/bin/phpunit --coverage-clover coverage.xml
+			./vendor/bin/phpunit --coverage-clover coverage.xml
 
 		fi
 	fi

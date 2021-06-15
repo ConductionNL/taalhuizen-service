@@ -272,9 +272,6 @@
     "phpunit/php-timer": {
         "version": "5.0.3"
     },
-    "phpunit/php-token-stream": {
-        "version": "4.0.4"
-    },
     "phpunit/phpunit": {
         "version": "4.7",
         "recipe": {
@@ -331,6 +328,9 @@
             "config/packages/ramsey_uuid_doctrine.yaml"
         ]
     },
+    "sebastian/cli-parser": {
+        "version": "1.0.1"
+    },
     "sebastian/code-unit": {
         "version": "1.0.8"
     },
@@ -339,6 +339,9 @@
     },
     "sebastian/comparator": {
         "version": "4.0.6"
+    },
+    "sebastian/complexity": {
+        "version": "2.0.2"
     },
     "sebastian/diff": {
         "version": "4.0.4"
@@ -351,6 +354,9 @@
     },
     "sebastian/global-state": {
         "version": "4.0.0"
+    },
+    "sebastian/lines-of-code": {
+        "version": "1.0.3"
     },
     "sebastian/object-enumerator": {
         "version": "4.0.4"

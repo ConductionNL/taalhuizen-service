@@ -7,7 +7,8 @@
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.1",
         "conduction/commongroundbundle": "dev-symfony52",
-        "phpdocumentor/reflection-docblock": "^4.3",
+        "phpdocumentor/reflection-docblock": "^5",
+        "phpunit/php-code-coverage": "^9.2",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/asset": "^5.1",
         "symfony/console": "^5.1",
@@ -24,7 +25,7 @@
     },
     "require-dev" : {
         "api-platform/schema-generator": "^2.1",
-        "phpunit/phpunit": "^9",
+        "phpunit/phpunit": "^9.3",
         "symfony/maker-bundle": "^1.11",
         "symfony/profiler-pack": "^1.0"
     },
