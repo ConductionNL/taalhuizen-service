@@ -9,7 +9,7 @@ languages:
           - /api/config/.*
           - /api/docker/.*
           - /api/docs/.*
-          - /api/helm/.*
+#          - /api/helm/.*
           - /api/migrations/.*
           - /api/nlx-setup/.*
 #          - /api/public/.*
@@ -19,6 +19,7 @@ languages:
           - /api/vendor/.*
           - /api/src/Entity/.*
           - /api/src/Subscriber/.*
+          - /api/src/Kernel.php
   test:
     include:
         - /api/tests/.*
