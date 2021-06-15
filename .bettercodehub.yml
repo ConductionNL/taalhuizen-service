@@ -19,6 +19,7 @@ languages:
           - /api/vendor/.*
           - /api/src/Entity/.*
           - /api/src/Subscriber/.*
+          - /api/src/Kernel.php
   test:
     include:
         - /api/tests/.*
