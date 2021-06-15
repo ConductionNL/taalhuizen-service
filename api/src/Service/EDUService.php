@@ -486,11 +486,13 @@ class EDUService
     /**
      * This function checks if a participation is in a group and if not adds them.
      *
-     * @param array $groupUrls Array of group urls
-     * @param array $participation Array with data of a participation
-     * @param string $aanbiederId ID of the aanbieder this participation belongs to
-     * @return Group The resource result
+     * @param array  $groupUrls     Array of group urls
+     * @param array  $participation Array with data of a participation
+     * @param string $aanbiederId   ID of the aanbieder this participation belongs to
+     *
      * @throws \Exception
+     *
+     * @return Group The resource result
      */
     public function checkParticipationGroup(array $groupUrls, array $participation, string $aanbiederId): ?Group
     {
@@ -501,8 +503,10 @@ class EDUService
             //handle result
             $resourceResult = $this->convertGroupObject($group, $aanbiederId);
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
+
             return $resourceResult;
         }
+
         return null;
     }
 
