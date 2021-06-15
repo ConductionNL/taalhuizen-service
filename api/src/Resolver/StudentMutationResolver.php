@@ -104,7 +104,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee
-        $employee = $this->mrcService->createEmployee($employee, true);
+        $employee = $this->mrcService->createEmployeeArray($employee, true);
 
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
@@ -157,7 +157,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
-        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true, true);
+        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee, true, true);
 
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
