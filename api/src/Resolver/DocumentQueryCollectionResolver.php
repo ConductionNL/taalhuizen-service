@@ -12,16 +12,16 @@ use Exception;
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private CommonGroundService $cgs;
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
     private WRCService $wrcService;
     private ResolverService $resolverService;
 
     public function __construct(
         CommonGroundService $cgs,
-        EntityManagerInterface $em
+        EntityManagerInterface $entityManager
     ) {
         $this->cgs = $cgs;
-        $this->wrcService = new WRCService($em, $cgs);
+        $this->wrcService = new WRCService($entityManager, $cgs);
         $this->resolverService = new ResolverService();
     }
 

@@ -20,15 +20,15 @@ class ExampleTest extends TestCase
 
         /*
         // Lets test if the example can be saved to the database
-        $this->assertTrue($em->persist($example));
-        $this->assertTrue($em->flush);
+        $this->assertTrue($entityManager->persist($example));
+        $this->assertTrue($entityManager->flush);
 
         // Lets test if the example has an ID (or has been succefully saved to the database
         $this->assertTrue($example->getId());
 
         // Let delete the example to keep de database clean
-        $this->assertTrue($em->remove($example));
-        $this->assertTrue($em->flush);
+        $this->assertTrue($entityManager->remove($example));
+        $this->assertTrue($entityManager->flush);
         */
     }
 }
