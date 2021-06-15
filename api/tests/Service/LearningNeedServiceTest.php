@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class LearningNeedServiceTest extends KernelTestCase
 {
-
     private $serviceContainer;
     private $learningNeedService;
 
@@ -21,66 +20,53 @@ class LearningNeedServiceTest extends KernelTestCase
 
     public function testHandleParticipantLearningNeeds()
     {
-
     }
 
     public function testDeleteLearningNeed()
     {
-
     }
 
     public function testAddStudentToLearningNeed()
     {
-
     }
 
     public function testCheckLearningNeedValues()
     {
-
     }
 
     public function testGetStudentLearningNeed()
     {
-
     }
 
     public function testDeleteLearningNeedParticipations()
     {
-
     }
 
     public function testRemoveLearningNeedFromStudent()
     {
-
     }
 
     public function testGetLearningNeeds()
     {
-
     }
 
     public function testGetLearningNeed()
     {
-
     }
 
     public function testSetResourceParticipations()
     {
-
     }
 
     public function testSaveLearningNeed()
     {
-
     }
 
     public function testRemoveParticipantsFromLearningNeed()
     {
-
     }
 
     public function testHandleResult()
     {
-
     }
 }

@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class BsServiceTest extends KernelTestCase
 {
-
     private $serviceContainer;
     private $bsService;
 
@@ -21,16 +20,13 @@ class BsServiceTest extends KernelTestCase
 
     public function testSendInvitation()
     {
-
     }
 
     public function testSendPasswordChangedEmail()
     {
-
     }
 
     public function testSendPasswordResetMail()
     {
-
     }
 }
