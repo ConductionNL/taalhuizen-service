@@ -33,7 +33,7 @@ class ReportMutationResolver implements MutationResolverInterface
     ) {
         $this->commonGroundService = $commonGroundService;
         $this->entityManager = $entityManager;
-        $this->eduService = new EDUService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->mrcService = $mrcService;
         $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService, new ParticipationService($entityManager, $commonGroundService, $mrcService));
         $this->serializer = $serializer;

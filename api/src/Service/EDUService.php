@@ -7,6 +7,7 @@ use App\Entity\StudentDossierEvent;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use mysql_xdevapi\Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -14,10 +15,19 @@ class EDUService
 {
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private EntityManagerInterface $entityManager;
 
+    /**
+     * EDUService constructor.
+     *
+     * @param CommonGroundService    $commonGroundService
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
-        CommonGroundService $commonGroundService
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
     }

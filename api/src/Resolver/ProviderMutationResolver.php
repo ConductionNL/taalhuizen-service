@@ -36,9 +36,9 @@ class ProviderMutationResolver implements MutationResolverInterface
         ParameterBagInterface $parameterBagInterface,
         UcService $ucService
     ) {
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->ucService = $ucService;
-        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
     }
 

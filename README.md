@@ -4,6 +4,7 @@
 [![Docker Image CI](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml/badge.svg)](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml)
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/taalhuizen-service)](https://artifacthub.io/packages/helm/taalhuizen-service/taalhuizen-service)
 [![Componenten Catalogus](https://img.shields.io/badge/vng--componentencatalogus-posted-green)](https://componentencatalogus.commonground.nl/componenten/180?)
+[![codecov](https://codecov.io/gh/ConductionNL/taalhuizen-service/branch/master/graph/badge.svg?token=UP5F3S1SVS)](https://codecov.io/gh/ConductionNL/taalhuizen-service)
 
 # Readme
 -------
