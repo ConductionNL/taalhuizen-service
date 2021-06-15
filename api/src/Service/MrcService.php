@@ -517,8 +517,10 @@ class MrcService
      *
      * @param array $employeeArray The resulting array for fetching an employee
      * @param array $userRoleArray The user roles of the employee
-     * @return Employee The resulting employee object
+     *
      * @throws Exception Thrown if the EAV is called incorrectly
+     *
+     * @return Employee The resulting employee object
      */
     public function createEmployeeObject(array $employeeArray, array $userRoleArray = []): Employee
     {
@@ -799,11 +801,13 @@ class MrcService
     /**
      * Gets the contact for an employee.
      *
-     * @param string $userId The user id of the employee
-     * @param array $employeeArray The input array for the employee
-     * @param Employee|null $employee The employee object of the employee
-     * @return array The resulting contact
+     * @param string        $userId        The user id of the employee
+     * @param array         $employeeArray The input array for the employee
+     * @param Employee|null $employee      The employee object of the employee
+     *
      * @throws Exception Thrownt if the EAV is called incorrectly
+     *
+     * @return array The resulting contact
      */
     public function getContact(string $userId, array $employeeArray, ?Employee $employee = null): array
     {
@@ -820,9 +824,9 @@ class MrcService
     /**
      * Saves the user for an employee.
      *
-     * @param array $employeeArray The input array for an employee
-     * @param array $contact The contact for the employee
-     * @param string|null $userId The user id of the employee
+     * @param array       $employeeArray The input array for an employee
+     * @param array       $contact       The contact for the employee
+     * @param string|null $userId        The user id of the employee
      *
      * @return array|null The resulting user object
      */
@@ -834,6 +838,7 @@ class MrcService
             } elseif (isset($userId)) {
                 $employeeArray['userId'] = $userId;
             }
+
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
         } elseif (isset($employeeArray['email'])) {
             return $this->createUser($employeeArray, $contact);
@@ -887,7 +892,7 @@ class MrcService
         if (key_exists('volunteeringPreference', $employeeArray)) {
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
-        if(key_exists('currentEducation', $employeeArray)){
+        if (key_exists('currentEducation', $employeeArray)) {
             $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
 
@@ -939,11 +944,12 @@ class MrcService
     /**
      * Saves the related user with the data from the contact of the employee.
      *
-     * @param Employee $employee The employee object the contact should relate to
-     * @param array $employeeArray The input data to update a contact
+     * @param Employee $employee      The employee object the contact should relate to
+     * @param array    $employeeArray The input data to update a contact
+     *
+     * @throws Exception
      *
      * @return array The resulting contact
-     * @throws Exception
      */
     public function handleRetrievingContact(Employee $employee, array $employeeArray): array
     {
@@ -960,8 +966,8 @@ class MrcService
     /**
      * Updates an employee.
      *
-     * @param string $id              The id of the employee to update
-     * @param array  $employeeArray   The input array for the employee to update
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
      *
      * @throws Exception
      *

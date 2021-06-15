@@ -45,9 +45,9 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param object|null $item    Post object
      * @param array       $context Information about post
      *
-     * @return \App\Entity\Student|object|null Returns a Student object
      *@throws Exception
      *
+     * @return \App\Entity\Student|object|null Returns a Student object
      */
     public function __invoke($item, array $context)
     {
@@ -71,9 +71,9 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @param array $input Array with students data
      *
-     * @return object Returns a Student object
      *@throws Exception
      *
+     * @return object Returns a Student object
      */
     public function createStudent(array $input): object
     {
@@ -128,9 +128,9 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @param array $input Array with students data
      *
-     * @return object Returns a Student object
      *@throws Exception
      *
+     * @return object Returns a Student object
      */
     public function updateStudent(array $input): object
     {
@@ -833,9 +833,9 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param array       $input       Array of given data
      * @param string|null $ccPersonUrl String that holds the person URL
      *
-     * @return array Returns an participant array
      *@throws Exception
      *
+     * @return array Returns an participant array
      */
     private function inputToParticipant(array $input, string $ccPersonUrl = null): array
     {
@@ -958,9 +958,9 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param string $personUrl      String that holds persons URL
      * @param null   $updateEmployee Bool if employee needs to be updated if not
      *
-     * @return array Returns employee array
      *@throws Exception
      *
+     * @return array Returns employee array
      */
     private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
     {
