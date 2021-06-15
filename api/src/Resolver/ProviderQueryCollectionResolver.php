@@ -18,8 +18,8 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
     /**
      * ProviderQueryCollectionResolver constructor.
      *
-     * @param CCService       $ccService
-     * @param UcService       $ucService
+     * @param CCService $ccService
+     * @param UcService $ucService
      */
     public function __construct(
         CCService $ccService,

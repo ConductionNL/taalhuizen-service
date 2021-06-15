@@ -26,8 +26,8 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
     /**
      * LanguageHouseMutationResolver constructor.
      *
-     * @param UcService              $ucService
-     * @param LayerService           $layerService
+     * @param UcService    $ucService
+     * @param LayerService $layerService
      */
     public function __construct(
         UcService $ucService,

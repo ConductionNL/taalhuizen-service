@@ -20,8 +20,8 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     /**
      * LearningNeedMutationResolver constructor.
      *
-     * @param LearningNeedService    $learningNeedService
-     * @param LayerService           $layerService
+     * @param LearningNeedService $learningNeedService
+     * @param LayerService        $layerService
      */
     public function __construct(LearningNeedService $learningNeedService, LayerService $layerService)
     {
