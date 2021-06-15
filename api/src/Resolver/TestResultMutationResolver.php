@@ -21,7 +21,7 @@ class TestResultMutationResolver implements MutationResolverInterface
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
-        $this->testResultService = new TestResultService($commonGroundService);
+        $this->testResultService = new TestResultService($commonGroundService, $entityManager);
     }
 
     /**

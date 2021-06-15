@@ -46,9 +46,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $this->parameterBagInterface = $parameterBagInterface;
         $this->commonGroundService = $commonGroundService;
         $this->registrationService = new RegistrationService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->studentService = $studentService;
-        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->eavService = new EAVService($commonGroundService);
     }
 
@@ -111,7 +111,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         //update program
         $this->updateProgram($input, $participant);
 
-        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $input['languageHouseId'], $participant, $memo);
+        $resourceResult = $this->registrationService->handleResult(['registrationStudent' => $participant, 'registrationRegistrar' => $registrationRegistrar, 'languageHouseId' => $input['languageHouseId'], 'memo' => $memo]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;

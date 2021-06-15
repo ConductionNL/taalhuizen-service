@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\TestResult;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class TestResultService
@@ -13,11 +14,12 @@ class TestResultService
     private EDUService $eduService;
 
     public function __construct(
-        CommonGroundService $commonGroundService
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
-        $this->eduService = new EDUService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
     }
 
     /**
@@ -77,12 +79,12 @@ class TestResultService
     {
         // Check if participation already has testResults
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
-            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
         } else {
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');
         }
         if ($this->eavService->hasEavObject($participation['learningNeed'], 'learning_needs')) {
-            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participation['learningNeed']]);
         } else {
             throw new Exception('Warning, participation is not connected to a learningNeed!');
         }
@@ -103,7 +105,7 @@ class TestResultService
         // Update the eav/participation to add the EAV/edu/result to it
         if (!in_array($testResult['@id'], $updateParticipation['results'])) {
             array_push($updateParticipation['results'], $testResult['@id']);
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', null, $participationId);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'eavId' => $participationId]);
         }
 
         return [
@@ -150,14 +152,14 @@ class TestResultService
      */
     private function removeTestResultFromParticipation(string $testResultUrl)
     {
-        $testResult = $this->eavService->getObject('results', $testResultUrl, 'edu');
+        $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $testResultUrl]);
         if ($this->eavService->hasEavObject($testResult['participation'])) {
-            $getParticipation = $this->eavService->getObject('participations', $testResult['participation']);
+            $getParticipation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $testResult['participation']]);
             if (isset($getParticipation['results'])) {
                 $participation['results'] = array_values(array_filter($getParticipation['results'], function ($participationResult) use ($testResultUrl) {
                     return $participationResult != $testResultUrl;
                 }));
-                $this->eavService->saveObject($participation, 'participations', 'eav', $testResult['participation']);
+                $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $testResult['participation']]);
             }
         }
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
@@ -183,7 +185,7 @@ class TestResultService
 
         // Get the edu/result from EAV and its memo from memo component
         if ($this->eavService->hasEavObject($url)) {
-            $testResult = $this->eavService->getObject('results', $url, 'edu');
+            $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $url]);
 
             $memos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic'=>$url])['hydra:member'];
             $memo = [];
@@ -213,7 +215,7 @@ class TestResultService
     {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
-            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationId]);
             // Get the edu/testResult urls for this participation and do gets on them
             $testResults = [];
             foreach ($participation['results'] as $result) {
