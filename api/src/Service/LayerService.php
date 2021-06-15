@@ -21,9 +21,9 @@ class LayerService
      * @param CommonGroundService    $commonGroundService
      * @param EntityManagerInterface $entityManager
      * @param ParameterBagInterface  $parameterBag
-     * @param BsService    $bsService
-     * @param TestResultService $testResultService
-     * @param RegistrationService  $registrationService
+     * @param BsService              $bsService
+     * @param TestResultService      $testResultService
+     * @param RegistrationService    $registrationService
      */
     public function __construct(
         CommonGroundService $commonGroundService,
@@ -40,6 +40,4 @@ class LayerService
         $this->testResultService = $testResultService;
         $this->registrationService = $registrationService;
     }
-
-
 }
