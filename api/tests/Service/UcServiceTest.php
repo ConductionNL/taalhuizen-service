@@ -145,7 +145,6 @@ class UcServiceTest extends KernelTestCase
 
     public function testLogout()
     {
-
     }
 
     public function testRemoveFiles()
