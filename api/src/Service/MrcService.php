@@ -159,12 +159,13 @@ class MrcService
     /**
      * Creates an object for the current education of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
+     * @throws Exception
      *
      * @return string The id of the education
-     * @throws Exception
      */
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
@@ -185,12 +186,13 @@ class MrcService
     /**
      * Creates an object for an unfinished education of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
+     * @throws Exception
      *
      * @return string The id of the education
-     * @throws Exception
      */
     public function createUnfinishedEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
@@ -212,12 +214,13 @@ class MrcService
     /**
      * Creates an object for the course of an employee.
      *
-     * @param array $employeeArray The input array for the employee
-     * @param string $employeeId The id of the employee
-     * @param string|null $educationId The id of the education if it exists already
+     * @param array       $employeeArray The input array for the employee
+     * @param string      $employeeId    The id of the employee
+     * @param string|null $educationId   The id of the education if it exists already
+     *
+     * @throws Exception
      *
      * @return string The id of the education
-     * @throws Exception
      */
     public function createCourse(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
@@ -1076,8 +1079,9 @@ class MrcService
     /**
      * Saves the educations of an employee.
      *
-     * @param array $educations The educations to store
+     * @param array  $educations The educations to store
      * @param string $employeeId The id of the employee the educations relate to
+     *
      * @throws Exception
      */
     public function saveEmployeeEducations(array $educations, string $employeeId): void

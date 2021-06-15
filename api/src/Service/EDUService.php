@@ -25,11 +25,12 @@ class EDUService
     /**
      * This function updates or creates a edu/participant with the given body.
      *
-     * @param array $body Array with data from the edu/participant
+     * @param array       $body           Array with data from the edu/participant
      * @param string|null $participantUrl Url of the edu/participant
      *
-     * @return array A edu/participant is returned from the EAV
      * @throws \Exception
+     *
+     * @return array A edu/participant is returned from the EAV
      */
     public function saveEavParticipant(array $body, $participantUrl = null): array
     {
@@ -48,11 +49,12 @@ class EDUService
     /**
      * This function updates or creates a edu/result with the given body.
      *
-     * @param array $body Array with data from the edu/result
+     * @param array       $body      Array with data from the edu/result
      * @param string|null $resultUrl Url of the edu/result
      *
-     * @return array A edu/result is returned from the EAV
      * @throws \Exception
+     *
+     * @return array A edu/result is returned from the EAV
      */
     public function saveEavResult(array $body, $resultUrl = null): array
     {
