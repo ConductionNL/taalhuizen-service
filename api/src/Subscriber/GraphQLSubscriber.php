@@ -48,6 +48,7 @@ class GraphQLSubscriber implements EventSubscriberInterface
         if (
             $graphQL->definitions->offsetGet(0)->name->value != 'loginUser' &&
             $graphQL->definitions->offsetGet(0)->name->value != 'requestPasswordResetUser' &&
+            $graphQL->definitions->offsetGet(0)->name->value != 'removeUser' &&
             $graphQL->definitions->offsetGet(0)->name->value != 'resetPasswordUser'
         ) {
             $auth = $event->getRequest()->headers->get('Authorization');

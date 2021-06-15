@@ -507,7 +507,7 @@ class UcService
      */
     public function checkIfSwitchIsRequired(array $splits): bool
     {
-        $enums = ['create', 'update', 'delete'];
+        $enums = ['create', 'update', 'delete', 'change', 'add', 'accept', 'request', 'reset', 'download'];
 
         if (in_array($splits[0], $enums)) {
             return true;
