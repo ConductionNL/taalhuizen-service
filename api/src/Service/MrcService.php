@@ -876,13 +876,12 @@ class MrcService
      * Creates an employee.
      *
      * @param array $employeeArray   The input array of the employee
-     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
      *
      * @throws Exception
      *
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @return array The resulting employee or raw mrc object
      */
-    public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
+    public function createEmployeeArray(array $employeeArray): array
     {
         //set contact
         $contact = $this->setContact($employeeArray);
@@ -984,17 +983,16 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param false  $returnMrcObject Whether or not the result should be a processed employee
-     * @param false  $studentEmployee Whether or not the employee is also a student
+     * @param boolean  $studentEmployee Whether or not the employee is also a student
      *
      * @throws Exception
      *
-     * @return Employee|array The resulting employee
+     * @return array The resulting employee
      */
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
+    public function updateEmployeeArray(string $id, array $employeeArray, bool $studentEmployee = false): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
+        $employee = $this->createEmployeeObject($employeeRaw, []);
 
         //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
         $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
