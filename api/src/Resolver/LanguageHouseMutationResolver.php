@@ -14,32 +14,27 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
-    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ParameterBagInterface $parameterBagInterface;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
-    private MrcService $mrcService;
 
     /**
      * LanguageHouseMutationResolver constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBagInterface
      * @param UcService              $ucService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBagInterface,
         UcService $ucService
     ) {
+        $this->commonGroundService = $commonGroundService;
         $this->ccService = new CCService($entityManager, $commonGroundService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($commonGroundService);
-        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
     }
 
     /**
