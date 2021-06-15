@@ -587,7 +587,7 @@ class StudentMutationResolver implements MutationResolverInterface
      * This function sets the persons birthplace from the given country of origins.
      *
      * @param array $personData
-     * @param null $updatePerson Bool if person should be updated
+     * @param null  $updatePerson Bool if person should be updated
      *
      * @return array Returns person array with birthplace property
      */
@@ -630,7 +630,7 @@ class StudentMutationResolver implements MutationResolverInterface
             }
         }
         if (isset($childrenCount)) {
-            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, ['count' => $childrenCount,'datesOfBirth' => $childrenDatesOfBirth ?? null]);
+            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, ['count' => $childrenCount, 'datesOfBirth' => $childrenDatesOfBirth ?? null]);
             if (isset($updatePerson['ownedContactLists'][0]['id'])) {
                 $person = $this->updatePersonChildrenContactList($person, $updatePerson);
             }
@@ -663,8 +663,9 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets children from children count.
      *
-     * @param array $person Array with persons data
+     * @param array $person       Array with persons data
      * @param array $childrenData
+     *
      * @return array Returns an array with childrens data
      */
     private function setChildrenFromChildrenCount(array $person, array $childrenData): array
