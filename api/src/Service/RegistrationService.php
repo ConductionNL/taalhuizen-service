@@ -255,6 +255,7 @@ class RegistrationService
         //@todo: setLanguageHouseId has to be set to the taalhuis where the student is referred to
         //@todo: remove address setRegistrar
         $resource->setLanguageHouseId($registration['languageHouseId']);
+
         $resource->setStudent($registration['registrationStudent']);
         $resource->setRegistrar($registration['registrationRegistrar']);
         $resource->setMemo($registration['memo']['description']);
