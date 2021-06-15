@@ -23,7 +23,7 @@ class GroupMutationResolver implements MutationResolverInterface
     {
         $this->entityManager = $entityManager;
         $this->eavService = new EAVService($commonGroundService);
-        $this->eduService = new EDUService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->commonGroundService = $commonGroundService;
     }
 
