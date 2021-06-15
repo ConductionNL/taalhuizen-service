@@ -76,7 +76,6 @@ jobs:
                   chmod +x ./local-php-security-checker
                   ./local-php-security-checker --path ./api/composer.lock
             
-            - uses: actions/checkout@master
             - uses: codecov/codecov-action@v1
               with:
                 token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
