@@ -19,7 +19,8 @@ class EDUService
 
     /**
      * EDUService constructor.
-     * @param CommonGroundService $commonGroundService
+     *
+     * @param CommonGroundService    $commonGroundService
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
