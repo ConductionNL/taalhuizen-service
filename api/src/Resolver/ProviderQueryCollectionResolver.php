@@ -20,16 +20,14 @@ class ProviderQueryCollectionResolver implements QueryCollectionResolverInterfac
      *
      * @param CCService       $ccService
      * @param UcService       $ucService
-     * @param ResolverService $resolverService
      */
     public function __construct(
         CCService $ccService,
-        UcService $ucService,
-        ResolverService $resolverService
+        UcService $ucService
     ) {
         $this->ccService = $ccService;
         $this->ucService = $ucService;
-        $this->resolverService = $resolverService;
+        $this->resolverService = new ResolverService();
     }
 
     /**

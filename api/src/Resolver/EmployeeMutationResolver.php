@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Employee;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,15 +19,14 @@ class EmployeeMutationResolver implements MutationResolverInterface
     /**
      * EmployeeMutationResolver constructor.
      *
-     * @param EntityManagerInterface $entityManager
      * @param MrcService             $mrcService
-     * @param ParticipationService   $participationService
+     * @param LayerService           $layerService
      */
-    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService, ParticipationService $participationService)
+    public function __construct(MrcService $mrcService, LayerService $layerService)
     {
-        $this->entityManager = $entityManager;
+        $this->entityManager = $layerService->entityManager;
         $this->mrcService = $mrcService;
-        $this->participationService = $participationService;
+        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
 
     /**

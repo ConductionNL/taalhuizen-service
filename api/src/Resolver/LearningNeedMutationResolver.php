@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LearningNeed;
+use App\Service\LayerService;
 use App\Service\LearningNeedService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,14 +20,13 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     /**
      * LearningNeedMutationResolver constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
      * @param LearningNeedService    $learningNeedService
+     * @param LayerService           $layerService
      */
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService)
+    public function __construct(LearningNeedService $learningNeedService, LayerService $layerService)
     {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->learningNeedService = $learningNeedService;
     }
 

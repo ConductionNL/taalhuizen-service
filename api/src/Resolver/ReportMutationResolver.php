@@ -6,6 +6,7 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Entity\Report;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\LearningNeedService;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
@@ -26,16 +27,15 @@ class ReportMutationResolver implements MutationResolverInterface
     private SerializerInterface $serializer;
 
     public function __construct(
-        CommonGroundService $commonGroundService,
-        EntityManagerInterface $entityManager,
         MrcService $mrcService,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        LayerService $layerService
     ) {
-        $this->commonGroundService = $commonGroundService;
-        $this->entityManager = $entityManager;
-        $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
-        $this->learningNeedService = new LearningNeedService($entityManager, $commonGroundService, new ParticipationService($entityManager, $commonGroundService, $mrcService));
+        $this->learningNeedService = new LearningNeedService(new ParticipationService($mrcService, $layerService), $layerService);
         $this->serializer = $serializer;
     }
 

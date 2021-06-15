@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Participation;
+use App\Service\LayerService;
 use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,14 +19,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     /**
      * ParticipationMutationResolver constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommongroundService    $commonGroundService
      * @param ParticipationService   $participationService
+     * @param LayerService           $layerService
      */
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ParticipationService $participationService)
+    public function __construct(ParticipationService $participationService, LayerService $layerService)
     {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->participationService = $participationService;
     }
 

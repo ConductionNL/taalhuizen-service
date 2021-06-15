@@ -10,14 +10,12 @@ use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
     public function __construct(
-        CommongroundService $commonGroundService
+        TestResultService $testResultService
     ) {
-        $this->commonGroundService = $commonGroundService;
-        $this->testResultService = new TestResultService($commonGroundService);
+        $this->testResultService = $testResultService;
     }
 
     /**

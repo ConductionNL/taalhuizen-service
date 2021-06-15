@@ -6,6 +6,7 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -25,21 +26,17 @@ class ProviderMutationResolver implements MutationResolverInterface
     /**
      * ProviderMutationResolver constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBagInterface
      * @param UcService              $ucService
+     * @param LayerService           $layerService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBagInterface,
-        UcService $ucService
+        UcService $ucService,
+        LayerService $layerService
     ) {
-        $this->ccService = new CCService($entityManager, $commonGroundService);
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
         $this->ucService = $ucService;
-        $this->eduService = new EDUService($commonGroundService, $entityManager);
-        $this->mrcService = new MrcService($entityManager, $commonGroundService, $parameterBagInterface, $ucService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
+        $this->mrcService = new MrcService($layerService, $ucService);
     }
 
     /**

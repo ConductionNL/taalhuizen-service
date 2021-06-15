@@ -3,6 +3,7 @@
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\LayerService;
 use App\Service\ResolverService;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -15,13 +16,11 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
 {
     private TestResultService $testResultService;
     private ResolverService $resolverService;
-    private CommonGroundService $commonGroundService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService
+        LayerService $layerService
     ) {
-        $this->testResultService = new TestResultService($commonGroundService, $entityManager);
+        $this->testResultService = $layerService->testResultService;
         $this->resolverService = new ResolverService();
     }
 

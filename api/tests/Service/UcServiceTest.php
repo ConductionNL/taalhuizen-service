@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\User;
 use App\Service\UcService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -54,6 +55,18 @@ class UcServiceTest extends KernelTestCase
 
     public function testCreateUser()
     {
+        $validChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $email = 'test-'. substr(str_shuffle(str_repeat($validChars, ceil(3 / strlen($validChars)))), 1, 3);
+        $userArray = array(
+            'username' => $email,
+            'password' => 'test1234',
+            'givenName' => 'testUser',
+            'familyName' => 'testUser',
+            'email' => $email);
+
+        $user = $this->ucService->createUser($userArray);
+
+        $this->assertInstanceOf(User::class, $user);
     }
 
     public function testUpdatePasswordWithToken()
