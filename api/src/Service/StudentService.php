@@ -32,9 +32,9 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
-     *
      * @return array Returns student
+     *@throws Exception
+     *
      */
     public function getStudent(string $id, bool $skipChecks = false): array
     {
@@ -61,9 +61,9 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
-     *
      * @return array Returns array with students subresources
+     *@throws Exception
+     *
      */
     private function getStudentObjects($studentUrl = null, $skipChecks = false): array
     {
@@ -101,9 +101,9 @@ class StudentService
      * @param array $participant Array with participants data
      * @param false $skipChecks  Bool if code should skip checks or not
      *
-     * @throws \Exception
-     *
      * @return array Returns person as array
+     *@throws Exception
+     *
      */
     private function getStudentPerson(array $participant, $skipChecks = false): array
     {
@@ -193,9 +193,9 @@ class StudentService
      * @param array $person     Array with persons data
      * @param false $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
-     *
      * @return array|false|mixed|null Returns the employee as array
+     *@throws Exception
+     *
      */
     private function getStudentEmployee(array $person, $skipChecks = false)
     {
@@ -217,9 +217,9 @@ class StudentService
      * @param array $query         Array with query params
      * @param bool  $registrations Bool for if there are registrations
      *
-     * @throws \Exception
-     *
      * @return array Returns an array of students
+     *@throws Exception
+     *
      */
     public function getStudents(array $query, bool $registrations = false): array
     {
@@ -240,9 +240,9 @@ class StudentService
      * @param string $providerId ID of the provider
      * @param string $status     A possible status for a student
      *
-     * @throws \Exception
-     *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with Student objects
+     *@throws Exception
+     *
      */
     public function getStudentsWithStatus(string $providerId, string $status): ArrayCollection
     {
@@ -305,9 +305,9 @@ class StudentService
      * @param array                                        $studentUrls     Array of student urls
      * @param string                                       $learningNeedUrl URL of the learning need
      *
-     * @throws \Exception
-     *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
+     *@throws Exception
+     *
      */
     private function getStudentFromLearningNeed(ArrayCollection $collection, array &$studentUrls, string $learningNeedUrl): ArrayCollection
     {
@@ -338,7 +338,7 @@ class StudentService
      *
      * @param array $input Array with students data
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkStudentValues(array $input)
     {
@@ -372,11 +372,11 @@ class StudentService
      * @param array $student      Array with students data
      * @param false $registration
      *
-     * @throws \Exception
-     *
      * @return object Returns Student object
+     * @throws Exception
+     *
      */
-    public function handleResult(array $student, $registration = false): object
+    public function handleResult(array $student, bool $registration = false): object
     {
         // Put together the expected result for Lifely:
         if ($registration) {
@@ -628,9 +628,9 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     * @throws \Exception
-     *
      * @return array|null[] Returns an array of educations
+     *@throws Exception
+     *
      */
     public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
     {
@@ -660,7 +660,7 @@ class StudentService
      * @param array $educations Array with educations data
      * @param array $education  Array with education data
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function setEducationType(array &$educations, array $education)
     {
