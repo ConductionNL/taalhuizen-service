@@ -31,18 +31,18 @@ class CCServiceTest extends KernelTestCase
 
     public function testCreateOrganization()
     {
-        $providerArray = array(
-            'name' => 'test provider',
-            'email' => 'test@email.com',
+        $providerArray = [
+            'name'        => 'test provider',
+            'email'       => 'test@email.com',
             'phoneNumber' => '0612345678',
-            'address' => array(
-                'street' => 'test',
-                'houseNumber' => '412',
+            'address'     => [
+                'street'            => 'test',
+                'houseNumber'       => '412',
                 'houseNumberSuffix' => 'b',
-                'postalCode' => '1234AB',
-                'locality' => 'Almere'
-            )
-        );
+                'postalCode'        => '1234AB',
+                'locality'          => 'Almere',
+            ],
+        ];
 
         $array = $this->ccService->createOrganization($providerArray, 'Aanbieder');
 
