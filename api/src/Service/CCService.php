@@ -20,8 +20,9 @@ class CCService
 
     /**
      * CCService constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService $commonGroundService
+     * @param CommonGroundService    $commonGroundService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
