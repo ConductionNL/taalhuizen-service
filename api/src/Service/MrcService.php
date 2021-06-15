@@ -917,7 +917,7 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
@@ -926,6 +926,7 @@ class MrcService
     public function createEmployee(array $employeeArray): Employee
     {
         $employee = $this->createEmployeeArray($employeeArray);
+
         return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
@@ -1022,14 +1023,17 @@ class MrcService
     /**
      * Updates an employee.
      *
-     * @param string $id              The id of the employee to update
-     * @param array  $employeeArray   The input array for the employee to update
-     * @return Employee                 The resulting employee
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
+     *
      * @throws Exception
+     *
+     * @return Employee The resulting employee
      */
     public function updateEmployee(string $id, array $employeeArray): Employee
     {
         $employee = $this->updateEmployeeArray($id, $employeeArray);
+
         return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
