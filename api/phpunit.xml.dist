@@ -21,13 +21,13 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">src/Service</directory>
         </whitelist>
     </filter>
 
     <coverage>
         <include>
-            <directory suffix=".php">src</directory>
+            <directory suffix=".php">src/Service</directory>
         </include>
 
         <exclude>
