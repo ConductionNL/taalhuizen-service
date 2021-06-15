@@ -204,18 +204,19 @@ class GroupMutationResolver implements MutationResolverInterface
      * @param array       $group   the input data for a Group.
      * @param string|null $groupId the id of an already existing group, to update it.
      *
+     * @throws Exception
+     *
      * @return array the result array, containing the created or updated group.
      */
     public function makeGroup(array $course, array $group, string $groupId = null): array
     {
+        $group['course'] = '/courses/'.$course['id'];
         if (isset($groupId)) {
             //update
-            $group['course'] = '/courses/'.$course['id'];
-            $group = $this->eavService->saveObject($group, 'groups', 'edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
+            $group = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId])]);
         } else {
             //create
-            $group['course'] = '/courses/'.$course['id'];
-            $group = $this->eavService->saveObject($group, 'groups', 'edu');
+            $group = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu']);
         }
         $result['group'] = $group;
 

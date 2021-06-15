@@ -8,6 +8,7 @@ use App\Entity\Provider;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 
@@ -242,14 +243,14 @@ class CCService
      * @param array         $employeeArray The employee object that was given as input
      * @param Employee|null $employee      The employee the data relates to
      *
-     * @throws \Exception Thrown if givenName is not provided
+     * @throws Exception Thrown if givenName is not provided
      *
      * @return array The resulting person array
      */
     public function employeeToPerson(array $employeeArray, ?Employee $employee = null): array
     {
         $person = [
-            'givenName'         => key_exists('givenName', $employeeArray) ? $employeeArray['givenName'] : ($employee ? $employee->getGivenName() : new \Exception('givenName must be provided')),
+            'givenName'         => key_exists('givenName', $employeeArray) ? $employeeArray['givenName'] : ($employee ? $employee->getGivenName() : new Exception('givenName must be provided')),
             'additionalName'    => key_exists('additionalName', $employeeArray) ? $employeeArray['additionalName'] : null,
             'familyName'        => key_exists('familyName', $employeeArray) ? $employeeArray['familyName'] : null,
             'birthday'          => key_exists('dateOfBirth', $employeeArray) ? $employeeArray['dateOfBirth'] : null,
@@ -268,7 +269,7 @@ class CCService
         ];
         $person['telephones'][] = key_exists('contactTelephone', $employeeArray) ? ['name' => 'contact telephone', 'telephone' => $employeeArray['contactTelephone']] : null;
 
-        if ($person['givenName'] instanceof \Exception) {
+        if ($person['givenName'] instanceof Exception) {
             throw $person['givenName'];
         }
 
@@ -282,7 +283,7 @@ class CCService
      *
      * @param array $employee The employee to create a person for
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return array The resulting person
      */
@@ -299,11 +300,13 @@ class CCService
      *
      * @param array $person The person array to provide to the contact catalogue
      *
+     * @throws Exception
+     *
      * @return array The result from the contact catalogue and EAV
      */
     public function createPerson(array $person): array
     {
-        return $this->eavService->saveObject($person, 'people', 'cc');
+        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
         // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
     }
@@ -314,13 +317,15 @@ class CCService
      * @param string $id     The id of the person to update
      * @param array  $person The updated data of the person
      *
+     * @throws Exception
+     *
      * @return array The updated person object in the contact catalogue and EAV
      */
     public function updatePerson(string $id, array $person): array
     {
         $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
 
-        return $this->eavService->saveObject($person, 'people', 'cc', $personUrl);
+        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->updateResource($person, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
     }
@@ -331,17 +336,19 @@ class CCService
      * @param array $body      The data to store in the EAV
      * @param null  $personUrl The url of the person to save
      *
-     * @return array|false The resulting object in the EAV
+     * @throws Exception
+     *
+     * @return array The resulting object in the EAV
      */
-    public function saveEavPerson(array $body, $personUrl = null)
+    public function saveEavPerson(array $body, $personUrl = null): array
     {
         // Save the cc/people in EAV
         if (isset($personUrl)) {
             // Update
-            $person = $this->eavService->saveObject($body, 'people', 'cc', $personUrl);
+            $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         } else {
             // Create
-            $person = $this->eavService->saveObject($body, 'people', 'cc');
+            $person = $this->eavService->saveObject($body, ['entityName' => 'groups', 'componentCode' => 'edu']);
         }
 
         return $person;

@@ -106,6 +106,8 @@ class ProviderMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
+     * @throws \Exception
+     *
      * @return Provider The resulting Provider properties
      */
     public function deleteProvider(array $input): ?Provider

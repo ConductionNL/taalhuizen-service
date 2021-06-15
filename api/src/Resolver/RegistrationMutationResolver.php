@@ -111,7 +111,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         //update program
         $this->updateProgram($input, $participant);
 
-        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $input['languageHouseId'], $participant, $memo);
+        $resourceResult = $this->registrationService->handleResult(['registrationStudent' => $participant, 'registrationRegistrar' => $registrationRegistrar, 'languageHouseId' => $input['languageHouseId'], 'memo' => $memo]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
