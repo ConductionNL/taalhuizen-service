@@ -37,6 +37,7 @@ class EAVService
         if (!isset($eavInfo['entityName'])) {
             throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to save an object in/with the EAV!');
         }
+        $body['entityName'] = $eavInfo['entityName'];
         if (!isset($eavInfo['componentCode'])) {
             $body['componentCode'] = 'eav';
         } else {
@@ -93,6 +94,7 @@ class EAVService
         if (!isset($eavInfo['entityName'])) {
             throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to get an object from/with the EAV!');
         }
+        $body['entityName'] = $eavInfo['entityName'];
         if (!isset($eavInfo['componentCode'])) {
             $body['componentCode'] = 'eav';
         } else {
