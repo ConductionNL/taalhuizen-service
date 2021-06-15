@@ -24,4 +24,17 @@
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+
+        <exclude>
+            <directory suffix=".php">src/DataFixtures</directory>
+            <directory suffix=".php">src/Entity</directory>
+            <directory suffix=".php">src/Repository</directory>
+            <file>src/Kernel.php</file>
+        </exclude>
+    </coverage>
 </phpunit>
