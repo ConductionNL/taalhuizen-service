@@ -875,7 +875,7 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
@@ -983,7 +983,7 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param boolean  $studentEmployee Whether or not the employee is also a student
+     * @param bool   $studentEmployee Whether or not the employee is also a student
      *
      * @throws Exception
      *
