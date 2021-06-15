@@ -81,26 +81,29 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * The self or eavId is required to get an object from/with the eav-component.
      *
-     * @param string      $entityName    the name of the entity to get. Defined as EAV/entity in the eav-component.
-     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to get.
-     * @param string|null $componentCode the component code of the entity to get. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $eavId         the id of an eav object you want to get.
+     * @param array $eavInfo an array containing at least an $eavInfo['entityName'] (example='people') and could also contain the $eavInfo['componentCode'] (default = 'eav', example='cc'). Defined as EAV/entity type in the eav-component. Also needs to have either $eavInfo['self'] = the (component @id, not @eav) url to an existing object. Or $eavInfo['eavId'] = the id of an eav object.
      *
      * @throws Exception
      *
-     * @return array|false the object array.
+     * @return array the object array.
      */
-    public function getObject(string $entityName, string $self = null, ?string $componentCode = 'eav', string $eavId = null)
+    public function getObject(array $eavInfo): array
     {
         $body['doGet'] = true;
-        $body['componentCode'] = $componentCode;
-        $body['entityName'] = $entityName;
-        if (isset($self)) {
-            $body['@self'] = $self;
-        } elseif (isset($eavId)) {
-            $body['objectEntityId'] = $eavId;
+        if (!isset($eavInfo['entityName'])) {
+            throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to get an object from/with the EAV!');
+        }
+        if (!isset($eavInfo['componentCode'])) {
+            $body['componentCode'] = 'eav';
         } else {
-            throw new Exception('[EAVService] a get to the eav component needs a @self or an eavId!');
+            $body['componentCode'] = $eavInfo['componentCode'];
+        }
+        if (isset($eavInfo['self'])) {
+            $body['@self'] = $eavInfo['self'];
+        } elseif (isset($eavInfo['eavId'])) {
+            $body['objectEntityId'] = $eavInfo['eavId'];
+        } else {
+            throw new Exception('[EAVService] a get to the eav component needs a self or an eavId in the $eavInfo array!');
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         // Hotfix, createResource adds this to the front of an @id, but eav already returns @id with this in front:
@@ -129,7 +132,7 @@ class EAVService
         if (isset($eavId)) {
             $object['eavId'] = $eavId;
         } else {
-            $object = $this->getObject($entityName, $self, $componentCode);
+            $object = $this->getObject(['entityName' => $entityName, 'componentCode' => $componentCode, 'self' => $self]);
         }
         $object = $this->commonGroundService->getResource(['component' => 'eav', 'type' => 'object_entities', 'id' => $object['eavId']]);
         $this->commonGroundService->deleteResource($object);

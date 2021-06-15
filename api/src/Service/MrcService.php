@@ -84,7 +84,7 @@ class MrcService
      */
     public function getEmployeeRaw(string $id): array
     {
-        return $this->eavService->getObject('employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
     }
 
     /**
@@ -405,7 +405,7 @@ class MrcService
     public function setCurrentEducation(Employee $employee, array $education): Employee
     {
         if ($this->eavService->hasEavObject($this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]))) {
-            $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+            $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
         } else {
             return $employee;
         }
@@ -428,7 +428,7 @@ class MrcService
      */
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
-        $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+        $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
         $employee->setDoesCurrentlyFollowCourse(true);
         $employee->setCurrentlyFollowingCourseName($education['name']);
         $employee->setCurrentlyFollowingCourseInstitute($education['institution']);
@@ -526,7 +526,7 @@ class MrcService
     public function createEmployeeObject(array $employeeArray, array $userRoleArray = [], bool $studentEmployee = false): Employee
     {
         if ($this->eavService->hasEavObject($employeeArray['person'])) {
-            $contact = $this->eavService->getObject('people', $employeeArray['person'], 'cc');
+            $contact = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $employeeArray['person']]);
         } else {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         }
@@ -909,7 +909,7 @@ class MrcService
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
         $userRoleArray = $this->handleUserRoleArray($employeeArray);
-        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
+        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         if ($returnMrcObject) {
             return $result;
         }
@@ -1002,7 +1002,7 @@ class MrcService
         //set userRoleArray
         $userRoleArray = $this->setUserRoleArray($employeeArray);
 
-        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
+        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         if ($returnMrcObject) {
             return $result;
         }

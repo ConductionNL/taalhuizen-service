@@ -67,7 +67,7 @@ class StudentService
      */
     private function getStudentObjects($studentUrl = null, $skipChecks = false): array
     {
-        $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+        $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
 
         $person = $this->getStudentPerson($participant, $skipChecks);
 
@@ -112,7 +112,7 @@ class StudentService
         }
         // Get the cc/person from EAV
         if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
-            $person = $this->eavService->getObject('people', $participant['person'], 'cc');
+            $person = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $participant['person']]);
         } else {
             throw new Exception('Warning, '.$participant['person'].' does not have an eav object (eav/cc/people)!');
         }
@@ -204,7 +204,7 @@ class StudentService
         if (count($employees) > 0) {
             $employee = $employees[0];
             if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
-                $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
+                $employee = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $employee['@id']]);
             }
         }
 
@@ -250,7 +250,7 @@ class StudentService
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $providerId, 'cc')) {
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
-            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            $provider = $this->eavService->getObject(['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $providerUrl]);
             // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
             $collection = $this->getStudentWithStatusFromParticipations($collection, $provider, $status);
         } else {
@@ -279,7 +279,7 @@ class StudentService
                 //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                if ($this->eavService->hasEavObject($participationUrl)) {
                 // Get eav/Participation
-                $participation = $this->eavService->getObject('participations', $participationUrl);
+                $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                 //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                 if ($participation['status'] == $status && isset($participation['learningNeed'])) {
                     $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
@@ -313,7 +313,7 @@ class StudentService
     {
         //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
         // Get eav/LearningNeed
-        $learningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+        $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $learningNeedUrl]);
         if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
             // Add studentUrl to array, if it is not already in there
             if (!in_array($learningNeed['participants'][0], $studentUrls)) {
@@ -675,11 +675,11 @@ class StudentService
                 break;
             case 'followingEducationYes':
                 if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
-                    $educations['followingEducationYes'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                    $educations['followingEducationYes'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 }
                 break;
             case 'course':
-                $educations['course'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                $educations['course'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 break;
         }
     }

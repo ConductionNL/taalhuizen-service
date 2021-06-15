@@ -399,7 +399,7 @@ class EDUService
      */
     public function getGroup(string $id): Group
     {
-        $group = $this->eavService->getObject('groups', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id]), 'edu');
+        $group = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $id])]);
 
         return $this->convertGroupObject($group);
     }
@@ -444,7 +444,7 @@ class EDUService
         if ($this->eavService->hasEavObject(null, 'organizations', $aanbiederId, 'cc')) {
             //get provider
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $aanbiederId]);
-            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            $provider = $this->eavService->getObject(['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $providerUrl]);
             // Get the provider eav/cc/organization participations and their edu/groups urls from EAV
             $groupUrls = [];
             //$provider['participations'] contain all participations urls
@@ -453,7 +453,7 @@ class EDUService
                     //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                    if ($this->eavService->hasEavObject($participationUrl)) {
                     // Get eav/Participation
-                    $participation = $this->eavService->getObject('participations', $participationUrl);
+                    $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
@@ -489,7 +489,7 @@ class EDUService
         if (!in_array($participation['group'], $groupUrls)) {
             array_push($groupUrls, $participation['group']);
             //get group
-            $group = $this->eavService->getObject('groups', $participation['group'], 'edu');
+            $group = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $participation['group']]);
             //handle result
             $resourceResult = $this->convertGroupObject($group, $aanbiederId);
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
@@ -515,7 +515,7 @@ class EDUService
             throw new Exception('Invalid request, groupId is not an existing edu/group!');
         }
         if ($this->eavService->hasEavObject($groupUrl)) {
-            $groep = $this->eavService->getObject('groups', $groupUrl, 'edu');
+            $groep = $this->eavService->getObject(['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]);
             // Remove this group from the eav/participation
             if (isset($groep['participations']) && !empty($groep['participations'])) {
                 $this->removeGroupFromParticipation($groep);
@@ -545,7 +545,7 @@ class EDUService
     {
         foreach ($group['participations'] as $participationUrl) {
             if ($this->eavService->hasEavObject($participationUrl)) {
-                $participation = $this->eavService->getObject('participations', $participationUrl);
+                $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                 if (isset($participation['group'])) {
                     $updateParticipation['group'] = null;
                     $updateParticipation['status'] = 'REFERRED';

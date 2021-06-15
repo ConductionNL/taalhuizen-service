@@ -82,7 +82,7 @@ class LearningNeedService
     public function handleParticipantLearningNeeds(string $studentUrl): array
     {
         if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             $participant['learningNeeds'] = $getParticipant['learningNeeds'];
         }
         if (!isset($participant['learningNeeds'])) {
@@ -191,7 +191,7 @@ class LearningNeedService
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             $result['participants'] = [];
             // Get the learningNeed from EAV
-            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
 
             // Remove this learningNeed from all EAV/edu/participants
             $result = $this->removeParticipantsFromLearningNeed($learningNeed, $result);
@@ -223,7 +223,7 @@ class LearningNeedService
     {
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             if (isset($getParticipant['learningNeeds'])) {
                 $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function ($participantLearningNeed) use ($learningNeedUrl) {
                     return $participantLearningNeed != $learningNeedUrl;
@@ -252,14 +252,14 @@ class LearningNeedService
         // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if (isset($id)) {
             if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
-                $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+                $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
                 $result['learningNeed'] = $learningNeed;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/learning_need!';
             }
         } elseif (isset($url)) {
             if ($this->eavService->hasEavObject($url)) {
-                $learningNeed = $this->eavService->getObject('learning_needs', $url);
+                $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $url]);
                 $result['learningNeed'] = $learningNeed;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/learning_need!';
@@ -287,7 +287,7 @@ class LearningNeedService
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['learningNeeds'] = [];
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             if (isset($participant['learningNeeds'])) {
                 if (isset($dateFrom)) {
                     $dateFrom = new DateTime($dateFrom);
