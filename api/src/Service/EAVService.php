@@ -25,22 +25,27 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * When updating an existing obejct the self or eavId is required.
      *
-     * @param array       $body          the body for creating or updating the object.
-     * @param string      $entityName    the name of the entity to save. Defined as EAV/entity in the eav-component.
-     * @param string|null $componentCode the component code of the entity to save. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to update or create an eav object for.
-     * @param string|null $eavId         the id of an eav object you want to update.
+     * @param array $body    the body for creating or updating the object. This body should contain at least the entityName and could also contain the componentCode (default = 'eav'). Defined as EAV/entity with type in the eav-component.
+     * @param array $eavInfo an array containing at least an $eavInfo['entityName'] (example='people') and could also contain the $eavInfo['componentCode'] (default = 'eav', example='cc'). Defined as EAV/entity type in the eav-component. Can also be used to update an existing eav object with $eavInfo['self'] = the (component @id, not @eav) url to an existing object. Or with $eavInfo['eavId'] = the id of an eav object.
      *
-     * @return array|false the saved object.
+     * @throws Exception
+     *
+     * @return array the saved object.
      */
-    public function saveObject(array $body, string $entityName, ?string $componentCode = 'eav', string $self = null, string $eavId = null)
+    public function saveObject(array $body, array $eavInfo): array
     {
-        $body['componentCode'] = $componentCode;
-        $body['entityName'] = $entityName;
-        if (isset($self)) {
-            $body['@self'] = $self;
-        } elseif (isset($eavId)) {
-            $body['objectEntityId'] = $eavId;
+        if (!isset($eavInfo['entityName'])) {
+            throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to save an object in/with the EAV!');
+        }
+        if (!isset($eavInfo['componentCode'])) {
+            $body['componentCode'] = 'eav';
+        } else {
+            $body['componentCode'] = $eavInfo['componentCode'];
+        }
+        if (isset($eavInfo['self'])) {
+            $body['@self'] = $eavInfo['self'];
+        } elseif (isset($eavInfo['eavId'])) {
+            $body['objectEntityId'] = $eavInfo['eavId'];
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);
@@ -76,26 +81,29 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * The self or eavId is required to get an object from/with the eav-component.
      *
-     * @param string      $entityName    the name of the entity to get. Defined as EAV/entity in the eav-component.
-     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to get.
-     * @param string|null $componentCode the component code of the entity to get. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $eavId         the id of an eav object you want to get.
+     * @param array $eavInfo an array containing at least an $eavInfo['entityName'] (example='people') and could also contain the $eavInfo['componentCode'] (default = 'eav', example='cc'). Defined as EAV/entity type in the eav-component. Also needs to have either $eavInfo['self'] = the (component @id, not @eav) url to an existing object. Or $eavInfo['eavId'] = the id of an eav object.
      *
      * @throws Exception
      *
-     * @return array|false the object array.
+     * @return array the object array.
      */
-    public function getObject(string $entityName, string $self = null, ?string $componentCode = 'eav', string $eavId = null)
+    public function getObject(array $eavInfo): array
     {
         $body['doGet'] = true;
-        $body['componentCode'] = $componentCode;
-        $body['entityName'] = $entityName;
-        if (isset($self)) {
-            $body['@self'] = $self;
-        } elseif (isset($eavId)) {
-            $body['objectEntityId'] = $eavId;
+        if (!isset($eavInfo['entityName'])) {
+            throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to get an object from/with the EAV!');
+        }
+        if (!isset($eavInfo['componentCode'])) {
+            $body['componentCode'] = 'eav';
         } else {
-            throw new Exception('[EAVService] a get to the eav component needs a @self or an eavId!');
+            $body['componentCode'] = $eavInfo['componentCode'];
+        }
+        if (isset($eavInfo['self'])) {
+            $body['@self'] = $eavInfo['self'];
+        } elseif (isset($eavInfo['eavId'])) {
+            $body['objectEntityId'] = $eavInfo['eavId'];
+        } else {
+            throw new Exception('[EAVService] a get to the eav component needs a self or an eavId in the $eavInfo array!');
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         // Hotfix, createResource adds this to the front of an @id, but eav already returns @id with this in front:
@@ -124,7 +132,7 @@ class EAVService
         if (isset($eavId)) {
             $object['eavId'] = $eavId;
         } else {
-            $object = $this->getObject($entityName, $self, $componentCode);
+            $object = $this->getObject(['entityName' => $entityName, 'componentCode' => $componentCode, 'self' => $self]);
         }
         $object = $this->commonGroundService->getResource(['component' => 'eav', 'type' => 'object_entities', 'id' => $object['eavId']]);
         $this->commonGroundService->deleteResource($object);
@@ -138,18 +146,18 @@ class EAVService
      * This function expects you to always give an component & type in the url array that matches the EAV/entity in the eav-component.
      * And than either give an id in the url array or give a resource with an @id or id set.
      *
-     * @param array|null $resource the resource you want to delete.
-     * @param array|null $url      an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
-     * @param false      $async    async for the commongroundService->deleteResource function.
-     * @param bool       $autowire autowire for the commongroundService->deleteResource function.
-     * @param bool       $events   events for the commongroundService->deleteResource function.
+     * @param array|null $resource               the resource you want to delete.
+     * @param array|null $url                    an array used to create an url to the resource you want to delete, containing at least component and type, but could also contain the id.
+     * @param array|null $deleteResourceSettings an array that can be used to set the params for the commongroundService->deleteResource function. Default: async = false, autowire = true, events = true.
      *
      * @throws Exception
      *
      * @return bool true if the eav object and any object connected to this eav object was deleted.
      */
-    public function deleteResource(?array $resource, array $url = null, bool $async = false, bool $autowire = true, bool $events = true): bool
+    public function deleteResource(?array $resource, array $url = null, array $deleteResourceSettings = null): bool
     {
+        $deleteResourceSettings = $this->checkDeleteResourceSettings($deleteResourceSettings);
+
         if (!isset($url['component']) || !isset($url['type'])) {
             throw new Exception('[EAVService] needs a component and a type in $url to delete the eav Object of a resource!');
         }
@@ -165,12 +173,21 @@ class EAVService
         } else {
             $eavResult = true;
         }
-        $result = $this->commonGroundService->deleteResource($resource, $url, $async, $autowire, $events);
+        $result = $this->commonGroundService->deleteResource($resource, $url, $deleteResourceSettings['async'], $deleteResourceSettings['autowire'], $deleteResourceSettings['events']);
         if ($eavResult and $result) {
             return true;
         }
 
         return false;
+    }
+
+    private function checkDeleteResourceSettings(array $deleteResourceSettings): array
+    {
+        return [
+            'async'    => $deleteResourceSettings['async'] ?? false,
+            'autowire' => $deleteResourceSettings['autowire'] ?? true,
+            'events'   => $deleteResourceSettings['events'] ?? true,
+        ];
     }
 
     /**

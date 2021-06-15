@@ -11,14 +11,14 @@ use Ramsey\Uuid\Uuid;
 
 class WRCService
 {
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
 
     public function __construct(
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService
     ) {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
     }
 
@@ -237,9 +237,9 @@ class WRCService
             strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentId($contact) : $documentObject->setAanbiederEmployeeId($contact);
             strpos($document['contact'], 'participant') !== false ? $documentObject->setStudentDocumentId('/documents/'.$document['id']) : $documentObject->setAanbiederEmployeeDocumentId('/documents/'.$document['id']);
         }
-        $this->em->persist($documentObject);
+        $this->entityManager->persist($documentObject);
         $documentObject->setId(Uuid::getFactory()->fromString($document['id']));
-        $this->em->persist($documentObject);
+        $this->entityManager->persist($documentObject);
 
         return $documentObject;
     }

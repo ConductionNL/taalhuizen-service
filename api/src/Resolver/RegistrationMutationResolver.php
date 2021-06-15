@@ -32,23 +32,20 @@ class RegistrationMutationResolver implements MutationResolverInterface
      * RegistrationMutationResolver constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param ParameterBagInterface  $parameterBagInterface
-     * @param CommongroundService    $commonGroundService
-     * @param StudentService         $studentService
+     * @param CommongroundService $commonGroundService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        ParameterBagInterface $parameterBagInterface,
-        CommonGroundService $commonGroundService,
-        StudentService $studentService
-    ) {
+        CommonGroundService $commonGroundService
+    )
+    {
         $this->entityManager = $entityManager;
-        $this->parameterBagInterface = $parameterBagInterface;
         $this->commonGroundService = $commonGroundService;
         $this->registrationService = new RegistrationService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBagInterface);
-        $this->studentService = $studentService;
-        $this->eduService = new EDUService($entityManager, $commonGroundService, $parameterBagInterface);
+        $this->ccService = new CCService($entityManager, $commonGroundService);
+        $this->studentService = new StudentService($entityManager, $commonGroundService);
+
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->eavService = new EAVService($commonGroundService);
     }
 
@@ -77,9 +74,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data for the registration
      *
+     * @return Registration The resulting registration object
      * @throws Exception
      *
-     * @return Registration The resulting registration object
      */
     public function createRegistration(array $input): Registration
     {
@@ -98,8 +95,11 @@ class RegistrationMutationResolver implements MutationResolverInterface
         $organization = $this->commonGroundService->saveResource($organization, ['component' => 'cc', 'type' => 'organizations']);
 
         //Save memo
-        $memo = $this->inputToMemo($input, $registrationStudent['@id'], $organization['@id']);
-        $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
+        if (isset($input['memo'])) {
+            $registration['author'] = $organization['@id'];
+            $memo = $this->inputToMemo($input, $registrationStudent['@id']);
+            $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
+        }
 
         //Save participant
         $participant = $this->createParticipant($organization, $registrationStudent);
@@ -111,7 +111,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
         //update program
         $this->updateProgram($input, $participant);
 
-        $resourceResult = $this->registrationService->handleResult($participant, $registrationRegistrar, $input['languageHouseId'], $participant, $memo);
+        $resourceResult = $this->registrationService->handleResult(["student" => $registrationStudent, "registration" => $registrationRegistrar, "languageHouseId" => $input['languageHouseId'], "participant" => $participant, "memo" => $memo]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
         return $resourceResult;
@@ -120,29 +120,29 @@ class RegistrationMutationResolver implements MutationResolverInterface
     /**
      * Updates a program.
      *
-     * @param array $input       the input data for the registration
+     * @param array $input the input data for the registration
      * @param array $participant the input data for the registration
      */
     public function updateProgram(array $input, array $participant)
     {
-        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type'=>'organizations', 'id' => $input['languageHouseId']]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $languageHouseUrl])['hydra:member'][0];
+        $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['languageHouseId']]);
+        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $languageHouseUrl])['hydra:member'][0];
         foreach ($program['participants'] as &$programParticipant) {
-            $programParticipant = '/participants/'.$programParticipant['id'];
+            $programParticipant = '/participants/' . $programParticipant['id'];
         }
-        $program['participants'][] = '/participants/'.$participant['id'];
-        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $program['id']]);
+        $program['participants'][] = '/participants/' . $participant['id'];
+        $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs', 'id' => $program['id']]);
     }
 
     /**
      * Creates a participant.
      *
-     * @param array $organization        the organization data.
+     * @param array $organization the organization data.
      * @param array $registrationStudent the registrationStudent data.
      *
+     * @return array The resulting eav/participants object
      * @throws Exception
      *
-     * @return array The resulting eav/participants object
      */
     public function createParticipant(array $organization, array $registrationStudent)
     {
@@ -158,9 +158,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
+     * @return ?Registration The resulting Registration object
      * @throws Exception
      *
-     * @return ?Registration The resulting Registration object
      */
     public function deleteRegistration(array $input): ?Registration
     {
@@ -192,9 +192,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
+     * @return object The resulting Registration object
      * @throws Exception
      *
-     * @return object The resulting Registration object
      */
     public function acceptRegistration(array $input): object
     {
@@ -216,22 +216,39 @@ class RegistrationMutationResolver implements MutationResolverInterface
     /**
      * Input to memo.
      *
-     * @param array       $input           the input data.
-     * @param string|null $studentUrl      The studentUrl
-     * @param string|null $organizationUrl The organizationUrl
-     *
-     * @throws Exception
+     * @param array $input the input data.
+     * @param string|null $studentUrl The studentUrl
      *
      * @return array The resulting memo properties
+     * @throws Exception
+     *
      */
-    private function inputToMemo(array $input, string $studentUrl = null, string $organizationUrl = null)
+    private function inputToMemo(array $input, string $studentUrl = null)
     {
         $memo = [];
-        if (isset($input['memo'])) {
-            $memo = $this->getMemoProperties($memo, $input['memo'], $studentUrl, $organizationUrl);
-        }
+
+        $memo['description'] = $input['memo'];
+        $memo = $this->getMemoStudentProperties($studentUrl);
 
         return $memo;
+    }
+
+    /**
+     * Get memo Student properties.
+     *
+     * @param string $studentUrl the studentUrl.
+     *
+     * @return array The resulting registration properties
+     * @throws Exception
+     *
+     */
+    private function getMemoStudentProperties(string $studentUrl): array
+    {
+        $student = $this->commonGroundService->getResource($studentUrl);
+        $registration['name'] = 'Memo about ' . $student['givenName'];
+        $registration['topic'] = $studentUrl;
+
+        return $registration;
     }
 
     /**
@@ -239,9 +256,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
+     * @return array The resulting student properties
      * @throws Exception
      *
-     * @return array The resulting student properties
      */
     private function inputToStudentPerson(array $input)
     {
@@ -259,9 +276,9 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @param array $input the input data.
      *
+     * @return array The resulting registrar properties
      * @throws Exception
      *
-     * @return array The resulting registrar properties
      */
     private function inputToRegistrarPerson(array $input)
     {
@@ -275,39 +292,14 @@ class RegistrationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get memo properties.
-     *
-     * @param array  $registration    the registration data.
-     * @param string $memoInput       the memo input.
-     * @param string $studentUrl      the studentUrl.
-     * @param string $organizationUrl the organizationUrl.
-     *
-     * @throws Exception
-     *
-     * @return array The resulting registration properties
-     */
-    private function getMemoProperties(array $registration, string $memoInput, string $studentUrl, string $organizationUrl): array
-    {
-        $registration['author'] = $organizationUrl;
-        $student = $this->commonGroundService->getResource($studentUrl);
-        $registration['name'] = 'Memo about '.$student['givenName'];
-        $registration['topic'] = $studentUrl;
-        if (isset($memoInput)) {
-            $registration['description'] = $memoInput;
-        }
-
-        return $registration;
-    }
-
-    /**
      * Get Student properties.
      *
      * @param array $registration the registration data.
      * @param array $studentInput the student input.
      *
+     * @return array The resulting registration properties
      * @throws Exception
      *
-     * @return array The resulting registration properties
      */
     private function getStudentProperties(array $registration, array $studentInput): array
     {
@@ -321,15 +313,15 @@ class RegistrationMutationResolver implements MutationResolverInterface
             $registration['familyName'] = $studentInput['familyName'];
         }
         if (isset($studentInput['email'])) {
-            $registration['emails'][0]['name'] = 'Email of '.$registration['givenName'];
+            $registration['emails'][0]['name'] = 'Email of ' . $registration['givenName'];
             $registration['emails'][0]['email'] = $studentInput['email'];
         }
         if (isset($studentInput['telephone'])) {
-            $registration['telephones'][0]['name'] = 'Telephone of '.$registration['givenName'];
+            $registration['telephones'][0]['name'] = 'Telephone of ' . $registration['givenName'];
             $registration['telephones'][0]['telephone'] = $studentInput['telephone'];
         }
         if (isset($studentInput['address'])) {
-            $registration['addresses'][0]['name'] = 'Address of '.$registration['givenName'];
+            $registration['addresses'][0]['name'] = 'Address of ' . $registration['givenName'];
             $registration['addresses'][0] = $studentInput['address'];
         }
 
@@ -339,12 +331,12 @@ class RegistrationMutationResolver implements MutationResolverInterface
     /**
      * Get Registrar properties.
      *
-     * @param array $registration   the registration data.
+     * @param array $registration the registration data.
      * @param array $registrarInput the registrar input.
      *
+     * @return array The resulting registration properties
      * @throws Exception
      *
-     * @return array The resulting registration properties
      */
     private function getRegistrarProperties(array $registration, array $registrarInput): array
     {
@@ -361,11 +353,11 @@ class RegistrationMutationResolver implements MutationResolverInterface
             $registration['familyName'] = $registrarInput['familyName'];
         }
         if (isset($registrarInput['email'])) {
-            $registration['emails'][0]['name'] = 'Email of '.$registration['givenName'];
+            $registration['emails'][0]['name'] = 'Email of ' . $registration['givenName'];
             $registration['emails'][0]['email'] = $registrarInput['email'];
         }
         if (isset($registrarInput['telephone'])) {
-            $registration['telephones'][0]['name'] = 'Telephone of '.$registration['givenName'];
+            $registration['telephones'][0]['name'] = 'Telephone of ' . $registration['givenName'];
             $registration['telephones'][0]['telephone'] = $registrarInput['telephone'];
         }
 
@@ -375,18 +367,18 @@ class RegistrationMutationResolver implements MutationResolverInterface
     /**
      * Input to organization.
      *
-     * @param array       $input      the input data.
+     * @param array $input the input data.
      * @param string|null $ccPersonId the cc/people id.
      *
+     * @return array The resulting registration properties
      * @throws Exception
      *
-     * @return array The resulting registration properties
      */
     private function inputToOrganization(array $input, string $ccPersonId = null)
     {
         // Add cc/people to this cc/organization
         if (isset($ccPersonId)) {
-            $organization['persons'][] = '/people/'.$ccPersonId;
+            $organization['persons'][] = '/people/' . $ccPersonId;
         } else {
             $organization = [];
         }

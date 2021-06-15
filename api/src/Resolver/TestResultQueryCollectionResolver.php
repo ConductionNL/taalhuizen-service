@@ -7,6 +7,8 @@ use App\Service\ResolverService;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryCollectionResolver implements QueryCollectionResolverInterface
@@ -16,11 +18,11 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
     private CommonGroundService $commonGroundService;
 
     public function __construct(
-        ResolverService $resolverService,
+        EntityManagerInterface $entityManager,
         CommonGroundService $commonGroundService
     ) {
-        $this->testResultService = new TestResultService($commonGroundService);
-        $this->resolverService = $resolverService;
+        $this->testResultService = new TestResultService($commonGroundService, $entityManager);
+        $this->resolverService = new ResolverService();
     }
 
     /**

@@ -18,15 +18,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class GraphQLSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
     private ParameterBagInterface $params;
     private UcService $ucService;
     private SerializerInterface $serializer;
     private CacheInterface $cache;
 
-    public function __construct(UcService $ucService, EntityManagerInterface $em, ParameterBagInterface $params, SerializerInterface $serializer, CacheInterface $cache)
+    public function __construct(UcService $ucService, EntityManagerInterface $entityManager, ParameterBagInterface $params, SerializerInterface $serializer, CacheInterface $cache)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->params = $params;
         $this->ucService = $ucService;
         $this->serializer = $serializer;

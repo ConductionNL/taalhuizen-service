@@ -5,6 +5,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\User;
 use App\Service\UcService;
+use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserQueryItemResolver implements QueryItemResolverInterface
