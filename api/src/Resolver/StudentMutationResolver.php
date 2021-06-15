@@ -581,7 +581,7 @@ class StudentMutationResolver implements MutationResolverInterface
         }
 
         // Create the children of this person
-        return $this->setPersonChildrenFromGeneralDetails(['person' => $person, 'details' => $generalDetails], $updatePerson);
+        return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
     }
 
     /**
@@ -618,10 +618,8 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @return array Returns person array with children properties
      */
-    private function setPersonChildrenFromGeneralDetails(array $personData, $updatePerson = null): array
+    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
-        $person = $personData['person'];
-        $generalDetails = $personData['generalDetails'];
         if (isset($generalDetails['childrenCount'])) {
             $childrenCount = (int) $generalDetails['childrenCount'];
         }
