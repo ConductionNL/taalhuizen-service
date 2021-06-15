@@ -17,8 +17,8 @@ class LanguageHouseQueryCollectionResolver implements QueryCollectionResolverInt
     /**
      * LanguageHouseQueryCollectionResolver constructor.
      *
-     * @param CCService       $ccService
-     * @param UcService       $ucService
+     * @param CCService $ccService
+     * @param UcService $ucService
      */
     public function __construct(
         CCService $ccService,

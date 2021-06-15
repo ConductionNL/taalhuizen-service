@@ -19,8 +19,8 @@ class ParticipationMutationResolver implements MutationResolverInterface
     /**
      * ParticipationMutationResolver constructor.
      *
-     * @param ParticipationService   $participationService
-     * @param LayerService           $layerService
+     * @param ParticipationService $participationService
+     * @param LayerService         $layerService
      */
     public function __construct(ParticipationService $participationService, LayerService $layerService)
     {

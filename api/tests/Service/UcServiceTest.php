@@ -56,13 +56,13 @@ class UcServiceTest extends KernelTestCase
     public function testCreateUser()
     {
         $validChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $email = 'test-'. substr(str_shuffle(str_repeat($validChars, ceil(3 / strlen($validChars)))), 1, 3);
-        $userArray = array(
-            'username' => $email,
-            'password' => 'test1234',
-            'givenName' => 'testUser',
+        $email = 'test-'.substr(str_shuffle(str_repeat($validChars, ceil(3 / strlen($validChars)))), 1, 3);
+        $userArray = [
+            'username'   => $email,
+            'password'   => 'test1234',
+            'givenName'  => 'testUser',
             'familyName' => 'testUser',
-            'email' => $email);
+            'email'      => $email, ];
 
         $user = $this->ucService->createUser($userArray);
 

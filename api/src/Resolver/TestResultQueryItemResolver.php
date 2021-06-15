@@ -4,7 +4,6 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\TestResultService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
 use Ramsey\Uuid\Uuid;
 

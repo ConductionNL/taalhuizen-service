@@ -19,8 +19,8 @@ class EmployeeMutationResolver implements MutationResolverInterface
     /**
      * EmployeeMutationResolver constructor.
      *
-     * @param MrcService             $mrcService
-     * @param LayerService           $layerService
+     * @param MrcService   $mrcService
+     * @param LayerService $layerService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
     {
