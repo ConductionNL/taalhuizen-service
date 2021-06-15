@@ -613,7 +613,8 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets the persons children properties from the given general details.
      *
-     * @param array $personData
+     * @param array $person
+     * @param array $generalDetails
      * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns person array with children properties
