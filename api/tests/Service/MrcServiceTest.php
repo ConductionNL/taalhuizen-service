@@ -12,8 +12,7 @@ class MrcServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->mrcService = $this->serviceContainer->get(MrcService::class);
         parent::setUp();
     }

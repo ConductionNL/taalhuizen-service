@@ -12,8 +12,7 @@ class CCServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->ccService = $this->serviceContainer->get(CCService::class);
         parent::setUp();
     }

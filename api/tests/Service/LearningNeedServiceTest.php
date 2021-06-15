@@ -12,8 +12,7 @@ class LearningNeedServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->learningNeedService = $this->serviceContainer->get(LearningNeedService::class);
         parent::setUp();
     }
