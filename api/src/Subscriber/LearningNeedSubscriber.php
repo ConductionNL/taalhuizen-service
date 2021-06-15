@@ -144,12 +144,12 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         if (isset($learningNeedId)) {
             // Update
             $learningNeed['dateModified'] = $now;
-            $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
         } else {
             // Create
             $learningNeed['dateCreated'] = $now;
             $learningNeed['dateModified'] = $now;
-            $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs');
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs']);
         }
 
         // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -177,7 +177,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         // Save the participant in EAV with the EAV/learningNeed connected to it
         if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
             array_push($participant['learningNeeds'], $learningNeed['@eav']);
-            $participant = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            $participant = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
 
             // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
             $result['participant'] = $participant;
@@ -190,7 +190,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             }
             if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
                 array_push($updateLearningNeed['participants'], $participant['@id']);
-                $learningNeed = $this->eavService->saveObject($updateLearningNeed, 'learning_needs', 'eav', $learningNeed['@eav']);
+                $learningNeed = $this->eavService->saveObject($updateLearningNeed, ['entityName' => 'learning_needs', 'self' => $learningNeed['@eav']]);
 
                 // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
                 $result['learningNeed'] = $learningNeed;
@@ -280,7 +280,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
             $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function ($participantLearningNeed) use ($learningNeedUrl) {
                 return $participantLearningNeed != $learningNeedUrl;
             }));
-            $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            $result['participant'] = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
         }
 
         return $result;

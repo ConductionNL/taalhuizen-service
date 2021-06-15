@@ -25,22 +25,26 @@ class EAVService
      * This can only be used for objects that are defined as EAV/entity in the eav-component.
      * When updating an existing obejct the self or eavId is required.
      *
-     * @param array       $body          the body for creating or updating the object.
-     * @param string      $entityName    the name of the entity to save. Defined as EAV/entity in the eav-component.
-     * @param string|null $componentCode the component code of the entity to save. Defined as EAV/entity in the eav-component. Default is 'eav' itself.
-     * @param string|null $self          the (component @id, not @eav) url to an existing object you want to update or create an eav object for.
-     * @param string|null $eavId         the id of an eav object you want to update.
+     * @param array $body the body for creating or updating the object. This body should contain at least the entityName and could also contain the componentCode (default = 'eav'). Defined as EAV/entity with type in the eav-component.
+     * @param array $eavInfo an array containing at least an $eavInfo['entityName'] (example='people') and could also contain the $eavInfo['componentCode'] (default = 'eav', example='cc'). Defined as EAV/entity type in the eav-component. Can also be used to update an existing eav object with $eavInfo['self'] = the (component @id, not @eav) url to an existing object. Or with $eavInfo['eavId'] = the id of an eav object.
      *
-     * @return array|false the saved object.
+     * @return array the saved object.
+     * @throws Exception
      */
-    public function saveObject(array $body, string $entityName, ?string $componentCode = 'eav', string $self = null, string $eavId = null)
+    public function saveObject(array $body, array $eavInfo): array
     {
-        $body['componentCode'] = $componentCode;
-        $body['entityName'] = $entityName;
-        if (isset($self)) {
-            $body['@self'] = $self;
-        } elseif (isset($eavId)) {
-            $body['objectEntityId'] = $eavId;
+        if (!isset($eavInfo['entityName'])) {
+            throw new Exception('[EAVService] needs an entityName in the $eavInfo array in order to save an object in/with the EAV!');
+        }
+        if (!isset($eavInfo['componentCode'])) {
+            $body['componentCode'] = 'eav';
+        } else {
+            $body['componentCode'] = $eavInfo['componentCode'];
+        }
+        if (isset($eavInfo['self'])) {
+            $body['@self'] = $eavInfo['self'];
+        } elseif (isset($eavInfo['eavId'])) {
+            $body['objectEntityId'] = $eavInfo['eavId'];
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $result['@id']);

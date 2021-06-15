@@ -46,7 +46,7 @@ class ParticipationService
                 return $result['errorMessage'] = $result['errorMessage'] = 'Invalid request, '.$participationId.' is not an existing eav/participation!';
             }
             // Update
-            $participation = $this->eavService->saveObject($participation, 'participations', 'eav', null, $participationId);
+            $participation = $this->eavService->saveObject($participation, ['entityName' => 'participations', 'eavId' => $participationId]);
         } else {
             // Create
             if (isset($participation['aanbiederName'])) {
@@ -54,7 +54,7 @@ class ParticipationService
             } else {
                 $participation['status'] = 'REFERRED';
             }
-            $participation = $this->eavService->saveObject($participation, 'participations');
+            $participation = $this->eavService->saveObject($participation, ['entityName' => 'participations']);
         }
 
         return $participation;
@@ -123,14 +123,14 @@ class ParticipationService
         // Connect the learningNeed in EAV to the EAV/participation
         if (!in_array($participation['@eav'], $learningNeed['participations'])) {
             array_push($learningNeed['participations'], $participation['@eav']);
-            $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
             $result['learningNeed'] = $learningNeed;
 
             // Update the participation to add the EAV/learningNeed to it
             $updateParticipation['learningNeed'] = $learningNeed['@eav'];
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
@@ -170,14 +170,14 @@ class ParticipationService
         // Connect the organization in EAV to the EAV/participation
         if (!in_array($participation['@eav'], $organization['participations'])) {
             array_push($organization['participations'], $participation['@eav']);
-            $organization = $this->eavService->saveObject($organization, 'organizations', 'cc', $aanbiederUrl);
+            $organization = $this->eavService->saveObject($organization, ['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $aanbiederUrl]);
 
             // Add $organization to the $result['organization'] because this is convenient when testing or debugging (mostly for us)
             $result['organization'] = $organization;
 
             // Update the participation to add the cc/organization to it
             $updateParticipation['aanbieder'] = $organization['@id'];
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
@@ -240,7 +240,7 @@ class ParticipationService
                 $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function ($learningNeedParticipation) use ($participationUrl) {
                     return $learningNeedParticipation != $participationUrl;
                 }));
-                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', $learningNeedUrl);
+                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedUrl]);
             }
         }
         // only works when participation is deleted after, because relation is not removed from the EAV participation object in here
@@ -267,7 +267,7 @@ class ParticipationService
                     $organization['participations'] = array_values(array_filter($getOrganization['participations'], function ($organizationParticipation) use ($participationUrl) {
                         return $organizationParticipation != $participationUrl;
                     }));
-                    $result['organization'] = $this->eavService->saveObject($organization, 'organizations', 'cc', $aanbiederUrl);
+                    $result['organization'] = $this->eavService->saveObject($organization, ['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $aanbiederUrl]);
                 }
             }
         }
@@ -425,7 +425,7 @@ class ParticipationService
         // Check if the status needs to be changed
         if ($participation['status'] != $updateParticipation['status']) {
             // Update status
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
@@ -477,7 +477,7 @@ class ParticipationService
         // Save the employee in EAV with the EAV/participant connected to it
         if (!in_array($participation['@eav'], $employee['participations'])) {
             array_push($employee['participations'], $participation['@eav']);
-            $employee = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
+            $employee = $this->eavService->saveObject($employee, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $mentorUrl]);
 
             // Add $employee to the $result['employee'] because this is convenient when testing or debugging (mostly for us)
             $result['employee'] = $employee;
@@ -485,7 +485,7 @@ class ParticipationService
             // Update the participant to add the mrc/employee to it
             $updateParticipation['mentor'] = $employee['@id'];
             $updateParticipation['status'] = 'ACTIVE';
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
@@ -547,7 +547,7 @@ class ParticipationService
             $employee['participations'] = array_values(array_filter($getEmployee['participations'], function ($employeeParticipation) use ($participation) {
                 return $employeeParticipation != $participation['@eav'];
             }));
-            $result['employee'] = $this->eavService->saveObject($employee, 'employees', 'mrc', $mentorUrl);
+            $result['employee'] = $this->eavService->saveObject($employee, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $mentorUrl]);
         }
         // Update eav/participation to remove the EAV/mrc/employee from it
         return $this->updateParticipation($participation);
@@ -624,7 +624,7 @@ class ParticipationService
             $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
             $participantId = $this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]);
             $group['participants'][] = '/participants/'.$participantId;
-            $group = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+            $group = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]);
 
             // Add $group to the $result['group'] because this is convenient when testing or debugging (mostly for us)
             $result['group'] = $group;
@@ -632,7 +632,7 @@ class ParticipationService
             // Update the participant to add the edu/group to it
             $updateParticipation['group'] = $group['@id'];
             $updateParticipation['status'] = 'ACTIVE';
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
             $result['participation'] = $participation;
@@ -662,9 +662,9 @@ class ParticipationService
      *
      * @throws Exception
      *
-     * @return Participation A eav/participations is returned from EAV
+     * @return array A eav/participations is returned from EAV
      */
-    public function checkEAVGroup(string $groupUrl): Participation
+    public function checkEAVGroup(string $groupUrl): array
     {
         if ($this->eavService->hasEavObject($groupUrl)) {
             $getGroup = $this->eavService->getObject('groups', $groupUrl, 'edu');
@@ -715,7 +715,7 @@ class ParticipationService
                     $participant = '/participants/'.$participant['id'];
                 }
             }
-            $result['group'] = $this->eavService->saveObject($group, 'groups', 'edu', $groupUrl);
+            $result['group'] = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]);
         }
         // Update eav/participation to remove the EAV/edu/group from it
         return $this->updateParticipation($participation);
@@ -1113,7 +1113,7 @@ class ParticipationService
         $updateParticipation['presenceStartDate'] = null;
         $updateParticipation['presenceEndDate'] = null;
         $updateParticipation['presenceEndParticipationReason'] = null;
-        $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participation['@eav']);
+        $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
         // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
         $result['participation'] = $participation;

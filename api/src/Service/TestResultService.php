@@ -103,7 +103,7 @@ class TestResultService
         // Update the eav/participation to add the EAV/edu/result to it
         if (!in_array($testResult['@id'], $updateParticipation['results'])) {
             array_push($updateParticipation['results'], $testResult['@id']);
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', null, $participationId);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'eavId' => $participationId]);
         }
 
         return [
@@ -157,7 +157,7 @@ class TestResultService
                 $participation['results'] = array_values(array_filter($getParticipation['results'], function ($participationResult) use ($testResultUrl) {
                     return $participationResult != $testResultUrl;
                 }));
-                $this->eavService->saveObject($participation, 'participations', 'eav', $testResult['participation']);
+                $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $testResult['participation']]);
             }
         }
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here

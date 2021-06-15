@@ -25,20 +25,21 @@ class EDUService
     /**
      * This function updates or creates a edu/participant with the given body.
      *
-     * @param array       $body           Array with data from the edu/participant
+     * @param array $body Array with data from the edu/participant
      * @param string|null $participantUrl Url of the edu/participant
      *
-     * @return array|false A edu/participant is returned from the EAV
+     * @return array A edu/participant is returned from the EAV
+     * @throws \Exception
      */
-    public function saveEavParticipant(array $body, $participantUrl = null)
+    public function saveEavParticipant(array $body, $participantUrl = null): array
     {
         // Save the edu/participant in EAV
         if (isset($participantUrl)) {
             // Update
-            $person = $this->eavService->saveObject($body, 'participants', 'edu', $participantUrl);
+            $person = $this->eavService->saveObject($body, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $participantUrl]);
         } else {
             // Create
-            $person = $this->eavService->saveObject($body, 'participants', 'edu');
+            $person = $this->eavService->saveObject($body, ['entityName' => 'participants', 'componentCode' => 'edu']);
         }
 
         return $person;
@@ -47,26 +48,25 @@ class EDUService
     /**
      * This function updates or creates a edu/result with the given body.
      *
-     * @param array       $body      Array with data from the edu/result
+     * @param array $body Array with data from the edu/result
      * @param string|null $resultUrl Url of the edu/result
      *
-     * @return array|false A edu/result is returned from the EAV
+     * @return array A edu/result is returned from the EAV
+     * @throws \Exception
      */
-    public function saveEavResult(array $body, $resultUrl = null)
+    public function saveEavResult(array $body, $resultUrl = null): array
     {
         // Save the edu/result in EAV
         if (isset($resultUrl)) {
             // Update
-            $result = $this->eavService->saveObject($body, 'results', 'edu', $resultUrl);
+            $result = $this->eavService->saveObject($body, ['entityName' => 'results', 'componentCode' => 'edu', 'self' => $resultUrl]);
         } else {
             // Create
-            $result = $this->eavService->saveObject($body, 'results', 'edu');
+            $result = $this->eavService->saveObject($body, ['entityName' => 'results', 'componentCode' => 'edu']);
         }
 
         return $result;
     }
-
-    //@todo uitwerken
 
     /**
      * This function updates or creates a edu/program that belongs to the given organization.
@@ -76,7 +76,7 @@ class EDUService
      *
      * @return array|false|mixed|string|null A edu/program is returned from the EAV
      */
-    public function saveProgram(array $organization, $update = false)
+    public function saveProgram(array $organization, bool $update = false)
     {
         $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider', $organization['@id']])['hydra:member'];
         $program['name'] = $organization['name'];
@@ -551,7 +551,7 @@ class EDUService
                     $updateParticipation['presenceStartDate'] = null;
                     $updateParticipation['presenceEndDate'] = null;
                     $updateParticipation['presenceEndParticipationReason'] = null;
-                    $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', $participationUrl);
+                    $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participationUrl]);
                 }
             }
         }
@@ -572,7 +572,7 @@ class EDUService
         $groupUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]);
         $groep['mentors'] = $employeeids;
 
-        return $this->convertGroupObject($this->eavService->saveObject($groep, 'groups', 'edu', $groupUrl));
+        return $this->convertGroupObject($this->eavService->saveObject($groep, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $groupUrl]));
     }
 
     /**
