@@ -13,8 +13,8 @@ languages:
           - /api/migrations/.*
           - /api/nlx-setup/.*
 #          - /api/public/.*
-          - /api/templates/.*
-          - /api/translations/.*
+#          - /api/templates/.*
+#          - /api/translations/.*
           - /api/var/.*
           - /api/vendor/.*
           - /api/src/Entity/.*
