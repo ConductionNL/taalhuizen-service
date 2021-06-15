@@ -12,7 +12,7 @@ languages:
           - /api/helm/.*
           - /api/migrations/.*
           - /api/nlx-setup/.*
-          - /api/public/.*
+#          - /api/public/.*
           - /api/templates/.*
           - /api/translations/.*
           - /api/var/.*
