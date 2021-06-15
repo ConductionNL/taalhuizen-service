@@ -565,7 +565,7 @@ class StudentMutationResolver implements MutationResolverInterface
     {
 //        $generalDetails = $personData['details'];
         if (isset($personData['details']['countryOfOrigin'])) {
-            $personData['person'] = $this->setPersonBirthplaceFromCountryOfOrigin($personData['person'], $personData['details']['countryOfOrigin'], $updatePerson);
+            $personData['person'] = $this->setPersonBirthplaceFromCountryOfOrigin(['person' => $personData['person'], 'countryOfOrigin' => $personData['details']['countryOfOrigin']], $updatePerson);
         }
         //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
         if (isset($personData['details']['nativeLanguage'])) {
@@ -586,27 +586,26 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets the persons birthplace from the given country of origins.
      *
-     * @param array  $person          Array with persons data
-     * @param string $countryOfOrigin String that holds country of origin
-     * @param null   $updatePerson    Bool if person should be updated
+     * @param array $personData
+     * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns person array with birthplace property
      */
-    private function setPersonBirthplaceFromCountryOfOrigin(array $person, string $countryOfOrigin, $updatePerson = null): array
+    private function setPersonBirthplaceFromCountryOfOrigin(array $personData, $updatePerson = null): array
     {
-        $person['birthplace'] = [
-            'country' => $countryOfOrigin,
+        $personData['person']['birthplace'] = [
+            'country' => $personData['countryOfOrigin'],
         ];
         if (isset($updatePerson['birthplace']['id'])) {
             //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
-            $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
+            $address = array_merge($updatePerson['birthplace'], $personData['person']['birthplace']);
             $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
 
             //unset person birthplace
-            unset($person['birthplace']);
+            unset($personData['person']['birthplace']);
         }
 
-        return $person;
+        return $personData['person'];
     }
 
     /**
@@ -631,7 +630,7 @@ class StudentMutationResolver implements MutationResolverInterface
             }
         }
         if (isset($childrenCount)) {
-            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, $childrenCount, $childrenDatesOfBirth ?? null);
+            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, ['count' => $childrenCount,'datesOfBirth' => $childrenDatesOfBirth ?? null]);
             if (isset($updatePerson['ownedContactLists'][0]['id'])) {
                 $person = $this->updatePersonChildrenContactList($person, $updatePerson);
             }
@@ -664,21 +663,19 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets children from children count.
      *
-     * @param array $person               Array with persons data
-     * @param int   $childrenCount        Int that counts children
-     * @param array $childrenDatesOfBirth Array with childrens date of births
-     *
+     * @param array $person Array with persons data
+     * @param array $childrenData
      * @return array Returns an array with childrens data
      */
-    private function setChildrenFromChildrenCount(array $person, int $childrenCount, array $childrenDatesOfBirth): array
+    private function setChildrenFromChildrenCount(array $person, array $childrenData): array
     {
         $children = [];
-        for ($i = 0; $i < $childrenCount; $i++) {
+        for ($i = 0; $i < $childrenData['count']; $i++) {
             $child = [
                 'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
             ];
-            if (isset($childrenDatesOfBirth[$i])) {
-                $child['birthday'] = $childrenDatesOfBirth[$i];
+            if (isset($childrenData['datesOfBirth'][$i])) {
+                $child['birthday'] = $childrenData['datesOfBirth'][$i];
             }
             $children[] = $child;
         }
