@@ -17,9 +17,10 @@ class ParticipationMutationResolver implements MutationResolverInterface
 
     /**
      * ParticipationMutationResolver constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param CommongroundService $commonGroundService
-     * @param ParticipationService $participationService
+     * @param CommongroundService    $commonGroundService
+     * @param ParticipationService   $participationService
      */
     public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ParticipationService $participationService)
     {
@@ -61,11 +62,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Create participation
+     * Create participation.
      *
      * @param Participation $resource the resource data.
-     * @return Participation The resulting Participation properties
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation properties
      */
     public function createParticipation(Participation $resource): Participation
     {
@@ -88,11 +91,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Update participation
+     * Update participation.
      *
      * @param array $input the input data.
-     * @return Participation The resulting Participation properties
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation properties
      */
     public function updateParticipation(array $input): Participation
     {
@@ -116,11 +121,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Remove participation
+     * Remove participation.
      *
      * @param array $participation the participation data.
-     * @return ?Participation The resulting Participation properties
+     *
      * @throws Exception
+     *
+     * @return ?Participation The resulting Participation properties
      */
     public function removeParticipation(array $participation): ?Participation
     {
@@ -143,11 +150,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Remove mentor from participation
+     * Remove mentor from participation.
      *
      * @param array $input the input data.
-     * @return Participation The resulting Participation properties
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation properties
      */
     public function removeMentorFromParticipation(array $input): Participation
     {
@@ -159,11 +168,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get mentor from participation
+     * Get mentor from participation.
      *
      * @param array $input the input data.
-     * @return array The resulting Participation properties
+     *
      * @throws Exception
+     *
+     * @return array The resulting Participation properties
      */
     public function getParticipationMentor(array $input): array
     {
@@ -186,11 +197,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Set mentorId
+     * Set mentorId.
      *
      * @param array $input the input data.
-     * @return string The resulting mentorId
+     *
      * @throws Exception
+     *
+     * @return string The resulting mentorId
      */
     public function setMentorId(array $input): string
     {
@@ -201,11 +214,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Set learningNeedId
+     * Set learningNeedId.
      *
      * @param Participation $resource the resource data.
-     * @return string The resulting learningNeedId
+     *
      * @throws Exception
+     *
+     * @return string The resulting learningNeedId
      */
     public function setLearningneedId(Participation $resource)
     {
@@ -216,11 +231,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Set participationId
+     * Set participationId.
      *
      * @param array $input the input data.
-     * @return string The resulting participationId
+     *
      * @throws Exception
+     *
+     * @return string The resulting participationId
      */
     public function setParticipationId(array $input)
     {
@@ -235,12 +252,14 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Set aanbiederId
+     * Set aanbiederId.
      *
-     * @param ?array $input the input data.
+     * @param ?array              $input    the input data.
      * @param ?Participation|null $resource the resource data.
-     * @return string The resulting aanbiederId
+     *
      * @throws Exception
+     *
+     * @return string The resulting aanbiederId
      */
     public function setAanbiederId(?array $input, ?Participation $resource = null)
     {
@@ -255,11 +274,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Set groupId
+     * Set groupId.
      *
      * @param array $input the input data.
-     * @return string The resulting groupId
+     *
      * @throws Exception
+     *
+     * @return string The resulting groupId
      */
     public function setGroupId(array $input)
     {
@@ -269,11 +290,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Checks if is_array
+     * Checks if is_array.
      *
      * @param string $id the id.
-     * @return string The resulting id.
+     *
      * @throws Exception
+     *
+     * @return string The resulting id.
      */
     public function isArray(string $id)
     {
@@ -285,11 +308,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Add group to participation
+     * Add group to participation.
      *
      * @param array $input the input data.
-     * @return Participation The resulting Participation object.
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation object.
      */
     public function addGroupToParticipation(array $input): Participation
     {
@@ -301,11 +326,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Remove group from participation
+     * Remove group from participation.
      *
      * @param array $input the input data.
-     * @return Participation The resulting Participation object.
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation object.
      */
     public function removeGroupFromParticipation(array $input): Participation
     {
@@ -317,11 +344,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Get group from participation
+     * Get group from participation.
      *
      * @param array $input the input data.
-     * @return array The resulting Participation object.
+     *
      * @throws Exception
+     *
+     * @return array The resulting Participation object.
      */
     public function getParticipationGroup(array $input): array
     {
@@ -341,12 +370,14 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Update mentor group from participation
+     * Update mentor group from participation.
      *
-     * @param array $input the input data.
-     * @param string $type the input data.
-     * @return Participation The resulting Participation object.
+     * @param array  $input the input data.
+     * @param string $type  the input data.
+     *
      * @throws Exception
+     *
+     * @return Participation The resulting Participation object.
      */
     public function updateMentorGroupParticipation(array $input, string $type): Participation
     {
@@ -376,6 +407,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
      * Checks datetimes.
      *
      * @param array $input the input data.
+     *
      * @throws Exception
      */
     private function checkDateTimes(array $input)
@@ -393,6 +425,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
      * Checks PresenceEndDate.
      *
      * @param array $input the input data.
+     *
      * @throws Exception
      */
     private function checkPresenceEndDate(array $input)
@@ -410,6 +443,7 @@ class ParticipationMutationResolver implements MutationResolverInterface
      * Checks ValidEnums.
      *
      * @param array $input the input data.
+     *
      * @throws Exception
      */
     private function checkValidEnums(array $input)
@@ -424,12 +458,14 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * DTO to participation
+     * DTO to participation.
      *
-     * @param Participation $resource the resource data.
-     * @param string $aanbiederId the cc/organization id.
-     * @return array The resulting Participation object.
+     * @param Participation $resource    the resource data.
+     * @param string        $aanbiederId the cc/organization id.
+     *
      * @throws Exception
+     *
+     * @return array The resulting Participation object.
      */
     private function dtoToParticipation(Participation $resource, string $aanbiederId): array
     {
@@ -458,11 +494,13 @@ class ParticipationMutationResolver implements MutationResolverInterface
     }
 
     /**
-     * Input to participation
+     * Input to participation.
      *
      * @param array $input the input data.
-     * @return array The resulting Participation object.
+     *
      * @throws Exception
+     *
+     * @return array The resulting Participation object.
      */
     private function inputToParticipation(array $input): array
     {

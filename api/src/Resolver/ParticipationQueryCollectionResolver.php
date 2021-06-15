@@ -5,10 +5,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ParticipationService;
 use App\Service\ResolverService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -24,7 +21,8 @@ class ParticipationQueryCollectionResolver implements QueryCollectionResolverInt
     }
 
     /**
-     * Get the participations objects with the given learningNeedId
+     * Get the participations objects with the given learningNeedId.
+     *
      * @inheritDoc
      *
      * @throws Exception;
