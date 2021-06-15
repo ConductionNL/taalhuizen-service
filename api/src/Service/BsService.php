@@ -68,7 +68,7 @@ class BsService
      * Sends an invitation for a user/employee.
      *
      * @param string $token The token to create a new password
-     * @param array $data The data to create the e-mail
+     * @param array  $data  The data to create the e-mail
      */
     public function sendInvitation(string $token, array $data): void
     {
