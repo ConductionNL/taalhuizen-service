@@ -5,7 +5,7 @@
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/taalhuizen-service)](https://artifacthub.io/packages/helm/taalhuizen-service/taalhuizen-service)
 [![Componenten Catalogus](https://img.shields.io/badge/vng--componentencatalogus-posted-green)](https://componentencatalogus.commonground.nl/componenten/180?)
 [![Status badge](https://shields.api-test.nl/endpoint.svg?style=for-the-badge&url=https%3A//api-test.nl/api/v1/provider-latest-badge/e97a7133-21b5-4a7d-bcbf-b41fe257e142/)](https://api-test.nl/server/4/323b99e2-9bdc-4fc3-9c7d-ab4efade07e7/e97a7133-21b5-4a7d-bcbf-b41fe257e142/latest/)
-
+[![codecov](https://codecov.io/gh/ConductionNL/taalhuizen-service/branch/master/graph/badge.svg?token=UP5F3S1SVS)](https://codecov.io/gh/ConductionNL/taalhuizen-service)
 # Readme
 -------
 Welcome to the the Taalhuizen component!

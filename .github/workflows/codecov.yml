@@ -1,0 +1,18 @@
+name: Codecov
+on: [push,pull_request]
+
+# Upload the codecovrage report to codecov based on https://github.com/codecov/codecov-action
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@master
+            - uses: codecov/codecov-action@v1
+              with:
+#               token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+                files: api/coverage.xml # optional
+                flags: unittests # optional
+                name: codecov-umbrella # optional
+#               fail_ci_if_error: true # optional (default = false)
+#               verbose: true # optional (default = false)
