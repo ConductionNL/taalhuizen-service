@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EAVServiceTest extends KernelTestCase
 {
-
     private $serviceContainer;
     private $eavService;
 
@@ -21,31 +20,25 @@ class EAVServiceTest extends KernelTestCase
 
     public function testDeleteObject()
     {
-
     }
 
     public function testSaveObject()
     {
-
     }
 
     public function testGetObject()
     {
-
     }
 
     public function testDeleteResource()
     {
-
     }
 
     public function testHasEavObject()
     {
-
     }
 
     public function testGetObjectList()
     {
-
     }
 }
