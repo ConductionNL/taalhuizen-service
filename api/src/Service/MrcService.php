@@ -968,7 +968,7 @@ class MrcService
      *
      * @return array The resulting employee
      */
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false)
+    public function updateEmployeeArray(string $id, array $employeeArray): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
         $employee = $this->createEmployeeObject($employeeRaw, []);
