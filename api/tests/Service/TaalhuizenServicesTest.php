@@ -32,7 +32,6 @@ class TaalhuizenServicesTest extends KernelTestCase
         $this->assertIsArray($array);
     }
 
-
     public function testCreateOrganization()
     {
         $providerArray = [
@@ -194,7 +193,7 @@ class TaalhuizenServicesTest extends KernelTestCase
     public function testUpdateEmployee($organization, $employee)
     {
         $employeeArray = [
-            'userId' => $employee->getUserId() ,
+            'userId'         => $employee->getUserId(),
             'givenName'      => 'Test',
             'additionalName' => '',
             'familyName'     => 'testing',
