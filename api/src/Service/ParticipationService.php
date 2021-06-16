@@ -18,13 +18,12 @@ class ParticipationService
     private MrcService $mrcService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        MrcService $mrcService
+        MrcService $mrcService,
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
         $this->mrcService = $mrcService;
     }
 

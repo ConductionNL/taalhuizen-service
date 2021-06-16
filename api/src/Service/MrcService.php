@@ -10,7 +10,6 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MrcService
 {
@@ -24,23 +23,19 @@ class MrcService
     /**
      * MrcService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBag
-     * @param UcService              $ucService
+     * @param LayerService $layerService
+     * @param UcService    $ucService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
+        LayerService $layerService,
         UcService $ucService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
-        $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->eavService = new EAVService($commonGroundService);
+        $this->bsService = $layerService->bsService;
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eavService = new EAVService($layerService->commonGroundService);
     }
 
     /**
@@ -793,7 +788,7 @@ class MrcService
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->createPasswordResetToken($resource['username'], false);
-        $this->bsService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
+        $this->bsService->sendInvitation($token, ['username' => $resource['username'], 'contact' => $contact, 'organization' => $organizationUrl]);
 
         return $result;
     }
@@ -868,14 +863,13 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
-     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @return array The resulting employee or raw mrc object
      */
-    public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
+    public function createEmployeeArray(array $employeeArray): array
     {
         //set contact
         $contact = $this->setContact($employeeArray);
@@ -973,8 +967,9 @@ class MrcService
      *
      * @throws Exception
      *
-     * @return Employee|array The resulting employee
+     * @return array The resulting employee
      */
+
     public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false)
     {
         $employeeRaw = $this->getEmployeeRaw($id);
