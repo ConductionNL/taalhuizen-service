@@ -901,13 +901,26 @@ class MrcService
         if (key_exists('educations', $employeeArray)) {
             $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
-        $userRoleArray = $this->handleUserRoleArray($employeeArray);
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        if ($returnMrcObject) {
-            return $result;
-        }
+        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
 
-        return $this->createEmployeeObject($result, $userRoleArray ?? []);
+        return $result;
+    }
+
+    /**
+     * Creates an employee.
+     *
+     * @param array $employeeArray The input array of the employee
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee or raw mrc object
+     */
+    public function createEmployee(array $employeeArray): Employee
+    {
+        $employee = $this->createEmployeeArray($employeeArray);
+
+        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
     /**
@@ -984,14 +997,28 @@ class MrcService
         }
 
         //set userRoleArray
-        $userRoleArray = $this->setUserRoleArray($employeeArray);
 
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        if ($returnMrcObject) {
-            return $result;
-        }
+        $result['userRoleArray'] = $this->setUserRoleArray($employeeArray);
 
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $result;
+    }
+
+    /**
+     * Updates an employee.
+     *
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee
+     */
+    public function updateEmployee(string $id, array $employeeArray): Employee
+    {
+        $employee = $this->updateEmployeeArray($id, $employeeArray);
+
+        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
     /**
