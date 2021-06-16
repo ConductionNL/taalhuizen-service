@@ -5,6 +5,7 @@ namespace App\Resolver;
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Entity\User;
 use App\Service\UcService;
+use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserQueryItemResolver implements QueryItemResolverInterface
@@ -12,6 +13,12 @@ class UserQueryItemResolver implements QueryItemResolverInterface
     private RequestStack $requestStack;
     private UcService $ucService;
 
+    /**
+     * UserQueryItemResolver constructor.
+     *
+     * @param RequestStack $requestStack
+     * @param UcService    $ucService
+     */
     public function __construct(RequestStack $requestStack, UcService $ucService)
     {
         $this->requestStack = $requestStack;
@@ -39,6 +46,13 @@ class UserQueryItemResolver implements QueryItemResolverInterface
         }
     }
 
+    /**
+     * Gets the user by id.
+     *
+     * @param string $id The id of the user to get
+     *
+     * @return User The resulting user object
+     */
     public function getUser(string $id): User
     {
         $id = explode('/', $id);
@@ -47,6 +61,13 @@ class UserQueryItemResolver implements QueryItemResolverInterface
         return $this->ucService->getUser($id);
     }
 
+    /**
+     * Gets the current logged in user.
+     *
+     * @throws \Exception Thrown when the JWT token is not valid
+     *
+     * @return User The user that is currently logged in
+     */
     public function getCurrentUser(): User
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));

@@ -10,13 +10,25 @@ class BsService
     private CommonGroundService $commonGroundService;
     private ParameterBagInterface $parameterBag;
 
+    /**
+     * BsService constructor.
+     *
+     * @param CommonGroundService   $commonGroundService
+     * @param ParameterBagInterface $parameterBag
+     */
     public function __construct(CommonGroundService $commonGroundService, ParameterBagInterface $parameterBag)
     {
         $this->commonGroundService = $commonGroundService;
         $this->parameterBag = $parameterBag;
     }
 
-    public function sendPasswordResetMail(string $email, string $token)
+    /**
+     * Sends a password reset email.
+     *
+     * @param string $email The email address to send the mail to
+     * @param string $token The reset token to send the mail in
+     */
+    public function sendPasswordResetMail(string $email, string $token): void
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
         $message = [
@@ -31,7 +43,13 @@ class BsService
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
     }
 
-    public function sendPasswordChangedEmail(string $username, array $contact)
+    /**
+     * Sends a mail when the password of a user has changed.
+     *
+     * @param string $username The username of the user that has been changed (and their e-mail address)
+     * @param array  $contact  The contact of the user that has been changed
+     */
+    public function sendPasswordChangedEmail(string $username, array $contact): void
     {
         $link = "{$this->parameterBag->get('app_domain')}/auth/forgotpassword";
         $message = [
@@ -46,8 +64,18 @@ class BsService
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
     }
 
-    public function sendInvitation(string $email, string $token, array $contact, string $organizationUrl = null)
+    /**
+     * Sends an invitation for a user/employee.
+     *
+     * @param string $token The token to create a new password
+     * @param array  $data  The data to create the e-mail
+     */
+    public function sendInvitation(string $token, array $data): void
     {
+        $email = $data['username'];
+        $contact = $data['contact'];
+        $organizationUrl = $data['organization'];
+
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
 
         if (!empty($organizationUrl)) {

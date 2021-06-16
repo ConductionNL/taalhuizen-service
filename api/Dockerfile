@@ -38,6 +38,11 @@ COPY src src/
 COPY templates templates/
 COPY translations translations/
 
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install xdebug-2.9.2 \
+    && docker-php-ext-enable xdebug;\
+    echo -e "xdebug.overload_var_dump=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
 	composer dump-autoload --classmap-authoritative --no-dev; \

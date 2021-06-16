@@ -9,3 +9,5 @@ api/helm/kubeconfig.yaml
 
 api/helm/*-kubeconfig.yaml
 api/helm/kubeconfig*
+
+local-php-security-checker

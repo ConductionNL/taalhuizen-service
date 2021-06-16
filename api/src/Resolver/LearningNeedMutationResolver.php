@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LearningNeed;
+use App\Service\LayerService;
 use App\Service\LearningNeedService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,17 +17,23 @@ class LearningNeedMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private LearningNeedService $learningNeedService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, LearningNeedService $learningNeedService)
+    /**
+     * LearningNeedMutationResolver constructor.
+     *
+     * @param LearningNeedService $learningNeedService
+     * @param LayerService        $layerService
+     */
+    public function __construct(LearningNeedService $learningNeedService, LayerService $layerService)
     {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->learningNeedService = $learningNeedService;
     }
 
     /**
      * @inheritDoc
      *
-     * @throws Exception;
+     * @throws Exception
      */
     public function __invoke($item, array $context)
     {
@@ -45,6 +52,15 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Creates a new LearningNeed.
+     *
+     * @param LearningNeed $resource the input data for the new LearningNeed.
+     *
+     * @throws Exception
+     *
+     * @return LearningNeed the created LearningNeed.
+     */
     public function createLearningNeed(LearningNeed $resource): LearningNeed
     {
         $result['result'] = [];
@@ -84,7 +100,14 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function handleLearningNeedId($input)
+    /**
+     * This function gets the learningNeed id from the given input array.
+     *
+     * @param array $input the input data for a LearningNeed.
+     *
+     * @return string the id of the learningNeed.
+     */
+    public function handleLearningNeedId(array $input): string
     {
         if (isset($input['learningNeedUrl'])) {
             $learningNeedId = $this->commonGroundService->getUuidFromUrl($input['learningNeedUrl']);
@@ -98,6 +121,15 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeedId;
     }
 
+    /**
+     * Updates an existing LearningNeed.
+     *
+     * @param array $input the input data for a LearningNeed.
+     *
+     * @throws Exception
+     *
+     * @return LearningNeed the updated LearningNeed.
+     */
     public function updateLearningNeed(array $input): LearningNeed
     {
         $result['result'] = [];
@@ -131,6 +163,15 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
+    /**
+     * Deletes a LearningNeed.
+     *
+     * @param array $learningNeed the input data for a LearningNeed.
+     *
+     * @throws Exception
+     *
+     * @return LearningNeed|null null if successful.
+     */
     public function removeLearningNeed(array $learningNeed): ?LearningNeed
     {
         $result['result'] = [];
@@ -162,7 +203,14 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    private function dtoToLearningNeed(LearningNeed $resource)
+    /**
+     * This function converts the input data for creating a LearningNeed from the DTO to a valid learningNeed body.
+     *
+     * @param LearningNeed $resource the LearningNeed DTO input.
+     *
+     * @return array a valid learningNeed body.
+     */
+    private function dtoToLearningNeed(LearningNeed $resource): array
     {
         // Get all info from the dto for creating a LearningNeed and return the body for this
         // note: everything that is nullabel in the dto has an if check, because eav doesn't like values set to null
@@ -186,7 +234,16 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeed;
     }
 
-    public function handleOutcomeOthersDTO($resource, $learningNeed)
+    /**
+     * This function checks if the topic, application and level 'other' inputs are set when creating a new LearningNeed.
+     * For each one that is set, it will be added to the learningNeed array.
+     *
+     * @param LearningNeed $resource     the LearningNeed DTO input.
+     * @param array        $learningNeed the learningNeed array.
+     *
+     * @return array a valid learningNeed body containing the other options if they where set in the input.
+     */
+    public function handleOutcomeOthersDTO(LearningNeed $resource, array $learningNeed): array
     {
         if ($resource->getDesiredOutComesTopicOther()) {
             $learningNeed['topicOther'] = $resource->getDesiredOutComesTopicOther();
@@ -201,7 +258,16 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeed;
     }
 
-    public function handleOutcomeOthers($input, $learningNeed)
+    /**
+     * This function checks if the topic, application and level 'other' inputs are set when updating a LearningNeed.
+     * For each one that is set, it will be added to the learningNeed array.
+     *
+     * @param array $input        the input data for a LearningNeed.
+     * @param array $learningNeed the learningNeed array.
+     *
+     * @return array a valid learningNeed body containing the other options if they where set in the input.
+     */
+    public function handleOutcomeOthers(array $input, array $learningNeed): array
     {
         if (isset($input['desiredOutComesTopicOther'])) {
             $learningNeed['topicOther'] = $input['desiredOutComesTopicOther'];
@@ -216,7 +282,14 @@ class LearningNeedMutationResolver implements MutationResolverInterface
         return $learningNeed;
     }
 
-    private function inputToLearningNeed(array $input)
+    /**
+     * This function converts the input data for updating a LearningNeed from the input array to a valid learningNeed body.
+     *
+     * @param array $input the input data for a LearningNeed.
+     *
+     * @return array a valid learningNeed body.
+     */
+    private function inputToLearningNeed(array $input): array
     {
         // Get all info from the input array for updating a LearningNeed and return the body for this
         $learningNeed['description'] = $input['learningNeedDescription'];

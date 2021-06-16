@@ -14,13 +14,15 @@ class ParticipationQueryCollectionResolver implements QueryCollectionResolverInt
     private ResolverService $resolverService;
     private ParticipationService $participationService;
 
-    public function __construct(ResolverService $resolverService, ParticipationService $participationService)
+    public function __construct(ParticipationService $participationService)
     {
-        $this->resolverService = $resolverService;
         $this->participationService = $participationService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
+     * Get the participations objects with the given learningNeedId.
+     *
      * @inheritDoc
      *
      * @throws Exception;

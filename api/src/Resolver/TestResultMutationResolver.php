@@ -4,6 +4,7 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\TestResult;
+use App\Service\LayerService;
 use App\Service\TestResultService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,11 +16,12 @@ class TestResultMutationResolver implements MutationResolverInterface
     private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, TestResultService $testResultService)
-    {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->testResultService = $testResultService;
+    public function __construct(
+        LayerService $layerService
+    ) {
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->testResultService = $layerService->testResultService;
     }
 
     /**

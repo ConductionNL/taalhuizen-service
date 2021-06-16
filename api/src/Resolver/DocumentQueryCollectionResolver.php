@@ -6,23 +6,35 @@ use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\ResolverService;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
+    private CommonGroundService $commonGroundService;
     private WRCService $wrcService;
-    private CommonGroundService $cgs;
     private ResolverService $resolverService;
 
-    public function __construct(WRCService $wrcService, CommonGroundService $cgs, ResolverService $resolverService)
-    {
-        $this->wrcService = $wrcService;
-        $this->cgs = $cgs;
-        $this->resolverService = $resolverService;
+    public function __construct(
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->commonGroundService = $commonGroundService;
+        $this->wrcService = new WRCService($entityManager, $commonGroundService);
+        $this->resolverService = new ResolverService();
     }
 
     /**
+     * This function creates a paginator.
+     *
      * @inheritDoc
+     *
+     * @param iterable $collection Collection of documents
+     * @param array    $context    Context of the call
+     *
+     * @throws \Exception
+     *
+     * @return iterable Returns a paginator
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
@@ -33,13 +45,13 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
             $studentId = explode('/', $context['args']['studentId']);
             if (is_array($studentId)) {
                 $studentId = end($studentId);
-                $contact = $this->cgs->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             }
         } elseif (key_exists('aanbiederEmployeeId', $context['args'])) {
             $aanbiederEmployeeId = explode('/', $context['args']['aanbiederEmployeeId']);
             if (is_array($aanbiederEmployeeId)) {
                 $aanbiederEmployeeId = end($aanbiederEmployeeId);
-                $contact = $this->cgs->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
             }
         } else {
             $contact = null;

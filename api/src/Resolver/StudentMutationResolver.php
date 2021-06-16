@@ -6,6 +6,7 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -23,25 +24,28 @@ class StudentMutationResolver implements MutationResolverInterface
     private MrcService $mrcService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommongroundService $commonGroundService,
-        StudentService $studentService,
-        CCService $ccService,
-        EDUService $eduService,
-        MrcService $mrcService
+        MrcService $mrcService,
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->studentService = $studentService;
-        $this->ccService = $ccService;
-        $this->eduService = $eduService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->studentService = new StudentService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
     }
 
     /**
+     * This function determines what function to execute next based on the context.
+     *
      * @inheritDoc
      *
-     * @throws Exception;
+     * @param object|null $item    Post object
+     * @param array       $context Information about post
+     *
+     *@throws Exception
+     *
+     * @return \App\Entity\Student|object|null Returns a Student object
      */
     public function __invoke($item, array $context)
     {
@@ -60,7 +64,16 @@ class StudentMutationResolver implements MutationResolverInterface
         }
     }
 
-    public function createStudent(array $input): Student
+    /**
+     * This function creates a Student object with given input.
+     *
+     * @param array $input Array with students data
+     *
+     *@throws Exception
+     *
+     * @return object Returns a Student object
+     */
+    public function createStudent(array $input): object
     {
         if (isset($input['languageHouseId'])) {
             $languageHouseId = explode('/', $input['languageHouseId']);
@@ -69,7 +82,7 @@ class StudentMutationResolver implements MutationResolverInterface
             }
             $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         } else {
-            throw new \Exception('languageHouseId not given');
+            throw new Exception('languageHouseId not given');
         }
 
         // Do some checks and error handling
@@ -88,8 +101,8 @@ class StudentMutationResolver implements MutationResolverInterface
         $participant = $this->eduService->saveEavParticipant($participant);
 
         $employee = $this->inputToEmployee($input, $person['@id']);
-        // Save mrc/employee
-        $employee = $this->mrcService->createEmployee($employee, true);
+        // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
+        $employee = $this->mrcService->createEmployeeArray($employee);
 
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
@@ -108,7 +121,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    public function updateStudent(array $input): Student
+    /**
+     * This function updates a Student with given input.
+     *
+     * @param array $input Array with students data
+     *
+     *@throws Exception
+     *
+     * @return object Returns a Student object
+     */
+    public function updateStudent(array $input): object
     {
         $studentId = explode('/', $input['id']);
         if (is_array($studentId)) {
@@ -133,7 +155,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
-        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true, true);
+        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
 
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
@@ -154,9 +176,9 @@ class StudentMutationResolver implements MutationResolverInterface
         return $resourceResult;
     }
 
-    //todo:
-    public function removeStudent(array $student): ?Student
-    {
+//    todo:
+//    public function removeStudent(array $student): ?Student
+//    {
 //        $result['result'] = [];
 //
 //        // If studentUrl or studentId is set generate the id for it, needed for eav calls later
@@ -183,11 +205,20 @@ class StudentMutationResolver implements MutationResolverInterface
 //        if (isset($result['errorMessage'])) {
 //            throw new Exception($result['errorMessage']);
 //        }
-        return null;
-    }
+//        return null;
+//    }
 
     //todo: should be done in StudentService, for examples how to do this: see StudentService->saveStudent or TestResultService->saveTestResult
-    private function saveMemos(array $input, string $ccPersonUrl)
+
+    /**
+     * This function saves memos with given input.
+     *
+     * @param array  $input       Array with students data
+     * @param string $ccPersonUrl Persons URL as string
+     *
+     * @return array[] Returns array with memo properties
+     */
+    private function saveMemos(array $input, string $ccPersonUrl): array
     {
         $availabilityMemo = [];
         $motivationMemo = [];
@@ -223,7 +254,16 @@ class StudentMutationResolver implements MutationResolverInterface
         ];
     }
 
-    private function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null)
+    /**
+     * This function retrieves memos from the given availability details.
+     *
+     * @param array       $availabilityDetails Array with availability details data
+     * @param string      $ccPersonUrl         Persons URL as string
+     * @param string|null $languageHouseUrl    Language house URL as string
+     *
+     * @return array Returns a memo as array
+     */
+    private function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
     {
         $memo['name'] = 'Availability notes';
         $memo['description'] = $availabilityDetails['availabilityNotes'];
@@ -235,7 +275,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $memo;
     }
 
-    private function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null)
+    /**
+     * This function retrieves memos from the given motivation details.
+     *
+     * @param array       $motivationDetails Array with motivation details data
+     * @param string      $ccPersonUrl       Persons URL as string
+     * @param string|null $languageHouseUrl  Language house URL as string
+     *
+     * @return array Returns a memo as array
+     */
+    private function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
     {
         $memo['name'] = 'Remarks';
         $memo['description'] = $motivationDetails['remarks'];
@@ -247,6 +296,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $memo;
     }
 
+    /**
+     * This function passes data from given input to the person array.
+     *
+     * @param array $input        Array with persons data
+     * @param null  $updatePerson Bool if person should be updated
+     *
+     * @return array Returns person with given data
+     */
     private function inputToPerson(array $input, $updatePerson = null): array
     {
         if (isset($input['languageHouseId'])) {
@@ -282,6 +339,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function passes given civic integration details to the person array.
+     *
+     * @param array $person                  Array with persons data
+     * @param array $civicIntegrationDetails Array with civic integration details data
+     *
+     * @return array Returns a person array with civic integration details
+     */
     private function getPersonPropertiesFromCivicIntegrationDetails(array $person, array $civicIntegrationDetails): array
     {
         if (isset($civicIntegrationDetails['civicIntegrationRequirement'])) {
@@ -297,6 +362,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function passes given person details to the person array.
+     *
+     * @param array $person        Array with persons data
+     * @param array $personDetails Array with person details data
+     *
+     * @return array Returns a person array with civic integration details
+     */
     private function getPersonPropertiesFromPersonDetails(array $person, array $personDetails): array
     {
         if (isset($personDetails['givenName'])) {
@@ -318,6 +391,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function passes given contact details to the person array.
+     *
+     * @param array $person         Array with persons data
+     * @param array $contactDetails Array with contact details data
+     * @param null  $updatePerson   Bool if person should be updated
+     *
+     * @return array Returns a person array with civic integration details
+     */
     private function getPersonPropertiesFromContactDetails(array $person, array $contactDetails, $updatePerson = null): array
     {
         $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
@@ -338,7 +420,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function getPersonEmailsFromContactDetails(array $person, array $contactDetails, $personName): array
+    /**
+     * This function passes given emails from contact details to the person array.
+     *
+     * @param array  $person         Array with persons data
+     * @param array  $contactDetails Array with contact details data
+     * @param string $personName     Name of person as string
+     *
+     * @return array Returns a person array with email properties
+     */
+    private function getPersonEmailsFromContactDetails(array $person, array $contactDetails, string $personName): array
     {
         if (isset($contactDetails['email'])) {
             $person['emails'][0]['name'] = 'Email of '.$personName;
@@ -348,7 +439,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function getPersonTelephonesFromContactDetails(array $person, array $contactDetails, $personName): array
+    /**
+     * This function passes given telephones from contact details to the person array.
+     *
+     * @param array  $person         Array with persons data
+     * @param array  $contactDetails Array with contact details data
+     * @param string $personName     Name of person as string
+     *
+     * @return array Returns a person array with telephone properties
+     */
+    private function getPersonTelephonesFromContactDetails(array $person, array $contactDetails, string $personName): array
     {
         if (isset($contactDetails['telephone'])) {
             $person['telephones'][0]['name'] = 'Telephone of '.$personName;
@@ -362,6 +462,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function passes given addresses from contact details to the person array.
+     *
+     * @param array  $person         Array with persons data
+     * @param array  $contactDetails Array with contact details data
+     * @param string $personName     Name of person as string
+     *
+     * @return array Returns a person array with address properties
+     */
     private function getPersonAdressesFromContactDetails(array $person, array $contactDetails, $personName): array
     {
         $person['addresses'][0]['name'] = 'Address of '.$personName;
@@ -384,6 +493,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function updates the person with the contact details's subobjects.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with data the person needs to be updated with
+     *
+     * @return array Returns a person array with updated contact details
+     */
     private function updatePersonContactDetailsSubobjects(array $person, array $updatePerson): array
     {
         if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
@@ -409,6 +526,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function updates the person with the contact details's telephones.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with data the person needs to be updated with
+     *
+     * @return array Returns a person array with updated contact details telephones
+     */
     private function updatePersonContactDetailsTelephones(array $person, array $updatePerson): array
     {
         if (isset($person['telephones'][0]) && isset($updatePerson['telephones'][0]['id'])) {
@@ -427,6 +552,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function updates the person with the given general details.
+     *
+     * @param array $person         Array with persons data
+     * @param array $generalDetails Array with general details data
+     * @param null  $updatePerson   Bool if person should be updated or not
+     *
+     * @return array Returns a person with properties from general details
+     */
     private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['countryOfOrigin'])) {
@@ -448,7 +582,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
     }
 
-    private function setPersonBirthplaceFromCountryOfOrigin(array $person, $countryOfOrigin, $updatePerson = null): array
+    /**
+     * This function sets the persons birthplace from the given country of origins.
+     *
+     * @param array  $person          Array with persons data
+     * @param string $countryOfOrigin String that holds country of origin
+     * @param null   $updatePerson    Bool if person should be updated
+     *
+     * @return array Returns person array with birthplace property
+     */
+    private function setPersonBirthplaceFromCountryOfOrigin(array $person, string $countryOfOrigin, $updatePerson = null): array
     {
         $person['birthplace'] = [
             'country' => $countryOfOrigin,
@@ -465,6 +608,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function sets the persons children properties from the given general details.
+     *
+     * @param array $person
+     * @param array $generalDetails
+     * @param null  $updatePerson   Bool if person should be updated
+     *
+     * @return array Returns person array with children properties
+     */
     private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['childrenCount'])) {
@@ -486,7 +638,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
-    private function setChildrenDatesOfBirthFromGeneralDetails($childrenDatesOfBirth): array
+    /**
+     * This function sets the children dates of birth from given general details.
+     *
+     * @param string $childrenDatesOfBirth String that holds dates of birth of children.
+     *
+     * @return array
+     */
+    private function setChildrenDatesOfBirthFromGeneralDetails(string $childrenDatesOfBirth): array
     {
         $childrenDatesOfBirth = explode(',', $childrenDatesOfBirth);
         foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
@@ -500,7 +659,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $childrenDatesOfBirth;
     }
 
-    private function setChildrenFromChildrenCount(array $person, $childrenCount, $childrenDatesOfBirth): array
+    /**
+     * This function sets children from children count.
+     *
+     * @param array $person               Array with persons data
+     * @param int   $childrenCount        Int that counts children
+     * @param array $childrenDatesOfBirth Array with childrens date of births
+     *
+     * @return array Returns an array with childrens data
+     */
+    private function setChildrenFromChildrenCount(array $person, int $childrenCount, array $childrenDatesOfBirth): array
     {
         $children = [];
         for ($i = 0; $i < $childrenCount; $i++) {
@@ -520,6 +688,14 @@ class StudentMutationResolver implements MutationResolverInterface
         ];
     }
 
+    /**
+     * This function updates the persons children contact list with given person.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with updated persons data
+     *
+     * @return array Returns an updated person array
+     */
     private function updatePersonChildrenContactList(array $person, array $updatePerson): array
     {
         // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
@@ -539,6 +715,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function sets the person background details with the given background details.
+     *
+     * @param array $person            Array with persons data
+     * @param array $backgroundDetails Array with background details
+     *
+     * @return array Returns a person array with background details
+     */
     private function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
     {
         //todo: check in StudentService -> checkStudentValues() for enum options and if other is chosen make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
@@ -569,6 +753,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function sets the persons DutchN NT details  with the given Dutch NT details.
+     *
+     * @param array $person         Array with persons data
+     * @param array $dutchNTDetails Array with Dutch NT Details
+     *
+     * @return array Returns person array
+     */
     private function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
     {
         if (isset($dutchNTDetails['dutchNTLevel'])) {
@@ -590,6 +782,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function sets the persons availability  with the given availability details.
+     *
+     * @param array $person              Array with persons data
+     * @param array $availabilityDetails Array with availability details
+     *
+     * @return array Returns person array
+     */
     private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
     {
         if (isset($availabilityDetails['availability'])) {
@@ -599,6 +799,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function sets the persons availability  with the given availability details.
+     *
+     * @param array $person            Array with persons data
+     * @param array $permissionDetails Array with permission details
+     *
+     * @return array Returns person array
+     */
     private function getPersonPropertiesFromPermissionDetails(array $person, array $permissionDetails): array
     {
         if (isset($permissionDetails['didSignPermissionForm'])) {
@@ -617,6 +825,16 @@ class StudentMutationResolver implements MutationResolverInterface
         return $person;
     }
 
+    /**
+     * This function passes the given input to an participant.
+     *
+     * @param array       $input       Array of given data
+     * @param string|null $ccPersonUrl String that holds the person URL
+     *
+     *@throws Exception
+     *
+     * @return array Returns an participant array
+     */
     private function inputToParticipant(array $input, string $ccPersonUrl = null): array
     {
         // Add cc/person to this edu/participant
@@ -655,6 +873,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
+    /**
+     * This function sets the participation referrer details.
+     *
+     * @param array $participant     Array with participant data
+     * @param array $referrerDetails Array with referrer details data
+     *
+     * @return array Returns participant array
+     */
     private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
     {
         if (isset($participant['referredBy'])) {
@@ -688,6 +914,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
+    /**
+     * This function sets the participant motivation details.
+     *
+     * @param array $participant       Array with participant details
+     * @param array $motivationDetails Array with motivation details
+     *
+     * @return array Returns participant array
+     */
     private function getParticipantPropertiesFromMotivationDetails(array $participant, array $motivationDetails): array
     {
         if (isset($motivationDetails['desiredSkills'])) {
@@ -715,19 +949,37 @@ class StudentMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
-    private function inputToEmployee($input, $personUrl, $updateEmployee = null): array
+    /**
+     * This function passes input to an employee array.
+     *
+     * @param array  $input          Array with employee data
+     * @param string $personUrl      String that holds persons URL
+     * @param null   $updateEmployee Bool if employee needs to be updated if not
+     *
+     *@throws Exception
+     *
+     * @return array Returns employee array
+     */
+    private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
     {
         $employee = ['person' => $personUrl];
+        //check if this person has a user and if so add its id to the employee body as userId
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $personUrl])['hydra:member'];
+        if (count($users) > 0) {
+            $user = $users[0];
+            $employee['userId'] = $user['id'];
+            $employee['email'] = $user['username'];
+        }
         if (isset($input['contactDetails']['email'])) {
             // set email for creating a user in mrcService
             $employee['email'] = $input['contactDetails']['email'];
         }
         $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, ['lastEducation' => $educations['lastEducation'], 'followingEducation' => $educations['followingEducation'], 'details' => $input['educationDetails']]);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $educations['course']);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, ['course' => $educations['course'], 'details' => $input['courseDetails']]);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
@@ -739,8 +991,19 @@ class StudentMutationResolver implements MutationResolverInterface
         return $employee;
     }
 
-    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
+    /**
+     * This function set employee properties from given education details.
+     *
+     * @param array $employee      Array with employee data
+     * @param array $educationData
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
     {
+        $educationDetails = $educationData['details'];
+        $lastEducation = $educationData['lastEducation'];
+        $followingEducation = $educationData['followingEducation'];
         if (isset($educationDetails['lastFollowedEducation'])) {
             $employee['educations'][] = $this->getLastEducationFromEducationDetails($educationDetails, $lastEducation);
         }
@@ -761,6 +1024,14 @@ class StudentMutationResolver implements MutationResolverInterface
         return $employee;
     }
 
+    /**
+     * This function retrieves the last eduction from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param null  $lastEducation    Bool if this is the last education
+     *
+     * @return array Returns new education array
+     */
     private function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
     {
         $newEducation = [
@@ -782,7 +1053,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $newEducation;
     }
 
-    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, $newEducation): array
+    /**
+     * This function retrieves the following education from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param array $newEducation     Array with new education
+     *
+     * @return array Returns a new education array
+     */
+    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, array $newEducation): array
     {
         $newEducation['description'] = 'followingEducationYes';
         if (isset($educationDetails['followingEducationRightNowYesStartDate'])) {
@@ -809,7 +1088,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $newEducation;
     }
 
-    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, $newEducation): array
+    /**
+     * This function retrieves following education from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param $newEducation array new education
+     *
+     * @return array Returns new education array
+     */
+    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, array $newEducation): array
     {
         $newEducation['description'] = 'followingEducationNo';
         if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
@@ -830,8 +1117,18 @@ class StudentMutationResolver implements MutationResolverInterface
         return $newEducation;
     }
 
-    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
+    /**
+     * This function retrieves employee properties from course details.
+     *
+     * @param array $employee   Array with employee data
+     * @param array $courseData
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
+        $courseDetails = $courseData['details'];
+        $course = $courseData['course'];
         if (isset($courseDetails['isFollowingCourseRightNow'])) {
             if (isset($course['id'])) {
                 $newEducation['id'] = $course['id'];
@@ -858,6 +1155,13 @@ class StudentMutationResolver implements MutationResolverInterface
         return $employee;
     }
 
+    /**
+     * This function retrieves course provider certificate from course details.
+     *
+     * @param array $newEducation Array with new education data
+     *
+     * @return array Returns new education array
+     */
     private function getCourseProvideCertificateFromCourseDetails(array $newEducation): array
     {
         if (isset($courseDetails['doesCourseProvideCertificate'])) {
@@ -871,7 +1175,15 @@ class StudentMutationResolver implements MutationResolverInterface
         return $newEducation;
     }
 
-    private function getEmployeePropertiesFromJobDetails($employee, $jobDetails): array
+    /**
+     * This function retrieves the employee properties from job details.
+     *
+     * @param array $employee   Array with employee data
+     * @param array $jobDetails Array with job details
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromJobDetails(array $employee, array $jobDetails): array
     {
         //todo make sure these attributes exist in eav! fixtures and online!
         if (isset($jobDetails['trainedForJob'])) {

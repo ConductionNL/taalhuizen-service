@@ -4,18 +4,16 @@ namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\TestResultService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(CommongroundService $commonGroundService, TestResultService $testResultService)
-    {
-        $this->commonGroundService = $commonGroundService;
+    public function __construct(
+        TestResultService $testResultService
+    ) {
         $this->testResultService = $testResultService;
     }
 

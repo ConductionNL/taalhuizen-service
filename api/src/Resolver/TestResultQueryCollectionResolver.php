@@ -3,9 +3,11 @@
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\LayerService;
 use App\Service\ResolverService;
 use App\Service\TestResultService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryCollectionResolver implements QueryCollectionResolverInterface
@@ -13,10 +15,11 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
     private TestResultService $testResultService;
     private ResolverService $resolverService;
 
-    public function __construct(TestResultService $testResultService, ResolverService $resolverService)
-    {
-        $this->testResultService = $testResultService;
-        $this->resolverService = $resolverService;
+    public function __construct(
+        LayerService $layerService
+    ) {
+        $this->testResultService = $layerService->testResultService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
