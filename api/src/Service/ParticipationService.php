@@ -29,7 +29,7 @@ class ParticipationService
 
     /**
      * @param array  $participation   Array with data from the eav/participation
-     * @param string $participationId Id of the eav/participation
+     * @param ?string $participationId Id of the eav/participation
      *
      * @throws Exception
      *
@@ -37,7 +37,7 @@ class ParticipationService
      *
      * @return array|false A eav/participation is returned from the EAV
      */
-    public function handleGettingParticipation(array $participation, string $participationId)
+    public function handleGettingParticipation(array $participation, ?string $participationId)
     {
         if (isset($participationId)) {
             // This should be checked with checkParticipationValues, but just in case:
@@ -887,11 +887,11 @@ class ParticipationService
     /**
      * This function checks if the participationId is an existing eav/participation.
      *
-     * @param string $participationId Id of the eav/participations
+     * @param ?string $participationId Id of the eav/participations
      *
      * @throws Exception
      */
-    public function checkParticipationId(string $participationId)
+    public function checkParticipationId(?string $participationId)
     {
         if (isset($participationId) and !$this->eavService->hasEavObject(null, 'participations', $participationId)) {
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');

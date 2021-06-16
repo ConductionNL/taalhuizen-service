@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1623822587">
-  <project timestamp="1623822587">
+<coverage generated="1623826737">
+  <project timestamp="1623826737">
     <file name="/srv/api/src/Service/BsService.php">
       <class name="App\Service\BsService" namespace="global">
         <metrics complexity="5" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="37" coveredstatements="18" elements="41" coveredelements="19"/>
@@ -184,9 +184,9 @@
       <class name="App\Service\EAVService" namespace="global">
         <metrics complexity="29" methods="8" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="71" coveredstatements="27" elements="79" coveredelements="28"/>
       </class>
-      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="11"/>
-      <line num="19" type="stmt" count="11"/>
-      <line num="20" type="stmt" count="11"/>
+      <line num="17" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="12"/>
+      <line num="19" type="stmt" count="12"/>
+      <line num="20" type="stmt" count="12"/>
       <line num="35" type="method" name="saveObject" visibility="public" complexity="5" crap="5.31" count="2"/>
       <line num="37" type="stmt" count="2"/>
       <line num="38" type="stmt" count="0"/>
@@ -267,13 +267,13 @@
     </file>
     <file name="/srv/api/src/Service/EDUService.php">
       <class name="App\Service\EDUService" namespace="global">
-        <metrics complexity="74" methods="28" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="10" elements="228" coveredelements="11"/>
+        <metrics complexity="74" methods="28" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="14" elements="228" coveredelements="15"/>
       </class>
-      <line num="26" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="8"/>
-      <line num="30" type="stmt" count="8"/>
-      <line num="31" type="stmt" count="8"/>
-      <line num="32" type="stmt" count="8"/>
-      <line num="33" type="stmt" count="8"/>
+      <line num="26" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="9"/>
+      <line num="30" type="stmt" count="9"/>
+      <line num="31" type="stmt" count="9"/>
+      <line num="32" type="stmt" count="9"/>
+      <line num="33" type="stmt" count="9"/>
       <line num="45" type="method" name="saveEavParticipant" visibility="public" complexity="2" crap="6" count="0"/>
       <line num="48" type="stmt" count="0"/>
       <line num="50" type="stmt" count="0"/>
@@ -406,13 +406,13 @@
       <line num="410" type="method" name="getGroup" visibility="public" complexity="1" crap="2" count="0"/>
       <line num="412" type="stmt" count="0"/>
       <line num="414" type="stmt" count="0"/>
-      <line num="426" type="method" name="getGroups" visibility="public" complexity="5" crap="30" count="0"/>
-      <line num="428" type="stmt" count="0"/>
-      <line num="430" type="stmt" count="0"/>
-      <line num="431" type="stmt" count="0"/>
+      <line num="426" type="method" name="getGroups" visibility="public" complexity="5" crap="5.93" count="1"/>
+      <line num="428" type="stmt" count="1"/>
+      <line num="430" type="stmt" count="1"/>
+      <line num="431" type="stmt" count="1"/>
       <line num="432" type="stmt" count="0"/>
       <line num="433" type="stmt" count="0"/>
-      <line num="437" type="stmt" count="0"/>
+      <line num="437" type="stmt" count="1"/>
       <line num="450" type="method" name="getGroupsWithStatus" visibility="public" complexity="7" crap="56" count="0"/>
       <line num="452" type="stmt" count="0"/>
       <line num="454" type="stmt" count="0"/>
@@ -497,7 +497,7 @@
       <line num="666" type="stmt" count="0"/>
       <line num="667" type="stmt" count="0"/>
       <line num="670" type="stmt" count="0"/>
-      <metrics loc="672" ncloc="430" classes="1" methods="28" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="10" elements="228" coveredelements="11"/>
+      <metrics loc="672" ncloc="430" classes="1" methods="28" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="14" elements="228" coveredelements="15"/>
     </file>
     <file name="/srv/api/src/Service/LayerService.php">
       <class name="App\Service\LayerService" namespace="global">
@@ -2391,6 +2391,6 @@
       <line num="290" type="stmt" count="0"/>
       <metrics loc="292" ncloc="193" classes="1" methods="13" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="82" coveredstatements="8" elements="95" coveredelements="11"/>
     </file>
-    <metrics files="14" loc="6592" ncloc="4390" classes="14" methods="259" coveredmethods="50" conditionals="0" coveredconditionals="0" statements="2047" coveredstatements="566" elements="2306" coveredelements="616"/>
+    <metrics files="14" loc="6592" ncloc="4390" classes="14" methods="259" coveredmethods="50" conditionals="0" coveredconditionals="0" statements="2047" coveredstatements="570" elements="2306" coveredelements="620"/>
   </project>
 </coverage>

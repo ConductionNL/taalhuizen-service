@@ -3,6 +3,8 @@
 namespace App\Tests\Service;
 
 use App\Entity\Employee;
+use App\Entity\Group;
+use App\Resolver\GroupMutationResolver;
 use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\MrcService;
@@ -266,5 +268,46 @@ class TaalhuizenServicesTest extends KernelTestCase
 
         $this->assertIsObject($result);
         $this->assertInstanceOf(Employee::class, $result);
+    }
+
+    public function testGetGroups()
+    {
+        $result = $this->serviceContainer->get(EDUService::class)->getGroups(['course.organization' => "/providers/3f26bf48-cfe6-4a2c-bafd-70f89b70efa7"]);
+
+        $this->assertIsArray($result);
+    }
+
+    /**
+     * @depends testCreateOrganization
+     */
+    public function testCreateGroup($organization)
+    {
+        $group = new Group();
+
+        $group->setAanbiederId($organization['id']);
+        $group->setName('testGroup');
+        $group->setTypeCourse('OTHER');
+        $group->setOutComesGoal('test');
+        $group->setOutComesTopic('OTHER');
+        $group->setOutComesTopicOther('test');
+        $group->setOutComesApplication('OTHER');
+        $group->setOutComesApplicationOther('test');
+        $group->setOutComesLevel('OTHER');
+        $group->setOutComesLevelOther('test');
+        $group->setDetailsIsFormal(false);
+        $group->setDetailsTotalClassHours(10);
+        $group->setDetailsCertificateWillBeAwarded(false);
+        $group->setGeneralLocation('test');
+        $group->setGeneralParticipantsMin(10);
+        $group->setGeneralParticipantsMax('20');
+        $group->setGeneralEvaluation('test');
+        $group->setAanbiederEmployeeIds(["/employees/70933304-5a0f-43aa-9745-e96db398a0e0"]);
+
+
+        $result = $this->serviceContainer->get(GroupMutationResolver::class)->createGroup($group);
+
+        $this->assertIsObject($result);
+        $this->assertInstanceOf(Employee::class, $result);
+
     }
 }
