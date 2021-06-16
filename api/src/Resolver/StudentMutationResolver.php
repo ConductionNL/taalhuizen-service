@@ -102,7 +102,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
-        $employee = $this->mrcService->createEmployee($employee, true);
+        $employee = $this->mrcService->createEmployeeArray($employee);
 
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
