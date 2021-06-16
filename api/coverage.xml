@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1623826737">
-  <project timestamp="1623826737">
+<coverage generated="1623827222">
+  <project timestamp="1623827222">
     <file name="/srv/api/src/Service/BsService.php">
       <class name="App\Service\BsService" namespace="global">
         <metrics complexity="5" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="37" coveredstatements="18" elements="41" coveredelements="19"/>
