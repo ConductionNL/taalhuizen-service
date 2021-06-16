@@ -961,16 +961,14 @@ class MrcService
     /**
      * Updates an employee.
      *
-     * @param string $id              The id of the employee to update
-     * @param array  $employeeArray   The input array for the employee to update
-     * @param false  $returnMrcObject Whether or not the result should be a processed employee
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
      *
      * @throws Exception
      *
      * @return array The resulting employee
      */
-
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false)
+    public function updateEmployeeArray(string $id, array $employeeArray): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
         $employee = $this->createEmployeeObject($employeeRaw, []);

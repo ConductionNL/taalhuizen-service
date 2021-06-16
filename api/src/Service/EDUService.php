@@ -144,7 +144,7 @@ class EDUService
      *
      * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent object
      */
-    public function convertEducationEvent(array $input, string $employeeName = null, ?string $studentId = null): StudentDossierEvent
+    public function convertEducationEvent(array $input, ?string $employeeName = null, ?string $studentId = null): StudentDossierEvent
     {
         $studentDossierEvent = new StudentDossierEvent();
         $studentDossierEvent->setStudentDossierEventId($input['id']);
@@ -467,7 +467,8 @@ class EDUService
                     //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                     //see if the status of said participation is the requested one and if the participation holds a group url
                     if ($participation['status'] == $status && isset($participation['group'])) {
-                        $groups = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId, $groups);
+                        $group = $this->checkParticipationGroup($groupUrls, $participation, $aanbiederId);
+                        $group ? $groups->add($group) : null;
                     }
                 } catch (Exception $e) {
                     continue;
@@ -485,16 +486,15 @@ class EDUService
     /**
      * This function checks if a participation is in a group and if not adds them.
      *
-     * @param array  $groupUrls           Array of group urls
-     * @param array  $participation       Array with data of a participation
-     * @param string $aanbiederId         ID of the aanbieder this participation belongs to
-     * @param mixed  $participationObject Mixed object as Participation
+     * @param array  $groupUrls     Array of group urls
+     * @param array  $participation Array with data of a participation
+     * @param string $aanbiederId   ID of the aanbieder this participation belongs to
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return Group The resource result
      */
-    public function checkParticipationGroup(array $groupUrls, $participation, $aanbiederId, $participationObject)
+    public function checkParticipationGroup(array $groupUrls, array $participation, string $aanbiederId): ?Group
     {
         if (!in_array($participation['group'], $groupUrls)) {
             array_push($groupUrls, $participation['group']);
@@ -503,10 +503,11 @@ class EDUService
             //handle result
             $resourceResult = $this->convertGroupObject($group, $aanbiederId);
             $resourceResult->setId(Uuid::getFactory()->fromString($group['id']));
-            $participationObject->add($resourceResult);
+
+            return $resourceResult;
         }
 
-        return $participationObject;
+        return null;
     }
 
     /**
