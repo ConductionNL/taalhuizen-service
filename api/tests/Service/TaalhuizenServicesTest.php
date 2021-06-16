@@ -20,7 +20,6 @@ class TaalhuizenServicesTest extends KernelTestCase
 
     public function testLogin()
     {
-
         $jwt = $this->serviceContainer->get(UcService::class)->login('main+testadmin@conduction.nl', 'Test1234');
 
         $this->assertIsString($jwt);
@@ -118,63 +117,62 @@ class TaalhuizenServicesTest extends KernelTestCase
     public function testCreateEmployee($organization)
     {
         $employeeArray = [
-            'givenName' => 'Test',
+            'givenName'      => 'Test',
             'additionalName' => '',
-            'familyName' => 'testing',
-            'telephone' => '0612345678',
+            'familyName'     => 'testing',
+            'telephone'      => '0612345678',
             'availabilities' => [
-                'mon' => 'true',
-                'tue' => 'false',
-                'wed' => 'false',
+                'mon'  => 'true',
+                'tue'  => 'false',
+                'wed'  => 'false',
                 'thur' => 'true',
-                'sat' => 'true',
-                'sun' => 'false'
+                'sat'  => 'true',
+                'sun'  => 'false',
             ],
             'availabilityNotes' => 'test',
-            'email' => "test+employee+{$organization['id']}@test.nl",
-            'userGroupIds' => ["5ef493ac-9c96-45a7-a8be-07fa6cc4301d", "00848014-63f6-4350-b125-25c68b8631d4"],
-            'gender' => 'X',
-            'dateOfBirth' => '1-1-2000',
-            'address' => [
-                'street' => 'test',
+            'email'             => "test+employee+{$organization['id']}@test.nl",
+            'userGroupIds'      => ['5ef493ac-9c96-45a7-a8be-07fa6cc4301d', '00848014-63f6-4350-b125-25c68b8631d4'],
+            'gender'            => 'X',
+            'dateOfBirth'       => '1-1-2000',
+            'address'           => [
+                'street'      => 'test',
                 'houseNumber' => '5',
-                'locality' => 'Almere',
-                'postalCode' => '1234AB'
+                'locality'    => 'Almere',
+                'postalCode'  => '1234AB',
             ],
-            'contactTelephone' => '0612345678',
-            'contactPreference' => 'EMAIL',
-            'contactPreferenceOther' => 'EMAIL',
-            'targetGroupPreferences' => ['nt1'],
-            'volunteeringPreference' => 'test',
-            'gotHereVia' => 'conduction',
-            'hasExperienceWithTargetGroup' => true,
+            'contactTelephone'                   => '0612345678',
+            'contactPreference'                  => 'EMAIL',
+            'contactPreferenceOther'             => 'EMAIL',
+            'targetGroupPreferences'             => ['nt1'],
+            'volunteeringPreference'             => 'test',
+            'gotHereVia'                         => 'conduction',
+            'hasExperienceWithTargetGroup'       => true,
             'experienceWithTargetGroupYesReason' => true,
-            'currentEducation' => 'NO_BUT_DID_FOLLOW',
-            'currentEducationYes' => [
-                'dateSince' => '2020-05-10',
-                'name' => 'something',
-                'doesProvideCertificate' => true
+            'currentEducation'                   => 'NO_BUT_DID_FOLLOW',
+            'currentEducationYes'                => [
+                'dateSince'              => '2020-05-10',
+                'name'                   => 'something',
+                'doesProvideCertificate' => true,
             ],
             'currentEducationNoButDidFollow' => [
-                'dateUntil' => '2020-05-10',
-                'name' => 'something',
+                'dateUntil'      => '2020-05-10',
+                'name'           => 'something',
                 'gotCertificate' => true,
-                'level' => '5'
+                'level'          => '5',
             ],
-            'doesCurrentlyFollowCourse' => true,
-            'currentlyFollowingCourseName' => 'course',
-            'currentlyFollowingCourseInstitute' => 'institute',
+            'doesCurrentlyFollowCourse'                      => true,
+            'currentlyFollowingCourseName'                   => 'course',
+            'currentlyFollowingCourseInstitute'              => 'institute',
             'currentlyFollowingCourseTeacherProfessionalism' => 'VOLUNTEER',
-            'currentlyFollowingCourseCourseProfessionalism' => 'VOLUNTEER',
+            'currentlyFollowingCourseCourseProfessionalism'  => 'VOLUNTEER',
             'doesCurrentlyFollowingCourseProvideCertificate' => true,
-            'otherRelevantCertificates' => 'MSC of Computer Science',
-            'isVOGChecked' => true,
-            'providerId' => $organization['id']
+            'otherRelevantCertificates'                      => 'MSC of Computer Science',
+            'isVOGChecked'                                   => true,
+            'providerId'                                     => $organization['id'],
         ];
 
         $result = $this->serviceContainer->get(MrcService::class)->createEmployee($employeeArray);
 
         $this->assertIsObject($result);
     }
-
 }

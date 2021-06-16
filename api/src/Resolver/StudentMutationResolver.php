@@ -157,7 +157,6 @@ class StudentMutationResolver implements MutationResolverInterface
         // Save mrc/employee
         $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
 
-
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
         if (isset($memos['availabilityMemo']['description'])) {
