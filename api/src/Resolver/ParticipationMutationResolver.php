@@ -292,13 +292,12 @@ class ParticipationMutationResolver implements MutationResolverInterface
     /**
      * Checks if is_array.
      *
-     * @param string $id the id.
      *
      * @throws Exception
      *
      * @return string The resulting id.
      */
-    public function isArray(string $id)
+    public function isArray($id)
     {
         if (is_array($id)) {
             $id = end($id);
