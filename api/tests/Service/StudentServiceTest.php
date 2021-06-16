@@ -31,6 +31,8 @@ class StudentServiceTest extends KernelTestCase
 
     public function testGetStudent()
     {
+//        $result = $this->studentService->getStudent('aUUID');
+//        $this->assertEquals('aUUID', $result['participant']['id']);
     }
 
     public function testGetStudentsWithStatus()

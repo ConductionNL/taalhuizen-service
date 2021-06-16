@@ -635,15 +635,15 @@ class StudentService
     public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
     {
         $educations = [
-            'lastEducation'         => null,
-            'followingEducationNo'  => null,
-            'followingEducationYes' => null,
-            'course'                => null,
+            'lastEducation'         => [],
+            'followingEducationNo'  => [],
+            'followingEducationYes' => [],
+            'course'                => [],
         ];
 
         if (isset($employee['educations'])) {
             foreach ($employee['educations'] as $education) {
-                $this->setEducationType($educations, $education);
+                $educations = array_merge($educations, $this->setEducationType($educations, $education));
             }
         }
 
@@ -662,19 +662,19 @@ class StudentService
      *
      * @throws Exception
      */
-    private function setEducationType(array &$educations, array $education)
+    private function setEducationType(array $educations, array $education): array
     {
         switch ($education['description']) {
             case 'lastEducation':
                 $educations['lastEducation'] = $education;
                 break;
             case 'followingEducationNo':
-                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
                     $educations['followingEducationNo'] = $education;
                 }
                 break;
             case 'followingEducationYes':
-                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
                     $educations['followingEducationYes'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 }
                 break;
@@ -682,6 +682,8 @@ class StudentService
                 $educations['course'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 break;
         }
+
+        return $educations;
     }
 
     /**

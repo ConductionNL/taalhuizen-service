@@ -510,15 +510,14 @@ class MrcService
     /**
      * Creates an employee object for a resulting employee from the MRC.
      *
-     * @param array $employeeArray   The resulting array for fetching an employee
-     * @param array $userRoleArray   The user roles of the employee
-     * @param bool  $studentEmployee Whether or not the user is both student and employee
+     * @param array $employeeArray The resulting array for fetching an employee
+     * @param array $userRoleArray The user roles of the employee
      *
      * @throws Exception Thrown if the EAV is called incorrectly
      *
      * @return Employee The resulting employee object
      */
-    public function createEmployeeObject(array $employeeArray, array $userRoleArray = [], bool $studentEmployee = false): Employee
+    public function createEmployeeObject(array $employeeArray, array $userRoleArray = []): Employee
     {
         if ($this->eavService->hasEavObject($employeeArray['person'])) {
             $contact = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $employeeArray['person']]);
@@ -533,11 +532,7 @@ class MrcService
             $employee->setUserRoles($userRoleArray);
         }
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
-        if (!$studentEmployee) {
-            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
-        } else {
-            $employee = $this->relatedObjectsToEmployeeObject($employee, $employeeArray);
-        }
+        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($employeeArray['id']));
@@ -801,18 +796,17 @@ class MrcService
     /**
      * Gets the contact for an employee.
      *
-     * @param string        $userId          The user id of the employee
-     * @param array         $employeeArray   The input array for the employee
-     * @param Employee|null $employee        The employee object of the employee
-     * @param bool          $studentEmployee Whether or not the employee is also a student
+     * @param string        $userId        The user id of the employee
+     * @param array         $employeeArray The input array for the employee
+     * @param Employee|null $employee      The employee object of the employee
      *
      * @throws Exception Thrownt if the EAV is called incorrectly
      *
      * @return array The resulting contact
      */
-    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
+    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null): array
     {
-        if (isset($studentEmployee) && isset($employeeArray['person'])) {
+        if (isset($employeeArray['person'])) {
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
@@ -825,14 +819,13 @@ class MrcService
     /**
      * Saves the user for an employee.
      *
-     * @param array       $employeeArray   The input array for an employee
-     * @param array       $contact         The contact for the employee
-     * @param bool        $studentEmployee Whether or not the employee is also a student
-     * @param string|null $userId          The user id of the employee
+     * @param array       $employeeArray The input array for an employee
+     * @param array       $contact       The contact for the employee
+     * @param string|null $userId        The user id of the employee
      *
      * @return array|null The resulting user object
      */
-    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?array
+    public function saveUser(array $employeeArray, array $contact, ?string $userId = null): ?array
     {
         if ((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))) {
             if (isset($user)) {
@@ -842,7 +835,7 @@ class MrcService
             }
 
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
-        } elseif (!$studentEmployee) {
+        } elseif (isset($employeeArray['email'])) {
             return $this->createUser($employeeArray, $contact);
         }
 
@@ -881,10 +874,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        // TODO fix that a student has an email for creating a user so this if statement can be removed:
-        if (!$returnMrcObject) {
-            $this->saveUser($employeeArray, $contact);
-        }
+        $this->saveUser($employeeArray, $contact);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
@@ -896,6 +886,9 @@ class MrcService
         }
         if (key_exists('volunteeringPreference', $employeeArray)) {
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
+        }
+        if (key_exists('currentEducation', $employeeArray)) {
+            $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
 
         // Saves lastEducation, followingEducation and course for student as employee
@@ -946,29 +939,21 @@ class MrcService
     /**
      * Saves the related user with the data from the contact of the employee.
      *
-     * @param bool     $studentEmployee Whether or not the employee is also a student
-     * @param Employee $employee        The employee object the contact should relate to
-     * @param array    $employeeArray   The input data to update a contact
+     * @param Employee $employee      The employee object the contact should relate to
+     * @param array    $employeeArray The input data to update a contact
      *
      * @throws Exception
      *
      * @return array The resulting contact
      */
-    public function handleRetrievingContact(bool $studentEmployee, Employee $employee, array $employeeArray): array
+    public function handleRetrievingContact(Employee $employee, array $employeeArray): array
     {
-        if ($studentEmployee) {
-            if (isset($employeeArray['person'])) {
-                $contact = $this->commonGroundService->getResource($employeeArray['person']);
-            }
-            // if this person does not exist we should not create it here, but before we update the student employee object!
-        } else {
-            $userId = $employee->getUserId();
-            if (empty($userId)) {
-                $userId = $employeeArray['userId'];
-            }
-            $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+        $userId = $employee->getUserId();
+        if (empty($userId)) {
+            $userId = $employeeArray['userId'];
         }
+        $contact = $this->getContact($userId, $employeeArray, $employee);
+        $this->saveUser($employeeArray, $contact, $userId);
 
         return $contact;
     }
@@ -978,27 +963,28 @@ class MrcService
      *
      * @param string $id              The id of the employee to update
      * @param array  $employeeArray   The input array for the employee to update
-     * @param bool   $studentEmployee Whether or not the employee is also a student
+     * @param false  $returnMrcObject Whether or not the result should be a processed employee
      *
      * @throws Exception
      *
      * @return array The resulting employee
      */
-    public function updateEmployeeArray(string $id, array $employeeArray, bool $studentEmployee = false): array
+
+    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false)
     {
         $employeeRaw = $this->getEmployeeRaw($id);
         $employee = $this->createEmployeeObject($employeeRaw, []);
 
-        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
-        $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
+        $contact = $this->handleRetrievingContact($employee, $employeeArray);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, $employee, $employeeRaw);
 
         $resource = $this->ccService->cleanResource($resource);
 
-        $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $id])]);
+        $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
         key_exists('targetGroupPreferences', $employeeArray) ? $this->createCompetences($employeeArray, $result['id'], $result) : null;
         key_exists('volunteeringPreference', $employeeArray) ? $this->createInterests($employeeArray, $result['id'], $result['interests']) : null;
+        key_exists('currentEducation', $employeeArray) ? $this->createEducations($employeeArray, $result['id'], $result['educations']) : null;
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)) {
