@@ -28,7 +28,7 @@ class ParticipationService
     }
 
     /**
-     * @param array  $participation   Array with data from the eav/participation
+     * @param array   $participation   Array with data from the eav/participation
      * @param ?string $participationId Id of the eav/participation
      *
      * @throws Exception
