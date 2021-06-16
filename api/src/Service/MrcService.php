@@ -1000,23 +1000,6 @@ class MrcService
     }
 
     /**
-     * Updates an employee.
-     *
-     * @param string $id            The id of the employee to update
-     * @param array  $employeeArray The input array for the employee to update
-     *
-     * @throws Exception
-     *
-     * @return Employee The resulting employee
-     */
-    public function updateEmployee(string $id, array $employeeArray): Employee
-    {
-        $employee = $this->updateEmployeeArray($id, $employeeArray);
-
-        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
-    }
-
-    /**
      * Sets the user role array of a user.
      *
      * @param array $employeeArray The employee array to fetch the user groups for
