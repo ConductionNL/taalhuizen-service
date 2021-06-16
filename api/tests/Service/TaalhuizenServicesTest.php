@@ -272,7 +272,7 @@ class TaalhuizenServicesTest extends KernelTestCase
 
     public function testGetGroups()
     {
-        $result = $this->serviceContainer->get(EDUService::class)->getGroups(['course.organization' => "/providers/3f26bf48-cfe6-4a2c-bafd-70f89b70efa7"]);
+        $result = $this->serviceContainer->get(EDUService::class)->getGroups(['course.organization' => '/providers/3f26bf48-cfe6-4a2c-bafd-70f89b70efa7']);
 
         $this->assertIsArray($result);
     }
@@ -301,13 +301,11 @@ class TaalhuizenServicesTest extends KernelTestCase
         $group->setGeneralParticipantsMin(10);
         $group->setGeneralParticipantsMax('20');
         $group->setGeneralEvaluation('test');
-        $group->setAanbiederEmployeeIds(["/employees/70933304-5a0f-43aa-9745-e96db398a0e0"]);
-
+        $group->setAanbiederEmployeeIds(['/employees/70933304-5a0f-43aa-9745-e96db398a0e0']);
 
         $result = $this->serviceContainer->get(GroupMutationResolver::class)->createGroup($group);
 
         $this->assertIsObject($result);
         $this->assertInstanceOf(Employee::class, $result);
-
     }
 }
