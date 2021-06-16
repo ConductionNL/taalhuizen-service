@@ -12,8 +12,7 @@ class ResolverServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->resolverService = $this->serviceContainer->get(ResolverService::class);
         parent::setUp();
     }

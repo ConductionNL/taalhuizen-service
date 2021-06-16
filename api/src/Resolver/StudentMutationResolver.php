@@ -6,13 +6,13 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -24,16 +24,14 @@ class StudentMutationResolver implements MutationResolverInterface
     private MrcService $mrcService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommongroundService $commonGroundService,
         MrcService $mrcService,
-        ParameterBagInterface $parameterBag
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->studentService = new StudentService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->studentService = new StudentService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
     }
 
@@ -45,7 +43,7 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param object|null $item    Post object
      * @param array       $context Information about post
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return \App\Entity\Student|object|null Returns a Student object
      */
@@ -71,7 +69,7 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @param array $input Array with students data
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return object Returns a Student object
      */
@@ -84,7 +82,7 @@ class StudentMutationResolver implements MutationResolverInterface
             }
             $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         } else {
-            throw new \Exception('languageHouseId not given');
+            throw new Exception('languageHouseId not given');
         }
 
         // Do some checks and error handling
@@ -128,7 +126,7 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @param array $input Array with students data
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return object Returns a Student object
      */
@@ -157,7 +155,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
-        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true);
+        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
 
 
         //Then save memos
@@ -614,8 +612,8 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function sets the persons children properties from the given general details.
      *
-     * @param array $person         Array with persons data
-     * @param array $generalDetails Array with general details data
+     * @param array $person
+     * @param array $generalDetails
      * @param null  $updatePerson   Bool if person should be updated
      *
      * @return array Returns person array with children properties
@@ -834,7 +832,7 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param array       $input       Array of given data
      * @param string|null $ccPersonUrl String that holds the person URL
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns an participant array
      */
@@ -959,7 +957,7 @@ class StudentMutationResolver implements MutationResolverInterface
      * @param string $personUrl      String that holds persons URL
      * @param null   $updateEmployee Bool if employee needs to be updated if not
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns employee array
      */
@@ -979,10 +977,10 @@ class StudentMutationResolver implements MutationResolverInterface
         }
         $educations = $this->studentService->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
-            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails'], $educations['lastEducation'], $educations['followingEducation']);
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, ['lastEducation' => $educations['lastEducation'], 'followingEducation' => $educations['followingEducation'], 'details' => $input['educationDetails']]);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails'], $educations['course']);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, ['course' => $educations['course'], 'details' => $input['courseDetails']]);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
@@ -997,15 +995,16 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function set employee properties from given education details.
      *
-     * @param array $employee           Array with employee data
-     * @param array $educationDetails   Array with education details
-     * @param null  $lastEducation      Bool if this is the last education or not
-     * @param null  $followingEducation Bool if employee is following education or not
+     * @param array $employee      Array with employee data
+     * @param array $educationData
      *
      * @return array Returns employee array
      */
-    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationDetails, $lastEducation = null, $followingEducation = null): array
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
     {
+        $educationDetails = $educationData['details'];
+        $lastEducation = $educationData['lastEducation'];
+        $followingEducation = $educationData['followingEducation'];
         if (isset($educationDetails['lastFollowedEducation'])) {
             $employee['educations'][] = $this->getLastEducationFromEducationDetails($educationDetails, $lastEducation);
         }
@@ -1122,14 +1121,15 @@ class StudentMutationResolver implements MutationResolverInterface
     /**
      * This function retrieves employee properties from course details.
      *
-     * @param array      $employee      Array with employee data
-     * @param array|null $courseDetails Array with course details
-     * @param array|null $course        Array with course
+     * @param array $employee   Array with employee data
+     * @param array $courseData
      *
      * @return array Returns employee array
      */
-    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseDetails = null, $course = null): array
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
+        $courseDetails = $courseData['details'];
+        $course = $courseData['course'];
         if (isset($courseDetails['isFollowingCourseRightNow'])) {
             if (isset($course['id'])) {
                 $newEducation['id'] = $course['id'];

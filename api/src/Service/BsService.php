@@ -67,13 +67,15 @@ class BsService
     /**
      * Sends an invitation for a user/employee.
      *
-     * @param string      $email           The email address to send the e-mail to
-     * @param string      $token           The token to create a new password
-     * @param array       $contact         The contact for the user
-     * @param string|null $organizationUrl The organization url for the organization that the new user relates to
+     * @param string $token The token to create a new password
+     * @param array  $data  The data to create the e-mail
      */
-    public function sendInvitation(string $email, string $token, array $contact, string $organizationUrl = null): void
+    public function sendInvitation(string $token, array $data): void
     {
+        $email = $data['username'];
+        $contact = $data['contact'];
+        $organizationUrl = $data['organization'];
+
         $link = "{$this->parameterBag->get('app_domain')}/auth/resetpassword/$token";
 
         if (!empty($organizationUrl)) {

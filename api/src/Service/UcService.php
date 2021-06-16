@@ -36,24 +36,20 @@ class UcService
     /**
      * UcService constructor.
      *
-     * @param CommonGroundService    $commonGroundService
-     * @param EntityManagerInterface $entityManager
-     * @param ParameterBagInterface  $parameterBag
-     * @param RequestStack           $requestStack
-     * @param CacheInterface         $cache
+     * @param RequestStack   $requestStack
+     * @param CacheInterface $cache
+     * @param LayerService   $layerService
      */
     public function __construct(
-        CommonGroundService $commonGroundService,
-        EntityManagerInterface $entityManager,
-        ParameterBagInterface $parameterBag,
         RequestStack $requestStack,
-        CacheInterface $cache
+        CacheInterface $cache,
+        LayerService $layerService
     ) {
-        $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->commonGroundService = $commonGroundService;
-        $this->entityManager = $entityManager;
-        $this->parameterBag = $parameterBag;
+        $this->bsService = $layerService->bsService;
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->parameterBag = $layerService->parameterBag;
         $this->requestStack = $requestStack;
         $this->cache = $cache;
     }

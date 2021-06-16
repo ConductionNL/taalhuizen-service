@@ -21,13 +21,12 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
      *
      * @param CommongroundService $commonGroundService
      * @param StudentService      $studentService
-     * @param ResolverService     $resolverService
      */
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService, ResolverService $resolverService)
+    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
     {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
-        $this->resolverService = $resolverService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
