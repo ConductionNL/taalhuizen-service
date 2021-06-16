@@ -12,8 +12,7 @@ class TestResultServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $this->serviceContainer = self::$container;
+        $this->serviceContainer = static::getContainer();
         $this->testResultService = $this->serviceContainer->get(TestResultService::class);
         parent::setUp();
     }

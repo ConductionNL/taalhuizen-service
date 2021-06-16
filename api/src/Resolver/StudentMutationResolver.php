@@ -6,13 +6,13 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Student;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class StudentMutationResolver implements MutationResolverInterface
 {
@@ -24,16 +24,14 @@ class StudentMutationResolver implements MutationResolverInterface
     private MrcService $mrcService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommongroundService $commonGroundService,
         MrcService $mrcService,
-        ParameterBagInterface $parameterBag
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->studentService = new StudentService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->studentService = new StudentService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
     }
 
@@ -104,7 +102,7 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
-        $employee = $this->mrcService->createEmployeeArray($employee);
+        $employee = $this->mrcService->createEmployee($employee, true);
 
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
@@ -158,6 +156,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
         $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
+
 
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
