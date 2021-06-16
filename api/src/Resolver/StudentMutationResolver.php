@@ -103,8 +103,8 @@ class StudentMutationResolver implements MutationResolverInterface
         $participant = $this->eduService->saveEavParticipant($participant);
 
         $employee = $this->inputToEmployee($input, $person['@id']);
-        // Save mrc/employee
-        $employee = $this->mrcService->createEmployeeArray($employee, true);
+        // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
+        $employee = $this->mrcService->createEmployee($employee, true);
 
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
@@ -157,7 +157,8 @@ class StudentMutationResolver implements MutationResolverInterface
 
         $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
         // Save mrc/employee
-        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee, true, true);
+        $employee = $this->mrcService->updateEmployee($student['employee']['id'], $employee, true);
+
 
         //Then save memos
         $memos = $this->saveMemos($input, $student['person']['@id']);
@@ -962,9 +963,16 @@ class StudentMutationResolver implements MutationResolverInterface
      *
      * @return array Returns employee array
      */
-    private function inputToEmployee(array $input, $personUrl, $updateEmployee = null): array
+    private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
     {
         $employee = ['person' => $personUrl];
+        //check if this person has a user and if so add its id to the employee body as userId
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $personUrl])['hydra:member'];
+        if (count($users) > 0) {
+            $user = $users[0];
+            $employee['userId'] = $user['id'];
+            $employee['email'] = $user['username'];
+        }
         if (isset($input['contactDetails']['email'])) {
             // set email for creating a user in mrcService
             $employee['email'] = $input['contactDetails']['email'];
