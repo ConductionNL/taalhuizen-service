@@ -417,6 +417,8 @@ class StudentService
      * @param mixed $resource Student object
      * @param array $student  Array with students data
      *
+     * @throws Exception
+     *
      * @return object Returns a Student object
      */
     private function handleSubResources($resource, array $student): object
@@ -430,10 +432,12 @@ class StudentService
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
 
-        $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
-        $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
-        $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        if (isset($student['employee'])) {
+            $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
+            $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
+            $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+            $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($student['person']));
         $resource->setPermissionDetails($this->handlePermissionDetails($student['person']));
@@ -630,9 +634,9 @@ class StudentService
      *
      *@throws Exception
      *
-     * @return array|null[] Returns an array of educations
+     *@return array|null[] Returns an array of educations
      */
-    public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
+    public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
         $educations = [
             'lastEducation'         => [],

@@ -183,7 +183,14 @@ class EAVService
         return false;
     }
 
-    private function checkDeleteResourceSettings(array $deleteResourceSettings): array
+    /**
+     * Check if any of the settings for commongroundService->deleteResource function are set in the given array and return the default options if not.
+     *
+     * @param array|null $deleteResourceSettings
+     *
+     * @return array an array that can be used to set the params for the commongroundService->deleteResource function. Default: async = false, autowire = true, events = true.
+     */
+    private function checkDeleteResourceSettings(?array $deleteResourceSettings): array
     {
         return [
             'async'    => $deleteResourceSettings['async'] ?? false,

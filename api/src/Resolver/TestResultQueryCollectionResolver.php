@@ -24,6 +24,8 @@ class TestResultQueryCollectionResolver implements QueryCollectionResolverInterf
 
     /**
      * @inheritDoc
+     *
+     * @throws Exception
      */
     public function __invoke(iterable $collection, array $context): iterable
     {

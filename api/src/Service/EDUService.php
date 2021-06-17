@@ -643,9 +643,8 @@ class EDUService
      */
     public function deleteResults(array $participant): bool
     {
-        $results = $this->commonGroundService->getResource($participant['results']);
-        foreach ($results as $result) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
+        foreach ($participant['results'] as $result) {
+            $this->eavService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
         }
 
         return false;
@@ -662,8 +661,7 @@ class EDUService
      */
     public function deleteParticipantGroups(array $participant): bool
     {
-        $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
-        foreach ($participantGroups as $participantGroup) {
+        foreach ($participant['participantGroups'] as $participantGroup) {
             $this->deleteGroup($participantGroup['id']);
         }
 
