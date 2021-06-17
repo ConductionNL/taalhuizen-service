@@ -770,16 +770,15 @@ class ParticipationService
     /**
      * This function checks the eav/participations values.
      *
-     * @param array       $participation   Array with data from the eav/participations
-     * @param string      $aanbiederUrl    Url of the cc/organizations
-     * @param string      $learningNeedId  Id of the eav/learningNeeds
+     * @param array $participation Array with data from the eav/participations
+     * @param string|null $aanbiederUrl Url of the cc/organizations
+     * @param string|null $learningNeedId Id of the eav/learningNeeds
      * @param string|null $participationId Id of the eav/participations
      *
-     * @throws Exception
-     *
      * @return array A eav/participations is returned from EAV
+     * @throws Exception
      */
-    public function checkParticipationValues(array $participation, string $aanbiederUrl, string $learningNeedId, string $participationId = null): array
+    public function checkParticipationValues(array $participation, ?string $aanbiederUrl, ?string $learningNeedId, string $participationId = null): array
     {
         $result = [];
         $this->checkParticipationRequiredFields($participation, $aanbiederUrl, $learningNeedId, $participationId);

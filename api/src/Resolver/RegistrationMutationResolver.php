@@ -95,7 +95,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         //Save memo
         if (isset($input['memo'])) {
-            $registration['author'] = $organization['@id'];
+            $memo['author'] = $organization['@id'];
             $memo = $this->inputToMemo($input, $registrationStudent['@id']);
             $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
         }
