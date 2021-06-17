@@ -84,7 +84,7 @@ class TestResultService
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');
         }
         if ($this->eavService->hasEavObject($participation['learningNeed'], 'learning_needs')) {
-            $learningNeed = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participation['learningNeed']]);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $participation['learningNeed']]);
         } else {
             throw new Exception('Warning, participation is not connected to a learningNeed!');
         }
