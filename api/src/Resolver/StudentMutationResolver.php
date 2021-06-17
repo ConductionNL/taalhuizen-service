@@ -207,6 +207,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 }
             }
             $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($availabilityMemo['author'])) {
+                $availabilityMemo['author'] = $ccPersonUrl;
+            }
             $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -219,6 +222,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 }
             }
             $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($motivationMemo['author'])) {
+                $motivationMemo['author'] = $ccPersonUrl;
+            }
             $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 

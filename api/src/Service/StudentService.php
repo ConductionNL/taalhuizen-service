@@ -415,9 +415,10 @@ class StudentService
      * This function handles a students subresources being set.
      *
      * @param mixed $resource Student object
-     * @param array $student  Array with students data
+     * @param array $student Array with students data
      *
      * @return object Returns a Student object
+     * @throws Exception
      */
     private function handleSubResources($resource, array $student): object
     {
@@ -430,10 +431,12 @@ class StudentService
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
 
-        $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
-        $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
-        $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        if (isset($student['employee'])) {
+            $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
+            $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
+            $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+            $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($student['person']));
         $resource->setPermissionDetails($this->handlePermissionDetails($student['person']));
@@ -628,11 +631,11 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
+     *@return array|null[] Returns an array of educations
      *@throws Exception
      *
-     * @return array|null[] Returns an array of educations
      */
-    public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
+    public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
         $educations = [
             'lastEducation'         => [],

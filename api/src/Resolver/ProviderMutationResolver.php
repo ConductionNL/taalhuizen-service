@@ -120,7 +120,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         //delete employees
         $this->mrcService->deleteEmployees($id);
 
-        //delete participants
+        //delete participants, this should just be done with the studentService!
         $programId = $this->eduService->deleteParticipants($id);
 
         $this->ccService->deleteOrganization($id, $programId);
