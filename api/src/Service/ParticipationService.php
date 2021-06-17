@@ -188,12 +188,13 @@ class ParticipationService
     /**
      * This function deletes a eav/participation with the given id or url.
      *
-     * @param string|null $id Id of the eav/participation
-     * @param string|null $url Url of the eav/participation
-     * @param bool|false $skipLearningNeed If true
+     * @param string|null $id               Id of the eav/participation
+     * @param string|null $url              Url of the eav/participation
+     * @param bool|false  $skipLearningNeed If true
+     *
+     * @throws Exception
      *
      * @return array A eav/participation is returned from the EAV
-     * @throws Exception
      */
     public function deleteParticipation(?string $id, string $url = null, bool $skipLearningNeed = false): array
     {
@@ -276,11 +277,12 @@ class ParticipationService
     /**
      * This function gets a eav/participation with the given id or url.
      *
-     * @param string|null $id Id of the eav/participation
+     * @param string|null $id  Id of the eav/participation
      * @param string|null $url Url of the eav/participation
      *
-     * @return array A eav/participation is returned from the EAV
      * @throws Exception
+     *
+     * @return array A eav/participation is returned from the EAV
      */
     public function getParticipation(?string $id, string $url = null): array
     {
@@ -768,13 +770,14 @@ class ParticipationService
     /**
      * This function checks the eav/participations values.
      *
-     * @param array $participation Array with data from the eav/participations
-     * @param string|null $aanbiederUrl Url of the cc/organizations
-     * @param string|null $learningNeedId Id of the eav/learningNeeds
+     * @param array       $participation   Array with data from the eav/participations
+     * @param string|null $aanbiederUrl    Url of the cc/organizations
+     * @param string|null $learningNeedId  Id of the eav/learningNeeds
      * @param string|null $participationId Id of the eav/participations
      *
-     * @return array A eav/participations is returned from EAV
      * @throws Exception
+     *
+     * @return array A eav/participations is returned from EAV
      */
     public function checkParticipationValues(array $participation, ?string $aanbiederUrl, ?string $learningNeedId, string $participationId = null): array
     {
@@ -793,9 +796,9 @@ class ParticipationService
     /**
      * This function checks the eav/participations required fields.
      *
-     * @param array $participation Array with data from the eav/participations
-     * @param string|null $aanbiederUrl Url of the cc/organizations
-     * @param string|null $learningNeedId Id of the eav/learningNeeds
+     * @param array       $participation   Array with data from the eav/participations
+     * @param string|null $aanbiederUrl    Url of the cc/organizations
+     * @param string|null $learningNeedId  Id of the eav/learningNeeds
      * @param string|null $participationId Id of the eav/participations
      *
      * @throws Exception

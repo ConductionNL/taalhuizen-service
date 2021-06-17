@@ -27,7 +27,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
     /**
      * RegistrationMutationResolver constructor.
      *
-     * @param MrcService $mrcService
+     * @param MrcService   $mrcService
      * @param LayerService $layerService
      */
     public function __construct(

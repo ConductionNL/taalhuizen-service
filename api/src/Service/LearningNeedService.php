@@ -238,11 +238,12 @@ class LearningNeedService
      * This function gets and returns a learningNeed object from the eav-component with the EAVService.
      * It is recommended to use the id, but can also be used with an url instead.
      *
-     * @param string|null $id the id of the learningNeed (eav).
+     * @param string|null $id  the id of the learningNeed (eav).
      * @param string|null $url an url of the learningNeed (eav url).
      *
-     * @return array the result array containing the learningNeed or an errorMessage.
      * @throws Exception
+     *
+     * @return array the result array containing the learningNeed or an errorMessage.
      */
     public function getLearningNeed(?string $id, string $url = null): array
     {
@@ -346,12 +347,13 @@ class LearningNeedService
      * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update a LearningNeed.
      * It also cleans up some values in the learningNeed body that we might not want in there when saving the learningNeed.
      *
-     * @param array $learningNeed the body of a learningNeed.
-     * @param string|null $studentUrl the student url (edu/participant).
+     * @param array       $learningNeed   the body of a learningNeed.
+     * @param string|null $studentUrl     the student url (edu/participant).
      * @param string|null $learningNeedId the id of an already existing learningNeed, for updating it.
      *
-     * @return array the result array containing the learningNeed or an errorMessage.
      * @throws Exception
+     *
+     * @return array the result array containing the learningNeed or an errorMessage.
      */
     public function checkLearningNeedValues(array $learningNeed, ?string $studentUrl, string $learningNeedId = null): array
     {

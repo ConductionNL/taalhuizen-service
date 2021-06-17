@@ -170,11 +170,12 @@ class TestResultService
     /**
      * This function fetches a test result from the given ID.
      *
-     * @param string|null $id ID of the test result that will be fetched
+     * @param string|null $id  ID of the test result that will be fetched
      * @param string|null $url Url of the test result as string
      *
-     * @return array Returns a test result and memo in a array
      * @throws Exception
+     *
+     * @return array Returns a test result and memo in a array
      */
     public function getTestResult(?string $id, string $url = null): array
     {
@@ -296,6 +297,7 @@ class TestResultService
         }
 
         $this->entityManager->persist($resource);
+
         return $resource;
     }
 }

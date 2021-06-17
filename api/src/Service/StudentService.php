@@ -415,10 +415,11 @@ class StudentService
      * This function handles a students subresources being set.
      *
      * @param mixed $resource Student object
-     * @param array $student Array with students data
+     * @param array $student  Array with students data
+     *
+     * @throws Exception
      *
      * @return object Returns a Student object
-     * @throws Exception
      */
     private function handleSubResources($resource, array $student): object
     {
@@ -631,9 +632,9 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     *@return array|null[] Returns an array of educations
      *@throws Exception
      *
+     *@return array|null[] Returns an array of educations
      */
     public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
