@@ -643,7 +643,6 @@ class EDUService
      */
     public function deleteResults(array $participant): bool
     {
-
         foreach ($participant['results'] as $result) {
             $this->eavService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
         }
