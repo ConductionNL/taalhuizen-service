@@ -12,6 +12,7 @@ class TestResultService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EDUService $eduService;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         CommonGroundService $commonGroundService,
@@ -20,6 +21,7 @@ class TestResultService
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
         $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -217,8 +219,10 @@ class TestResultService
             $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
             // Get the edu/testResult urls for this participation and do gets on them
             $testResults = [];
-            foreach ($participation['results'] as $result) {
-                array_push($testResults, $this->getTestResult(null, $result));
+            if (isset($participation['results'])) {
+                foreach ($participation['results'] as $result) {
+                    array_push($testResults, $this->getTestResult(null, $result));
+                }
             }
         } else {
             throw new Exception('Invalid request, '.$participationId.' is not an existing eav/participation !');
@@ -291,6 +295,7 @@ class TestResultService
             $resource->setParticipationId($participationId);
         }
 
+        $this->entityManager->persist($resource);
         return $resource;
     }
 }
