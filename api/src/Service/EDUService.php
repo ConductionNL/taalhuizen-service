@@ -662,8 +662,7 @@ class EDUService
      */
     public function deleteParticipantGroups(array $participant): bool
     {
-        $participantGroups = $this->commonGroundService->getResource($participant['participantGroups']);
-        foreach ($participantGroups as $participantGroup) {
+        foreach ($participant['participantGroups'] as $participantGroup) {
             $this->deleteGroup($participantGroup['id']);
         }
 

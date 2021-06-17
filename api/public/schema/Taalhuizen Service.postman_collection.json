@@ -24468,7 +24468,7 @@
 							]
 						},
 						{
-							"name": "Retrieves the Provider resources with an invalidated token",
+							"name": "[UNUSED] Retrieves the Provider resources with an invalidated token",
 							"event": [
 								{
 									"listen": "test",
