@@ -243,7 +243,7 @@ class RegistrationService
     /**
      * This function handles the Registration result.
      *
-     * @param array $registration Array with data from the registrationStudent, registrationRegistrar, cc/organization, edu/participant & the memo
+     * @param array $registration Array with data from the student, registration, edu/participant & the memo
      *
      * @throws Exception
      *
@@ -256,10 +256,10 @@ class RegistrationService
         //@todo: remove address setRegistrar
         $resource->setLanguageHouseId($registration['languageHouseId']);
 
-        $resource->setStudent($registration['registrationStudent']);
-        $resource->setRegistrar($registration['registrationRegistrar']);
+        $resource->setStudent($registration['student']);
+        $resource->setRegistrar($registration['registration']);
         $resource->setMemo($registration['memo']['description']);
-        $resource->setStudentId($registration['registrationStudent']['id']);
+        $resource->setStudentId($registration['participant']['id']);
         $this->entityManager->persist($resource);
 
         return $resource;

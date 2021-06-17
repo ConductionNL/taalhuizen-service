@@ -95,8 +95,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         //Save memo
         if (isset($input['memo'])) {
-            $memo['author'] = $organization['@id'];
             $memo = $this->inputToMemo($input, $registrationStudent['@id']);
+            $memo['author'] = $organization['@id'];
             $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -222,12 +222,10 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @return array The resulting memo properties
      */
-    private function inputToMemo(array $input, string $studentUrl = null)
+    private function inputToMemo(array $input, string $studentUrl = null): array
     {
-        $memo = [];
-
-        $memo['description'] = $input['memo'];
         $memo = $this->getMemoStudentProperties($studentUrl);
+        $memo['description'] = $input['memo'];
 
         return $memo;
     }
@@ -244,10 +242,10 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private function getMemoStudentProperties(string $studentUrl): array
     {
         $student = $this->commonGroundService->getResource($studentUrl);
-        $registration['name'] = 'Memo about '.$student['givenName'];
-        $registration['topic'] = $studentUrl;
+        $memo['name'] = 'Memo about '.$student['givenName'];
+        $memo['topic'] = $studentUrl;
 
-        return $registration;
+        return $memo;
     }
 
     /**

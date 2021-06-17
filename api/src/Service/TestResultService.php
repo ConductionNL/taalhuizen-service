@@ -168,14 +168,13 @@ class TestResultService
     /**
      * This function fetches a test result from the given ID.
      *
-     * @param string $id  ID of the test result that will be fetched
-     * @param null   $url Url of the test result as string
-     *
-     * @throws \Exception
+     * @param string|null $id ID of the test result that will be fetched
+     * @param string|null $url Url of the test result as string
      *
      * @return array Returns a test result and memo in a array
+     * @throws Exception
      */
-    public function getTestResult(string $id, $url = null): array
+    public function getTestResult(?string $id, string $url = null): array
     {
         if (isset($id)) {
             $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
@@ -215,7 +214,7 @@ class TestResultService
     {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
-            $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationId]);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
             // Get the edu/testResult urls for this participation and do gets on them
             $testResults = [];
             foreach ($participation['results'] as $result) {

@@ -177,36 +177,10 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
 //    todo:
-//    public function removeStudent(array $student): ?Student
-//    {
-//        $result['result'] = [];
-//
-//        // If studentUrl or studentId is set generate the id for it, needed for eav calls later
-//        $studentId = null;
-//        if (isset($student['studentUrl'])) {
-//            $studentId = $this->commonGroundService->getUuidFromUrl($student['studentUrl']);
-//        } elseif (isset($student['id'])) {
-//            $studentId = explode('/', $student['id']);
-//            if (is_array($studentId)) {
-//                $studentId = end($studentId);
-//            }
-//        } else {
-//            throw new Exception('No studentUrl or id was specified');
-//        }
-//
-//        $result = array_merge($result, $this->studentService->deleteStudent($studentId));
-//
-//        $result['result'] = False;
-//        if (isset($result['student'])) {
-//            $result['result'] = True;
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
-//        return null;
-//    }
+    public function removeStudent(array $student): ?Student
+    {
+        return null;
+    }
 
     //todo: should be done in StudentService, for examples how to do this: see StudentService->saveStudent or TestResultService->saveTestResult
 

@@ -188,15 +188,14 @@ class ParticipationService
     /**
      * This function deletes a eav/participation with the given id or url.
      *
-     * @param string      $id               Id of the eav/participation
-     * @param string|null $url              Url of the eav/participation
-     * @param bool|false  $skipLearningNeed If true
-     *
-     * @throws Exception
+     * @param string|null $id Id of the eav/participation
+     * @param string|null $url Url of the eav/participation
+     * @param bool|false $skipLearningNeed If true
      *
      * @return array A eav/participation is returned from the EAV
+     * @throws Exception
      */
-    public function deleteParticipation(string $id, string $url = null, bool $skipLearningNeed = false): array
+    public function deleteParticipation(?string $id, string $url = null, bool $skipLearningNeed = false): array
     {
         $result = $this->getParticipation($id, $url);
 
@@ -239,7 +238,7 @@ class ParticipationService
                 $learningNeed['participations'] = array_values(array_filter($getLearningNeed['participations'], function ($learningNeedParticipation) use ($participationUrl) {
                     return $learningNeedParticipation != $participationUrl;
                 }));
-                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedUrl]);
+                $result['learningNeed'] = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'self' => $learningNeedUrl]);
             }
         }
         // only works when participation is deleted after, because relation is not removed from the EAV participation object in here
@@ -277,14 +276,13 @@ class ParticipationService
     /**
      * This function gets a eav/participation with the given id or url.
      *
-     * @param string      $id  Id of the eav/participation
+     * @param string|null $id Id of the eav/participation
      * @param string|null $url Url of the eav/participation
      *
-     * @throws Exception
-     *
      * @return array A eav/participation is returned from the EAV
+     * @throws Exception
      */
-    public function getParticipation(string $id, string $url = null): array
+    public function getParticipation(?string $id, string $url = null): array
     {
         $result = [];
         // Get the participation from EAV and add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
@@ -795,14 +793,14 @@ class ParticipationService
     /**
      * This function checks the eav/participations required fields.
      *
-     * @param array       $participation   Array with data from the eav/participations
-     * @param string      $aanbiederUrl    Url of the cc/organizations
-     * @param string      $learningNeedId  Id of the eav/learningNeeds
+     * @param array $participation Array with data from the eav/participations
+     * @param string|null $aanbiederUrl Url of the cc/organizations
+     * @param string|null $learningNeedId Id of the eav/learningNeeds
      * @param string|null $participationId Id of the eav/participations
      *
      * @throws Exception
      */
-    public function checkParticipationRequiredFields(array $participation, string $aanbiederUrl, string $learningNeedId, string $participationId = null)
+    public function checkParticipationRequiredFields(array $participation, ?string $aanbiederUrl, ?string $learningNeedId, string $participationId = null)
     {
         $this->checkAanbieder($participation);
         $this->checkTopic($participation);
@@ -872,11 +870,11 @@ class ParticipationService
     /**
      * This function checks if the aanbiederUrl is an existing cc/organization.
      *
-     * @param string $aanbiederUrl Url of the cc/organizations
+     * @param string|null $aanbiederUrl Url of the cc/organizations
      *
      * @throws Exception
      */
-    public function checkAanbiederUrl(string $aanbiederUrl)
+    public function checkAanbiederUrl(?string $aanbiederUrl)
     {
         if (isset($aanbiederUrl) and !$this->commonGroundService->isResource($aanbiederUrl)) {
             throw new Exception('Invalid request, aanbiederUrl is not an existing cc/organization!');
@@ -900,11 +898,11 @@ class ParticipationService
     /**
      * This function checks if the learningNeedId is an existing eav/learning_need.
      *
-     * @param string $learningNeedId Id of the eav/learningNeeds
+     * @param string|null $learningNeedId Id of the eav/learningNeeds
      *
      * @throws Exception
      */
-    public function checkLearningNeedId(string $learningNeedId)
+    public function checkLearningNeedId(?string $learningNeedId)
     {
         if (isset($learningNeedId) && !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             throw new Exception('Invalid request, learningNeedId is not an existing eav/learning_need!');
