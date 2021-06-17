@@ -1034,7 +1034,7 @@ class MrcService
             $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $competence['@id']));
         }
         foreach ($employee['educations'] as $education) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $education['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]);
         }
         foreach ($employee['skills'] as $skill) {
             $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $skill['@id']));
@@ -1055,8 +1055,8 @@ class MrcService
     public function deleteEmployee(string $id): bool
     {
         $employeeArray = $this->getEmployeeRaw($id);
-        $this->deleteSubObjects($employeeArray);
         $employee = $this->createEmployeeObject($employeeArray);
+        $this->deleteSubObjects($employeeArray);
         $this->ucService->deleteUser($employee->getUserId());
         $this->eavService->deleteObject(null, 'employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
 

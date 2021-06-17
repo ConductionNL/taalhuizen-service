@@ -12,6 +12,7 @@ class TestResultService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EDUService $eduService;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         CommonGroundService $commonGroundService,
@@ -20,6 +21,7 @@ class TestResultService
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
         $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -84,7 +86,7 @@ class TestResultService
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');
         }
         if ($this->eavService->hasEavObject($participation['learningNeed'], 'learning_needs')) {
-            $learningNeed = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participation['learningNeed']]);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $participation['learningNeed']]);
         } else {
             throw new Exception('Warning, participation is not connected to a learningNeed!');
         }
@@ -168,14 +170,14 @@ class TestResultService
     /**
      * This function fetches a test result from the given ID.
      *
-     * @param string $id  ID of the test result that will be fetched
-     * @param null   $url Url of the test result as string
+     * @param string|null $id  ID of the test result that will be fetched
+     * @param string|null $url Url of the test result as string
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return array Returns a test result and memo in a array
      */
-    public function getTestResult(string $id, $url = null): array
+    public function getTestResult(?string $id, string $url = null): array
     {
         if (isset($id)) {
             $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
@@ -215,11 +217,13 @@ class TestResultService
     {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
-            $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationId]);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
             // Get the edu/testResult urls for this participation and do gets on them
             $testResults = [];
-            foreach ($participation['results'] as $result) {
-                array_push($testResults, $this->getTestResult(null, $result));
+            if (isset($participation['results'])) {
+                foreach ($participation['results'] as $result) {
+                    array_push($testResults, $this->getTestResult(null, $result));
+                }
             }
         } else {
             throw new Exception('Invalid request, '.$participationId.' is not an existing eav/participation !');
@@ -291,6 +295,8 @@ class TestResultService
         if (isset($participationId)) {
             $resource->setParticipationId($participationId);
         }
+
+        $this->entityManager->persist($resource);
 
         return $resource;
     }

@@ -177,36 +177,10 @@ class StudentMutationResolver implements MutationResolverInterface
     }
 
 //    todo:
-//    public function removeStudent(array $student): ?Student
-//    {
-//        $result['result'] = [];
-//
-//        // If studentUrl or studentId is set generate the id for it, needed for eav calls later
-//        $studentId = null;
-//        if (isset($student['studentUrl'])) {
-//            $studentId = $this->commonGroundService->getUuidFromUrl($student['studentUrl']);
-//        } elseif (isset($student['id'])) {
-//            $studentId = explode('/', $student['id']);
-//            if (is_array($studentId)) {
-//                $studentId = end($studentId);
-//            }
-//        } else {
-//            throw new Exception('No studentUrl or id was specified');
-//        }
-//
-//        $result = array_merge($result, $this->studentService->deleteStudent($studentId));
-//
-//        $result['result'] = False;
-//        if (isset($result['student'])) {
-//            $result['result'] = True;
-//        }
-//
-//        // If any error was caught throw it
-//        if (isset($result['errorMessage'])) {
-//            throw new Exception($result['errorMessage']);
-//        }
-//        return null;
-//    }
+    public function removeStudent(array $student): ?Student
+    {
+        return null;
+    }
 
     //todo: should be done in StudentService, for examples how to do this: see StudentService->saveStudent or TestResultService->saveTestResult
 
@@ -233,6 +207,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 }
             }
             $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($availabilityMemo['author'])) {
+                $availabilityMemo['author'] = $ccPersonUrl;
+            }
             $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -245,6 +222,9 @@ class StudentMutationResolver implements MutationResolverInterface
                 }
             }
             $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($motivationMemo['author'])) {
+                $motivationMemo['author'] = $ccPersonUrl;
+            }
             $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 

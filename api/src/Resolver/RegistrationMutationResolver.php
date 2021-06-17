@@ -6,46 +6,40 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Registration;
 use App\Entity\Student;
 use App\Service\CCService;
-use App\Service\EAVService;
 use App\Service\EDUService;
+use App\Service\LayerService;
+use App\Service\MrcService;
 use App\Service\RegistrationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class RegistrationMutationResolver implements MutationResolverInterface
 {
-    private EntityManagerInterface $entityManager;
-    private ParameterBagInterface $parameterBagInterface;
     private CommonGroundService $commonGroundService;
     private RegistrationService $registrationService;
     private CCService $ccService;
     private StudentService $studentService;
     private EDUService $eduService;
-    private EAVService $eavService;
+    private MrcService $mrcService;
 
     /**
      * RegistrationMutationResolver constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommongroundService    $commonGroundService
+     * @param MrcService   $mrcService
+     * @param LayerService $layerService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService
+        MrcService $mrcService,
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->registrationService = new RegistrationService($entityManager, $commonGroundService);
-        $this->ccService = new CCService($entityManager, $commonGroundService);
-        $this->studentService = new StudentService($entityManager, $commonGroundService);
-
-        $this->eduService = new EDUService($commonGroundService, $entityManager);
-        $this->eavService = new EAVService($commonGroundService);
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->registrationService = new RegistrationService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->studentService = new StudentService($layerService->entityManager, $layerService->commonGroundService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
+        $this->mrcService = $mrcService;
     }
 
     /**
@@ -95,8 +89,8 @@ class RegistrationMutationResolver implements MutationResolverInterface
 
         //Save memo
         if (isset($input['memo'])) {
-            $registration['author'] = $organization['@id'];
             $memo = $this->inputToMemo($input, $registrationStudent['@id']);
+            $memo['author'] = $organization['@id'];
             $memo = $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
         }
 
@@ -143,7 +137,7 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @return array The resulting eav/participants object
      */
-    public function createParticipant(array $organization, array $registrationStudent)
+    public function createParticipant(array $organization, array $registrationStudent): array
     {
         $participant['referredBy'] = $organization['@id'];
         $participant['person'] = $registrationStudent['@id'];
@@ -203,6 +197,13 @@ class RegistrationMutationResolver implements MutationResolverInterface
         }
         $student = $this->studentService->getStudent($studentId);
 
+        // Create mrc/employee and user
+        $employee = ['person' => $student['person']['@id']];
+        if (isset($student['person']['emails'][0]['email'])) {
+            $employee['email'] = $student['person']['emails'][0]['email'];
+        }
+        $this->mrcService->createEmployeeArray($employee);
+
         $participant['status'] = 'accepted';
         $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
         $student['participant'] = $participant;
@@ -222,12 +223,10 @@ class RegistrationMutationResolver implements MutationResolverInterface
      *
      * @return array The resulting memo properties
      */
-    private function inputToMemo(array $input, string $studentUrl = null)
+    private function inputToMemo(array $input, string $studentUrl = null): array
     {
-        $memo = [];
-
-        $memo['description'] = $input['memo'];
         $memo = $this->getMemoStudentProperties($studentUrl);
+        $memo['description'] = $input['memo'];
 
         return $memo;
     }
@@ -244,10 +243,10 @@ class RegistrationMutationResolver implements MutationResolverInterface
     private function getMemoStudentProperties(string $studentUrl): array
     {
         $student = $this->commonGroundService->getResource($studentUrl);
-        $registration['name'] = 'Memo about '.$student['givenName'];
-        $registration['topic'] = $studentUrl;
+        $memo['name'] = 'Memo about '.$student['givenName'];
+        $memo['topic'] = $studentUrl;
 
-        return $registration;
+        return $memo;
     }
 
     /**
