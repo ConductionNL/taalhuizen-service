@@ -78,6 +78,7 @@ class Employee
      */
     private $id;
 
+    // @todo do we want to give this as a person object?
     /**
      * @var string The Name of this Employee.
      *
@@ -123,24 +124,6 @@ class Employee
     private $telephone;
 
     /**
-     * @var array|null The availability for this employee
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $availability = [];
-
-    /**
-     * @var string The Availability Note of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=2550, nullable=true)
-     */
-    private $availabilityNotes;
-
-    /**
      * @var string The Email of this Employee.
      *
      * @Assert\Length(
@@ -150,11 +133,6 @@ class Employee
      * @ORM\Column(type="string", length=255)
      */
     private $email;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $userGroupIds = [];
 
     /**
      * @var string The Gender of this Employee. **Male**, **Female**, **X**
@@ -213,6 +191,26 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $contactPreferenceOther;
+
+    // @todo do we want the availability as a object?
+    /**
+     * @var array|null The availability for this employee
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $availability = [];
+
+    // @todo do we want the availability note as a object?
+    /**
+     * @var string The Availability Note of this Employee.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=2550, nullable=true)
+     */
+    private $availabilityNotes;
 
     /**
      * @var array|null Target Preference of this Employee. **NT1**, **NT2**
@@ -332,6 +330,7 @@ class Employee
      */
     private ?bool $isVOGChecked = false;
 
+    // @todo look at how we want to handle the ids. providerId and languageHouseId are used for the organization the employee is working for
     /**
      * @var string|null The provider this employee works for
      *
@@ -359,6 +358,11 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $userId;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $userGroupIds = [];
 
     /**
      * @var Datetime The moment this resource was created

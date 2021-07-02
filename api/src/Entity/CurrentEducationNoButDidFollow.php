@@ -28,20 +28,23 @@ class CurrentEducationNoButDidFollow
      */
     private $id;
 
+    //   endDate of the education, was called in the graphql-schema 'dateUntil', changed to 'endDate' related to schema.org
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateUntil;
+    private $enddate;
 
+    //   degree ganted status of the education, was called in the graphql-schema 'gotCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $level;
+    private $degreeGrantedStatus;
 
+    //   isced education level code of the education, was called in the graphql-schema 'level', changed to 'iscedEducationLevelCode' related to schema.org
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $gotCertificate;
+    private $iscedEducationLevelCode;
 
     public function getId(): UuidInterface
     {
@@ -54,38 +57,38 @@ class CurrentEducationNoButDidFollow
         return $this;
     }
 
-    public function getDateUntil(): ?\DateTimeInterface
+    public function getEnddate(): ?\DateTimeInterface
     {
-        return $this->dateUntil;
+        return $this->enddate;
     }
 
-    public function setDateUntil(?\DateTimeInterface $dateUntil): self
+    public function setEnddate(?\DateTimeInterface $enddate): self
     {
-        $this->dateUntil = $dateUntil;
+        $this->enddate = $enddate;
 
         return $this;
     }
 
-    public function getLevel(): ?string
+    public function getDegreeGrantedStatus(): ?string
     {
-        return $this->level;
+        return $this->degreeGrantedStatus;
     }
 
-    public function setLevel(?string $level): self
+    public function setDegreeGrantedStatus(?string $degreeGrantedStatus): self
     {
-        $this->level = $level;
+        $this->degreeGrantedStatus = $degreeGrantedStatus;
 
         return $this;
     }
 
-    public function getGotCertificate(): ?bool
+    public function getIscedEducationLevelCode(): ?string
     {
-        return $this->gotCertificate;
+        return $this->iscedEducationLevelCode;
     }
 
-    public function setGotCertificate(?bool $gotCertificate): self
+    public function setIscedEducationLevelCode(?string $iscedEducationLevelCode): self
     {
-        $this->gotCertificate = $gotCertificate;
+        $this->iscedEducationLevelCode = $iscedEducationLevelCode;
 
         return $this;
     }
