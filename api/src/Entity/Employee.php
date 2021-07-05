@@ -78,39 +78,17 @@ class Employee
      */
     private $id;
 
-    // @todo do we want to give this as a person object?
+    // @todo do we want to make a email en telephone entity
     /**
-     * @var string The Name of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $givenName;
+    private $person;
 
     /**
-     * @var string The PrefixName of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToMany(targetEntity=Address::class)
      */
-    private $additionalName;
-
-    /**
-     * @var string The LastName of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $familyName;
+    private $addresses;
 
     /**
      * @var string The Telephone of this Employee.
@@ -133,37 +111,6 @@ class Employee
      * @ORM\Column(type="string", length=255)
      */
     private $email;
-
-    /**
-     * @var string The Gender of this Employee. **Male**, **Female**, **X**
-     *
-     * @example Male
-     *
-     * @Assert\Choice(
-     *      {"Male","Female","X"}
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $gender;
-
-    /**
-     * @var string Date of birth of this Employee.
-     *
-     * @example 15-03-2000
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $dateOfBirth;
-
-    /**
-     * @var array|null The address of this Employee.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $address = [];
 
     /**
      * @var string Contact Telephone of this Employee.
@@ -381,6 +328,11 @@ class Employee
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateModified;
+
+    public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {
@@ -821,6 +773,42 @@ class Employee
     public function setDateModified(\DateTimeInterface $dateModified): self
     {
         $this->dateModified = $dateModified;
+
+        return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(Person $person): self
+    {
+        $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Address[]
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Address $address): self
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses[] = $address;
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): self
+    {
+        $this->addresses->removeElement($address);
 
         return $this;
     }
