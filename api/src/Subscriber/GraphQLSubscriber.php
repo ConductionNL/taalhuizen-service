@@ -44,6 +44,9 @@ class GraphQLSubscriber implements EventSubscriberInterface
     public function login(RequestEvent $event)
     {
         $content = json_decode($event->getRequest()->getContent(), true);
+        if (!isset($content['query'])) {
+            return;
+        }
         $graphQL = Parser::parse($content['query']);
         if (
             $graphQL->definitions->offsetGet(0)->name->value != 'loginUser' &&
