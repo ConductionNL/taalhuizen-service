@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
+//TODO: REMOVE THIS FILE after Person entity at least has these variables:
+
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass=StudentPersonRepository::class)

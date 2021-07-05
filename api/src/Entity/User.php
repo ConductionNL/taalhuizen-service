@@ -8,11 +8,14 @@ use App\Resolver\UserMutationResolver;
 use App\Resolver\UserQueryCollectionResolver;
 use App\Resolver\UserQueryItemResolver;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Mollie\Api\Resources\Organization;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -103,17 +106,6 @@ class User
     private $id;
 
     /**
-     * @var string The Email of this User.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $email;
-
-    /**
      * @var string The Username of this User
      *
      * @Assert\Length(
@@ -122,40 +114,19 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $username;
+    private string $username;
 
     /**
-     * @var string The givenName of this User.
+     * @var Person A contact component person
      *
      * @Assert\Length(
-     *     max = 2550
+     *     max = 255
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $givenName;
-
-    /**
-     * @var string The additionalName of this User.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $additionalName;
-
-    /**
-     * @var string The familyName of this User.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $familyName;
+    private Person $person;
 
     /**
      * @var string The userEnvironment of this User.
@@ -166,29 +137,19 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $userEnvironment;
+    private string $userEnvironment;
 
     /**
-     * @var string The organizationId of this User.
+     * @var Organization A contact component organization.
      *
      * @Assert\Length(
      *     max = 2550
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $organizationId;
-
-    /**
-     * @var string The organizationName of this User.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $organizationName;
+    private Organization $organization;
 
     /**
      * @var array The userRoles of this User.
@@ -196,7 +157,7 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $userRoles = [];
+    private array $userRoles = [];
 
     /**
      * @var string The Password of this User.
@@ -207,7 +168,7 @@ class User
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $password;
+    private string $password;
 
     /**
      * @var string The Token for password reset
@@ -218,25 +179,27 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $token;
+    private string $token;
 
+    //TODO: not sure what this is for, remove this? and just get this from the uc/user?
     /**
-     * @var Datetime The moment this resource was created
+     * @var DateTimeInterface|null The moment this resource was created
      *
      * @Groups({"read"})
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateCreated;
+    private ?DateTimeInterface $dateCreated;
 
+    //TODO: not sure what this is for, remove this? and just get this from the uc/user?
     /**
-     * @var Datetime The moment this resource last Modified
+     * @var DateTimeInterface|null The moment this resource last Modified
      *
      * @Groups({"read"})
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateModified;
+    private ?DateTimeInterface $dateModified;
 
     public function getId(): UuidInterface
     {
@@ -246,18 +209,6 @@ class User
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
 
         return $this;
     }
@@ -274,38 +225,14 @@ class User
         return $this;
     }
 
-    public function getGivenName(): ?string
+    public function getPerson(): ?Person
     {
-        return $this->givenName;
+        return $this->person;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setPerson(Person $person): self
     {
-        $this->givenName = $givenName;
-
-        return $this;
-    }
-
-    public function getAdditionalName(): ?string
-    {
-        return $this->additionalName;
-    }
-
-    public function setAdditionalName(string $additionalName): self
-    {
-        $this->additionalName = $additionalName;
-
-        return $this;
-    }
-
-    public function getFamilyName(): ?string
-    {
-        return $this->familyName;
-    }
-
-    public function setFamilyName(string $familyName): self
-    {
-        $this->familyName = $familyName;
+        $this->person = $person;
 
         return $this;
     }
@@ -322,26 +249,14 @@ class User
         return $this;
     }
 
-    public function getOrganizationId(): ?string
+    public function getOrganization(): ?Organization
     {
-        return $this->organizationId;
+        return $this->organization;
     }
 
-    public function setOrganizationId(string $organizationId): self
+    public function setOrganization(Organization $organization): self
     {
-        $this->organizationId = $organizationId;
-
-        return $this;
-    }
-
-    public function getOrganizationName(): ?string
-    {
-        return $this->organizationName;
-    }
-
-    public function setOrganizationName(string $organizationName): self
-    {
-        $this->organizationName = $organizationName;
+        $this->organization = $organization;
 
         return $this;
     }
@@ -382,24 +297,24 @@ class User
         return $this;
     }
 
-    public function getDateCreated(): ?\DateTimeInterface
+    public function getDateCreated(): ?DateTimeInterface
     {
         return $this->dateCreated;
     }
 
-    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    public function setDateCreated(DateTimeInterface $dateCreated): self
     {
         $this->dateCreated = $dateCreated;
 
         return $this;
     }
 
-    public function getDateModified(): ?\DateTimeInterface
+    public function getDateModified(): ?DateTimeInterface
     {
         return $this->dateModified;
     }
 
-    public function setDateModified(\DateTimeInterface $dateModified): self
+    public function setDateModified(DateTimeInterface $dateModified): self
     {
         $this->dateModified = $dateModified;
 

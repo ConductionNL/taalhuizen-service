@@ -60,82 +60,76 @@ class TestResult
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $participationId;
+    private ?string $participationId;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $outComesGoal;
+    private ?string $outComesGoal;
 
     /**
      * @Groups({"write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
-    private $outComesTopic;
+    private ?string $outComesTopic;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $outComesTopicOther;
+    private ?string $outComesTopicOther;
 
     /**
      * @Groups({"write"})
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
-    private $outComesApplication;
+    private ?string $outComesApplication;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $outComesApplicationOther;
+    private ?string $outComesApplicationOther;
 
     /**
      * @Groups({"write"})
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      * @ORM\Column(type="string", length=255)
      */
-    private $outComesLevel;
+    private ?string $outComesLevel;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $outComesLevelOther;
+    private ?string $outComesLevelOther;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $examUsedExam;
+    private ?string $examUsedExam;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $examDate;
+    private ?string $examDate;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $examMemo;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $testResultId;
+    private ?string $examMemo;
 
     public function getId(): UuidInterface
     {
@@ -277,18 +271,6 @@ class TestResult
     public function setExamMemo(?string $examMemo): self
     {
         $this->examMemo = $examMemo;
-
-        return $this;
-    }
-
-    public function getTestResultId(): ?string
-    {
-        return $this->testResultId;
-    }
-
-    public function setTestResultId(?string $testResultId): self
-    {
-        $this->testResultId = $testResultId;
 
         return $this;
     }

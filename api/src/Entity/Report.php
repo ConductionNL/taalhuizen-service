@@ -113,11 +113,12 @@ class Report
      */
     private ?string $filename;
 
+    // Renamed from base64data to base64.
     /**
      * @var string|null A base64 encoded string containing the file's contents
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $base64data;
+    private ?string $base64;
 
     public function getId(): UuidInterface
     {
@@ -191,14 +192,14 @@ class Report
         return $this;
     }
 
-    public function getBase64data(): ?string
+    public function getBase64(): ?string
     {
-        return $this->base64data;
+        return $this->base64;
     }
 
-    public function setBase64data(?string $base64data): self
+    public function setBase64(?string $base64): self
     {
-        $this->base64data = $base64data;
+        $this->base64 = $base64;
 
         return $this;
     }

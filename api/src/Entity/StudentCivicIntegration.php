@@ -24,22 +24,22 @@ class StudentCivicIntegration
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $civicIntegrationRequirement;
+    private ?string $civicIntegrationRequirement;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $civicIntegrationRequirementReason;
+    private ?string $civicIntegrationRequirementReason;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $civivIntegrationRequirementFinishDate;
+    private ?\DateTimeInterface $civivIntegrationRequirementFinishDate;
 
     public function getId(): UuidInterface
     {

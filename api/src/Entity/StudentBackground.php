@@ -7,6 +7,7 @@ use App\Repository\StudentBackgroundRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,42 +25,47 @@ class StudentBackground
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $foundVia;
+    private ?string $foundVia;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $foundViaOther;
+    private ?string $foundViaOther;
 
+    // Renamed from wentToTaalhuisBefore to wentToLanguageHouseBefore. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $wentToTaalhuisBefore;
+    private ?bool $wentToLanguageHouseBefore;
 
+    // Renamed from wentToTaalhuisBeforeReason to wentToLanguageHouseBeforeReason. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $wentToTaalhuisBeforeReason;
+    private ?string $wentToLanguageHouseBeforeReason;
 
+    // Renamed from $wentToTaalhuisBeforeYear to $wentToLanguageHouseBeforeYear. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $wentToTaalhuisBeforeYear;
+    private ?float $wentToLanguageHouseBeforeYear;
 
+    // todo: Needs to be an array of enum options: not tested if this works and if this is the correct way to do this
     /**
+     * @Assert\Choice(multiple=true, choices={"HOUSEHOLD_MEMBERS", "NEIGHBORS", "FAMILY_MEMBERS", "AID_WORKERS", "FRIENDS_ACQUAINTANCES", "PEOPLE_AT_MOSQUE_CHURCH", "ACQUAINTANCES_SPEAKING_OWN_LANGUAGE", "ACQUAINTANCES_SPEAKING_DUTCH"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $network = [];
+    private array $network = [];
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $participationLadder;
+    private ?int $participationLadder;
 
     public function getId(): UuidInterface
     {
@@ -97,38 +103,38 @@ class StudentBackground
         return $this;
     }
 
-    public function getWentToTaalhuisBefore(): ?bool
+    public function getWentToLanguageHouseBefore(): ?bool
     {
-        return $this->wentToTaalhuisBefore;
+        return $this->wentToLanguageHouseBefore;
     }
 
-    public function setWentToTaalhuisBefore(?bool $wentToTaalhuisBefore): self
+    public function setWentToLanguageHouseBefore(?bool $wentToLanguageHouseBefore): self
     {
-        $this->wentToTaalhuisBefore = $wentToTaalhuisBefore;
+        $this->wentToLanguageHouseBefore = $wentToLanguageHouseBefore;
 
         return $this;
     }
 
-    public function getWentToTaalhuisBeforeReason(): ?string
+    public function getWentToLanguageHouseBeforeReason(): ?string
     {
-        return $this->wentToTaalhuisBeforeReason;
+        return $this->wentToLanguageHouseBeforeReason;
     }
 
-    public function setWentToTaalhuisBeforeReason(?string $wentToTaalhuisBeforeReason): self
+    public function setWentToLanguageHouseBeforeReason(?string $wentToLanguageHouseBeforeReason): self
     {
-        $this->wentToTaalhuisBeforeReason = $wentToTaalhuisBeforeReason;
+        $this->wentToLanguageHouseBeforeReason = $wentToLanguageHouseBeforeReason;
 
         return $this;
     }
 
-    public function getWentToTaalhuisBeforeYear(): ?float
+    public function getWentToLanguageHouseBeforeYear(): ?float
     {
-        return $this->wentToTaalhuisBeforeYear;
+        return $this->wentToLanguageHouseBeforeYear;
     }
 
-    public function setWentToTaalhuisBeforeYear(?float $wentToTaalhuisBeforeYear): self
+    public function setWentToLanguageHouseBeforeYear(?float $wentToLanguageHouseBeforeYear): self
     {
-        $this->wentToTaalhuisBeforeYear = $wentToTaalhuisBeforeYear;
+        $this->wentToLanguageHouseBeforeYear = $wentToLanguageHouseBeforeYear;
 
         return $this;
     }

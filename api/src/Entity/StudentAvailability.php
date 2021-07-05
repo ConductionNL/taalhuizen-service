@@ -7,6 +7,7 @@ use App\Repository\StudentAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ApiResource()
@@ -24,17 +25,18 @@ class StudentAvailability
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $availability;
+    private ?Availability $availability;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $availabilityNotes;
+    private ?string $availabilityNotes;
 
     public function getId(): UuidInterface
     {

@@ -24,49 +24,49 @@ class Availability
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $monday;
+    private ?AvailabilityDay $monday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $tuesday;
+    private ?AvailabilityDay $tuesday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $wednesday;
+    private ?AvailabilityDay $wednesday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $thursday;
+    private ?AvailabilityDay $thursday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $friday;
+    private ?AvailabilityDay $friday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $saturday;
+    private ?AvailabilityDay $saturday;
 
     /**
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $sunday;
+    private ?AvailabilityDay $sunday;
 
     public function getId(): UuidInterface
     {

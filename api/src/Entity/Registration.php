@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ApiResource(
@@ -67,152 +68,49 @@ class Registration
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $languageHouseId;
+    private ?string $languageHouseId;
 
     /**
-     *@var array|null The student
-     *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $student;
+    private ?Person $student;
 
+    // This person should have a organization object in it! todo:remove comment
     /**
-     * @var array|null
-     *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $registrar;
+    private ?Person $registrar;
 
     /**
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
-    private $memo;
+    private ?string $memo;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $status;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $civicIntegrationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $personDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $contactDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $generalDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $referrerDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $backgroundDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $dutchNTDetails;
+    private ?string $studentId;
 
     /**
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $speakingLevel;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $educationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $courseDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $jobDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $motivationDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $availabilityDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $readingTestResult;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $writingTestResult;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $permissionDetails;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $intakeDetail;
+    private ?string $status;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateCreated;
+    private ?\DateTimeInterface $dateCreated;
 
     public function getId(): UuidInterface
     {
@@ -250,24 +148,24 @@ class Registration
         return $this;
     }
 
-    public function getStudent(): ?array
+    public function getStudent(): ?Person
     {
         return $this->student;
     }
 
-    public function setStudent(?array $student): self
+    public function setStudent(?Person $student): self
     {
         $this->student = $student;
 
         return $this;
     }
 
-    public function getRegistrar(): ?array
+    public function getRegistrar(): ?Person
     {
         return $this->registrar;
     }
 
-    public function setRegistrar(?array $registrar): self
+    public function setRegistrar(?Person $registrar): self
     {
         $this->registrar = $registrar;
 
