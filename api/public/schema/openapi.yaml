@@ -5007,18 +5007,18 @@ paths:
   /current_education_yes:
     get:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: getCurrentEducationYesCollection
-      summary: 'Retrieves the collection of CurrentEducationYes resources.'
+      summary: 'Retrieves the collection of EducationRepository resources.'
       responses:
         200:
-          description: 'CurrentEducationYes collection response'
+          description: 'EducationRepository collection response'
           content:
             application/ld+json:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/CurrentEducationYes:jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/EducationRepository:jsonld' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -5028,7 +5028,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/CurrentEducationYes:jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/EducationRepository:jsonld' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -5038,62 +5038,62 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/json+hal:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/vnd.api+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/json+vnd.api:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/health+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/json+health:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/x-yaml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             text/csv:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             text/html:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
             application/graphql:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CurrentEducationYes'
+                  $ref: '#/components/schemas/EducationRepository'
       parameters:
         -
           name: page
@@ -5187,55 +5187,55 @@ paths:
         - application/health+json
     post:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: postCurrentEducationYesCollection
-      summary: 'Creates a CurrentEducationYes resource.'
+      summary: 'Creates a EducationRepository resource.'
       responses:
         201:
-          description: 'CurrentEducationYes resource created'
+          description: 'EducationRepository resource created'
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/xml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/csv:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/html:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
           links:
             GetCurrentEducationYesItem:
               parameters:
@@ -5250,47 +5250,47 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+              $ref: '#/components/schemas/EducationRepository:jsonld'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+              $ref: '#/components/schemas/EducationRepository:jsonld'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/xml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/csv:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/html:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
-        description: 'The new CurrentEducationYes resource'
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The new EducationRepository resource'
       parameters:
         -
           name: Authorization
@@ -5324,9 +5324,9 @@ paths:
   '/current_education_yes/{id}':
     get:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: getCurrentEducationYesItem
-      summary: 'Retrieves a CurrentEducationYes resource.'
+      summary: 'Retrieves a EducationRepository resource.'
       parameters:
         -
           name: id
@@ -5407,62 +5407,62 @@ paths:
           in: query
       responses:
         200:
-          description: 'CurrentEducationYes resource response'
+          description: 'EducationRepository resource response'
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/xml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/csv:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/html:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
         404:
           description: 'Resource not found'
       produces:
         - application/health+json
     delete:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: deleteCurrentEducationYesItem
-      summary: 'Removes the CurrentEducationYes resource.'
+      summary: 'Removes the EducationRepository resource.'
       responses:
         204:
-          description: 'CurrentEducationYes resource deleted'
+          description: 'EducationRepository resource deleted'
         404:
           description: 'Resource not found'
       parameters:
@@ -5503,9 +5503,9 @@ paths:
           in: header
     put:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: putCurrentEducationYesItem
-      summary: 'Replaces the CurrentEducationYes resource.'
+      summary: 'Replaces the EducationRepository resource.'
       parameters:
         -
           name: id
@@ -5544,50 +5544,50 @@ paths:
           in: header
       responses:
         200:
-          description: 'CurrentEducationYes resource updated'
+          description: 'EducationRepository resource updated'
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/xml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/csv:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/html:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
         400:
           description: 'Invalid input'
         404:
@@ -5596,52 +5596,52 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+              $ref: '#/components/schemas/EducationRepository:jsonld'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+              $ref: '#/components/schemas/EducationRepository:jsonld'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/xml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/csv:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/html:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
-        description: 'The updated CurrentEducationYes resource'
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The updated EducationRepository resource'
     patch:
       tags:
-        - CurrentEducationYes
+        - EducationRepository
       operationId: patchCurrentEducationYesItem
-      summary: 'Updates the CurrentEducationYes resource.'
+      summary: 'Updates the EducationRepository resource.'
       parameters:
         -
           name: id
@@ -5680,50 +5680,50 @@ paths:
           in: header
       responses:
         200:
-          description: 'CurrentEducationYes resource updated'
+          description: 'EducationRepository resource updated'
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+                $ref: '#/components/schemas/EducationRepository:jsonld'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/xml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/csv:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             text/html:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/CurrentEducationYes'
+                $ref: '#/components/schemas/EducationRepository'
         400:
           description: 'Invalid input'
         404:
@@ -5732,32 +5732,32 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes:jsonld'
+              $ref: '#/components/schemas/EducationRepository:jsonld'
           application/json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/merge-patch+json:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           application/xml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           applications/x-yaml:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/csv:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
+              $ref: '#/components/schemas/EducationRepository'
           text/html:
             schema:
-              $ref: '#/components/schemas/CurrentEducationYes'
-        description: 'The updated CurrentEducationYes resource'
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The updated EducationRepository resource'
   /documents:
     get:
       tags:
@@ -31812,7 +31812,7 @@ tags:
       
       
   -
-    name: CurrentEducationYes
+    name: EducationRepository
     description: |
       
       
