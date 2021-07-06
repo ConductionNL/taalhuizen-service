@@ -670,13 +670,13 @@ type Mutation {
   """Creates a CurrentEducationNoButDidFollow."""
   createCurrentEducationNoButDidFollow(input: createCurrentEducationNoButDidFollowInput!): createCurrentEducationNoButDidFollowPayload
 
-  """Deletes a CurrentEducationYes."""
+  """Deletes a EducationRepository."""
   deleteCurrentEducationYes(input: deleteCurrentEducationYesInput!): deleteCurrentEducationYesPayload
 
-  """Updates a CurrentEducationYes."""
+  """Updates a EducationRepository."""
   updateCurrentEducationYes(input: updateCurrentEducationYesInput!): updateCurrentEducationYesPayload
 
-  """Creates a CurrentEducationYes."""
+  """Creates a EducationRepository."""
   createCurrentEducationYes(input: createCurrentEducationYesInput!): createCurrentEducationYesPayload
 
   """Deletes a Document."""

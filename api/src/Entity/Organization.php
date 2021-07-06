@@ -2,10 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\OrganizationRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -14,7 +27,7 @@ use Ramsey\Uuid\UuidInterface;
 class Organization
 {
     /**
-     * @var UuidInterface The UUID identifier of this resource
+     * @var UuidInterface The UUID identifier of this organization
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
@@ -26,26 +39,53 @@ class Organization
     private UuidInterface $id;
 
     /**
+     * @var string Name of this organization
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?Telephone Telephone of this organization
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
      */
-    private $telephone;
+    private ?Telephone $telephones;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?Email Email of this organization
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
      */
-    private $email;
+    private ?Email $emails;
 
     /**
+     * @var ?string Type of this organization
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $type;
+    private ?string $type;
 
-    public function getId(): UuidInterface
+    /**
+     * @var ?Address Address of this organization
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     */
+    private ?Address $addresses;
+
+    public function getId(): ?UuidInterface
     {
         return $this->id;
     }
@@ -69,30 +109,6 @@ class Organization
         return $this;
     }
 
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     public function getType(): ?string
     {
         return $this->type;
@@ -101,6 +117,42 @@ class Organization
     public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAddresses(): ?Address
+    {
+        return $this->addresses;
+    }
+
+    public function setAddresses(?Address $addresses): self
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function getTelephones(): ?Telephone
+    {
+        return $this->telephones;
+    }
+
+    public function setTelephones(?Telephone $telephones): self
+    {
+        $this->telephones = $telephones;
+
+        return $this;
+    }
+
+    public function getEmails(): ?Email
+    {
+        return $this->emails;
+    }
+
+    public function setEmails(?Email $emails): self
+    {
+        $this->emails = $emails;
 
         return $this;
     }

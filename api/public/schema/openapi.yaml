@@ -4537,16 +4537,29 @@ paths:
     get:
       operationId: getCurrentEducationYesCollection
       tags:
+<<<<<<< HEAD
         - CurrentEducationYes
       responses:
         200:
           description: 'CurrentEducationYes collection'
+=======
+        - EducationRepository
+      operationId: getCurrentEducationYesCollection
+      summary: 'Retrieves the collection of EducationRepository resources.'
+      responses:
+        200:
+          description: 'EducationRepository collection response'
+>>>>>>> feature-sarai
           content:
             application/ld+json:
               schema:
                 type: object
                 properties:
+<<<<<<< HEAD
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/CurrentEducationYes.jsonld' } }
+=======
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/EducationRepository:jsonld' } }
+>>>>>>> feature-sarai
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -4556,7 +4569,11 @@ paths:
               schema:
                 type: object
                 properties:
+<<<<<<< HEAD
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/CurrentEducationYes.jsonld' } }
+=======
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/EducationRepository:jsonld' } }
+>>>>>>> feature-sarai
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -4564,6 +4581,7 @@ paths:
                   - 'hydra:member'
             application/hal+json:
               schema:
+<<<<<<< HEAD
                 type: object
                 properties:
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/CurrentEducationYes.jsonld' } }
@@ -4684,6 +4702,66 @@ paths:
                   - 'hydra:member'
       summary: 'Retrieves the collection of CurrentEducationYes resources.'
       description: 'Retrieves the collection of CurrentEducationYes resources.'
+=======
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EducationRepository'
+>>>>>>> feature-sarai
       parameters:
         -
           name: page
@@ -4716,13 +4794,20 @@ paths:
     post:
       operationId: postCurrentEducationYesCollection
       tags:
+<<<<<<< HEAD
         - CurrentEducationYes
+=======
+        - EducationRepository
+      operationId: postCurrentEducationYesCollection
+      summary: 'Creates a EducationRepository resource.'
+>>>>>>> feature-sarai
       responses:
         201:
-          description: 'CurrentEducationYes resource created'
+          description: 'EducationRepository resource created'
           content:
             application/ld+json:
               schema:
+<<<<<<< HEAD
                 $ref: '#/components/schemas/CurrentEducationYes.jsonld'
             application/json+ld:
               schema:
@@ -4763,6 +4848,48 @@ paths:
             application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes.jsonld'
+=======
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+>>>>>>> feature-sarai
           links:
             GetCurrentEducationYesItem:
               operationId: getCurrentEducationYesItem
@@ -4781,6 +4908,7 @@ paths:
         content:
           application/ld+json:
             schema:
+<<<<<<< HEAD
               $ref: '#/components/schemas/CurrentEducationYes.jsonld'
           application/json+ld:
             schema:
@@ -4824,10 +4952,84 @@ paths:
         required: true
       deprecated: false
     parameters: []
+=======
+              $ref: '#/components/schemas/EducationRepository:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/EducationRepository:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/graphql:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The new EducationRepository resource'
+      parameters:
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+>>>>>>> feature-sarai
   '/current_education_yes/{id}':
     get:
       operationId: getCurrentEducationYesItem
       tags:
+<<<<<<< HEAD
         - CurrentEducationYes
       responses:
         200:
@@ -4875,6 +5077,147 @@ paths:
             application/graphql:
               schema:
                 $ref: '#/components/schemas/CurrentEducationYes.jsonld'
+=======
+        - EducationRepository
+      operationId: getCurrentEducationYesItem
+      summary: 'Retrieves a EducationRepository resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+        -
+          name: Link
+          description: 'A [websub](https://www.w3.org/TR/websub/#discovery) header like <https://hub.example.com/>; rel="hub"'
+          in: header
+        -
+          name: 'extend[]'
+          required: false
+          description: 'An array of nested objects to include in the return object'
+          in: query
+          schema:
+            type: array
+        -
+          name: 'fields[]'
+          required: false
+          description: 'An array of fields to return in output, wil return all fields is not supplied'
+          in: query
+          schema:
+            type: array
+        -
+          name: validOn
+          required: false
+          description: 'Returns object as valid on a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validFrom
+          required: false
+          description: 'Returns objects valid from a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+        -
+          name: validUntil
+          required: false
+          description: 'Returns objects valid until a given date time'
+          schema:
+            type: string
+            format: date-time
+          in: query
+      responses:
+        200:
+          description: 'EducationRepository resource response'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+        404:
+          description: 'Resource not found'
+      produces:
+        - application/health+json
+    delete:
+      tags:
+        - EducationRepository
+      operationId: deleteCurrentEducationYesItem
+      summary: 'Removes the EducationRepository resource.'
+      responses:
+        204:
+          description: 'EducationRepository resource deleted'
+>>>>>>> feature-sarai
         404:
           description: 'Resource not found'
       summary: 'Retrieves a CurrentEducationYes resource.'
@@ -4896,13 +5239,56 @@ paths:
     put:
       operationId: putCurrentEducationYesItem
       tags:
+<<<<<<< HEAD
         - CurrentEducationYes
+=======
+        - EducationRepository
+      operationId: putCurrentEducationYesItem
+      summary: 'Replaces the EducationRepository resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+>>>>>>> feature-sarai
       responses:
         200:
-          description: 'CurrentEducationYes resource updated'
+          description: 'EducationRepository resource updated'
           content:
             application/ld+json:
               schema:
+<<<<<<< HEAD
                 $ref: '#/components/schemas/CurrentEducationYes.jsonld'
             application/json+ld:
               schema:
@@ -4949,6 +5335,48 @@ paths:
               parameters:
                 id: '$response.body#/id'
               description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /current_education_yes/{id}`.'
+=======
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+>>>>>>> feature-sarai
         400:
           description: 'Invalid input'
         422:
@@ -4975,6 +5403,7 @@ paths:
         content:
           application/ld+json:
             schema:
+<<<<<<< HEAD
               $ref: '#/components/schemas/CurrentEducationYes.jsonld'
           application/json+ld:
             schema:
@@ -5028,6 +5457,54 @@ paths:
           description: 'Resource not found'
       summary: 'Removes the CurrentEducationYes resource.'
       description: 'Removes the CurrentEducationYes resource.'
+=======
+              $ref: '#/components/schemas/EducationRepository:jsonld'
+          application/json+ld:
+            schema:
+              $ref: '#/components/schemas/EducationRepository:jsonld'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+hal:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+vnd.api:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/health+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/json+health:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/graphql:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The updated EducationRepository resource'
+    patch:
+      tags:
+        - EducationRepository
+      operationId: patchCurrentEducationYesItem
+      summary: 'Updates the EducationRepository resource.'
+>>>>>>> feature-sarai
       parameters:
         -
           name: id
@@ -5038,6 +5515,7 @@ paths:
           allowEmptyValue: false
           schema:
             type: string
+<<<<<<< HEAD
           style: simple
           explode: false
           allowReserved: false
@@ -5098,6 +5576,83 @@ paths:
               parameters:
                 id: '$response.body#/id'
               description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /current_education_yes/{id}`.'
+=======
+        -
+          name: Authorization
+          description: 'The JWT of the entity performing the request'
+          in: header
+        -
+          name: API-Version
+          description: 'The version of the API conform [Landelijke API-strategie.](https://geonovum.github.io/KP-APIs/#versioning)'
+          example: 1.0.1
+          in: header
+        -
+          name: X-NLX-Logrecord-ID
+          description: 'A  globally unique id of the request, which makes a request traceable throughout the network.'
+          in: header
+        -
+          name: X-NLX-Request-Process-Id
+          description: 'A process id for purpose registration (doelbinding)'
+          in: header
+        -
+          name: X-NLX-Request-Data-Elements
+          description: 'A list of requested data elements'
+          in: header
+        -
+          name: X-NLX-Request-Data-Subject
+          description: 'A key-value list of data subjects related to this request. e.g. `bsn=12345678, kenteken=ab-12-fg`'
+          in: header
+        -
+          name: X-NLX-Audit-Clarification
+          description: 'A clarification as to why a request has been made  (doelbinding)'
+          in: header
+      responses:
+        200:
+          description: 'EducationRepository resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/EducationRepository:jsonld'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/EducationRepository'
+>>>>>>> feature-sarai
         400:
           description: 'Invalid input'
         422:
@@ -5124,6 +5679,7 @@ paths:
         content:
           application/ld+json:
             schema:
+<<<<<<< HEAD
               $ref: '#/components/schemas/CurrentEducationYes.jsonld'
           application/json:
             schema:
@@ -5152,6 +5708,34 @@ paths:
         required: true
       deprecated: false
     parameters: []
+=======
+              $ref: '#/components/schemas/EducationRepository:jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          applications/x-yaml:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/csv:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/EducationRepository'
+        description: 'The updated EducationRepository resource'
+>>>>>>> feature-sarai
   /documents:
     get:
       operationId: getDocumentCollection
@@ -27599,6 +28183,7 @@ components:
           description: 'The Token for password reset'
           type: string
           nullable: true
+<<<<<<< HEAD
         dateCreated:
           description: 'The moment this resource was created'
           type: string
@@ -27617,3 +28202,891 @@ components:
   securitySchemes: {  }
 security: []
 tags: []
+=======
+definitions:
+  Address-read:
+    properties:
+      street: []
+      houseNumber: []
+      houseNumberSuffix: []
+      postalCode: []
+      locality: []
+    required: []
+  Address-write:
+    properties:
+      street: []
+      houseNumber: []
+      houseNumberSuffix: []
+      postalCode: []
+      locality: []
+    required: []
+  Employee-read:
+    properties:
+      givenName:
+        description: 'The Name of this Employee.'
+        type: string
+        maxLength: 255
+      additionalName:
+        description: 'The PrefixName of this Employee.'
+        type: string
+        maxLength: 255
+      familyName:
+        description: 'The LastName of this Employee.'
+        type: string
+        maxLength: 255
+      telephone:
+        description: 'The Telephone of this Employee.'
+        type: string
+        maxLength: 255
+      availability:
+        description: 'The availability for this employee'
+        type: array|null
+      availabilityNotes:
+        description: 'The Availability Note of this Employee.'
+        type: string
+        maxLength: 2550
+      email:
+        description: 'The Email of this Employee.'
+        type: string
+        maxLength: 2550
+      gender:
+        description: 'The Gender of this Employee. **Male**, **Female**, **X**'
+        type: string
+        example: Male
+      dateOfBirth:
+        description: 'Date of birth of this Employee.'
+        type: string
+        example: 15-03-2000
+      address:
+        description: 'The address of this Employee.'
+        type: array|null
+      contactTelephone:
+        description: 'Contact Telephone of this Employee.'
+        type: string
+        maxLength: 255
+      contactPreference:
+        description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
+        type: string|null
+      targetGroupPreferences:
+        description: 'Target Preference of this Employee. **NT1**, **NT2**'
+        type: array|null
+        example: NT1
+      volunteeringPreference:
+        description: |
+          Volunteering Preference of this Employee.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string|null
+      currentEducationNoButDidFollow: []
+      currentlyFollowingCourseCourseProfessionalism: []
+      currentEducationYes: []
+    required: []
+  Employee-write:
+    properties:
+      givenName:
+        description: 'The Name of this Employee.'
+        type: string
+        maxLength: 255
+      additionalName:
+        description: 'The PrefixName of this Employee.'
+        type: string
+        maxLength: 255
+      familyName:
+        description: 'The LastName of this Employee.'
+        type: string
+        maxLength: 255
+      telephone:
+        description: 'The Telephone of this Employee.'
+        type: string
+        maxLength: 255
+      availability:
+        description: 'The availability for this employee'
+        type: array|null
+      availabilityNotes:
+        description: 'The Availability Note of this Employee.'
+        type: string
+        maxLength: 2550
+      email:
+        description: 'The Email of this Employee.'
+        type: string
+        maxLength: 2550
+      gender:
+        description: 'The Gender of this Employee. **Male**, **Female**, **X**'
+        type: string
+        example: Male
+      dateOfBirth:
+        description: 'Date of birth of this Employee.'
+        type: string
+        example: 15-03-2000
+      address:
+        description: 'The address of this Employee.'
+        type: array|null
+      contactTelephone:
+        description: 'Contact Telephone of this Employee.'
+        type: string
+        maxLength: 255
+      contactPreference:
+        description: 'Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**'
+        type: string|null
+      targetGroupPreferences:
+        description: 'Target Preference of this Employee. **NT1**, **NT2**'
+        type: array|null
+        example: NT1
+      volunteeringPreference:
+        description: |
+          Volunteering Preference of this Employee.
+          
+           @Assert\Length(
+              max = 255
+          )
+        type: string|null
+      currentEducationNoButDidFollow: []
+      currentlyFollowingCourseCourseProfessionalism: []
+      currentEducationYes: []
+    required: []
+  Group-write:
+    properties:
+      outComesApplication: []
+      outComesLevel: []
+    required: []
+  LanguageHouse-read:
+    properties:
+      name:
+        description: 'The Name of this Taalhuis.'
+        type: string
+        maxLength: 255
+      address:
+        description: 'The address of this Taalhuis.'
+        type: array|null
+      phoneNumber:
+        description: 'The Telephone of this Taalhuis.'
+        type: string|null
+        maxLength: 255
+      email:
+        description: 'The Email of this Taalhuis.'
+        type: string|null
+        maxLength: 2550
+    required:
+      - name
+      - email
+  LanguageHouse-write:
+    properties:
+      name:
+        description: 'The Name of this Taalhuis.'
+        type: string
+        maxLength: 255
+      address:
+        description: 'The address of this Taalhuis.'
+        type: array|null
+      phoneNumber:
+        description: 'The Telephone of this Taalhuis.'
+        type: string|null
+        maxLength: 255
+      email:
+        description: 'The Email of this Taalhuis.'
+        type: string|null
+        maxLength: 2550
+    required:
+      - name
+      - email
+  LearningNeed-write:
+    properties:
+      learningNeedDescription: []
+      learningNeedMotivation: []
+      desiredOutComesGoal: []
+      desiredOutComesTopic: []
+      desiredOutComesTopicOther: []
+      desiredOutComesApplication: []
+      desiredOutComesApplicationOther: []
+      desiredOutComesLevel: []
+      desiredOutComesLevelOther: []
+      offerDesiredOffer: []
+      offerAdvisedOffer: []
+      offerDifference: []
+      offerDifferenceOther: []
+      offerEngagements: []
+      participations: []
+      studentId: []
+      learningNeedId:
+        description: 'The id of the objectEntity of an eav/learning_need.'
+        type: string
+      learningNeedUrl:
+        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+        type: string
+        format: url
+    required: []
+  Participation-write:
+    properties:
+      status: []
+      aanbiederId: []
+      aanbiederName: []
+      aanbiederNote: []
+      offerName: []
+      offerCourse: []
+      outComesGoal: []
+      outComesTopic: []
+      outComesTopicOther: []
+      outComesApplication: []
+      outComesApplicationOther: []
+      outComesLevel: []
+      outComesLevelOther: []
+      detailsIsFormal: []
+      detailsGroupFormation: []
+      detailsTotalClassHours: []
+      detailsCertificateWillBeAwarded: []
+      detailsStartDate: []
+      detailsEndDate: []
+      detailsEngagements: []
+      learningNeedId:
+        description: 'The id of the objectEntity of an eav/learning_need.'
+        type: string
+      learningNeedUrl:
+        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
+        type: string
+        format: url
+    required: []
+  Provider-read:
+    properties:
+      name:
+        description: 'The Name of this Provider.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Provider.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Provider.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Aanbieder.'
+        type: array|null
+    required:
+      - name
+  Provider-write:
+    properties:
+      name:
+        description: 'The Name of this Provider.'
+        type: string
+        maxLength: 255
+      phoneNumber:
+        description: 'The Telephone of this Provider.'
+        type: string
+        maxLength: 255
+      email:
+        description: 'The Email of this Provider.'
+        type: string
+        maxLength: 2550
+      address:
+        description: 'The address of this Aanbieder.'
+        type: array|null
+    required:
+      - name
+  RegisterStudent-read:
+    properties:
+      address: []
+    required:
+      - givenName
+      - familyName
+      - email
+      - telephone
+  RegisterStudent-write:
+    properties:
+      address: []
+    required:
+      - givenName
+      - familyName
+      - email
+      - telephone
+  Student-write:
+    properties:
+      status: []
+      memo: []
+      registrar: []
+      civicIntegrationDetails: []
+      personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      speakingLevel: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
+      permissionDetails: []
+      intakeDetail: []
+      languageHouseId: []
+      studentId: []
+    required:
+      - permissionDetails
+      - languageHouseId
+  Student-read:
+    properties:
+      civicIntegrationDetails: []
+      personDetails: []
+      contactDetails: []
+      generalDetails: []
+      referrerDetails: []
+      backgroundDetails: []
+      dutchNTDetails: []
+      speakingLevel: []
+      educationDetails: []
+      courseDetails: []
+      jobDetails: []
+      motivationDetails: []
+      availabilityDetails: []
+      readingTestResult: []
+      writingTestResult: []
+      permissionDetails: []
+      intakeDetail: []
+      languageHouseId: []
+      studentId: []
+    required:
+      - permissionDetails
+      - languageHouseId
+  StudentDossierEvent-read:
+    properties:
+      event:
+        description: 'The Event of this Student.'
+        type: string
+      eventDate:
+        description: 'date of this student Dossier.'
+        type: \Datetime
+      eventDescription:
+        description: 'description of this student Dossier.'
+        type: string
+      studentId:
+        description: 'studentId of this student Dossier.'
+        type: string|null
+    required:
+      - event
+      - eventDate
+      - eventDescription
+      - studentId
+  StudentDossierEvent-write:
+    properties:
+      event:
+        description: 'The Event of this Student.'
+        type: string
+      eventDate:
+        description: 'date of this student Dossier.'
+        type: \Datetime
+      eventDescription:
+        description: 'description of this student Dossier.'
+        type: string
+      studentId:
+        description: 'studentId of this student Dossier.'
+        type: string|null
+    required:
+      - event
+      - eventDate
+      - eventDescription
+      - studentId
+  StudentIntakeDetail-write:
+    properties:
+      studentId: []
+      lastName: []
+      middleName: []
+      nickname: []
+      gender: []
+      dateOfBirth: []
+      streetAndHouseNumber: []
+      postalCode: []
+      place: []
+      phoneNumber: []
+      phoneNumberContactPerson: []
+      email: []
+      availability: []
+    required: []
+  User-read:
+    properties:
+      email:
+        description: 'The Email of this User.'
+        type: string
+        maxLength: 2550
+      username:
+        description: 'The Username of this User'
+        type: string
+        maxLength: 2550
+      token:
+        description: 'The Token for password reset'
+        type: string
+        maxLength: 2550
+    required: []
+  User-write:
+    properties:
+      email:
+        description: 'The Email of this User.'
+        type: string
+        maxLength: 2550
+      username:
+        description: 'The Username of this User'
+        type: string
+        maxLength: 2550
+      password:
+        description: 'The Password of this User.'
+        type: string
+        maxLength: 2550
+      token:
+        description: 'The Token for password reset'
+        type: string
+        maxLength: 2550
+    required: []
+  AuditTrail-read:
+    properties:
+      id:
+        description: 'The UUID identifier of this object'
+        type: string
+        example: e2984465-190a-4562-829e-a8cca81aa35d
+        format: uuid
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line looks suspicius'
+        maxLength: 2555
+      application:
+        description: 'The application that made the request'
+        type: string
+        format: url
+        maxLength: 255
+      request:
+        description: 'The id of the request within that application'
+        type: string
+        format: url
+        maxLength: 255
+      user:
+        description: 'The user on behalf of wich the request was made'
+        type: string
+        format: url
+        maxLength: 255
+      subject:
+        description: '???'
+        type: string
+        maxLength: 255
+      process:
+        description: 'The procces on behalf of wich the request was made'
+        type: string
+        maxLength: 255
+      dataElements:
+        description: 'The moment this request was created'
+        type: array
+      dataSubjects:
+        description: 'The moment this request was created'
+        type: array
+      resource:
+        description: 'The resource that was requested'
+        type: string
+        maxLength: 255
+      resourceType:
+        description: 'The type of the resource that was requested'
+        type: string
+        maxLength: 255
+      route:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      endpoint:
+        description: 'The endpoint that the request was made to'
+        type: string
+        maxLength: 255
+      method:
+        description: 'The method that was used'
+        type: string
+        maxLength: 255
+      accept:
+        description: 'The contentType that was reqousted'
+        type: string
+        maxLength: 255
+      contentType:
+        description: 'The contentType that was suplieds'
+        type: string
+        maxLength: 255
+      content:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 2555
+      ip:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      session:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      headers:
+        description: 'The headers supplied by client'
+        type: array
+      statusCode:
+        description: 'The status code returned to client'
+        type: int
+        example: '200'
+      notFound:
+        description: 'Whether or not the reqousted endpoint was found'
+        type: bool
+        example: 'false'
+      forbidden:
+        description: 'Whether or not the client was allowed to the reqousted endpoint'
+        type: bool
+        example: 'false'
+      ok:
+        description: 'Whether or not there where any problems'
+        type: bool
+        example: 'true'
+      dateCreated:
+        description: 'The moment this request was created'
+        type: string
+        format: date-time
+        example: '2021-04-26 07:42:04'
+      dateModified:
+        description: 'The moment this request last Modified'
+        type: string
+        format: date-time
+        example: '2021-04-26 07:42:04'
+    required: []
+  AuditTrail-write:
+    properties:
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line looks suspicius'
+        maxLength: 2555
+    required: []
+  ChangeLog-read:
+    properties:
+      id:
+        description: 'The UUID identifier of this object'
+        type: string
+        example: e2984465-190a-4562-829e-a8cca81aa35d
+        format: uuid
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
+        maxLength: 2555
+      action:
+        description: ''
+        type: string
+      objectId:
+        description: ''
+        type: string
+      objectClass:
+        description: ''
+        type: string
+      version:
+        description: ''
+        type: int
+      data:
+        description: ''
+        type: array
+      username:
+        description: ''
+        type: string
+      session:
+        description: 'The moment this request was created'
+        type: string
+        maxLength: 255
+      dateCreated:
+        description: 'The moment this request was created'
+        type: string
+        format: date-time
+        example: '2021-04-26 07:42:04'
+      dateModified:
+        description: 'The moment this request last Modified'
+        type: string
+        format: date-time
+        example: '2021-04-26 07:42:04'
+    required: []
+  ChangeLog-write:
+    properties:
+      note:
+        description: 'A note conserning this log lin'
+        type: string
+        example: 'This log line is suspicius'
+        maxLength: 2555
+    required: []
+tags:
+  -
+    name: Address
+    description: |
+      
+      
+      
+  -
+    name: Availability
+    description: |
+      
+      
+      
+  -
+    name: AvailabilityDay
+    description: |
+      
+      
+      
+  -
+    name: CurrentEducationNoButDidFollow
+    description: |
+      
+      
+      
+  -
+    name: EducationRepository
+    description: |
+      
+      
+      
+  -
+    name: Document
+    description: |
+      
+      
+      
+  -
+    name: Employee
+    description: |
+      
+      
+      
+  -
+    name: Group
+    description: |
+      
+      
+      
+  -
+    name: LanguageHouse
+    description: |
+      
+      
+      
+  -
+    name: LearningNeed
+    description: |
+      
+      
+      
+  -
+    name: Participation
+    description: |
+      
+      
+      
+  -
+    name: Provider
+    description: |
+      
+      
+      
+  -
+    name: RegisterStudent
+    description: |
+      
+      
+      
+  -
+    name: RegisterStudentRegistrar
+    description: |
+      
+      
+      
+  -
+    name: Registration
+    description: |
+      
+      
+      
+  -
+    name: Report
+    description: |
+      
+      
+      
+  -
+    name: Student
+    description: |
+      
+      
+      
+  -
+    name: StudentAvailability
+    description: |
+      
+      
+      
+  -
+    name: StudentBackground
+    description: |
+      
+      
+      
+  -
+    name: StudentCivicIntegration
+    description: |
+      
+      
+      
+  -
+    name: StudentContact
+    description: |
+      
+      
+      
+  -
+    name: StudentCourse
+    description: |
+      
+      
+      
+  -
+    name: StudentDossierEvent
+    description: |
+      
+      
+      
+  -
+    name: StudentDutchNT
+    description: |
+      
+      
+      
+  -
+    name: StudentEducation
+    description: |
+      
+      
+      
+  -
+    name: StudentGeneral
+    description: |
+      
+      
+      
+  -
+    name: StudentIntakeDetail
+    description: |
+      
+      
+      
+  -
+    name: StudentJob
+    description: |
+      
+      
+      
+  -
+    name: StudentMotivation
+    description: |
+      
+      
+      
+  -
+    name: StudentPermission
+    description: |
+      
+      
+      
+  -
+    name: StudentPerson
+    description: |
+      
+      
+      
+  -
+    name: StudentReferrer
+    description: |
+      
+      
+      
+  -
+    name: TestResult
+    description: |
+      
+      
+      
+  -
+    name: User
+    description: |
+      
+      
+      
+  -
+    name: AuditTrail
+    description: |
+      An resource representing a log line.
+      
+      This entity represents a product that can be ordered via the OrderRegistratieComponent.
+  -
+    name: ChangeLog
+    description: |
+      An resource representing a log line.
+      
+      This entity represents a product that can be ordered via the OrderRegistratieComponent.
+securityDefinitions:
+  JWT-Oauth:
+    type: oauth2
+    authorizationUrl: 'http://petstore.swagger.io/api/oauth/dialog'
+    flow: implicit
+    scopes:
+      read: 'read right to the ChangeLog resource'
+      write: 'write right to the ChangeLog resource'
+  JWT-Token:
+    type: apiKey
+    in: header
+    name: Authorization
+    scopes:
+      read: 'read right to the ChangeLog resource'
+      write: 'write right to the ChangeLog resource'
+host: irc.zaakonline.nl
+servers:
+  -
+    name: taalhuizen-bisc.commonground.nu
+    url: taalhuizen-service.dev.taalhuizen-bisc.commonground.nu
+externalDocs:
+  -
+    description: 'OAS Documentatie'
+    url: 'http://proto.demo.common-ground.dev'
+x-commonground:
+  type: service
+  developers:
+    -
+      name: Conduction
+      url: 'https://github.com/ConductionNL'
+      email: info@conduction.nl
+    -
+      name: 'Gemeente "s-Hertogenbosch'
+      url: 'https://github.com/gemeenteshertogenbosch'
+      email: info@s-hertogenbosch.nl/
+    -
+      name: 'Gemeente Utrecht'
+      url: 'https://github.com/GemeenteUtrecht'
+      email: info@utrecht.nl
+  builds:
+    -
+      name: travis
+      logo: 'https://travis-ci.org/api-platform/core.svg?branch=master'
+      url: 'https://travis-ci.org/api-platform/core'
+    -
+      name: appveyor
+      logo: 'https://ci.appveyor.com/api/projects/status/grwuyprts3wdqx5l?svg=true'
+      url: 'https://ci.appveyor.com/project/dunglas/dunglasapibundle'
+    -
+      name: codecov
+      logo: 'https://codecov.io/gh/api-platform/core/branch/master/graph/badge.svg'
+      url: 'https://codecov.io/gh/api-platform/core'
+    -
+      name: SensioLabsInsight
+      logo: 'https://insight.sensiolabs.com/projects/92d78899-946c-4282-89a3-ac92344f9a93/mini.png'
+      url: 'https://insight.sensiolabs.com/projects/92d78899-946c-4282-89a3-ac92344f9a93'
+    -
+      name: 'Scrutinizer Code Quality'
+      logo: 'https://scrutinizer-ci.com/g/api-platform/core/badges/quality-score.png?b=master'
+      url: 'https://scrutinizer-ci.com/g/api-platform/core/?branch=master'
+>>>>>>> feature-sarai

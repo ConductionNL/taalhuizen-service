@@ -3,9 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\DocumentRepository;
-use App\Resolver\DocumentMutationResolver;
-use App\Resolver\DocumentQueryCollectionResolver;
-use App\Resolver\DocumentQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -19,22 +16,26 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use SebastianBergmann\CodeCoverage\Report\Text;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+
+
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document
 {
+//   Id of the document, was called in the graphql-schema 'studentDocumentId' and 'aanbiederEmployeeDocumentId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true, nullable=true)
+     * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
@@ -42,36 +43,46 @@ class Document
 
 //   name of the document, was called in the graphql-schema 'filename', changed to 'name' related to schema.org
     /**
+     * @var string Name of this document.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
 //   base64 of the document, was called in the graphql-schema 'base64data', changed to 'base64' related to schema.org
     /**
+     * @var string Base64 of this document.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="text")
      */
-    private $base64;
-
-//  @todo look at how we want to handle the ids. Top 2 are linked together and the bottom 2
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $studentId;
+    private string $base64;
 
     /**
+     * @var ?string Student id of this document
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $studentDocumentId;
+    private ?string $studentId;
 
     /**
+     * @var ?string Aanbieder employee id of this document
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $aanbiederEmployeeDocumentId;
+    private ?string $aanbiederEmployeeId;
 
     public function getId(): UuidInterface
     {
@@ -81,7 +92,6 @@ class Document
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
         return $this;
     }
 
@@ -133,27 +143,4 @@ class Document
         return $this;
     }
 
-    public function getAanbiederEmployeeDocumentId(): ?string
-    {
-        return $this->aanbiederEmployeeDocumentId;
-    }
-
-    public function setAanbiederEmployeeDocumentId(?string $aanbiederEmployeeDocumentId): self
-    {
-        $this->aanbiederEmployeeDocumentId = $aanbiederEmployeeDocumentId;
-
-        return $this;
-    }
-
-    public function getStudentDocumentId(): ?string
-    {
-        return $this->studentDocumentId;
-    }
-
-    public function setStudentDocumentId(?string $studentDocumentId): self
-    {
-        $this->studentDocumentId = $studentDocumentId;
-
-        return $this;
-    }
 }
