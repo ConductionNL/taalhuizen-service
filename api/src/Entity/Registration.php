@@ -82,8 +82,9 @@ class Registration
      */
     private ?Person $student;
 
-    // This person should have a organization object in it! todo:remove comment
     /**
+     * @var ?Person a contact catalogue person for the registrar, this person should have a organization with a name set.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)

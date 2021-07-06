@@ -95,8 +95,9 @@ class Student
      */
     private ?string $memo;
 
-    // This person should have a organization object in it! or use the old RegisterStudentRegistrar object for the organizationName of the person! todo:remove comment
     /**
+     * @var ?Person a contact catalogue person for the registrar, this person should have a organization with a name set.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -110,8 +111,9 @@ class Student
      */
     private ?StudentCivicIntegration $civicIntegrationDetails;
 
-    // PersonDetails & ContactDetails together have the same variables as a Person object, so we should use that instead of those 2! todo:remove comment
     /**
+     * @var ?Person a contact catalogue person for the student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)

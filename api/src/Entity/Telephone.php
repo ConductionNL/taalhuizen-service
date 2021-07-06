@@ -56,11 +56,11 @@ class Telephone
      *     max = 255
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $telephone;
+    private string $telephone;
 
-    public function getId(): ?UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
@@ -84,12 +84,12 @@ class Telephone
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getTelephone(): string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
 

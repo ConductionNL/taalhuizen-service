@@ -105,7 +105,7 @@ class User
     private $id;
 
     /**
-     * @var string The Username of this User
+     * @var string The Username of this User.
      *
      * @Assert\Length(
      *     max = 2550
@@ -116,7 +116,7 @@ class User
     private string $username;
 
     /**
-     * @var Person A contact component person
+     * @var Person A contact component person of this User.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
@@ -136,7 +136,7 @@ class User
     private string $userEnvironment;
 
     /**
-     * @var Organization A contact component organization.
+     * @var Organization A contact component organization of this User.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
@@ -164,7 +164,7 @@ class User
     private string $password;
 
     /**
-     * @var string The Token for password reset
+     * @var string The Token for password reset.
      *
      * @Assert\Length(
      *     max = 2550

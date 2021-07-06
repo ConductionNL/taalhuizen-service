@@ -83,12 +83,16 @@ class TestResult
     private ?string $usedExam;
 
     /**
+     * @var String|null The date of the exam that this TestResult is a result of.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private ?string $examDate;
 
     /**
+     * @var String|null A memo/note for this TestResult.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */

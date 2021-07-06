@@ -66,6 +66,7 @@ class Person
      * @var ?string Gender of this person
      *
      * @Groups({"read", "write"})
+     * @Assert\Choice({"Male", "Female"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $gender;
@@ -86,6 +87,7 @@ class Person
      */
     private ?Address $addresses;
 
+    // TODO:this should be a oneToMany so we can add an extra telephone for the $contactPersonTelephone of a student
     /**
      * @var ?Telephone Telephone of this person
      *
@@ -110,16 +112,27 @@ class Person
      */
     private ?Organization $organization;
 
+    /**
+     * @var string|null The contact preference of the person.
+     *
+     * @example Whatsapp
+     *
+     * @Groups({"read","write"})
+     * @Assert\Choice({"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $contactPreference;
+
+    /**
+     * @var string|null The contact preference of the person for when the OTHER option is selected.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $contactPreferenceOther;
+
     public function getId(): ?UuidInterface
     {
         return $this->id;
-    }
-
-    public function setId(?UuidInterface $uuid): self
-    {
-        $this->id = $uuid;
-
-        return $this;
     }
 
     public function setId(?UuidInterface $uuid): self
@@ -233,6 +246,30 @@ class Person
     public function setOrganization(?Organization $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getContactPreference(): ?string
+    {
+        return $this->contactPreference;
+    }
+
+    public function setContactPreference(?string $contactPreference): self
+    {
+        $this->contactPreference = $contactPreference;
+
+        return $this;
+    }
+
+    public function getContactPreferenceOther(): ?string
+    {
+        return $this->contactPreferenceOther;
+    }
+
+    public function setContactPreferenceOther(?string $contactPreferenceOther): self
+    {
+        $this->contactPreferenceOther = $contactPreferenceOther;
 
         return $this;
     }

@@ -37,19 +37,16 @@ class StudentBackground
      */
     private ?string $foundViaOther;
 
-    // Renamed from wentToTaalhuisBefore to wentToLanguageHouseBefore. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $wentToLanguageHouseBefore;
 
-    // Renamed from wentToTaalhuisBeforeReason to wentToLanguageHouseBeforeReason. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $wentToLanguageHouseBeforeReason;
 
-    // Renamed from $wentToTaalhuisBeforeYear to $wentToLanguageHouseBeforeYear. todo: EAV variable might need this rename as well?
     /**
      * @ORM\Column(type="float", nullable=true)
      */
