@@ -26,20 +26,23 @@ class CurrentEducationYes
      */
     private $id;
 
+    //   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $dateSince;
+    private $startDate;
 
+    //   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $name;
+    private $institution;
 
+    //   degree granted status of the education, was called in the graphql-schema 'doesProvideCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $doesProvideCertificate;
+    private $degreeGrantedStatus;
 
     public function getId(): UuidInterface
     {
@@ -53,38 +56,38 @@ class CurrentEducationYes
         return $this;
     }
 
-    public function getDateSince(): ?\DateTimeInterface
+    public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->dateSince;
+        return $this->startDate;
     }
 
-    public function setDateSince(?\DateTimeInterface $dateSince): self
+    public function setStartDate(?\DateTimeInterface $startDate): self
     {
-        $this->dateSince = $dateSince;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getInstitution(): ?string
     {
-        return $this->name;
+        return $this->institution;
     }
 
-    public function setName(?string $name): self
+    public function setInstitution(?string $institution): self
     {
-        $this->name = $name;
+        $this->institution = $institution;
 
         return $this;
     }
 
-    public function getDoesProvideCertificate(): ?bool
+    public function getDegreeGrantedStatus(): ?string
     {
-        return $this->doesProvideCertificate;
+        return $this->degreeGrantedStatus;
     }
 
-    public function setDoesProvideCertificate(?bool $doesProvideCertificate): self
+    public function setDegreeGrantedStatus(?string $degreeGrantedStatus): self
     {
-        $this->doesProvideCertificate = $doesProvideCertificate;
+        $this->degreeGrantedStatus = $degreeGrantedStatus;
 
         return $this;
     }

@@ -2,56 +2,28 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\DocumentRepository;
 use App\Resolver\DocumentMutationResolver;
 use App\Resolver\DocumentQueryCollectionResolver;
 use App\Resolver\DocumentQueryItemResolver;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-
 /**
- * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = DocumentQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = DocumentQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "download" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact", "aanbiederEmployeeId": "exact"})
+ * @ApiResource()
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document
@@ -68,48 +40,38 @@ class Document
      */
     private UuidInterface $id;
 
+//   name of the document, was called in the graphql-schema 'filename', changed to 'name' related to schema.org
     /**
-     * @var string the base64 of the document
-     *
-     * @Assert\NotNull
-     * @ORM\Column(type="text")
-     */
-    private string $base64data;
-
-    /**
-     * @var string the name of the file
-     *
-     * @Assert\NotNull
      * @ORM\Column(type="string", length=255)
      */
-    private string $filename;
+    private $name;
 
+//   base64 of the document, was called in the graphql-schema 'base64data', changed to 'base64' related to schema.org
     /**
-     * @var string|null
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text")
      */
-    private ?string $aanbiederEmployeeId = null;
+    private $base64;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $studentId = null;
-
+//  @todo look at how we want to handle the ids. Top 2 are linked together and the bottom 2
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $aanbiederEmployeeDocumentId = null;
+    private $studentId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $studentDocumentId = null;
+    private $studentDocumentId;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $dateCreated;
+    private $aanbiederEmployeeId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $aanbiederEmployeeDocumentId;
 
     public function getId(): UuidInterface
     {
@@ -123,26 +85,26 @@ class Document
         return $this;
     }
 
-    public function getBase64data(): ?string
+    public function getName(): ?string
     {
-        return $this->base64data;
+        return $this->name;
     }
 
-    public function setBase64data(string $base64data): self
+    public function setName(string $name): self
     {
-        $this->base64data = $base64data;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getFilename(): ?string
+    public function getBase64(): ?string
     {
-        return $this->filename;
+        return $this->base64;
     }
 
-    public function setFilename(string $filename): self
+    public function setBase64(string $base64): self
     {
-        $this->filename = $filename;
+        $this->base64 = $base64;
 
         return $this;
     }
@@ -152,7 +114,7 @@ class Document
         return $this->aanbiederEmployeeId;
     }
 
-    public function setAanbiederEmployeeId(string $aanbiederEmployeeId): self
+    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
     {
         $this->aanbiederEmployeeId = $aanbiederEmployeeId;
 
@@ -164,7 +126,7 @@ class Document
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
 
@@ -191,18 +153,6 @@ class Document
     public function setStudentDocumentId(?string $studentDocumentId): self
     {
         $this->studentDocumentId = $studentDocumentId;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?string
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(?string $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
 
         return $this;
     }
