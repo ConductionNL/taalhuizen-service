@@ -78,42 +78,40 @@ class Employee
      */
     private $id;
 
-    // @todo do we want to make a email en telephone entity
     /**
+     * @var Person Person of this employee
+     *
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $person;
+    private Person $person;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Address::class)
-     */
-    private $addresses;
-
-    /**
-     * @var string The Telephone of this Employee.
+     * @var ?Address Address of this employee
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
      */
-    private $telephone;
+    private ?Address $addresses;
 
     /**
-     * @var string The Email of this Employee.
+     * @var ?Telephone Telephone of this employee
      *
-     * @Assert\Length(
-     *     max = 2550
-     * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
      */
-    private $email;
+    private ?Telephone $telephones;
 
     /**
-     * @var string Contact Telephone of this Employee.
+     * @var ?Email Email of this employee
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     */
+    private ?Email $emails;
+
+    /**
+     * @var string Contact telephone of this Employee.
      *
      * @Assert\Length(
      *     max = 255
@@ -277,22 +275,13 @@ class Employee
      */
     private ?bool $isVOGChecked = false;
 
-    // @todo look at how we want to handle the ids. providerId and languageHouseId are used for the organization the employee is working for
     /**
-     * @var string|null The provider this employee works for
+     * @var ?Organization Organization of this person
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      */
-    private ?string $providerId;
-
-    /**
-     * @var string|null The language house this employee works for
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
+    private ?Organization $organization;
 
     /**
      * @Groups({"read", "write"})
@@ -329,11 +318,6 @@ class Employee
      */
     private $dateModified;
 
-    public function __construct()
-    {
-        $this->addresses = new ArrayCollection();
-    }
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -345,50 +329,50 @@ class Employee
         return $this;
     }
 
-    public function getGivenName(): ?string
+    public function getPerson(): ?Person
     {
-        return $this->givenName;
+        return $this->person;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setPerson(?Person $person): self
     {
-        $this->givenName = $givenName;
+        $this->person = $person;
 
         return $this;
     }
 
-    public function getAdditionalName(): ?string
+    public function getAddresses(): ?Address
     {
-        return $this->additionalName;
+        return $this->addresses;
     }
 
-    public function setAdditionalName(?string $additionalName): self
+    public function setAddresses(?Address $addresses): self
     {
-        $this->additionalName = $additionalName;
+        $this->addresses = $addresses;
 
         return $this;
     }
 
-    public function getFamilyName(): ?string
+    public function getTelephones(): ?Telephone
     {
-        return $this->familyName;
+        return $this->telephones;
     }
 
-    public function setFamilyName(string $familyName): self
+    public function setTelephones(?Telephone $telephones): self
     {
-        $this->familyName = $familyName;
+        $this->telephones = $telephones;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getEmails(): ?Email
     {
-        return $this->telephone;
+        return $this->emails;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setEmails(?Email $emails): self
     {
-        $this->telephone = $telephone;
+        $this->emails = $emails;
 
         return $this;
     }
@@ -401,42 +385,6 @@ class Employee
     public function setAvailabilityNotes(?string $availabilityNotes): self
     {
         $this->availabilityNotes = $availabilityNotes;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?string $gender): self
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getDateOfBirth(): ?\DateTimeInterface
-    {
-        return $this->dateOfBirth;
-    }
-
-    public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
-    {
-        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }
@@ -485,18 +433,6 @@ class Employee
     public function setVolunteeringPreference(?string $volunteeringPreference): self
     {
         $this->volunteeringPreference = $volunteeringPreference;
-
-        return $this;
-    }
-
-    public function getAddress(): array
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?array $address = []): self
-    {
-        $this->address = $address;
 
         return $this;
     }
@@ -669,26 +605,14 @@ class Employee
         return $this;
     }
 
-    public function getProviderId(): ?string
+    public function getOrganization(): ?Organization
     {
-        return $this->providerId;
+        return $this->organization;
     }
 
-    public function setProviderId(?string $providerId): self
+    public function setOrganization(?Organization $organization): self
     {
-        $this->providerId = $providerId;
-
-        return $this;
-    }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(?string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
+        $this->organization = $organization;
 
         return $this;
     }
@@ -777,39 +701,4 @@ class Employee
         return $this;
     }
 
-    public function getPerson(): ?Person
-    {
-        return $this->person;
-    }
-
-    public function setPerson(Person $person): self
-    {
-        $this->person = $person;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddresses(): Collection
-    {
-        return $this->addresses;
-    }
-
-    public function addAddress(Address $address): self
-    {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses[] = $address;
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        $this->addresses->removeElement($address);
-
-        return $this;
-    }
 }
