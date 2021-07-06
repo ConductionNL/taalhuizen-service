@@ -21,7 +21,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=EducationRepository::class)
  */
 class Education
@@ -42,9 +49,9 @@ class Education
     /**
      * @var ?DateTime Start date of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -54,9 +61,9 @@ class Education
     /**
      * @var ?DateTime End date of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -64,11 +71,11 @@ class Education
 
 //   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
-     * @var ?string Start date of this education.
+     * @var ?string Institution of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -78,9 +85,9 @@ class Education
     /**
      * @var ?string Isced education level code of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -90,9 +97,9 @@ class Education
     /**
      * @var ?string Degree granted status of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */

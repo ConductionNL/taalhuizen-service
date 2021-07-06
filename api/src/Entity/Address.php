@@ -21,7 +21,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
 class Address
@@ -41,31 +48,33 @@ class Address
     /**
      * @var ?string Street of this address.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $street;
 
     /**
      * @var ?string House number of this address.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $houseNumber;
 
     /**
      * @var ?string House number suffix of this address.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -74,22 +83,24 @@ class Address
     /**
      * @var ?string Postal code of this address.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $postalCode;
 
     /**
      * @var ?string Locality of this address.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $locality;
 

@@ -21,7 +21,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=AvailabilityDayRepository::class)
  */
 class AvailabilityDay
@@ -41,6 +48,7 @@ class AvailabilityDay
     /**
      * @var bool Morning of this availability day.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
@@ -49,6 +57,7 @@ class AvailabilityDay
     /**
      * @var bool Afternoon of this availability day.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
@@ -57,6 +66,7 @@ class AvailabilityDay
     /**
      * @var bool Evening of this availability day.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */

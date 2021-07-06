@@ -21,7 +21,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=AvailabilityRepository::class)
  */
 class Availability
@@ -41,6 +48,7 @@ class Availability
     /**
      * @var AvailabilityDay Monday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -49,6 +57,7 @@ class Availability
     /**
      * @var AvailabilityDay Tuesday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -57,6 +66,7 @@ class Availability
     /**
      * @var AvailabilityDay Wednesday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -65,6 +75,7 @@ class Availability
     /**
      * @var AvailabilityDay Thursday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -73,6 +84,7 @@ class Availability
     /**
      * @var AvailabilityDay Friday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -81,6 +93,7 @@ class Availability
     /**
      * @var AvailabilityDay Saturday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -89,6 +102,7 @@ class Availability
     /**
      * @var AvailabilityDay Sunday of this availability
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */

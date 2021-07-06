@@ -21,7 +21,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  */
 class Person
@@ -41,6 +48,7 @@ class Person
     /**
      * @var string Given name of this person
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -57,8 +65,9 @@ class Person
     /**
      * @var ?string Family name of this person
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $familyName;
 

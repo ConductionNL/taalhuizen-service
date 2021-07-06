@@ -16,6 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = LearningNeedQueryItemResolver::class,
@@ -70,6 +76,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class LearningNeed
 {
+//   Id of the learning need, was called in the graphql-schema 'learningNeedId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -85,7 +92,7 @@ class LearningNeed
     /**
      * @var ?string Description of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -96,7 +103,7 @@ class LearningNeed
     /**
      * @var ?string Motivation of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -107,7 +114,7 @@ class LearningNeed
     /**
      * @var ?string Desired out comes goal of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -128,7 +135,7 @@ class LearningNeed
     /**
      * @var ?string Desired outcomes topic other of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -149,7 +156,7 @@ class LearningNeed
     /**
      * @var ?string Desired out comes application other of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -170,7 +177,7 @@ class LearningNeed
     /**
      * @var ?string Desired out comes level other of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -181,7 +188,7 @@ class LearningNeed
     /**
      * @var ?string Offer desired offer of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -192,7 +199,7 @@ class LearningNeed
     /**
      * @var ?string Offer advised offer of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -212,7 +219,7 @@ class LearningNeed
     /**
      * @var ?string Offer difference other of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -223,7 +230,7 @@ class LearningNeed
     /**
      * @var ?string Offer engagements of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
@@ -242,30 +249,13 @@ class LearningNeed
     /**
      * @var ?string Student id of this learning need.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $studentId;
-
-    /**
-     * @var ?string The id of the objectEntity of an eav/learning_need.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $learningNeedId;
-
-    /**
-     * @var ?string The url of the objectEntity of an eav/learning_need '@eav'.
-     *
-     * @Groups({"write"})
-     * @Assert\Url
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $learningNeedUrl;
 
     public function getId(): UuidInterface
     {
@@ -466,30 +456,6 @@ class LearningNeed
     public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getLearningNeedId(): ?string
-    {
-        return $this->learningNeedId;
-    }
-
-    public function setLearningNeedId(?string $learningNeedId): self
-    {
-        $this->learningNeedId = $learningNeedId;
-
-        return $this;
-    }
-
-    public function getLearningNeedUrl(): ?string
-    {
-        return $this->learningNeedUrl;
-    }
-
-    public function setLearningNeedUrl(?string $learningNeedUrl): self
-    {
-        $this->learningNeedUrl = $learningNeedUrl;
 
         return $this;
     }

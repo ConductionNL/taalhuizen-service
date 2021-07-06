@@ -23,7 +23,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document
@@ -48,6 +55,7 @@ class Document
      * @Assert\Length(
      *     max = 255
      *)
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -57,32 +65,22 @@ class Document
     /**
      * @var string Base64 of this document.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="text")
      */
     private string $base64;
 
+//   person of the document, was called in the graphql-schema 'studentId' and 'aanbiederEmployeeId', changed to 'person'(Person entity)
     /**
-     * @var ?string Student id of this document
+     * @var Person Person of this document.
      *
-     * @Assert\Length(
-     *     max = 255
-     *)
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private ?string $studentId;
-
-    /**
-     * @var ?string Aanbieder employee id of this document
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $aanbiederEmployeeId;
+    private Person $person;
 
     public function getId(): UuidInterface
     {
@@ -119,26 +117,14 @@ class Document
         return $this;
     }
 
-    public function getAanbiederEmployeeId(): ?string
+    public function getPerson(): ?Person
     {
-        return $this->aanbiederEmployeeId;
+        return $this->person;
     }
 
-    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    public function setPerson(Person $person): self
     {
-        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
-
-        return $this;
-    }
-
-    public function getStudentId(): ?string
-    {
-        return $this->studentId;
-    }
-
-    public function setStudentId(?string $studentId): self
-    {
-        $this->studentId = $studentId;
+        $this->person = $person;
 
         return $this;
     }

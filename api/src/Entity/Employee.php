@@ -25,6 +25,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = EmployeeQueryItemResolver::class,
@@ -91,7 +97,7 @@ class Employee
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -142,7 +148,7 @@ class Employee
      *
      * @example NT1
      * @Assert\Choice(multiple=true, choices={"NT1","NT2"})
-     * 
+     *
      * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
      */
@@ -151,9 +157,9 @@ class Employee
     /**
      * @var ?string Volunteering Preference of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -162,9 +168,9 @@ class Employee
     /**
      * @var ?string Got here via of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -173,9 +179,9 @@ class Employee
     /**
      * @var ?string Has experience with target group of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -192,9 +198,9 @@ class Employee
     /**
      * @var ?string Current education of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -220,9 +226,9 @@ class Employee
     /**
      * @var ?string Currently following course name of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -231,9 +237,9 @@ class Employee
     /**
      * @var ?string Currently following course institute of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -272,9 +278,9 @@ class Employee
     /**
      * @var ?string Other relevant certificates of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -299,9 +305,9 @@ class Employee
     /**
      * @var ?string Bisc employee id of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -310,9 +316,9 @@ class Employee
     /**
      * @var ?string User id of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */

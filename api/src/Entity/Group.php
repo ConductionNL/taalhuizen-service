@@ -26,6 +26,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = GroupQueryItemResolver::class,
@@ -97,72 +103,78 @@ class Group
 
 //   Organization of the group, was called in the graphql-schema 'aanbiederId', changed to 'organization'(Organization Entity)
     /**
-     * @var ?Organization Organization of this group
+     * @var Organization Organization of this group
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private ?Organization $organization;
+    private Organization $organization;
 
     /**
-     * @var ?string Name of this group.
+     * @var string Name of this group.
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $name;
+    private string $name;
 
     /**
-     * @var ?string Type course of this group.
+     * @var string Type course of this group.
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $typeCourse;
+    private string $typeCourse;
 
     /**
-     * @var ?string Detail is formal of this group.
+     * @var string Detail is formal of this group.
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $detailsIsFormal;
+    private string $detailsIsFormal;
 
     /**
-     * @var ?int Detail is formal of this group.
+     * @var int Detail is formal of this group.
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="integer", length=255, nullable=true)
+     * @ORM\Column(type="integer", length=255)
      */
-    private ?int $detailsTotalClassHours;
+    private int $detailsTotalClassHours;
 
     /**
-     * @var ?bool Details certificate will be awarded of this group.
+     * @var bool Details certificate will be awarded of this group.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean")
      */
-    private ?bool $detailsCertificateWillBeAwarded;
+    private bool $detailsCertificateWillBeAwarded;
 
 //   start and end date of the group, was called in the graphql-schema 'detailsStartDate' and 'detailsEndDate', changed to 'startDate' and 'endDate' related to schema.org
     /**
      * @var ?DateTime Start date of this group.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -171,9 +183,9 @@ class Group
     /**
      * @var ?DateTime End date of this group.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -198,15 +210,16 @@ class Group
     private ?string $availabilityNotes;
 
     /**
-     * @var ?string General location of this group.
+     * @var string General location of this group.
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $generalLocation;
+    private string $generalLocation;
 
 //   min and max participations of the group, was called in the graphql-schema 'generalParticipantsMin' and 'generalParticipantsMax', changed to 'minParticipations' and 'maxParticipations' related to schema.org
     /**
@@ -214,7 +227,7 @@ class Group
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", length=255, nullable=true)
      */
@@ -225,7 +238,7 @@ class Group
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", length=255, nullable=true)
      */
@@ -236,18 +249,19 @@ class Group
      *
      * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $generalEvaluation;
 
     /**
-     * @var ?array Employee ids of this group.
+     * @var array Employee ids of this group.
      *
-     * @ORM\Column(type="array", nullable=true)
+     * @Assert\NotNull
+     * @ORM\Column(type="array")
      */
-    private ?array $employeeIds = [];
+    private array $employeeIds = [];
 
     public function getId(): UuidInterface
     {
@@ -260,60 +274,60 @@ class Group
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getTypeCourse(): ?string
+    public function getTypeCourse(): string
     {
         return $this->typeCourse;
     }
 
-    public function setTypeCourse(?string $typeCourse): self
+    public function setTypeCourse(string $typeCourse): self
     {
         $this->typeCourse = $typeCourse;
 
         return $this;
     }
 
-    public function getDetailsIsFormal(): ?string
+    public function getDetailsIsFormal(): string
     {
         return $this->detailsIsFormal;
     }
 
-    public function setDetailsIsFormal(?string $detailsIsFormal): self
+    public function setDetailsIsFormal(string $detailsIsFormal): self
     {
         $this->detailsIsFormal = $detailsIsFormal;
 
         return $this;
     }
 
-    public function getDetailsTotalClassHours(): ?int
+    public function getDetailsTotalClassHours(): int
     {
         return $this->detailsTotalClassHours;
     }
 
-    public function setDetailsTotalClassHours(?int $detailsTotalClassHours): self
+    public function setDetailsTotalClassHours(int $detailsTotalClassHours): self
     {
         $this->detailsTotalClassHours = $detailsTotalClassHours;
 
         return $this;
     }
 
-    public function getDetailsCertificateWillBeAwarded(): ?bool
+    public function getDetailsCertificateWillBeAwarded(): bool
     {
         return $this->detailsCertificateWillBeAwarded;
     }
 
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
+    public function setDetailsCertificateWillBeAwarded(bool $detailsCertificateWillBeAwarded): self
     {
         $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
 
@@ -332,12 +346,12 @@ class Group
         return $this;
     }
 
-    public function getGeneralLocation(): ?string
+    public function getGeneralLocation(): string
     {
         return $this->generalLocation;
     }
 
-    public function setGeneralLocation(?string $generalLocation): self
+    public function setGeneralLocation(string $generalLocation): self
     {
         $this->generalLocation = $generalLocation;
 
@@ -356,12 +370,12 @@ class Group
         return $this;
     }
 
-    public function getEmployeeIds(): ?array
+    public function getEmployeeIds(): array
     {
         return $this->employeeIds;
     }
 
-    public function setEmployeeIds(?array $employeeIds): self
+    public function setEmployeeIds(array $employeeIds): self
     {
         $this->employeeIds = $employeeIds;
 
@@ -380,12 +394,12 @@ class Group
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getOrganization(): Organization
     {
         return $this->organization;
     }
 
-    public function setOrganization(?Organization $organization): self
+    public function setOrganization(Organization $organization): self
     {
         $this->organization = $organization;
 
