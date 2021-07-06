@@ -51,6 +51,7 @@ class GraphQLSubscriber implements EventSubscriberInterface
         if (
             $graphQL->definitions->offsetGet(0)->name->value != 'loginUser' &&
             $graphQL->definitions->offsetGet(0)->name->value != 'requestPasswordResetUser' &&
+            $graphQL->definitions->offsetGet(0)->name->value != 'removeUser' &&
             $graphQL->definitions->offsetGet(0)->name->value != 'resetPasswordUser'
         ) {
             $auth = $event->getRequest()->headers->get('Authorization');
@@ -67,6 +68,12 @@ class GraphQLSubscriber implements EventSubscriberInterface
                     $payload = $this->ucService->validateJWTAndGetPayload($token);
                     if (!$this->validatePayload($payload)) {
                         $result['errors'] = new Error('Token not valid');
+                        $this->throwError($event, $result);
+
+                        return;
+                    }
+                    if (!$this->ucService->checkUserScopes($graphQL->definitions->offsetGet(0)->name->value, $token)) {
+                        $result['errors'] = new Error("User doesn't have the proper rights to do this action");
                         $this->throwError($event, $result);
 
                         return;
