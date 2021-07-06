@@ -12,6 +12,7 @@ use App\Resolver\TestResultQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -70,54 +71,16 @@ class TestResult
 
     /**
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private ?string $outComesGoal;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $outComesTopic;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $outComesApplication;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private ?string $outComesLevel;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $outComesLevelOther;
+    private ?string $learningNeedOutCome;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
-    private ?string $examUsedExam;
+    private ?string $usedExam;
 
     /**
      * @Groups({"write"})
@@ -155,98 +118,26 @@ class TestResult
         return $this;
     }
 
-    public function getOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): ?string
     {
-        return $this->outComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesGoal(string $outComesGoal): self
+    public function setLearningNeedOutCome(string $learningNeedOutCome): self
     {
-        $this->outComesGoal = $outComesGoal;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getOutComesTopic(): ?string
+    public function getUsedExam(): ?string
     {
-        return $this->outComesTopic;
+        return $this->usedExam;
     }
 
-    public function setOutComesTopic(string $outComesTopic): self
+    public function setUsedExam(string $usedExam): self
     {
-        $this->outComesTopic = $outComesTopic;
-
-        return $this;
-    }
-
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevel(): ?string
-    {
-        return $this->outComesLevel;
-    }
-
-    public function setOutComesLevel(string $outComesLevel): self
-    {
-        $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
-    public function getExamUsedExam(): ?string
-    {
-        return $this->examUsedExam;
-    }
-
-    public function setExamUsedExam(string $examUsedExam): self
-    {
-        $this->examUsedExam = $examUsedExam;
+        $this->usedExam = $usedExam;
 
         return $this;
     }

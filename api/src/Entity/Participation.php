@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -46,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "removeMentorFrom" = {
  *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "args" = {"participationId"={"type" = "ID!"}, "providerEmployeeId"={"type" = "ID!"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
@@ -126,19 +127,19 @@ class Participation
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederId;
+    private $providerId;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederName;
+    private $providerName;
 
     /**
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederNote;
+    private $providerNote;
 
     /**
      * @Groups({"write"})
@@ -155,85 +156,10 @@ class Participation
 
     /**
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $outComesGoal;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopic;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplication;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevel;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $detailsIsFormal;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsGroupFormation;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private $detailsTotalClassHours;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $detailsCertificateWillBeAwarded;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $detailsStartDate;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $detailsEndDate;
+    private ?string $learningNeedOutCome;
 
     /**
      * @Groups({"write"})
@@ -261,11 +187,6 @@ class Participation
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $participationId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
     private $presenceEngagements;
 
     /**
@@ -287,7 +208,7 @@ class Participation
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederEmployeeId;
+    private $providerEmployeeId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -318,38 +239,38 @@ class Participation
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->aanbiederId;
+        return $this->providerId;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->providerId = $providerId;
 
         return $this;
     }
 
-    public function getAanbiederName(): ?string
+    public function getProviderName(): ?string
     {
-        return $this->aanbiederName;
+        return $this->providerName;
     }
 
-    public function setAanbiederName(?string $aanbiederName): self
+    public function setProviderName(?string $providerName): self
     {
-        $this->aanbiederName = $aanbiederName;
+        $this->providerName = $providerName;
 
         return $this;
     }
 
-    public function getAanbiederNote(): ?string
+    public function getProviderNote(): ?string
     {
-        return $this->aanbiederNote;
+        return $this->providerNote;
     }
 
-    public function setAanbiederNote(?string $aanbiederNote): self
+    public function setProviderNote(?string $providerNote): self
     {
-        $this->aanbiederNote = $aanbiederNote;
+        $this->providerNote = $providerNote;
 
         return $this;
     }
@@ -378,158 +299,14 @@ class Participation
         return $this;
     }
 
-    public function getOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): ?string
     {
-        return $this->outComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesGoal(?string $outComesGoal): self
+    public function setLearningNeedOutCome(string $learningNeedOutCome): self
     {
-        $this->outComesGoal = $outComesGoal;
-
-        return $this;
-    }
-
-    public function getOutComesTopic(): ?string
-    {
-        return $this->outComesTopic;
-    }
-
-    public function setOutComesTopic(?string $outComesTopic): self
-    {
-        $this->outComesTopic = $outComesTopic;
-
-        return $this;
-    }
-
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(?string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevel(): ?string
-    {
-        return $this->outComesLevel;
-    }
-
-    public function setOutComesLevel(?string $outComesLevel): self
-    {
-        $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
-    public function getDetailsIsFormal(): ?bool
-    {
-        return $this->detailsIsFormal;
-    }
-
-    public function setDetailsIsFormal(?bool $detailsIsFormal): self
-    {
-        $this->detailsIsFormal = $detailsIsFormal;
-
-        return $this;
-    }
-
-    public function getDetailsGroupFormation(): ?string
-    {
-        return $this->detailsGroupFormation;
-    }
-
-    public function setDetailsGroupFormation(?string $detailsGroupFormation): self
-    {
-        $this->detailsGroupFormation = $detailsGroupFormation;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): ?float
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(?float $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): ?bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
@@ -566,18 +343,6 @@ class Participation
     public function setLearningNeedUrl(?string $learningNeedUrl): self
     {
         $this->learningNeedUrl = $learningNeedUrl;
-
-        return $this;
-    }
-
-    public function getParticipationId(): ?string
-    {
-        return $this->participationId;
-    }
-
-    public function setParticipationId(?string $participationId): self
-    {
-        $this->participationId = $participationId;
 
         return $this;
     }
@@ -630,14 +395,14 @@ class Participation
         return $this;
     }
 
-    public function getAanbiederEmployeeId(): ?string
+    public function getProviderEmployeeId(): ?string
     {
-        return $this->aanbiederEmployeeId;
+        return $this->providerEmployeeId;
     }
 
-    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    public function setProviderEmployeeId(?string $providerEmployeeId): self
     {
-        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+        $this->providerEmployeeId = $providerEmployeeId;
 
         return $this;
     }

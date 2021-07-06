@@ -61,12 +61,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "group" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
  *          },
- *          "aanbiederEmployeeMentees" = {
+ *          "providerEmployeeMentees" = {
  *              "collection_query" = StudentQueryCollectionResolver::class
  *          }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact", "aanbiederEmployeeId": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact", "providerEmployeeId": "exact"})
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -243,7 +243,7 @@ class Student
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $aanbiederEmployeeId;
+    private string $providerEmployeeId;
 
     /**
      * @Groups({"read", "write"})
@@ -534,14 +534,14 @@ class Student
         return $this;
     }
 
-    public function getAanbiederEmployeeId(): ?string
+    public function getProviderEmployeeId(): ?string
     {
-        return $this->aanbiederEmployeeId;
+        return $this->providerEmployeeId;
     }
 
-    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
+    public function setProviderEmployeeId(?string $providerEmployeeId): self
     {
-        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+        $this->providerEmployeeId = $providerEmployeeId;
 
         return $this;
     }
