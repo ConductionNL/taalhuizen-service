@@ -118,9 +118,6 @@ class User
     /**
      * @var Person A contact component person
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -141,9 +138,6 @@ class User
     /**
      * @var Organization A contact component organization.
      *
-     * @Assert\Length(
-     *     max = 2550
-     * )
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
