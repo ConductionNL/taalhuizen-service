@@ -10,6 +10,7 @@ use App\Resolver\StudentDossierEventMutationResolver;
 use App\Resolver\StudentDossierEventQueryCollectionResolver;
 use App\Resolver\StudentDossierEventQueryItemResolver;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -66,10 +67,10 @@ class StudentDossierEvent
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @var string The Event of this Student.
+     * @var string|null The Event of this Student.
      *
      * @Assert\Choice(
      *      {"FINAL_TALK","REMARK","FOLLOW_UP_TALK","INFO_FOR_STORYTELLING","INTAKE"}
@@ -78,16 +79,16 @@ class StudentDossierEvent
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $event;
+    private string $event;
 
     /**
-     * @var Datetime date of this student Dossier.
+     * @var DateTimeInterface date of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime")
      */
-    private $eventDate;
+    private DateTimeInterface $eventDate;
 
     /**
      * @var string description of this student Dossier.
@@ -96,7 +97,7 @@ class StudentDossierEvent
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550)
      */
-    private $eventDescription;
+    private string $eventDescription;
 
     /**
      * @var string|null studentId of this student Dossier.
@@ -106,11 +107,6 @@ class StudentDossierEvent
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private ?string $studentId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $studentDossierEventId;
 
     /**
      * @var string|null creator of this student Dossier.
@@ -152,12 +148,12 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getEventDate(): ?\DateTimeInterface
+    public function getEventDate(): ?DateTimeInterface
     {
         return $this->eventDate;
     }
 
-    public function setEventDate(\DateTimeInterface $eventDate): self
+    public function setEventDate(DateTimeInterface $eventDate): self
     {
         $this->eventDate = $eventDate;
 
@@ -184,18 +180,6 @@ class StudentDossierEvent
     public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getStudentDossierEventId(): ?string
-    {
-        return $this->studentDossierEventId;
-    }
-
-    public function setStudentDossierEventId(?string $studentDossierEventId): self
-    {
-        $this->studentDossierEventId = $studentDossierEventId;
 
         return $this;
     }

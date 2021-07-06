@@ -24,37 +24,37 @@ class StudentCourse
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isFollowingCourseRightNow;
+    private ?bool $isFollowingCourseRightNow;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $courseName;
+    private ?string $courseName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $courseTeacher;
+    private ?string $courseTeacher;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $courseGroup;
+    private ?string $courseGroup;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $amountOfHours;
+    private ?int $amountOfHours;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $doesCourseProvideCertificate;
+    private ?bool $doesCourseProvideCertificate;
 
     public function getId(): UuidInterface
     {

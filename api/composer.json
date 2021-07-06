@@ -26,7 +26,7 @@
     "require-dev" : {
         "api-platform/schema-generator": "^2.1",
         "phpunit/phpunit": "^9.3",
-        "symfony/maker-bundle": "^1.11",
+        "symfony/maker-bundle": "^1.33",
         "symfony/profiler-pack": "^1.0"
     },
     "config" : {

@@ -24,32 +24,32 @@ class StudentDutchNT
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $dutchNTLevel;
+    private ?string $dutchNTLevel;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $inNetherlandsSinceYear;
+    private ?float $inNetherlandsSinceYear;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $languageInDailyLife;
+    private ?string $languageInDailyLife;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $knowsLatinAlphabet;
+    private ?bool $knowsLatinAlphabet;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lastKnownLevel;
+    private ?string $lastKnownLevel;
 
     public function getId(): UuidInterface
     {
