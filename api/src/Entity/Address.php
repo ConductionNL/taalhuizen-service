@@ -2,13 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AddressRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -26,40 +36,62 @@ class Address
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var ?string Street of this address.
      *
-     * @Groups({"read", "write"})
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $street;
+    private ?string $street;
 
     /**
+     * @var ?string House number of this address.
      *
-     * @Groups({"read", "write"})
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $houseNumber;
+    private ?string $houseNumber;
 
     /**
+     * @var ?string House number suffix of this address.
      *
-     * @Groups({"read", "write"})
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $houseNumberSuffix;
+    private ?string $houseNumberSuffix;
 
     /**
-     * @Groups({"read", "write"})
+     * @var ?string Postal code of this address.
+     *
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $postalCode;
+    private ?string $postalCode;
 
     /**
-     * @Groups({"read", "write"})
+     * @var ?string Locality of this address.
+     *
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $locality;
+    private ?string $locality;
 
     public function __construct()
     {
@@ -70,7 +102,8 @@ class Address
     {
         return $this->id;
     }
-    public function setId(?UuidInterface $uuid): self
+
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
         return $this;

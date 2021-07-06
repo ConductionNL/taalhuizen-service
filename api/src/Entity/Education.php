@@ -36,7 +36,7 @@ class Education
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
 //   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
     /**
@@ -60,7 +60,7 @@ class Education
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $enddate;
+    private ?DateTime $enddate;
 
 //   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
@@ -84,7 +84,7 @@ class Education
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $iscedEducationLevelCode;
+    private ?string $iscedEducationLevelCode;
 
 //   degree granted status of the education, was called in the graphql-schema 'doesProvideCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
@@ -96,14 +96,14 @@ class Education
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $degreeGrantedStatus;
+    private ?string $degreeGrantedStatus;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
         return $this;

@@ -39,7 +39,7 @@ class Document
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
 //   name of the document, was called in the graphql-schema 'filename', changed to 'name' related to schema.org
     /**
@@ -89,7 +89,7 @@ class Document
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
         return $this;

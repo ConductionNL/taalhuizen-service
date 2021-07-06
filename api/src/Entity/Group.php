@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use phpDocumentor\Reflection\Types\Integer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -81,6 +82,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Group
 {
+//   Id of the group, was called in the graphql-schema 'groupId', changed to 'id'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -91,134 +93,168 @@ class Group
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
+
+//   Organization of the group, was called in the graphql-schema 'aanbiederId', changed to 'organization'(Organization Entity)
+    /**
+     * @var ?Organization Organization of this group
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     */
+    private ?Organization $organization;
 
     /**
+     * @var ?string Name of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $aanbiederId;
+    private ?string $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $name;
-
-    /**
+     * @var ?string Type course of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $typeCourse;
 
     /**
+     * @var ?string Detail is formal of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $outComesGoal;
+    private ?string $detailsIsFormal;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopic;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplication;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevel;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsIsFormal;
-
-    /**
+     * @var ?int Detail is formal of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", length=255, nullable=true)
      */
-    private $detailsTotalClassHours;
+    private ?int $detailsTotalClassHours;
 
     /**
+     * @var ?bool Details certificate will be awarded of this group.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $detailsCertificateWillBeAwarded;
+    private ?bool $detailsCertificateWillBeAwarded;
 
+//   start and end date of the group, was called in the graphql-schema 'detailsStartDate' and 'detailsEndDate', changed to 'startDate' and 'endDate' related to schema.org
     /**
-     * @ORM\Column(type="datetime", nullable=true, nullable=true)
-     */
-    private $detailsStartDate;
-
-    /**
+     * @var ?DateTime Start date of this group.
+     *
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $detailsEndDate;
+    private ?DateTime $startDate;
 
     /**
+     * @var ?DateTime End date of this group.
      *
-     * @ORM\Column(type="json", nullable=true)
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?array $availability = [];
+    private ?DateTime $endDate;
 
     /**
+     * @var ?Availability Availability of this group.
+     *
+     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     */
+    private ?Availability $availability;
+
+    /**
+     * @var ?string Availability note of this group.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
-    private $availabilityNotes;
+    private ?string $availabilityNotes;
 
     /**
+     * @var ?string General location of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $generalLocation;
+    private ?string $generalLocation;
 
+//   min and max participations of the group, was called in the graphql-schema 'generalParticipantsMin' and 'generalParticipantsMax', changed to 'minParticipations' and 'maxParticipations' related to schema.org
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @var ?int Min participation's of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", length=255, nullable=true)
      */
-    private $generalParticipantsMin;
+    private ?int $minParticipations;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @var ?int Max participation's of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", length=255, nullable=true)
      */
-    private $generalParticipantsMax;
+    private ?int $maxParticipations;
 
     /**
+     * @var ?string General evaluation of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $generalEvaluation;
+    private ?string $generalEvaluation;
 
     /**
+     * @var ?array Employee ids of this group.
+     *
      * @ORM\Column(type="array", nullable=true)
      */
-    private $aanbiederEmployeeIds = [];
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $groupId;
+    private ?array $employeeIds = [];
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
         return $this;
@@ -244,18 +280,6 @@ class Group
     public function setTypeCourse(?string $typeCourse): self
     {
         $this->typeCourse = $typeCourse;
-
-        return $this;
-    }
-
-    public function getOutComesGoal(): ?string
-    {
-        return $this->outComesGoal;
-    }
-
-    public function setOutComesGoal(?string $outComesGoal): self
-    {
-        $this->outComesGoal = $outComesGoal;
 
         return $this;
     }
@@ -296,30 +320,6 @@ class Group
         return $this;
     }
 
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
-
-        return $this;
-    }
-
     public function getAvailabilityNotes(): ?string
     {
         return $this->availabilityNotes;
@@ -344,30 +344,6 @@ class Group
         return $this;
     }
 
-    public function getGeneralParticipantsMin(): ?int
-    {
-        return $this->generalParticipantsMin;
-    }
-
-    public function setGeneralParticipantsMin(?int $generalParticipantsMin): self
-    {
-        $this->generalParticipantsMin = $generalParticipantsMin;
-
-        return $this;
-    }
-
-    public function getGeneralParticipantsMax(): ?int
-    {
-        return $this->generalParticipantsMax;
-    }
-
-    public function setGeneralParticipantsMax(?int $generalParticipantsMax): self
-    {
-        $this->generalParticipantsMax = $generalParticipantsMax;
-
-        return $this;
-    }
-
     public function getGeneralEvaluation(): ?string
     {
         return $this->generalEvaluation;
@@ -380,122 +356,86 @@ class Group
         return $this;
     }
 
-    public function getAanbiederEmployeeIds(): ?array
+    public function getEmployeeIds(): ?array
     {
-        return $this->aanbiederEmployeeIds;
+        return $this->employeeIds;
     }
 
-    public function setAanbiederEmployeeIds(?array $aanbiederEmployeeIds): self
+    public function setEmployeeIds(?array $employeeIds): self
     {
-        $this->aanbiederEmployeeIds = $aanbiederEmployeeIds;
+        $this->employeeIds = $employeeIds;
 
         return $this;
     }
 
-    public function getOutComesTopic(): ?string
-    {
-        return $this->outComesTopic;
-    }
-
-    public function setOutComesTopic(?string $outComesTopic): self
-    {
-        $this->outComesTopic = $outComesTopic;
-
-        return $this;
-    }
-
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(?string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
-    public function getAvailability(): ?array
+    public function getAvailability(): ?Availability
     {
         return $this->availability;
     }
 
-    public function setAvailability(?array $availability): self
+    public function setAvailability(?Availability $availability): self
     {
         $this->availability = $availability;
 
         return $this;
     }
 
-    public function getOutComesLevel(): ?string
+    public function getOrganization(): ?Organization
     {
-        return $this->outComesLevel;
+        return $this->organization;
     }
 
-    public function setOutComesLevel(?string $outComesLevel): self
+    public function setOrganization(?Organization $organization): self
     {
-        $this->outComesLevel = $outComesLevel;
+        $this->organization = $organization;
 
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->aanbiederId;
+        return $this->startDate;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setStartDate(?\DateTimeInterface $startDate): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getGroupId(): ?string
+    public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->groupId;
+        return $this->endDate;
     }
 
-    public function setGroupId(?string $groupId): self
+    public function setEndDate(?\DateTimeInterface $endDate): self
     {
-        $this->groupId = $groupId;
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getMinParticipations(): ?int
+    {
+        return $this->minParticipations;
+    }
+
+    public function setMinParticipations(?int $minParticipations): self
+    {
+        $this->minParticipations = $minParticipations;
+
+        return $this;
+    }
+
+    public function getMaxParticipations(): ?int
+    {
+        return $this->maxParticipations;
+    }
+
+    public function setMaxParticipations(?int $maxParticipations): self
+    {
+        $this->maxParticipations = $maxParticipations;
 
         return $this;
     }
