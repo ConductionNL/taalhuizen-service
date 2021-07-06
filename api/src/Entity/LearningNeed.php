@@ -89,6 +89,7 @@ class LearningNeed
      */
     private UuidInterface $id;
 
+// @todo outcomes properties toevoegen
     /**
      * @var ?string Description of this learning need.
      *

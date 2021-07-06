@@ -9818,7 +9818,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld-read' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -9828,7 +9828,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Participation:jsonld-read' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -9838,79 +9838,63 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/json+hal:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/vnd.api+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/json+vnd.api:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/health+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/json+health:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/x-yaml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             text/csv:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             text/html:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
             application/graphql:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Participation'
+                  $ref: '#/components/schemas/Participation-read'
       parameters:
-        -
-          name: learningNeedId
-          in: query
-          required: false
-          schema:
-            type: string
-        -
-          name: 'learningNeedId[]'
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
         -
           name: page
           in: query
@@ -10012,46 +9996,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
           links:
             GetParticipationItem:
               parameters:
@@ -10066,46 +10050,46 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/Participation:jsonld'
+              $ref: '#/components/schemas/Participation:jsonld-write'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/Participation:jsonld'
+              $ref: '#/components/schemas/Participation:jsonld-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
         description: 'The new Participation resource'
       parameters:
         -
@@ -10227,46 +10211,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
         404:
           description: 'Resource not found'
       produces:
@@ -10364,46 +10348,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
         400:
           description: 'Invalid input'
         404:
@@ -10412,46 +10396,46 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/Participation:jsonld'
+              $ref: '#/components/schemas/Participation:jsonld-write'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/Participation:jsonld'
+              $ref: '#/components/schemas/Participation:jsonld-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
         description: 'The updated Participation resource'
     patch:
       tags:
@@ -10500,46 +10484,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/Participation:jsonld'
+                $ref: '#/components/schemas/Participation:jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/Participation'
+                $ref: '#/components/schemas/Participation-read'
         400:
           description: 'Invalid input'
         404:
@@ -10548,31 +10532,31 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/Participation:jsonld'
+              $ref: '#/components/schemas/Participation:jsonld-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/merge-patch+json:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           applications/x-yaml:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/Participation'
+              $ref: '#/components/schemas/Participation-write'
         description: 'The updated Participation resource'
   /people:
     get:
@@ -30504,9 +30488,10 @@ components:
           nullable: true
         participations:
           description: 'Participation''s of this learning need.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Participation-read'
         studentId:
           description: 'Student id of this learning need.'
           type: string
@@ -30581,16 +30566,6 @@ components:
           description: 'Student id of this learning need.'
           type: string
           nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
-          type: string
-          nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
-          type: string
-          nullable: true
     'LearningNeed:jsonld-read':
       type: object
       description: ''
@@ -30662,9 +30637,10 @@ components:
           nullable: true
         participations:
           description: 'Participation''s of this learning need.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Participation:jsonld-read'
         studentId:
           description: 'Student id of this learning need.'
           type: string
@@ -30746,16 +30722,6 @@ components:
               $ref: '#/components/schemas/Participation:jsonld-write'
         studentId:
           description: 'Student id of this learning need.'
-          type: string
-          nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
-          type: string
-          nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
           type: string
           nullable: true
     Organization-read:
@@ -30892,108 +30858,92 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Address:jsonld-write'
-    Participation:
+    Participation-read:
       type: object
       description: ''
       properties:
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         status:
+          description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
           type: string
           nullable: true
-        aanbiederId:
-          type: string
+        organization:
+          description: 'Organization of this participation'
           nullable: true
-        aanbiederName:
-          type: string
-          nullable: true
-        aanbiederNote:
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-read'
+        organizationNote:
+          description: 'Organization note of this participation'
           type: string
           nullable: true
         offerName:
+          description: 'Offer name of this participation'
           type: string
           nullable: true
         offerCourse:
-          type: string
-          nullable: true
-        outComesGoal:
-          type: string
-          nullable: true
-        outComesTopic:
-          type: string
-          nullable: true
-        outComesTopicOther:
-          type: string
-          nullable: true
-        outComesApplication:
-          type: string
-          nullable: true
-        outComesApplicationOther:
-          type: string
-          nullable: true
-        outComesLevel:
-          type: string
-          nullable: true
-        outComesLevelOther:
+          description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
           type: string
           nullable: true
         detailsIsFormal:
+          description: 'Details is formal of this participation.'
           type: boolean
           nullable: true
         detailsGroupFormation:
+          description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
           type: string
           nullable: true
         detailsTotalClassHours:
+          description: 'Details total class hours of this participation.'
           type: number
           nullable: true
         detailsCertificateWillBeAwarded:
+          description: 'Details certificate will be awarded of this participation.'
           type: boolean
           nullable: true
         detailsStartDate:
+          description: 'Details start date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEndDate:
+          description: 'Details end date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEngagements:
+          description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
-          type: string
+        learningNeed:
+          description: 'LearningNeed of this participation'
           nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
-          type: string
-          nullable: true
-        participationId:
-          type: string
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeed-read'
         presenceEngagements:
+          description: 'Presence engagements of this participation.'
           type: string
           nullable: true
         presenceStartDate:
+          description: 'Presence start date of this participation.'
           type: string
           format: date-time
           nullable: true
         presenceEndDate:
+          description: 'Presence end date of this participation.'
           type: string
           format: date-time
           nullable: true
         presenceEndParticipationReason:
+          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
           type: string
           nullable: true
-        aanbiederEmployeeId:
+        employeeId:
+          description: 'Employee id of this participation'
           type: string
           nullable: true
         groupId:
+          description: 'Group id of this participation'
           type: string
           nullable: true
     Participation-write:
@@ -31001,78 +30951,90 @@ components:
       description: ''
       properties:
         status:
+          description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
           type: string
           nullable: true
-        aanbiederId:
-          type: string
+        organization:
+          description: 'Organization of this participation'
           nullable: true
-        aanbiederName:
-          type: string
-          nullable: true
-        aanbiederNote:
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-write'
+        organizationNote:
+          description: 'Organization note of this participation'
           type: string
           nullable: true
         offerName:
+          description: 'Offer name of this participation'
           type: string
           nullable: true
         offerCourse:
-          type: string
-          nullable: true
-        outComesGoal:
-          type: string
-          nullable: true
-        outComesTopic:
-          type: string
-          nullable: true
-        outComesTopicOther:
-          type: string
-          nullable: true
-        outComesApplication:
-          type: string
-          nullable: true
-        outComesApplicationOther:
-          type: string
-          nullable: true
-        outComesLevel:
-          type: string
-          nullable: true
-        outComesLevelOther:
+          description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
           type: string
           nullable: true
         detailsIsFormal:
+          description: 'Details is formal of this participation.'
           type: boolean
           nullable: true
         detailsGroupFormation:
+          description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
           type: string
           nullable: true
         detailsTotalClassHours:
+          description: 'Details total class hours of this participation.'
           type: number
           nullable: true
         detailsCertificateWillBeAwarded:
+          description: 'Details certificate will be awarded of this participation.'
           type: boolean
           nullable: true
         detailsStartDate:
+          description: 'Details start date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEndDate:
+          description: 'Details end date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEngagements:
+          description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
+        learningNeed:
+          description: 'LearningNeed of this participation'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeed-write'
+        presenceEngagements:
+          description: 'Presence engagements of this participation.'
           type: string
           nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
+        presenceStartDate:
+          description: 'Presence start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndDate:
+          description: 'Presence end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndParticipationReason:
+          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
           type: string
           nullable: true
-    'Participation:jsonld':
+        employeeId:
+          description: 'Employee id of this participation'
+          type: string
+          nullable: true
+        groupId:
+          description: 'Group id of this participation'
+          type: string
+          nullable: true
+    'Participation:jsonld-read':
       type: object
       description: ''
       properties:
@@ -31085,104 +31047,88 @@ components:
         '@type':
           readOnly: true
           type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         status:
+          description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
           type: string
           nullable: true
-        aanbiederId:
-          type: string
+        organization:
+          description: 'Organization of this participation'
           nullable: true
-        aanbiederName:
-          type: string
-          nullable: true
-        aanbiederNote:
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization:jsonld-read'
+        organizationNote:
+          description: 'Organization note of this participation'
           type: string
           nullable: true
         offerName:
+          description: 'Offer name of this participation'
           type: string
           nullable: true
         offerCourse:
-          type: string
-          nullable: true
-        outComesGoal:
-          type: string
-          nullable: true
-        outComesTopic:
-          type: string
-          nullable: true
-        outComesTopicOther:
-          type: string
-          nullable: true
-        outComesApplication:
-          type: string
-          nullable: true
-        outComesApplicationOther:
-          type: string
-          nullable: true
-        outComesLevel:
-          type: string
-          nullable: true
-        outComesLevelOther:
+          description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
           type: string
           nullable: true
         detailsIsFormal:
+          description: 'Details is formal of this participation.'
           type: boolean
           nullable: true
         detailsGroupFormation:
+          description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
           type: string
           nullable: true
         detailsTotalClassHours:
+          description: 'Details total class hours of this participation.'
           type: number
           nullable: true
         detailsCertificateWillBeAwarded:
+          description: 'Details certificate will be awarded of this participation.'
           type: boolean
           nullable: true
         detailsStartDate:
+          description: 'Details start date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEndDate:
+          description: 'Details end date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEngagements:
+          description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
-          type: string
+        learningNeed:
+          description: 'LearningNeed of this participation'
           nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
-          type: string
-          nullable: true
-        participationId:
-          type: string
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeed:jsonld-read'
         presenceEngagements:
+          description: 'Presence engagements of this participation.'
           type: string
           nullable: true
         presenceStartDate:
+          description: 'Presence start date of this participation.'
           type: string
           format: date-time
           nullable: true
         presenceEndDate:
+          description: 'Presence end date of this participation.'
           type: string
           format: date-time
           nullable: true
         presenceEndParticipationReason:
+          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
           type: string
           nullable: true
-        aanbiederEmployeeId:
+        employeeId:
+          description: 'Employee id of this participation'
           type: string
           nullable: true
         groupId:
+          description: 'Group id of this participation'
           type: string
           nullable: true
     'Participation:jsonld-write':
@@ -31199,75 +31145,87 @@ components:
           readOnly: true
           type: string
         status:
+          description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
           type: string
           nullable: true
-        aanbiederId:
-          type: string
+        organization:
+          description: 'Organization of this participation'
           nullable: true
-        aanbiederName:
-          type: string
-          nullable: true
-        aanbiederNote:
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization:jsonld-write'
+        organizationNote:
+          description: 'Organization note of this participation'
           type: string
           nullable: true
         offerName:
+          description: 'Offer name of this participation'
           type: string
           nullable: true
         offerCourse:
-          type: string
-          nullable: true
-        outComesGoal:
-          type: string
-          nullable: true
-        outComesTopic:
-          type: string
-          nullable: true
-        outComesTopicOther:
-          type: string
-          nullable: true
-        outComesApplication:
-          type: string
-          nullable: true
-        outComesApplicationOther:
-          type: string
-          nullable: true
-        outComesLevel:
-          type: string
-          nullable: true
-        outComesLevelOther:
+          description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
           type: string
           nullable: true
         detailsIsFormal:
+          description: 'Details is formal of this participation.'
           type: boolean
           nullable: true
         detailsGroupFormation:
+          description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
           type: string
           nullable: true
         detailsTotalClassHours:
+          description: 'Details total class hours of this participation.'
           type: number
           nullable: true
         detailsCertificateWillBeAwarded:
+          description: 'Details certificate will be awarded of this participation.'
           type: boolean
           nullable: true
         detailsStartDate:
+          description: 'Details start date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEndDate:
+          description: 'Details end date of this participation.'
           type: string
           format: date-time
           nullable: true
         detailsEngagements:
+          description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeedId:
-          description: 'The id of the objectEntity of an eav/learning_need.'
+        learningNeed:
+          description: 'LearningNeed of this participation'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeed:jsonld-write'
+        presenceEngagements:
+          description: 'Presence engagements of this participation.'
           type: string
           nullable: true
-        learningNeedUrl:
-          description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-          externalDocs:
-            url: 'http://schema.org/url'
+        presenceStartDate:
+          description: 'Presence start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndDate:
+          description: 'Presence end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        presenceEndParticipationReason:
+          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+          type: string
+          nullable: true
+        employeeId:
+          description: 'Employee id of this participation'
+          type: string
+          nullable: true
+        groupId:
+          description: 'Group id of this participation'
           type: string
           nullable: true
     Person-read:
@@ -34077,13 +34035,6 @@ definitions:
         description: 'Student id of this learning need.'
         type: '?string'
         maxLength: 255
-      learningNeedId:
-        description: 'The id of the objectEntity of an eav/learning_need.'
-        type: '?string'
-      learningNeedUrl:
-        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-        type: string
-        format: url
       participations:
         description: 'Participation''s of this learning need.'
         type: '?\Participation'
@@ -34126,35 +34077,137 @@ definitions:
         type: '?\Address'
     required:
       - name
+  Participation-read:
+    properties:
+      status:
+        description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
+        type: '?string'
+      organizationNote:
+        description: 'Organization note of this participation'
+        type: '?string'
+        maxLength: 255
+      offerName:
+        description: 'Offer name of this participation'
+        type: '?string'
+        maxLength: 255
+      offerCourse:
+        description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
+        type: '?string'
+      detailsIsFormal:
+        description: 'Details is formal of this participation.'
+        type: '?bool'
+      detailsGroupFormation:
+        description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
+        type: '?string'
+      detailsTotalClassHours:
+        description: 'Details total class hours of this participation.'
+        type: '?float'
+      detailsCertificateWillBeAwarded:
+        description: 'Details certificate will be awarded of this participation.'
+        type: '?bool'
+      detailsStartDate:
+        description: 'Details start date of this participation.'
+        type: '?\DateTime'
+      detailsEndDate:
+        description: 'Details end date of this participation.'
+        type: '?\DateTime'
+      detailsEngagements:
+        description: 'Details engagements of this participation'
+        type: '?string'
+        maxLength: 255
+      presenceEngagements:
+        description: 'Presence engagements of this participation.'
+        type: '?string'
+        maxLength: 255
+      presenceStartDate:
+        description: 'Presence start date of this participation.'
+        type: '?\DateTime'
+      presenceEndDate:
+        description: 'Presence end date of this participation.'
+        type: '?\DateTime'
+      presenceEndParticipationReason:
+        description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+        type: '?string'
+      employeeId:
+        description: 'Employee id of this participation'
+        type: '?string'
+        maxLength: 255
+      groupId:
+        description: 'Group id of this participation'
+        type: '?string'
+        maxLength: 255
+      organization:
+        description: 'Organization of this participation'
+        type: '?\Organization'
+      learningNeed:
+        description: 'LearningNeed of this participation'
+        type: '?\LearningNeed'
+    required: []
   Participation-write:
     properties:
-      status: []
-      aanbiederId: []
-      aanbiederName: []
-      aanbiederNote: []
-      offerName: []
-      offerCourse: []
-      outComesGoal: []
-      outComesTopic: []
-      outComesTopicOther: []
-      outComesApplication: []
-      outComesApplicationOther: []
-      outComesLevel: []
-      outComesLevelOther: []
-      detailsIsFormal: []
-      detailsGroupFormation: []
-      detailsTotalClassHours: []
-      detailsCertificateWillBeAwarded: []
-      detailsStartDate: []
-      detailsEndDate: []
-      detailsEngagements: []
-      learningNeedId:
-        description: 'The id of the objectEntity of an eav/learning_need.'
-        type: string
-      learningNeedUrl:
-        description: 'The url of the objectEntity of an eav/learning_need ''@eav''.'
-        type: string
-        format: url
+      status:
+        description: 'Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**'
+        type: '?string'
+      organizationNote:
+        description: 'Organization note of this participation'
+        type: '?string'
+        maxLength: 255
+      offerName:
+        description: 'Offer name of this participation'
+        type: '?string'
+        maxLength: 255
+      offerCourse:
+        description: 'Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**'
+        type: '?string'
+      detailsIsFormal:
+        description: 'Details is formal of this participation.'
+        type: '?bool'
+      detailsGroupFormation:
+        description: 'Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**'
+        type: '?string'
+      detailsTotalClassHours:
+        description: 'Details total class hours of this participation.'
+        type: '?float'
+      detailsCertificateWillBeAwarded:
+        description: 'Details certificate will be awarded of this participation.'
+        type: '?bool'
+      detailsStartDate:
+        description: 'Details start date of this participation.'
+        type: '?\DateTime'
+      detailsEndDate:
+        description: 'Details end date of this participation.'
+        type: '?\DateTime'
+      detailsEngagements:
+        description: 'Details engagements of this participation'
+        type: '?string'
+        maxLength: 255
+      presenceEngagements:
+        description: 'Presence engagements of this participation.'
+        type: '?string'
+        maxLength: 255
+      presenceStartDate:
+        description: 'Presence start date of this participation.'
+        type: '?\DateTime'
+      presenceEndDate:
+        description: 'Presence end date of this participation.'
+        type: '?\DateTime'
+      presenceEndParticipationReason:
+        description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+        type: '?string'
+      employeeId:
+        description: 'Employee id of this participation'
+        type: '?string'
+        maxLength: 255
+      groupId:
+        description: 'Group id of this participation'
+        type: '?string'
+        maxLength: 255
+      organization:
+        description: 'Organization of this participation'
+        type: '?\Organization'
+      learningNeed:
+        description: 'LearningNeed of this participation'
+        type: '?\LearningNeed'
     required: []
   Person-read:
     properties:
@@ -34683,12 +34736,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-07-06 14:07:39'
+        example: '2021-07-06 14:51:55'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-07-06 14:07:39'
+        example: '2021-07-06 14:51:55'
     required: []
   AuditTrail-write:
     properties:
@@ -34736,12 +34789,12 @@ definitions:
         description: 'The moment this request was created'
         type: string
         format: date-time
-        example: '2021-07-06 14:07:39'
+        example: '2021-07-06 14:51:55'
       dateModified:
         description: 'The moment this request last Modified'
         type: string
         format: date-time
-        example: '2021-07-06 14:07:39'
+        example: '2021-07-06 14:51:55'
     required: []
   ChangeLog-write:
     properties:
