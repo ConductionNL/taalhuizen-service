@@ -106,12 +106,6 @@ class Registration
      */
     private ?string $status;
 
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTimeInterface $dateCreated;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -396,18 +390,6 @@ class Registration
     public function setIntakeDetails(?string $intakeDetail): self
     {
         $this->intakeDetail = $intakeDetail;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?\DateTimeInterface
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(?\DateTimeInterface $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
 
         return $this;
     }

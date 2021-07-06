@@ -7,6 +7,7 @@ use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -37,11 +38,13 @@ class StudentCourse
     private ?string $courseName;
 
     /**
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $courseTeacher;
 
     /**
+     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $courseGroup;

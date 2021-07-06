@@ -7,6 +7,7 @@ use App\Repository\StudentReferrerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,22 +25,23 @@ class StudentReferrer
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
+
+    /**
+     * @Assert\Choice({"UWV", "SOCIAL_SERVICE", "LIBRARY", "WELFARE_WORK", "NEIGHBORHOOD_TEAM", "VOLUNTEER_ORGANIZATION", "LANGUAGE_PROVIDER", "OTHER"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $referringOrganization;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $referringOrganization;
+    private ?string $referringOrganizationOther;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $referringOrganizationOther;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $email;
+    private ?string $email;
 
     public function getId(): UuidInterface
     {

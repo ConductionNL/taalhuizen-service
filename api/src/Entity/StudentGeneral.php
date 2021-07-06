@@ -7,6 +7,7 @@ use App\Repository\StudentGeneralRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,37 +25,38 @@ class StudentGeneral
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $countryOfOrigin;
+    private ?string $countryOfOrigin;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $nativeLanguage;
+    private ?string $nativeLanguage;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $otherLanguages;
+    private ?string $otherLanguages;
 
     /**
+     * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $familiComposition = [];
+    private ?array $familyComposition = [];
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $childrenCount;
+    private ?int $childrenCount;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $childrenDatesOfBirth;
+    private ?string $childrenDatesOfBirth;
 
     public function getId(): UuidInterface
     {
@@ -104,14 +106,14 @@ class StudentGeneral
         return $this;
     }
 
-    public function getFamiliComposition(): ?array
+    public function getFamilyComposition(): ?array
     {
-        return $this->familiComposition;
+        return $this->familyComposition;
     }
 
-    public function setFamiliComposition(?array $familiComposition): self
+    public function setFamilyComposition(?array $familyComposition): self
     {
-        $this->familiComposition = $familiComposition;
+        $this->familyComposition = $familyComposition;
 
         return $this;
     }

@@ -174,26 +174,6 @@ class User
      */
     private string $token;
 
-    //TODO: not sure what this is for, remove this? and just get this from the uc/user?
-    /**
-     * @var DateTimeInterface|null The moment this resource was created
-     *
-     * @Groups({"read"})
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $dateCreated;
-
-    //TODO: not sure what this is for, remove this? and just get this from the uc/user?
-    /**
-     * @var DateTimeInterface|null The moment this resource last Modified
-     *
-     * @Groups({"read"})
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $dateModified;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -286,30 +266,6 @@ class User
     public function setToken(string $token): self
     {
         $this->token = $token;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?DateTimeInterface
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(DateTimeInterface $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    public function getDateModified(): ?DateTimeInterface
-    {
-        return $this->dateModified;
-    }
-
-    public function setDateModified(DateTimeInterface $dateModified): self
-    {
-        $this->dateModified = $dateModified;
 
         return $this;
     }

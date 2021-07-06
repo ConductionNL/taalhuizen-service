@@ -7,6 +7,7 @@ use App\Repository\StudentMotivationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,47 +25,53 @@ class StudentMotivation
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @ORM\Column(type="array")
+     * @Assert\Choice(multiple=true, choices={
+     *     "KLIKTIK", "USING_WHATSAPP", "USING_SKYPE", "DEVICE_FUNCTIONALITIES", "DIGITAL_GOVERNMENT", "RESERVE_BOOKS_IN_LIBRARY",
+     *     "ADS_ON_MARKTPLAATS", "READ_FOR_CHILDREN", "UNDERSTAND_PRESCRIPTIONS", "WRITE_APPLICATION_LETTER", "WRITE_POSTCARD_FOR_FAMILY",
+     *     "DO_ADMINISTRATION", "CALCULATIONS_FOR_RECIPES", "OTHER"
+     * })
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $desiredSkills = [];
+    private ?array $desiredSkills = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $desiredSkillsOther;
+    private ?string $desiredSkillsOther;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hasTriedThisBefore;
+    private ?bool $hasTriedThisBefore;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $hasTriedThisBeforeExplanation;
+    private ?string $hasTriedThisBeforeExplanation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $whyWantTheseSkills;
+    private ?string $whyWantTheseSkills;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $whyWantThisNow;
+    private ?string $whyWantThisNow;
 
     /**
-     * @ORM\Column(type="array")
+     * @Assert\Choice(multiple=true, choices={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"})
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $desiredLearingMethod = [];
+    private ?array $desiredLearingMethod = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $remarks;
+    private ?string $remarks;
 
     public function getId(): UuidInterface
     {
@@ -83,7 +90,7 @@ class StudentMotivation
         return $this->desiredSkills;
     }
 
-    public function setDesiredSkills(array $desiredSkills): self
+    public function setDesiredSkills(?array $desiredSkills): self
     {
         $this->desiredSkills = $desiredSkills;
 
@@ -155,7 +162,7 @@ class StudentMotivation
         return $this->desiredLearingMethod;
     }
 
-    public function setDesiredLearingMethod(array $desiredLearingMethod): self
+    public function setDesiredLearingMethod(?array $desiredLearingMethod): self
     {
         $this->desiredLearingMethod = $desiredLearingMethod;
 

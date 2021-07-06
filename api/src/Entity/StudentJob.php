@@ -7,6 +7,7 @@ use App\Repository\StudentJobRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,27 +25,28 @@ class StudentJob
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $trainedForJob;
+    private ?string $trainedForJob;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lastJob;
+    private ?string $lastJob;
 
     /**
+     * @Assert\Choice(multiple=true, choices={"SEARCHING_FOR_JOB", "RE_INTEGRATION", "SCHOOL", "VOLUNTEER_JOB", "JOB", "OTHER"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private $dayTimeActivities = [];
+    private ?array $dayTimeActivities = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $dayTimeActivitiesOther;
+    private ?string $dayTimeActivitiesOther;
 
     public function getId(): UuidInterface
     {

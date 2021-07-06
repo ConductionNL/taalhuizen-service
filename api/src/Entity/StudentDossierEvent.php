@@ -136,7 +136,7 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getEvent(): ?string
+    public function getEvent(): string
     {
         return $this->event;
     }
@@ -148,7 +148,7 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getEventDate(): ?DateTimeInterface
+    public function getEventDate(): DateTimeInterface
     {
         return $this->eventDate;
     }
@@ -160,7 +160,7 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getEventDescription(): ?string
+    public function getEventDescription(): string
     {
         return $this->eventDescription;
     }

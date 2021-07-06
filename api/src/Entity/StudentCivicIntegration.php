@@ -7,6 +7,7 @@ use App\Repository\StudentCivicIntegrationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -27,11 +28,13 @@ class StudentCivicIntegration
     private UuidInterface $id;
 
     /**
+     * @Assert\Choice({"NO", "YES", "CURRENTLY_WORKING_ON_INTEGRATION"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $civicIntegrationRequirement;
 
     /**
+     * @Assert\Choice({"FINISHED", "FROM_EU_COUNTRY", "EXEMPTED_OR_ZROUTE"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $civicIntegrationRequirementReason;

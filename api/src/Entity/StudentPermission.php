@@ -24,27 +24,27 @@ class StudentPermission
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $didSignPermissionForm;
+    private bool $didSignPermissionForm;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $hasPermissionToShareDataWithAanbieders;
+    private bool $hasPermissionToShareDataWithAanbieders;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $hasPermissionToShareDataWithLibraries;
+    private bool $hasPermissionToShareDataWithLibraries;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $hasPermissionToSendInformationAboutLibraries;
+    private bool $hasPermissionToSendInformationAboutLibraries;
 
     public function getId(): UuidInterface
     {
@@ -58,7 +58,7 @@ class StudentPermission
         return $this;
     }
 
-    public function getDidSignPermissionForm(): ?bool
+    public function getDidSignPermissionForm(): bool
     {
         return $this->didSignPermissionForm;
     }
@@ -70,7 +70,7 @@ class StudentPermission
         return $this;
     }
 
-    public function getHasPermissionToShareDataWithAanbieders(): ?bool
+    public function getHasPermissionToShareDataWithAanbieders(): bool
     {
         return $this->hasPermissionToShareDataWithAanbieders;
     }
@@ -82,7 +82,7 @@ class StudentPermission
         return $this;
     }
 
-    public function getHasPermissionToShareDataWithLibraries(): ?bool
+    public function getHasPermissionToShareDataWithLibraries(): bool
     {
         return $this->hasPermissionToShareDataWithLibraries;
     }
@@ -94,7 +94,7 @@ class StudentPermission
         return $this;
     }
 
-    public function getHasPermissionToSendInformationAboutLibraries(): ?bool
+    public function getHasPermissionToSendInformationAboutLibraries(): bool
     {
         return $this->hasPermissionToSendInformationAboutLibraries;
     }

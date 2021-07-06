@@ -55,12 +55,11 @@ class StudentBackground
      */
     private ?float $wentToLanguageHouseBeforeYear;
 
-    // todo: Needs to be an array of enum options: not tested if this works and if this is the correct way to do this
     /**
      * @Assert\Choice(multiple=true, choices={"HOUSEHOLD_MEMBERS", "NEIGHBORS", "FAMILY_MEMBERS", "AID_WORKERS", "FRIENDS_ACQUAINTANCES", "PEOPLE_AT_MOSQUE_CHURCH", "ACQUAINTANCES_SPEAKING_OWN_LANGUAGE", "ACQUAINTANCES_SPEAKING_DUTCH"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private array $network = [];
+    private ?array $network = [];
 
     /**
      * @ORM\Column(type="integer", nullable=true)

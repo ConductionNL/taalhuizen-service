@@ -7,6 +7,7 @@ use App\Repository\StudentDutchNTRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -27,6 +28,7 @@ class StudentDutchNT
     private UuidInterface $id;
 
     /**
+     * @Assert\Choice({"NT1", "NT2"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dutchNTLevel;
@@ -47,6 +49,7 @@ class StudentDutchNT
     private ?bool $knowsLatinAlphabet;
 
     /**
+     * @Assert\Choice({"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $lastKnownLevel;

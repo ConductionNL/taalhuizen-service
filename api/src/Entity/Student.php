@@ -116,7 +116,7 @@ class Student
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
      */
-    private ?Person $person;
+    private Person $person;
 
     /**
      * @Groups({"read", "write"})
@@ -207,56 +207,36 @@ class Student
     private StudentPermission $permissionDetails;
 
     /**
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentIntakeDetail::class, cascade={"persist", "remove"})
-     * @MaxDepth(1)
-     */
-    private ?StudentIntakeDetail $intakeDetail;
-
-    /**
-     * @var string The id of the cc/organization of a languageHouse.
+     * @var string|null The id of the cc/organization of a languageHouse.
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $languageHouseId;
+    private ?string $languageHouseId;
 
     /**
-     * @var string The id of the cc/organization of a provider.
+     * @var string|null The id of the cc/organization of a provider.
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $providerId;
+    private ?string $providerId;
 
     /**
-     * @var string The id of the edu/group of a group.
+     * @var string|null The id of the edu/group of a group.
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $groupId;
+    private ?string $groupId;
 
     /**
-     * @var string The id of the mrc/employee of a mentor.
+     * @var string|null The id of the mrc/employee of a mentor.
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $providerEmployeeId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $studentId;
-
-    //TODO: not sure what this is for, remove this? and just get this from the edu/participant?
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?\DateTimeInterface $dateCreated;
+    private ?string $providerEmployeeId;
 
     public function getId(): UuidInterface
     {
@@ -318,12 +298,12 @@ class Student
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
 
-    public function setPerson(?Person $person): self
+    public function setPerson(Person $person): self
     {
         $this->person = $person;
 
@@ -474,7 +454,7 @@ class Student
         return $this;
     }
 
-    public function getPermissionDetails(): ?StudentPermission
+    public function getPermissionDetails(): StudentPermission
     {
         return $this->permissionDetails;
     }
@@ -486,24 +466,12 @@ class Student
         return $this;
     }
 
-    public function getIntakeDetail(): ?StudentIntakeDetail
-    {
-        return $this->intakeDetail;
-    }
-
-    public function setIntakeDetails(?StudentIntakeDetail $intakeDetail): self
-    {
-        $this->intakeDetail = $intakeDetail;
-
-        return $this;
-    }
-
     public function getLanguageHouseId(): ?string
     {
         return $this->languageHouseId;
     }
 
-    public function setLanguageHouseId(string $languageHouseId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
 
@@ -542,30 +510,6 @@ class Student
     public function setProviderEmployeeId(?string $providerEmployeeId): self
     {
         $this->providerEmployeeId = $providerEmployeeId;
-
-        return $this;
-    }
-
-    public function getStudentId(): ?string
-    {
-        return $this->studentId;
-    }
-
-    public function setStudentId(?string $studentId): self
-    {
-        $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?\DateTimeInterface
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(?\DateTimeInterface $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
 
         return $this;
     }

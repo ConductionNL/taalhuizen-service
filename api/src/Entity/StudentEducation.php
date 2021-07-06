@@ -5,9 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentEducationRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -25,62 +27,65 @@ class StudentEducation
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @Assert\Choice({"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lastFollowedEducation;
+    private ?string $lastFollowedEducation;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $didGraduate;
+    private ?bool $didGraduate;
 
     /**
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $followingEducationRightNow;
+    private ?string $followingEducationRightNow;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowYesStartDate;
+    private ?DateTimeInterface $followingEducationRightNowYesStartDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowYesEndDate;
+    private ?DateTimeInterface $followingEducationRightNowYesEndDate;
+
+    /**
+     * @Assert\Choice({"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $followingEducationRightNowYesLevel;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $followingEducationRightNowYesLevel;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $followingEducationRightNowYesInstitute;
+    private ?string $followingEducationRightNowYesInstitute;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $followingEducationRightNowYesProvidesCertificate;
+    private ?bool $followingEducationRightNowYesProvidesCertificate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowNoEndDate;
+    private ?DateTimeInterface $followingEducationRightNowNoEndDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $followingEducationRightNowNoLevel;
+    private ?string $followingEducationRightNowNoLevel;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $followingEducationRightNowNoGotCertificate;
+    private ?bool $followingEducationRightNowNoGotCertificate;
 
     public function getId(): UuidInterface
     {
@@ -130,24 +135,24 @@ class StudentEducation
         return $this;
     }
 
-    public function getFollowingEducationRightNowYesStartDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowYesStartDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowYesStartDate;
     }
 
-    public function setFollowingEducationRightNowYesStartDate(?\DateTimeInterface $followingEducationRightNowYesStartDate): self
+    public function setFollowingEducationRightNowYesStartDate(?DateTimeInterface $followingEducationRightNowYesStartDate): self
     {
         $this->followingEducationRightNowYesStartDate = $followingEducationRightNowYesStartDate;
 
         return $this;
     }
 
-    public function getFollowingEducationRightNowYesEndDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowYesEndDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowYesEndDate;
     }
 
-    public function setFollowingEducationRightNowYesEndDate(?\DateTimeInterface $followingEducationRightNowYesEndDate): self
+    public function setFollowingEducationRightNowYesEndDate(?DateTimeInterface $followingEducationRightNowYesEndDate): self
     {
         $this->followingEducationRightNowYesEndDate = $followingEducationRightNowYesEndDate;
 
@@ -190,12 +195,12 @@ class StudentEducation
         return $this;
     }
 
-    public function getFollowingEducationRightNowNoEndDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowNoEndDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowNoEndDate;
     }
 
-    public function setFollowingEducationRightNowNoEndDate(?\DateTimeInterface $followingEducationRightNowNoEndDate): self
+    public function setFollowingEducationRightNowNoEndDate(?DateTimeInterface $followingEducationRightNowNoEndDate): self
     {
         $this->followingEducationRightNowNoEndDate = $followingEducationRightNowNoEndDate;
 
