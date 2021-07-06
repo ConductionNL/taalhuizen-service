@@ -19,6 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = UserQueryItemResolver::class,
@@ -86,7 +92,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "write" = false,
  *              "args" = {"email" = {"type" = "String!"}, "password" = {"type" = "String!"}, "token" = {"type" = "String!"}}
  *          }
- *     }
+ *     },
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */

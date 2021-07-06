@@ -13,6 +13,7 @@ metadata:
 data:
   project_name: {{ .Values.settings.projectName | quote }}
   app-name: {{ .Values.settings.name | quote }}
+  app-title: {{ .Values.settings.title | quote }}
   app-version: {{ .Values.settings.version | quote }}
   {{ if .Values.settings.id }}
   app-id: {{ .Values.settings.id | quote }}

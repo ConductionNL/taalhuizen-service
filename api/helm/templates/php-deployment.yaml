@@ -54,6 +54,11 @@ spec:
                 configMapKeyRef:
                   name: {{ template "fullname" . }}
                   key: app-name
+            - name: APP_TITLE
+              valueFrom:
+                  configMapKeyRef:
+                      name: {{ template "fullname" . }}
+                      key: app-title
             - name: APP_DESCRIPTION
               valueFrom:
                 configMapKeyRef:

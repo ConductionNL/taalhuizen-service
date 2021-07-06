@@ -19204,7 +19204,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -19214,7 +19214,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -19224,62 +19224,62 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             text/html:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/User-read'
       summary: 'Retrieves the collection of User resources.'
       description: 'Retrieves the collection of User resources.'
       parameters:
@@ -19321,46 +19321,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
           links:
             GetUserItem:
               operationId: getUserItem
@@ -19379,46 +19379,46 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/User.jsonld'
+              $ref: '#/components/schemas/User.jsonld-write'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/User.jsonld'
+              $ref: '#/components/schemas/User.jsonld-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
         required: true
       deprecated: false
     parameters: []
@@ -19433,46 +19433,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
         404:
           description: 'Resource not found'
       summary: 'Retrieves a User resource.'
@@ -19501,46 +19501,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
           links:
             GetUserItem:
               operationId: getUserItem
@@ -19573,46 +19573,46 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/User.jsonld'
+              $ref: '#/components/schemas/User.jsonld-write'
           application/json+ld:
             schema:
-              $ref: '#/components/schemas/User.jsonld'
+              $ref: '#/components/schemas/User.jsonld-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+hal:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+vnd.api:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/health+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/json+health:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/x-yaml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/graphql:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
         required: true
       deprecated: false
     delete:
@@ -19650,46 +19650,46 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/User.jsonld'
+                $ref: '#/components/schemas/User.jsonld-read'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/User-read'
           links:
             GetUserItem:
               operationId: getUserItem
@@ -19722,31 +19722,31 @@ paths:
         content:
           application/ld+json:
             schema:
-              $ref: '#/components/schemas/User.jsonld'
+              $ref: '#/components/schemas/User.jsonld-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/hal+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/merge-patch+json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           applications/x-yaml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/csv:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
           text/html:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User-write'
         required: true
       deprecated: false
     parameters: []
@@ -19761,6 +19761,44 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
+    Address-read:
+      type: object
+      description: ''
+      properties:
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
+    Address-write:
+      type: object
+      description: ''
+      properties:
         street:
           type: string
           nullable: true
@@ -19808,6 +19846,90 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
+    Address.jsonld-read:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        street:
+          type: string
+          nullable: true
+        houseNumber:
+          type: string
+          nullable: true
+        houseNumberSuffix:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        locality:
+          type: string
+          nullable: true
+    Address.jsonld-write:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         street:
           type: string
           nullable: true
@@ -20675,6 +20797,32 @@ components:
           maxLength: 255
           description: 'The actual mail address'
           type: string
+    Email-read:
+      type: object
+      description: ''
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this email'
+          type: string
+          nullable: true
+        email:
+          maxLength: 255
+          description: 'The actual mail address'
+          type: string
+    Email-write:
+      type: object
+      description: ''
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this email'
+          type: string
+          nullable: true
+        email:
+          maxLength: 255
+          description: 'The actual mail address'
+          type: string
     Email.jsonld:
       type: object
       description: ''
@@ -20707,6 +20855,78 @@ components:
           description: 'The UUID identifier of this email'
           type: string
           format: uuid
+        name:
+          maxLength: 255
+          description: 'Name of this email'
+          type: string
+          nullable: true
+        email:
+          maxLength: 255
+          description: 'The actual mail address'
+          type: string
+    Email.jsonld-read:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          maxLength: 255
+          description: 'Name of this email'
+          type: string
+          nullable: true
+        email:
+          maxLength: 255
+          description: 'The actual mail address'
+          type: string
+    Email.jsonld-write:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         name:
           maxLength: 255
           description: 'Name of this email'
@@ -21451,6 +21671,67 @@ components:
           nullable: true
       required:
         - name
+    Organization-read:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this organization'
+          type: string
+        telephones:
+          description: 'Telephone of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone-read'
+        emails:
+          description: 'Email of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email-read'
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address-read'
+    Organization-write:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this organization'
+          type: string
+        telephones:
+          description: 'Telephone of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone-write'
+        emails:
+          description: 'Email of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email-write'
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address-write'
     Organization.jsonld:
       type: object
       description: ''
@@ -21509,6 +21790,113 @@ components:
           nullable: true
       required:
         - name
+    Organization.jsonld-read:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          maxLength: 255
+          description: 'Name of this organization'
+          type: string
+        telephones:
+          description: 'Telephone of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone.jsonld-read'
+        emails:
+          description: 'Email of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email.jsonld-read'
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-read'
+    Organization.jsonld-write:
+      type: object
+      description: ''
+      required:
+        - name
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          maxLength: 255
+          description: 'Name of this organization'
+          type: string
+        telephones:
+          description: 'Telephone of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone.jsonld-write'
+        emails:
+          description: 'Email of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email.jsonld-write'
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-write'
     Participation:
       type: object
       description: ''
@@ -21716,6 +22104,108 @@ components:
           description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
           nullable: true
+    Person-read:
+      type: object
+      description: ''
+      properties:
+        givenName:
+          description: 'Given name of this person'
+          type: string
+        additionalName:
+          description: 'Additional name of this person'
+          type: string
+          nullable: true
+        familyName:
+          description: 'Family name of this person'
+          type: string
+          nullable: true
+        gender:
+          description: 'Gender of this person'
+          type: string
+          nullable: true
+        birthday:
+          description: 'Birthday of this person'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address-read'
+        telephones:
+          description: 'Telephone of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone-read'
+        emails:
+          description: 'Email of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email-read'
+        organization:
+          description: 'Organization of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-read'
+        contactPreference:
+          description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+    Person-write:
+      type: object
+      description: ''
+      properties:
+        givenName:
+          description: 'Given name of this person'
+          type: string
+        additionalName:
+          description: 'Additional name of this person'
+          type: string
+          nullable: true
+        familyName:
+          description: 'Family name of this person'
+          type: string
+          nullable: true
+        gender:
+          description: 'Gender of this person'
+          type: string
+          nullable: true
+        birthday:
+          description: 'Birthday of this person'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address-write'
+        telephones:
+          description: 'Telephone of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone-write'
+        emails:
+          description: 'Email of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email-write'
+        organization:
+          description: 'Organization of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-write'
+        contactPreference:
+          description: 'The contact preference of the person.'
+          type: string
+          nullable: true
     Person.jsonld:
       type: object
       description: ''
@@ -21793,6 +22283,154 @@ components:
           nullable: true
         contactPreferenceOther:
           description: 'The contact preference of the person for when the OTHER option is selected.'
+          type: string
+          nullable: true
+    Person.jsonld-read:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        givenName:
+          description: 'Given name of this person'
+          type: string
+        additionalName:
+          description: 'Additional name of this person'
+          type: string
+          nullable: true
+        familyName:
+          description: 'Family name of this person'
+          type: string
+          nullable: true
+        gender:
+          description: 'Gender of this person'
+          type: string
+          nullable: true
+        birthday:
+          description: 'Birthday of this person'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-read'
+        telephones:
+          description: 'Telephone of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone.jsonld-read'
+        emails:
+          description: 'Email of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email.jsonld-read'
+        organization:
+          description: 'Organization of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization.jsonld-read'
+        contactPreference:
+          description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+    Person.jsonld-write:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        givenName:
+          description: 'Given name of this person'
+          type: string
+        additionalName:
+          description: 'Additional name of this person'
+          type: string
+          nullable: true
+        familyName:
+          description: 'Family name of this person'
+          type: string
+          nullable: true
+        gender:
+          description: 'Gender of this person'
+          type: string
+          nullable: true
+        birthday:
+          description: 'Birthday of this person'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-write'
+        telephones:
+          description: 'Telephone of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Telephone.jsonld-write'
+        emails:
+          description: 'Email of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Email.jsonld-write'
+        organization:
+          description: 'Organization of this person'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization.jsonld-write'
+        contactPreference:
+          description: 'The contact preference of the person.'
           type: string
           nullable: true
     Registration:
@@ -23272,6 +23910,32 @@ components:
           maxLength: 255
           description: 'The actual phone number'
           type: string
+    Telephone-read:
+      type: object
+      description: ''
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this telephone'
+          type: string
+          nullable: true
+        telephone:
+          maxLength: 255
+          description: 'The actual phone number'
+          type: string
+    Telephone-write:
+      type: object
+      description: ''
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this telephone'
+          type: string
+          nullable: true
+        telephone:
+          maxLength: 255
+          description: 'The actual phone number'
+          type: string
     Telephone.jsonld:
       type: object
       description: ''
@@ -23313,6 +23977,78 @@ components:
           maxLength: 255
           description: 'The actual phone number'
           type: string
+    Telephone.jsonld-read:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          maxLength: 255
+          description: 'Name of this telephone'
+          type: string
+          nullable: true
+        telephone:
+          maxLength: 255
+          description: 'The actual phone number'
+          type: string
+    Telephone.jsonld-write:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          maxLength: 255
+          description: 'Name of this telephone'
+          type: string
+          nullable: true
+        telephone:
+          maxLength: 255
+          description: 'The actual phone number'
+          type: string
     TestResult:
       type: object
       description: ''
@@ -23331,8 +24067,10 @@ components:
         usedExam:
           type: string
         examDate:
+          description: 'The date of the exam that this TestResult is a result of.'
           type: string
         examMemo:
+          description: 'A memo/note for this TestResult.'
           type: string
           nullable: true
     TestResult.jsonld:
@@ -23376,39 +24114,75 @@ components:
         usedExam:
           type: string
         examDate:
+          description: 'The date of the exam that this TestResult is a result of.'
           type: string
         examMemo:
+          description: 'A memo/note for this TestResult.'
           type: string
           nullable: true
-    User:
+    User-read:
       type: object
       description: ''
       properties:
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         username:
           maxLength: 2550
-          description: 'The Username of this User'
+          description: 'The Username of this User.'
           type: string
           nullable: true
         person:
-          description: 'A contact component person'
-          type: string
-          format: iri-reference
+          description: 'A contact component person of this User.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
           type: string
           nullable: true
         organization:
-          description: 'A contact component organization.'
-          type: string
-          format: iri-reference
+          description: 'A contact component organization of this User.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-read'
+        userRoles:
+          description: 'The userRoles of this User.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        token:
+          maxLength: 2550
+          description: 'The Token for password reset.'
+          type: string
+          nullable: true
+    User-write:
+      type: object
+      description: ''
+      properties:
+        username:
+          maxLength: 2550
+          description: 'The Username of this User.'
+          type: string
+          nullable: true
+        person:
+          description: 'A contact component person of this User.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
+        userEnvironment:
+          maxLength: 2550
+          description: 'The userEnvironment of this User.'
+          type: string
+          nullable: true
+        organization:
+          description: 'A contact component organization of this User.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization-write'
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -23422,10 +24196,10 @@ components:
           nullable: true
         token:
           maxLength: 2550
-          description: 'The Token for password reset'
+          description: 'The Token for password reset.'
           type: string
           nullable: true
-    User.jsonld:
+    User.jsonld-read:
       type: object
       description: ''
       properties:
@@ -23452,31 +24226,88 @@ components:
         '@type':
           readOnly: true
           type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         username:
           maxLength: 2550
-          description: 'The Username of this User'
+          description: 'The Username of this User.'
           type: string
           nullable: true
         person:
-          description: 'A contact component person'
-          type: string
-          format: iri-reference
+          description: 'A contact component person of this User.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
           type: string
           nullable: true
         organization:
-          description: 'A contact component organization.'
-          type: string
-          format: iri-reference
+          description: 'A contact component organization of this User.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization.jsonld-read'
+        userRoles:
+          description: 'The userRoles of this User.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        token:
+          maxLength: 2550
+          description: 'The Token for password reset.'
+          type: string
+          nullable: true
+    User.jsonld-write:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        username:
+          maxLength: 2550
+          description: 'The Username of this User.'
+          type: string
+          nullable: true
+        person:
+          description: 'A contact component person of this User.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
+        userEnvironment:
+          maxLength: 2550
+          description: 'The userEnvironment of this User.'
+          type: string
+          nullable: true
+        organization:
+          description: 'A contact component organization of this User.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Organization.jsonld-write'
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -23490,7 +24321,7 @@ components:
           nullable: true
         token:
           maxLength: 2550
-          description: 'The Token for password reset'
+          description: 'The Token for password reset.'
           type: string
           nullable: true
   responses: {  }

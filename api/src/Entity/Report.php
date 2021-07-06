@@ -13,6 +13,12 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = ReportQueryItemResolver::class,
