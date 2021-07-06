@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -36,59 +37,92 @@ class StudentEducation
     private UuidInterface $id;
 
     /**
+     * @var String|null The last followed education of this StudentEducation.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $lastFollowedEducation;
 
     /**
+     * @var bool|null A boolean that is true when the student graduated for his/her last followed education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $didGraduate;
 
     /**
+     * @var String|null A enum for if the student is following an education right now or not.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $followingEducationRightNow;
 
     /**
+     * @var DateTimeInterface|null If the student is following an education right now this is used for the start date of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTimeInterface $followingEducationRightNowYesStartDate;
 
     /**
+     * @var DateTimeInterface|null If the student is following an education right now this is used for the end date of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTimeInterface $followingEducationRightNowYesEndDate;
 
     /**
+     * @var String|null If the student is following an education right now this is used for the level of that education.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $followingEducationRightNowYesLevel;
 
     /**
+     * @var String|null If the student is following an education right now this is used for the institute of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $followingEducationRightNowYesInstitute;
 
     /**
+     * @var bool|null If the student is following an education right now this is true if that education provides a certificate.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $followingEducationRightNowYesProvidesCertificate;
 
     /**
+     * @var DateTimeInterface|null If the student is not following an education right now this can be used for the end date of the last education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTimeInterface $followingEducationRightNowNoEndDate;
 
     /**
+     * @var String|null If the student is not following an education right now this is used for the level of the last education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $followingEducationRightNowNoLevel;
 
     /**
+     * @var bool|null If the student is not following an education right now this is true if the last education provides a certificate.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $followingEducationRightNowNoGotCertificate;

@@ -88,7 +88,7 @@ class StudentDossierEvent
     private string $event;
 
     /**
-     * @var DateTimeInterface date of this student Dossier.
+     * @var DateTimeInterface Date of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -97,7 +97,7 @@ class StudentDossierEvent
     private DateTimeInterface $eventDate;
 
     /**
-     * @var string description of this student Dossier.
+     * @var string Description of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -106,7 +106,7 @@ class StudentDossierEvent
     private string $eventDescription;
 
     /**
-     * @var string|null studentId of this student Dossier.
+     * @var string|null StudentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -115,7 +115,7 @@ class StudentDossierEvent
     private ?string $studentId;
 
     /**
-     * @var string|null creator of this student Dossier.
+     * @var string|null Creator of this student Dossier.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -123,7 +123,7 @@ class StudentDossierEvent
     private ?string $creatorGivenName;
 
     /**
-     * @var string|null employeeId of this student Dossier.
+     * @var string|null EmployeeId of this student Dossier.
      *
      * @Groups({"read"})
      * @ORM\Column(type="string", length=255, nullable=true)

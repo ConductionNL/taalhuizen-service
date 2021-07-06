@@ -7,6 +7,7 @@ use App\Repository\StudentGeneralRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,32 +35,50 @@ class StudentGeneral
     private UuidInterface $id;
 
     /**
+     * @var String|null The country of origin of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $countryOfOrigin;
 
     /**
+     * @var String|null The native language of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $nativeLanguage;
 
     /**
+     * @var String|null The other languages this student speaks.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $otherLanguages;
 
     /**
+     * @var array|null The family composition of this student.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
      * @ORM\Column(type="array", nullable=true)
      */
     private ?array $familyComposition = [];
 
     /**
+     * @var int|null The amount of children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private ?int $childrenCount;
 
     /**
+     * @var String|null The birthdays of the children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $childrenDatesOfBirth;

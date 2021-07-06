@@ -7,6 +7,7 @@ use App\Repository\StudentReferrerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,17 +35,26 @@ class StudentReferrer
     private UuidInterface $id;
 
     /**
+     * @var String|null The StudentReferrer organization name.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"UWV", "SOCIAL_SERVICE", "LIBRARY", "WELFARE_WORK", "NEIGHBORHOOD_TEAM", "VOLUNTEER_ORGANIZATION", "LANGUAGE_PROVIDER", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $referringOrganization;
 
     /**
+     * @var String|null The StudentReferrer organization name when the OTHER option is selected.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $referringOrganizationOther;
 
     /**
+     * @var String|null The email of this StudentReferrer.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $email;

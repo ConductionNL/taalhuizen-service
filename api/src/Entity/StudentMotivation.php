@@ -7,6 +7,7 @@ use App\Repository\StudentMotivationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,6 +35,9 @@ class StudentMotivation
     private UuidInterface $id;
 
     /**
+     * @var array|null The desired skills for a StudentMotivation.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={
      *     "KLIKTIK", "USING_WHATSAPP", "USING_SKYPE", "DEVICE_FUNCTIONALITIES", "DIGITAL_GOVERNMENT", "RESERVE_BOOKS_IN_LIBRARY",
      *     "ADS_ON_MARKTPLAATS", "READ_FOR_CHILDREN", "UNDERSTAND_PRESCRIPTIONS", "WRITE_APPLICATION_LETTER", "WRITE_POSTCARD_FOR_FAMILY",
@@ -44,37 +48,58 @@ class StudentMotivation
     private ?array $desiredSkills = [];
 
     /**
+     * @var String|null The desired skills for when the OTHER option is selected.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $desiredSkillsOther;
 
     /**
+     * @var bool|null A boolean that is true when the student has tried this before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $hasTriedThisBefore;
 
     /**
+     * @var String|null The explanation why the student has or has not tried this before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $hasTriedThisBeforeExplanation;
 
     /**
+     * @var String|null The reason why the student wants to learn these skills.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $whyWantTheseSkills;
 
     /**
+     * @var String|null The reason why the student wants to learn these skills right now.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $whyWantThisNow;
 
     /**
+     * @var array|null The desired learning methods for this StudentMotivation.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private ?array $desiredLearingMethod = [];
+    private ?array $desiredLearningMethod = [];
 
     /**
+     * @var String|null The final remark/note for the StudentMotivation.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $remarks;
@@ -163,14 +188,14 @@ class StudentMotivation
         return $this;
     }
 
-    public function getDesiredLearingMethod(): ?array
+    public function getDesiredLearningMethod(): ?array
     {
-        return $this->desiredLearingMethod;
+        return $this->desiredLearningMethod;
     }
 
-    public function setDesiredLearingMethod(?array $desiredLearingMethod): self
+    public function setDesiredLearningMethod(?array $desiredLearningMethod): self
     {
-        $this->desiredLearingMethod = $desiredLearingMethod;
+        $this->desiredLearningMethod = $desiredLearningMethod;
 
         return $this;
     }

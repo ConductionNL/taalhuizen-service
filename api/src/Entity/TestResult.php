@@ -70,12 +70,16 @@ class TestResult
     private UuidInterface $id;
 
     /**
+     * @var String|null The id of a participation this TestResult is connected to.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
     private ?string $participationId;
 
     /**
+     * @var String|null The learningNeedOutCome of this TestResult.
+     *
      * @Groups({"write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -83,6 +87,8 @@ class TestResult
     private ?string $learningNeedOutCome;
 
     /**
+     * @var String|null The used exam for this TestResult.
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */

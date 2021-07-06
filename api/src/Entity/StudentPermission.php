@@ -7,6 +7,7 @@ use App\Repository\StudentPermissionRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -33,21 +34,33 @@ class StudentPermission
     private UuidInterface $id;
 
     /**
+     * @var Bool A boolean that is true when the permission form was signed.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
     private bool $didSignPermissionForm;
 
     /**
+     * @var Bool A boolean that is true when the student gives permission to share his/her data with providers.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
-    private bool $hasPermissionToShareDataWithAanbieders;
+    private bool $hasPermissionToShareDataWithProviders;
 
     /**
+     * @var Bool A boolean that is true when the student gives permission to share his/her data with libraries.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
     private bool $hasPermissionToShareDataWithLibraries;
 
     /**
+     * @var Bool A boolean that is true when the student gives permission to send information about libraries.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
     private bool $hasPermissionToSendInformationAboutLibraries;
@@ -76,14 +89,14 @@ class StudentPermission
         return $this;
     }
 
-    public function getHasPermissionToShareDataWithAanbieders(): bool
+    public function getHasPermissionToShareDataWithProviders(): bool
     {
-        return $this->hasPermissionToShareDataWithAanbieders;
+        return $this->hasPermissionToShareDataWithProviders;
     }
 
-    public function setHasPermissionToShareDataWithAanbieders(bool $hasPermissionToShareDataWithAanbieders): self
+    public function setHasPermissionToShareDataWithProviders(bool $hasPermissionToShareDataWithProviders): self
     {
-        $this->hasPermissionToShareDataWithAanbieders = $hasPermissionToShareDataWithAanbieders;
+        $this->hasPermissionToShareDataWithProviders = $hasPermissionToShareDataWithProviders;
 
         return $this;
     }

@@ -10,6 +10,7 @@ use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -93,28 +94,36 @@ class Report
 
     /**
      * @var string|null The language house the report applies to
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;
 
     /**
      * @var string|null The provider this report applies to
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $providerId;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateFrom;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateUntil;
 
     /**
      * @var string|null The filename of the report
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $filename;
@@ -122,6 +131,8 @@ class Report
     // Renamed from base64data to base64.
     /**
      * @var string|null A base64 encoded string containing the file's contents
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)
      */
     private ?string $base64;

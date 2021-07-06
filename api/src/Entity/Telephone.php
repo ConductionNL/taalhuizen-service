@@ -45,7 +45,7 @@ class Telephone
     private $id;
 
     /**
-     * @var ?string Name of this telephone
+     * @var ?string Name of this telephone.
      *
      * @Assert\Length(
      *     max = 255
@@ -56,7 +56,7 @@ class Telephone
     private ?string $name;
 
     /**
-     * @var ?string The actual phone number
+     * @var ?string The actual phone number.
      *
      * @Assert\Length(
      *     max = 255

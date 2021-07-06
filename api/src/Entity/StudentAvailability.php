@@ -7,6 +7,7 @@ use App\Repository\StudentAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
@@ -34,12 +35,18 @@ class StudentAvailability
     private UuidInterface $id;
 
     /**
+     * @var Availability|null The Availability of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
      */
     private ?Availability $availability;
 
     /**
+     * @var String|null The note for/with this Availability.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $availabilityNotes;

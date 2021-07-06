@@ -16,6 +16,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -90,19 +91,24 @@ class Student
     private UuidInterface $id;
 
     /**
+     * @var String|null The status of this Student.
+     *
      * @Groups({"read", "write"})
+     * @Assert\Choice({"pending", "accepted"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $status;
 
     /**
+     * @var String|null The memo of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $memo;
 
     /**
-     * @var ?Person a contact catalogue person for the registrar, this person should have a organization with a name set.
+     * @var Person|null A contact catalogue person for the registrar, this person should have a Organization with at least the name set.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
@@ -111,6 +117,8 @@ class Student
     private ?Person $registrar;
 
     /**
+     * @var StudentCivicIntegration|null The StudentCivicIntegration of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -118,7 +126,7 @@ class Student
     private ?StudentCivicIntegration $civicIntegrationDetails;
 
     /**
-     * @var ?Person a contact catalogue person for the student.
+     * @var Person|null A contact catalogue person for the student.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
@@ -127,6 +135,8 @@ class Student
     private Person $person;
 
     /**
+     * @var StudentGeneral|null The StudentGeneral of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -134,6 +144,8 @@ class Student
     private ?StudentGeneral $generalDetails;
 
     /**
+     * @var StudentReferrer|null The StudentReferrer of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -141,6 +153,8 @@ class Student
     private ?StudentReferrer $referrerDetails;
 
     /**
+     * @var StudentBackground|null The StudentBackground of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -148,6 +162,8 @@ class Student
     private ?StudentBackground $backgroundDetails;
 
     /**
+     * @var StudentDutchNT|null The StudentDutchNT of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -155,12 +171,17 @@ class Student
     private ?StudentDutchNT $dutchNTDetails;
 
     /**
+     * @var String|null The speakingLevel of this Student.
+     *
      * @Groups({"read", "write"})
+     * @Assert\Choice({"BEGINNER", "REASONABLE", "ADVANCED"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $speakingLevel;
 
     /**
+     * @var StudentEducation|null The StudentEducation of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -168,6 +189,8 @@ class Student
     private ?StudentEducation $educationDetails;
 
     /**
+     * @var StudentCourse|null The StudentCourse of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -175,6 +198,8 @@ class Student
     private ?StudentCourse $courseDetails;
 
     /**
+     * @var StudentJob|null The StudentJob of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -182,6 +207,8 @@ class Student
     private ?StudentJob $jobDetails;
 
     /**
+     * @var StudentMotivation|null The StudentMotivation of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -189,6 +216,8 @@ class Student
     private ?StudentMotivation $motivationDetails;
 
     /**
+     * @var StudentAvailability|null The StudentAvailability of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -197,17 +226,21 @@ class Student
 
     /**
      * @Groups({"read", "write"})
+     * @Assert\Choice({"CAN_NOT_READ", "A0", "A1", "A2", "B1", "B2", "C1", "C2"})
      * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?string $readingTestResult;
 
     /**
      * @Groups({"read", "write"})
+     * @Assert\Choice({"CAN_NOT_WRITE", "WRITE_NAW_DETAILS", "WRITE_SIMPLE_TEXTS", "WRITE_SIMPLE_LETTERS"})
      * @ORM\Column(type="json", length=255, nullable=true)
      */
     private ?string $writingTestResult;
 
     /**
+     * @var StudentPermission|null The StudentPermission of this Student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
      * @MaxDepth(1)

@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentCivicIntegrationRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,21 +36,30 @@ class StudentCivicIntegration
     private UuidInterface $id;
 
     /**
+     * @var String|null A enum for the status of the civic integration requirement of the student.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"NO", "YES", "CURRENTLY_WORKING_ON_INTEGRATION"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $civicIntegrationRequirement;
 
     /**
+     * @var String|null The reason why this student has no civic integration requirement.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"FINISHED", "FROM_EU_COUNTRY", "EXEMPTED_OR_ZROUTE"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $civicIntegrationRequirementReason;
 
     /**
+     * @var DateTimeInterface|null The civic integration requirement finish date for this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?\DateTimeInterface $civivIntegrationRequirementFinishDate;
+    private ?DateTimeInterface $civicIntegrationRequirementFinishDate;
 
     public function getId(): UuidInterface
     {
@@ -86,14 +97,14 @@ class StudentCivicIntegration
         return $this;
     }
 
-    public function getCivivIntegrationRequirementFinishDate(): ?\DateTimeInterface
+    public function getCivicIntegrationRequirementFinishDate(): ?DateTimeInterface
     {
-        return $this->civivIntegrationRequirementFinishDate;
+        return $this->civicIntegrationRequirementFinishDate;
     }
 
-    public function setCivivIntegrationRequirementFinishDate(?\DateTimeInterface $civivIntegrationRequirementFinishDate): self
+    public function setCivicIntegrationRequirementFinishDate(?DateTimeInterface $civicIntegrationRequirementFinishDate): self
     {
-        $this->civivIntegrationRequirementFinishDate = $civivIntegrationRequirementFinishDate;
+        $this->civicIntegrationRequirementFinishDate = $civicIntegrationRequirementFinishDate;
 
         return $this;
     }

@@ -7,6 +7,7 @@ use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,33 +35,51 @@ class StudentCourse
     private UuidInterface $id;
 
     /**
+     * @var bool|null A boolean that is true if this student is following a course right now.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $isFollowingCourseRightNow;
 
     /**
+     * @var String|null The name of the course this student is following.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $courseName;
 
     /**
+     * @var String|null The type of teacher this student has for his course.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $courseTeacher;
 
     /**
+     * @var String|null The group type, Individually or Group, of the course this student is following.
+     *
+     * @Groups({"read", "write"})
      * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $courseGroup;
 
     /**
+     * @var int|null The amount of hours the course takes, that this student is following.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private ?int $amountOfHours;
 
     /**
+     * @var bool|null A boolean that is true if the course this student is following provides a certificate when completed.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $doesCourseProvideCertificate;
