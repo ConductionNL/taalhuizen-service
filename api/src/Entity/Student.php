@@ -26,55 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = StudentQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "newReffered" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "active" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "completed" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "group" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "providerEmployeeMentees" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          }
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact", "providerEmployeeId": "exact"})
+ *     })
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student
@@ -82,8 +34,7 @@ class Student
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -276,6 +227,14 @@ class Student
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;
+
+    /**
+     * @var string|null The id of the cc/organization of a languageHouse
+     *
+     * @Groups("write")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $languageHouseId;
 
     public function getId(): UuidInterface
     {
@@ -477,6 +436,18 @@ class Student
     public function setPermissionDetails(StudentPermission $permissionDetails): self
     {
         $this->permissionDetails = $permissionDetails;
+
+        return $this;
+    }
+
+    public function getLanguageHouseId(): ?string
+    {
+        return $this->languageHouseId;
+    }
+
+    public function setLanguageHouseId(?string $languageHouseId): self
+    {
+        $this->languageHouseId = $languageHouseId;
 
         return $this;
     }

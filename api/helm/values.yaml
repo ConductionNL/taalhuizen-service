@@ -8,7 +8,7 @@ settings:
   name: taalhuizen-service
   version: V1.0
   majorVersion: v1
-  description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&amp;#039;'
+  description: '&amp;'
   repro: https://github.com/ConductionNL/taalhuizen-service
   demo: taal.zaakonline.nl
   domain: taalhuizen-bisc.commonground.nu

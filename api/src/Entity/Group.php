@@ -38,8 +38,7 @@ class Group
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -47,17 +46,13 @@ class Group
      */
     private UuidInterface $id;
 
-//   Organization of the group, was called in the graphql-schema 'aanbiederId', changed to 'organization'(Organization Entity)
     /**
-     * @var Organization Organization of this group
+     * @var string|null The id of the cc/organization of a provider
      *
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @MaxDepth(1)
+     * @Groups("write")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private Organization $organization;
+    private ?string $providerId;
 
     /**
      * @var string Name of this group.
@@ -84,34 +79,14 @@ class Group
     private string $typeCourse;
 
     /**
-     * @var bool Detail is formal of this group.
+     * @var ?LearningNeedOutCome The learning need out come of this Group.
      *
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private bool $detailsIsFormal;
-
-    /**
-     * @var int Detail is formal of this group.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="integer", length=255)
-     */
-    private int $detailsTotalClassHours;
-
-    /**
-     * @var bool Details certificate will be awarded of this group.
-     *
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean")
-     */
-    private bool $detailsCertificateWillBeAwarded;
+    private ?LearningNeedOutCome $learningNeedOutCome;
 
 //   start and end date of the group, was called in the graphql-schema 'detailsStartDate' and 'detailsEndDate', changed to 'startDate' and 'endDate' related to schema.org
     /**
@@ -225,6 +200,18 @@ class Group
         return $this;
     }
 
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -245,42 +232,6 @@ class Group
     public function setTypeCourse(string $typeCourse): self
     {
         $this->typeCourse = $typeCourse;
-
-        return $this;
-    }
-
-    public function getDetailsIsFormal(): bool
-    {
-        return $this->detailsIsFormal;
-    }
-
-    public function setDetailsIsFormal(bool $detailsIsFormal): self
-    {
-        $this->detailsIsFormal = $detailsIsFormal;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): int
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(int $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
 
         return $this;
     }
@@ -353,6 +304,18 @@ class Group
     public function setOrganization(Organization $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getLearningNeedOutCome(): LearningNeedOutCome
+    {
+        return $this->learningNeedOutCome;
+    }
+
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    {
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }

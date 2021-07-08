@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
+    &
   version: V1.0
 servers:
   -
@@ -12729,32 +12729,6 @@ paths:
           style: form
           explode: false
           allowReserved: false
-        -
-          name: studentId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'studentId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
       deprecated: false
     post:
       operationId: postStudentDossierEventCollection
@@ -18345,32 +18319,6 @@ paths:
           style: form
           explode: false
           allowReserved: false
-        -
-          name: participationId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'participationId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
       deprecated: false
     post:
       operationId: postTestResultCollection
@@ -19375,12 +19323,12 @@ components:
     Address-read:
       type: object
       description: ''
-      required:
-        - street
-        - houseNumber
-        - postalCode
-        - locality
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         street:
           maxLength: 255
           description: 'Street of this address.'
@@ -19402,6 +19350,11 @@ components:
           maxLength: 255
           description: 'Locality of this address.'
           type: string
+      required:
+        - street
+        - houseNumber
+        - postalCode
+        - locality
     Address-write:
       type: object
       description: ''
@@ -19435,11 +19388,6 @@ components:
     Address.jsonld-read:
       type: object
       description: ''
-      required:
-        - street
-        - houseNumber
-        - postalCode
-        - locality
       properties:
         '@context':
           readOnly: true
@@ -19464,6 +19412,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         street:
           maxLength: 255
           description: 'Street of this address.'
@@ -19485,6 +19438,11 @@ components:
           maxLength: 255
           description: 'Locality of this address.'
           type: string
+      required:
+        - street
+        - houseNumber
+        - postalCode
+        - locality
     Address.jsonld-write:
       type: object
       description: ''
@@ -19877,6 +19835,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         monday:
           description: 'Monday of this availability'
           $ref: '#/components/schemas/AvailabilityDay-read'
@@ -19901,9 +19864,25 @@ components:
         sunday:
           description: 'Sunday of this availability'
           $ref: '#/components/schemas/AvailabilityDay-read'
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
     Availability-write:
       type: object
       description: ''
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
       properties:
         monday:
           description: 'Monday of this availability'
@@ -19956,6 +19935,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         monday:
           description: 'Monday of this availability'
           $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
@@ -19980,9 +19964,25 @@ components:
         sunday:
           description: 'Sunday of this availability'
           $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
     Availability.jsonld-write:
       type: object
       description: ''
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
       properties:
         '@context':
           readOnly: true
@@ -20034,11 +20034,12 @@ components:
     AvailabilityDay-read:
       type: object
       description: ''
-      required:
-        - morning
-        - afternoon
-        - evening
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         morning:
           description: 'Morning of this availability day.'
           type: boolean
@@ -20048,6 +20049,10 @@ components:
         evening:
           description: 'Evening of this availability day.'
           type: boolean
+      required:
+        - morning
+        - afternoon
+        - evening
     AvailabilityDay-write:
       type: object
       description: ''
@@ -20068,10 +20073,6 @@ components:
     AvailabilityDay.jsonld-read:
       type: object
       description: ''
-      required:
-        - morning
-        - afternoon
-        - evening
       properties:
         '@context':
           readOnly: true
@@ -20096,6 +20097,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         morning:
           description: 'Morning of this availability day.'
           type: boolean
@@ -20105,6 +20111,10 @@ components:
         evening:
           description: 'Evening of this availability day.'
           type: boolean
+      required:
+        - morning
+        - afternoon
+        - evening
     AvailabilityDay.jsonld-write:
       type: object
       description: ''
@@ -20295,11 +20305,12 @@ components:
     Document-read:
       type: object
       description: ''
-      required:
-        - name
-        - base64
-        - person
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this document.'
@@ -20310,6 +20321,10 @@ components:
         person:
           description: 'Person of this document.'
           $ref: '#/components/schemas/Person-read'
+      required:
+        - name
+        - base64
+        - person
     Document-write:
       type: object
       description: ''
@@ -20331,10 +20346,6 @@ components:
     Document.jsonld-read:
       type: object
       description: ''
-      required:
-        - name
-        - base64
-        - person
       properties:
         '@context':
           readOnly: true
@@ -20359,6 +20370,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this document.'
@@ -20369,6 +20385,10 @@ components:
         person:
           description: 'Person of this document.'
           $ref: '#/components/schemas/Person.jsonld-read'
+      required:
+        - name
+        - base64
+        - person
     Document.jsonld-write:
       type: object
       description: ''
@@ -20414,6 +20434,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20495,6 +20520,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20576,6 +20606,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this email'
@@ -20629,6 +20664,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this email'
@@ -20681,9 +20721,12 @@ components:
     Employee-read:
       type: object
       description: ''
-      required:
-        - person
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person-read'
@@ -20800,11 +20843,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-read'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -20816,6 +20854,8 @@ components:
           items:
             type: string
           nullable: true
+      required:
+        - person
     Employee-write:
       type: object
       description: ''
@@ -20938,11 +20978,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-write'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -20957,8 +20992,6 @@ components:
     Employee.jsonld-read:
       type: object
       description: ''
-      required:
-        - person
       properties:
         '@context':
           readOnly: true
@@ -20983,6 +21016,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person.jsonld-read'
@@ -21099,11 +21137,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-read'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21115,6 +21148,8 @@ components:
           items:
             type: string
           nullable: true
+      required:
+        - person
     Employee.jsonld-write:
       type: object
       description: ''
@@ -21260,11 +21295,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-write'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21279,18 +21309,12 @@ components:
     Group-read:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization-read'
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21299,15 +21323,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-read'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21347,21 +21368,18 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     Group-write:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization-write'
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21370,15 +21388,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-write'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21418,17 +21433,13 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     Group.jsonld-read:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
         '@context':
           readOnly: true
@@ -21453,9 +21464,11 @@ components:
         '@type':
           readOnly: true
           type: string
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization.jsonld-read'
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21464,15 +21477,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21512,17 +21522,13 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     Group.jsonld-write:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
         '@context':
           readOnly: true
@@ -21547,9 +21553,10 @@ components:
         '@type':
           readOnly: true
           type: string
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization.jsonld-write'
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21558,15 +21565,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21606,17 +21610,19 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     LearningNeed-read:
       type: object
       description: ''
-      required:
-        - description
-        - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
-        - offerDifference
-        - studentId
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         description:
           maxLength: 255
           description: 'Description of this learning need.'
@@ -21627,9 +21633,10 @@ components:
           type: string
         learningNeedOutCome:
           description: 'The learning need out come of this learning need.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-read'
         offerDesiredOffer:
           maxLength: 255
           description: 'Offer desired offer of this learning need.'
@@ -21672,6 +21679,13 @@ components:
           maxLength: 255
           description: 'Student id of this learning need.'
           type: string
+      required:
+        - description
+        - motivation
+        - offerDesiredOffer
+        - offerAdvisedOffer
+        - offerDifference
+        - studentId
     LearningNeed-write:
       type: object
       description: ''
@@ -21742,13 +21756,6 @@ components:
     LearningNeed.jsonld-read:
       type: object
       description: ''
-      required:
-        - description
-        - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
-        - offerDifference
-        - studentId
       properties:
         '@context':
           readOnly: true
@@ -21773,6 +21780,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         description:
           maxLength: 255
           description: 'Description of this learning need.'
@@ -21783,9 +21795,10 @@ components:
           type: string
         learningNeedOutCome:
           description: 'The learning need out come of this learning need.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         offerDesiredOffer:
           maxLength: 255
           description: 'Offer desired offer of this learning need.'
@@ -21828,6 +21841,13 @@ components:
           maxLength: 255
           description: 'Student id of this learning need.'
           type: string
+      required:
+        - description
+        - motivation
+        - offerDesiredOffer
+        - offerAdvisedOffer
+        - offerDifference
+        - studentId
     LearningNeed.jsonld-write:
       type: object
       description: ''
@@ -21921,6 +21941,12 @@ components:
     LearningNeedOutCome-read:
       type: object
       description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
     LearningNeedOutCome-write:
       type: object
       description: ''
@@ -22008,16 +22034,6 @@ components:
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
-        startDate:
-          description: 'The start date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
-        endDate:
-          description: 'The end date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
     LearningNeedOutCome.jsonld-read:
       type: object
       description: ''
@@ -22045,6 +22061,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
     LearningNeedOutCome.jsonld-write:
       type: object
       description: ''
@@ -22155,22 +22176,15 @@ components:
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
-        startDate:
-          description: 'The start date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
-        endDate:
-          description: 'The end date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
     Organization-read:
       type: object
       description: ''
-      required:
-        - name
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this organization'
@@ -22193,6 +22207,8 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Address-read'
+      required:
+        - name
     Organization-write:
       type: object
       description: ''
@@ -22229,8 +22245,6 @@ components:
     Organization.jsonld-read:
       type: object
       description: ''
-      required:
-        - name
       properties:
         '@context':
           readOnly: true
@@ -22255,6 +22269,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this organization'
@@ -22277,6 +22296,8 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Address.jsonld-read'
+      required:
+        - name
     Organization.jsonld-write:
       type: object
       description: ''
@@ -22337,6 +22358,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         status:
           type: string
           enum:
@@ -22359,9 +22385,10 @@ components:
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-read'
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22457,6 +22484,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22549,6 +22586,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         status:
           type: string
           enum:
@@ -22571,9 +22613,10 @@ components:
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
-          type: string
-          format: iri-reference
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22692,6 +22735,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22760,10 +22813,12 @@ components:
     Person-read:
       type: object
       description: ''
-      required:
-        - givenName
-        - familyName
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         givenName:
           description: 'Given name of this person'
           type: string
@@ -22810,6 +22865,9 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-read'
+      required:
+        - givenName
+        - familyName
     Person-write:
       type: object
       description: ''
@@ -22866,9 +22924,6 @@ components:
     Person.jsonld-read:
       type: object
       description: ''
-      required:
-        - givenName
-        - familyName
       properties:
         '@context':
           readOnly: true
@@ -22893,6 +22948,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         givenName:
           description: 'Given name of this person'
           type: string
@@ -22939,6 +22999,9 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-read'
+      required:
+        - givenName
+        - familyName
     Person.jsonld-write:
       type: object
       description: ''
@@ -23018,11 +23081,12 @@ components:
     Registration-read:
       type: object
       description: ''
-      required:
-        - languageHouseId
-        - student
-        - registrar
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
@@ -23036,6 +23100,10 @@ components:
           description: 'A note for/with this registration.'
           type: string
           nullable: true
+      required:
+        - languageHouseId
+        - student
+        - registrar
     Registration-write:
       type: object
       description: ''
@@ -23060,10 +23128,6 @@ components:
     Registration.jsonld-read:
       type: object
       description: ''
-      required:
-        - languageHouseId
-        - student
-        - registrar
       properties:
         '@context':
           readOnly: true
@@ -23088,6 +23152,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
@@ -23101,6 +23170,10 @@ components:
           description: 'A note for/with this registration.'
           type: string
           nullable: true
+      required:
+        - languageHouseId
+        - student
+        - registrar
     Registration.jsonld-write:
       type: object
       description: ''
@@ -23149,6 +23222,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         languageHouseId:
           description: 'The language house the report applies to.'
           type: string
@@ -23228,6 +23306,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         languageHouseId:
           description: 'The language house the report applies to.'
           type: string
@@ -23307,6 +23390,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
@@ -23524,6 +23612,10 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission-write'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails
@@ -23554,6 +23646,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
@@ -23794,6 +23891,10 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission.jsonld-write'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails
@@ -23801,6 +23902,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         availability:
           description: 'The Availability of this student.'
           nullable: true
@@ -23852,6 +23958,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         availability:
           description: 'The Availability of this student.'
           nullable: true
@@ -23903,6 +24014,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         foundVia:
           type: string
           enum:
@@ -24030,6 +24146,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         foundVia:
           type: string
           enum:
@@ -24157,6 +24278,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationRequirement:
           type: string
           enum:
@@ -24234,6 +24360,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         civicIntegrationRequirement:
           type: string
           enum:
@@ -24311,6 +24442,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         isFollowingCourseRightNow:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
@@ -24408,6 +24544,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         isFollowingCourseRightNow:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
@@ -24504,12 +24645,12 @@ components:
     StudentDossierEvent-read:
       type: object
       description: ''
-      required:
-        - event
-        - eventDate
-        - eventDescription
-        - studentId
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         event:
           type: string
           enum:
@@ -24534,6 +24675,11 @@ components:
           description: 'EmployeeId of this student Dossier.'
           type: string
           nullable: true
+      required:
+        - event
+        - eventDate
+        - eventDescription
+        - studentId
     StudentDossierEvent-write:
       type: object
       description: ''
@@ -24570,11 +24716,6 @@ components:
     StudentDossierEvent.jsonld-read:
       type: object
       description: ''
-      required:
-        - event
-        - eventDate
-        - eventDescription
-        - studentId
       properties:
         '@context':
           readOnly: true
@@ -24599,6 +24740,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         event:
           type: string
           enum:
@@ -24623,6 +24769,11 @@ components:
           description: 'EmployeeId of this student Dossier.'
           type: string
           nullable: true
+      required:
+        - event
+        - eventDate
+        - eventDescription
+        - studentId
     StudentDossierEvent.jsonld-write:
       type: object
       description: ''
@@ -24683,6 +24834,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         dutchNTLevel:
           type: string
           enum:
@@ -24782,6 +24938,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         dutchNTLevel:
           type: string
           enum:
@@ -24881,6 +25042,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         education:
           description: 'Education of this studentEducation.'
           nullable: true
@@ -24954,6 +25120,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         education:
           description: 'Education of this studentEducation.'
           nullable: true
@@ -25027,6 +25198,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         countryOfOrigin:
           description: 'The country of origin of this student.'
           type: string
@@ -25122,6 +25298,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         countryOfOrigin:
           description: 'The country of origin of this student.'
           type: string
@@ -25217,6 +25398,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         trainedForJob:
           description: 'The job this student is trained for.'
           type: string
@@ -25300,6 +25486,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         trainedForJob:
           description: 'The job this student is trained for.'
           type: string
@@ -25383,6 +25574,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         desiredSkills:
           type: array
           items:
@@ -25532,6 +25728,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         desiredSkills:
           type: array
           items:
@@ -25680,12 +25881,12 @@ components:
     StudentPermission-read:
       type: object
       description: ''
-      required:
-        - didSignPermissionForm
-        - hasPermissionToShareDataWithProviders
-        - hasPermissionToShareDataWithLibraries
-        - hasPermissionToSendInformationAboutLibraries
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         didSignPermissionForm:
           description: 'A boolean that is true when the permission form was signed.'
           type: boolean
@@ -25698,6 +25899,11 @@ components:
         hasPermissionToSendInformationAboutLibraries:
           description: 'A boolean that is true when the student gives permission to send information about libraries.'
           type: boolean
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
     StudentPermission-write:
       type: object
       description: ''
@@ -25722,11 +25928,6 @@ components:
     StudentPermission.jsonld-read:
       type: object
       description: ''
-      required:
-        - didSignPermissionForm
-        - hasPermissionToShareDataWithProviders
-        - hasPermissionToShareDataWithLibraries
-        - hasPermissionToSendInformationAboutLibraries
       properties:
         '@context':
           readOnly: true
@@ -25751,6 +25952,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         didSignPermissionForm:
           description: 'A boolean that is true when the permission form was signed.'
           type: boolean
@@ -25763,6 +25969,11 @@ components:
         hasPermissionToSendInformationAboutLibraries:
           description: 'A boolean that is true when the student gives permission to send information about libraries.'
           type: boolean
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
     StudentPermission.jsonld-write:
       type: object
       description: ''
@@ -25811,6 +26022,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         referringOrganization:
           type: string
           enum:
@@ -25886,6 +26102,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         referringOrganization:
           type: string
           enum:
@@ -25961,6 +26182,11 @@ components:
       type: object
       description: ''
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this telephone.'
@@ -26014,6 +26240,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         name:
           maxLength: 255
           description: 'Name of this telephone.'
@@ -26066,6 +26297,12 @@ components:
     TestResult-read:
       type: object
       description: ''
+      properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
     TestResult-write:
       type: object
       description: ''
@@ -26120,6 +26357,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
     TestResult.jsonld-write:
       type: object
       description: ''
@@ -26173,11 +26415,12 @@ components:
     User-read:
       type: object
       description: ''
-      required:
-        - username
-        - person
-        - organization
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         username:
           maxLength: 2550
           description: 'The Username of this User.'
@@ -26204,6 +26447,10 @@ components:
           description: 'The Token for password reset.'
           type: string
           nullable: true
+      required:
+        - username
+        - person
+        - organization
     User-write:
       type: object
       description: ''
@@ -26246,10 +26493,6 @@ components:
     User.jsonld-read:
       type: object
       description: ''
-      required:
-        - username
-        - person
-        - organization
       properties:
         '@context':
           readOnly: true
@@ -26274,6 +26517,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         username:
           maxLength: 2550
           description: 'The Username of this User.'
@@ -26300,6 +26548,10 @@ components:
           description: 'The Token for password reset.'
           type: string
           nullable: true
+      required:
+        - username
+        - person
+        - organization
     User.jsonld-write:
       type: object
       description: ''

@@ -31,8 +31,7 @@ class LearningNeedOutCome
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -171,22 +170,6 @@ class LearningNeedOutCome
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $certificateWillBeAwarded;
-
-    /**
-     * @var DateTimeInterface|null The start date of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $startDate;
-
-    /**
-     * @var DateTimeInterface|null The end date of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $endDate;
 
     public function getId(): UuidInterface
     {
@@ -328,30 +311,6 @@ class LearningNeedOutCome
     public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
     {
         $this->certificateWillBeAwarded = $certificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getStartDate(): ?DateTimeInterface
-    {
-        return $this->startDate;
-    }
-
-    public function setStartDate(?DateTimeInterface $startDate): self
-    {
-        $this->startDate = $startDate;
-
-        return $this;
-    }
-
-    public function getEndDate(): ?DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate(?DateTimeInterface $endDate): self
-    {
-        $this->endDate = $endDate;
 
         return $this;
     }
