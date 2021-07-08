@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * All properties that the DTO entity TestResult holds. DTO TestResult exists of variables based on the following schema.org schema: https://schema.org/result.
+ * All properties that the DTO entity TestResult holds.
+ *
+ * The main entity associated with this DTO is the edu/Result https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Result.
+ * DTO TestResult exists of variables based on the following jira epic: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16799%2C16919.
+ * And mainly the following issues: hhttps://lifely.atlassian.net/browse/BISC-93 & https://lifely.atlassian.net/browse/BISC-140.
  *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
