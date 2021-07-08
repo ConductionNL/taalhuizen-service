@@ -80,6 +80,7 @@ class AvailabilityDay
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

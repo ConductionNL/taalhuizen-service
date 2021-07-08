@@ -2,26 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\StudentGeneralRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\StudentGeneralRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=StudentGeneralRepository::class)
  */
 class StudentGeneral
@@ -36,46 +33,78 @@ class StudentGeneral
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var String|null The country of origin of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $countryOfOrigin;
+    private ?string $countryOfOrigin;
 
     /**
+     * @var String|null The native language of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $nativeLanguage;
+    private ?string $nativeLanguage;
 
     /**
+     * @var String|null The other languages this student speaks.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $otherLanguages;
+    private ?string $otherLanguages;
 
     /**
+     * @var array|null The family composition of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"},
+     *               "example"="MARRIED_PARTNER"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $familiComposition = [];
+    private ?array $familyComposition = [];
 
     /**
+     * @var int|null The amount of children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $childrenCount;
+    private ?int $childrenCount;
 
     /**
+     * @var String|null The birthdays of the children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $childrenDatesOfBirth;
+    private ?string $childrenDatesOfBirth;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 
@@ -115,14 +144,14 @@ class StudentGeneral
         return $this;
     }
 
-    public function getFamiliComposition(): ?array
+    public function getFamilyComposition(): ?array
     {
-        return $this->familiComposition;
+        return $this->familyComposition;
     }
 
-    public function setFamiliComposition(?array $familiComposition): self
+    public function setFamilyComposition(?array $familyComposition): self
     {
-        $this->familiComposition = $familiComposition;
+        $this->familyComposition = $familyComposition;
 
         return $this;
     }

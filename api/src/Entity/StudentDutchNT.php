@@ -2,25 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\StudentDutchNTRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\StudentDutchNTRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=StudentDutchNTRepository::class)
  */
 class StudentDutchNT
@@ -35,41 +33,77 @@ class StudentDutchNT
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var String|null The dutch NT level of this Student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"NT1", "NT2"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"NT1", "NT2"},
+     *             "example"="NT1"
+     *         }
+     *     }
+     * )
      */
-    private $dutchNTLevel;
+    private ?string $dutchNTLevel;
 
     /**
+     * @var float|null The year since when this student is in the Netherlands.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="float", nullable=true)
      */
-    private $inNetherlandsSinceYear;
+    private ?float $inNetherlandsSinceYear;
 
     /**
+     * @var String|null The language this student speaks in his/her daily life.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $languageInDailyLife;
+    private ?string $languageInDailyLife;
 
     /**
+     * @var bool|null A boolean that is true if this student knows the latin alphabet.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $knowsLatinAlphabet;
+    private ?bool $knowsLatinAlphabet;
 
     /**
+     * @var String|null The last known language level of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"},
+     *             "example"="A0"
+     *         }
+     *     }
+     * )
      */
-    private $lastKnownLevel;
+    private ?string $lastKnownLevel;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

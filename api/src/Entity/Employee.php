@@ -2,25 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeQueryItemResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeMutationResolver;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Repository\EmployeeRepository;
+use App\Resolver\EmployeeMutationResolver;
+use App\Resolver\EmployeeQueryCollectionResolver;
+use App\Resolver\EmployeeQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
@@ -57,6 +52,14 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *          "remove" = {
  *              "mutation" = EmployeeMutationResolver::class,
  *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
+ *              "read" = false,
+ *              "deserialize" = false,
+ *              "validate" = false,
+ *              "write" = false
+ *          },
+ *          "addMentoredParticipationTo" = {
+ *              "mutation" = EmployeeMutationResolver::class,
+ *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
@@ -396,6 +399,7 @@ class Employee
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

@@ -1,39 +1,37 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\TestResultService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $commonGroundService;
     private TestResultService $testResultService;
 
-    public function __construct(CommongroundService $commonGroundService, TestResultService $testResultService){
-        $this->commonGroundService = $commonGroundService;
+    public function __construct(
+        TestResultService $testResultService
+    ) {
         $this->testResultService = $testResultService;
     }
 
     /**
      * @inheritDoc
+     *
      * @throws Exception
      */
     public function __invoke($item, array $context)
     {
-        if(key_exists('testResultId', $context['info']->variableValues)){
+        if (key_exists('testResultId', $context['info']->variableValues)) {
             $testResultId = $context['info']->variableValues['testResultId'];
         } elseif (key_exists('id', $context['args'])) {
             $testResultId = $context['args']['id'];
         } else {
             throw new Exception('The testResultId was not specified');
         }
-        $testResultId = explode('/',$testResultId);
+        $testResultId = explode('/', $testResultId);
         if (is_array($testResultId)) {
             $testResultId = end($testResultId);
         }

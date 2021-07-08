@@ -46,7 +46,7 @@ class Telephone
     private UuidInterface $id;
 
     /**
-     * @var ?string Name of this telephone
+     * @var string|null Name of this telephone.
      *
      * @Assert\Length(
      *     max = 255
@@ -57,15 +57,16 @@ class Telephone
     private ?string $name;
 
     /**
-     * @var ?string The actual phone number
+     * @var string The actual phone number.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $telephone;
+    private string $telephone;
 
     public function getId(): UuidInterface
     {
@@ -90,12 +91,12 @@ class Telephone
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getTelephone(): string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setTelephone(string $telephone): self
     {
         $this->telephone = $telephone;
 

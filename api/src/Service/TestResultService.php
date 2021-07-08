@@ -9,20 +9,35 @@ use Exception;
 
 class TestResultService
 {
-    private EntityManagerInterface $entityManager;
-    private $commonGroundService;
+    private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EDUService $eduService;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, EAVService $eavService, EDUService $eduService)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
+    ) {
         $this->commonGroundService = $commonGroundService;
-        $this->eavService = $eavService;
-        $this->eduService = $eduService;
+        $this->eavService = new EAVService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
+        $this->entityManager = $entityManager;
     }
 
-    public function saveTestResult(array $testResult, array $memo, $participationId, $testResultUrl = null) {
+    /**
+     * This function updates or creates a test result with the given data.
+     *
+     * @param array       $testResult      Array that holds the test results data
+     * @param array       $memo            Array that holds the memos data
+     * @param string|null $participationId ID of the participation
+     * @param string|null $testResultUrl   Url of the test result as string
+     *
+     * @throws Exception
+     *
+     * @return array Returns the test result and memo in a array
+     */
+    public function saveTestResult(array $testResult, array $memo, ?string $participationId, ?string $testResultUrl = null): array
+    {
         if (isset($participationId)) {
             // Create
             // Connect the participation and result in eav and save both objects
@@ -48,19 +63,30 @@ class TestResultService
 
         return [
             'testResult' => $testResult,
-            'memo' => $memo
+            'memo'       => $memo,
         ];
     }
 
-    private function addParticipationToTestResult($participationId, $testResult) {
+    /**
+     * This function adds a participation to a test result.
+     *
+     * @param string $participationId ID of the participation
+     * @param array  $testResult      Array with data of the test result
+     *
+     * @throws \Exception
+     *
+     * @return array Returns test result, participation an learning need in a array
+     */
+    private function addParticipationToTestResult(string $participationId, array $testResult)
+    {
         // Check if participation already has testResults
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
-            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
         } else {
             throw new Exception('Invalid request, participationId is not an existing eav/participation!');
         }
         if ($this->eavService->hasEavObject($participation['learningNeed'], 'learning_needs')) {
-            $learningNeed = $this->eavService->getObject('learning_needs', $participation['learningNeed']);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $participation['learningNeed']]);
         } else {
             throw new Exception('Warning, participation is not connected to a learningNeed!');
         }
@@ -81,16 +107,25 @@ class TestResultService
         // Update the eav/participation to add the EAV/edu/result to it
         if (!in_array($testResult['@id'], $updateParticipation['results'])) {
             array_push($updateParticipation['results'], $testResult['@id']);
-            $participation = $this->eavService->saveObject($updateParticipation, 'participations', 'eav', null, $participationId);
+            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'eavId' => $participationId]);
         }
+
         return [
-            'testResult' => $testResult,
+            'testResult'    => $testResult,
             'participation' => $participation,
-            'learningNeed' => $learningNeed
+            'learningNeed'  => $learningNeed,
         ];
     }
 
-    public function deleteTestResult($id) {
+    /**
+     * This function deletes a test result.
+     *
+     * @param string $id ID of the test result that will be deleted
+     *
+     * @throws \Exception
+     */
+    public function deleteTestResult(string $id)
+    {
         $testResultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
         // Check if this testResult exists
         if (!$this->commonGroundService->isResource($testResultUrl)) {
@@ -110,21 +145,40 @@ class TestResultService
         $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
     }
 
-    private function removeTestResultFromParticipation($testResultUrl) {
-        $testResult = $this->eavService->getObject('results', $testResultUrl, 'edu');
+    /**
+     * This function removes a test result from a participation.
+     *
+     * @param string $testResultUrl Url of the test result as string
+     *
+     * @throws \Exception
+     */
+    private function removeTestResultFromParticipation(string $testResultUrl)
+    {
+        $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $testResultUrl]);
         if ($this->eavService->hasEavObject($testResult['participation'])) {
-            $getParticipation = $this->eavService->getObject('participations', $testResult['participation']);
+            $getParticipation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $testResult['participation']]);
             if (isset($getParticipation['results'])) {
-                $participation['results'] = array_values(array_filter($getParticipation['results'], function($participationResult) use($testResultUrl) {
+                $participation['results'] = array_values(array_filter($getParticipation['results'], function ($participationResult) use ($testResultUrl) {
                     return $participationResult != $testResultUrl;
                 }));
-                $this->eavService->saveObject($participation, 'participations', 'eav', $testResult['participation']);
+                $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $testResult['participation']]);
             }
         }
         // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
     }
 
-    public function getTestResult($id, $url = null) {
+    /**
+     * This function fetches a test result from the given ID.
+     *
+     * @param string|null $id  ID of the test result that will be fetched
+     * @param string|null $url Url of the test result as string
+     *
+     * @throws Exception
+     *
+     * @return array Returns a test result and memo in a array
+     */
+    public function getTestResult(?string $id, string $url = null): array
+    {
         if (isset($id)) {
             $url = $this->commonGroundService->cleanUrl(['component'=>'edu', 'type'=>'results', 'id'=>$id]);
         } elseif (!isset($url)) {
@@ -133,7 +187,7 @@ class TestResultService
 
         // Get the edu/result from EAV and its memo from memo component
         if ($this->eavService->hasEavObject($url)) {
-            $testResult = $this->eavService->getObject('results', $url, 'edu');
+            $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $url]);
 
             $memos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['topic'=>$url])['hydra:member'];
             $memo = [];
@@ -141,30 +195,56 @@ class TestResultService
                 $memo = $memos[0];
             }
         } else {
-            throw new Exception('Invalid request, '. $url .' is not an existing eav/edu/result!');
+            throw new Exception('Invalid request, '.$url.' is not an existing eav/edu/result!');
         }
+
         return [
             'testResult' => $testResult,
-            'memo' => $memo
+            'memo'       => $memo,
         ];
     }
 
-    public function getTestResults($participationId) {
+    /**
+     * This function fetches the test results from the given participation ID.
+     *
+     * @param string $participationId ID of the participation
+     *
+     * @throws \Exception
+     *
+     * @return array Returns test results in a array
+     */
+    public function getTestResults(string $participationId): array
+    {
         if ($this->eavService->hasEavObject(null, 'participations', $participationId)) {
             // Get eav/participation
-            $participation = $this->eavService->getObject('participations', null, 'eav', $participationId);
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $participationId]);
             // Get the edu/testResult urls for this participation and do gets on them
             $testResults = [];
-            foreach ($participation['results'] as $result) {
-                array_push($testResults, $this->getTestResult(null, $result));
+            if (isset($participation['results'])) {
+                foreach ($participation['results'] as $result) {
+                    array_push($testResults, $this->getTestResult(null, $result));
+                }
             }
         } else {
-            throw new Exception('Invalid request, '. $participationId .' is not an existing eav/participation !');
+            throw new Exception('Invalid request, '.$participationId.' is not an existing eav/participation !');
         }
+
         return $testResults;
     }
 
-    public function checkTestResultValues($testResult, $participationId, $testResultUrl = null) {
+    /**
+     * This function check the given test results values.
+     *
+     * @param array       $testResult      Array with data of the test result
+     * @param string|null $participationId ID of the participation
+     * @param string|null $testResultUrl   Url of the test result as string
+     *
+     * @throws Exception
+     *
+     * @return mixed Returns the test result as array
+     */
+    public function checkTestResultValues(array $testResult, ?string $participationId = null, ?string $testResultUrl = null)
+    {
         if (isset($testResultUrl) && !$this->commonGroundService->isResource($testResultUrl)) {
             throw new Exception('Invalid request, testResultId is not an existing edu/result!');
         }
@@ -182,10 +262,21 @@ class TestResultService
         }
         // Make sure not to keep these values in the input/testResult body when doing and update
         unset($testResult['testResultId']);
+
         return $testResult;
     }
 
-    public function handleResult($testResult, $memo, $participationId = null) {
+    /**
+     * This function converts the test result array to an TestResult object.
+     *
+     * @param array       $testResult      Array with data of the given test result
+     * @param array       $memo            Array with data of the given memo
+     * @param string|null $participationId ID of the participation as string
+     *
+     * @return \App\Entity\TestResult
+     */
+    public function handleResult(array $testResult, array $memo, $participationId = null): TestResult
+    {
         // Put together the expected result for Lifely:
         $resource = new TestResult();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
@@ -204,7 +295,9 @@ class TestResultService
         if (isset($participationId)) {
             $resource->setParticipationId($participationId);
         }
+
         $this->entityManager->persist($resource);
+
         return $resource;
     }
 }

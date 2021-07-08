@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\PersonRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
@@ -55,7 +56,7 @@ class Person
     private string $givenName;
 
     /**
-     * @var ?string Additional name of this person
+     * @var string|null Additional name of this person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -63,7 +64,7 @@ class Person
     private ?string $additionalName;
 
     /**
-     * @var ?string Family name of this person
+     * @var string|null Family name of this person
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -72,15 +73,25 @@ class Person
     private ?string $familyName;
 
     /**
-     * @var ?string Gender of this person
+     * @var string|null Gender of this person
      *
      * @Groups({"read", "write"})
+     * @Assert\Choice({"Male", "Female"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"Male", "Female"},
+     *             "example"="Male"
+     *         }
+     *     }
+     * )
      */
     private ?string $gender;
 
     /**
-     * @var ?string Birthday of this person
+     * @var string|null Birthday of this person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -88,7 +99,7 @@ class Person
     private ?string $birthday;
 
     /**
-     * @var ?Address Address of this person
+     * @var Address|null Address of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
@@ -97,8 +108,9 @@ class Person
      */
     private ?Address $addresses;
 
+    // TODO:this should be a oneToMany so we can add an extra telephone for the $contactPersonTelephone of a student
     /**
-     * @var ?Telephone Telephone of this person
+     * @var Telephone|null Telephones of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
@@ -108,7 +120,7 @@ class Person
     private ?Telephone $telephones;
 
     /**
-     * @var ?Email Email of this person
+     * @var Email|null Email of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
@@ -118,7 +130,7 @@ class Person
     private ?Email $emails;
 
     /**
-     * @var ?Organization Organization of this person
+     * @var Organization|null Organization of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
@@ -242,6 +254,30 @@ class Person
     public function setOrganization(?Organization $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getContactPreference(): ?string
+    {
+        return $this->contactPreference;
+    }
+
+    public function setContactPreference(?string $contactPreference): self
+    {
+        $this->contactPreference = $contactPreference;
+
+        return $this;
+    }
+
+    public function getContactPreferenceOther(): ?string
+    {
+        return $this->contactPreferenceOther;
+    }
+
+    public function setContactPreferenceOther(?string $contactPreferenceOther): self
+    {
+        $this->contactPreferenceOther = $contactPreferenceOther;
 
         return $this;
     }

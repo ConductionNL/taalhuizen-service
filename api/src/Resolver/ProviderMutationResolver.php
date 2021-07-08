@@ -1,31 +1,42 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\Provider;
-use App\Service\ProviderService;
+use App\Service\CCService;
+use App\Service\EDUService;
+use App\Service\LayerService;
+use App\Service\MrcService;
+use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use SensioLabs\Security\Exception\HttpException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ProviderMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private ProviderService $providerService;
+    private ParameterBagInterface $parameterBagInterface;
+    private CCService $ccService;
+    private UcService $ucService;
+    private EDUService $eduService;
+    private MrcService $mrcService;
 
-    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, ProviderService $providerService)
-    {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->providerService = $providerService;
+    /**
+     * ProviderMutationResolver constructor.
+     *
+     * @param UcService    $ucService
+     * @param LayerService $layerService
+     */
+    public function __construct(
+        UcService $ucService,
+        LayerService $layerService
+    ) {
+        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ucService = $ucService;
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
+        $this->mrcService = new MrcService($layerService, $ucService);
     }
 
     /**
@@ -38,112 +49,82 @@ class ProviderMutationResolver implements MutationResolverInterface
         }
         switch ($context['info']->operation->name->value) {
             case 'createProvider':
-                return $this->createProvider($item);
+                return $this->createProvider($context['info']->variableValues['input']);
             case 'updateProvider':
                 return $this->updateProvider($context['info']->variableValues['input']);
             case 'removeProvider':
-                return $this->removeProvider($context['info']->variableValues['input']);
+                return $this->deleteProvider($context['info']->variableValues['input']);
             default:
                 return $item;
         }
     }
 
-    public function createProvider(Provider $resource): Provider
+    /**
+     * Create a Provider.
+     *
+     * @param array $providerArray the resource data.
+     *
+     * @return Provider The resulting Provider properties
+     */
+    public function createProvider(array $providerArray): Provider
     {
-        $result['result'] = [];
+        $type = 'Aanbieder';
+        $result = $this->ccService->createOrganization($providerArray, $type);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
 
-        // get all DTO info...
-        $provider = $this->dtoToProvider($resource);
-
-        $result = array_merge($result, $this->providerService->createProvider($provider));
-
-        if (isset($result['provider'])) {
-            // Now put together the expected result in $provider for Lifely:
-            $resourceResult = $this->providerService->handleResult($result['provider']);
-            $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
-        }
-
-        // If any error was catched throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-
-        return $resourceResult;
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Update a Provider.
+     *
+     * @param array $input the input data.
+     *
+     * @return Provider The resulting Provider properties
+     */
     public function updateProvider(array $input): Provider
     {
-        $result['result'] = [];
-
-        $providerId = explode('/', $input['id']);
-        if (is_array($providerId)) {
-            $providerId = end($providerId);
+        $id = explode('/', $input['id']);
+        if (is_array($id)) {
+            $id = end($id);
         }
-        // Transform input info to Provider body...
-        $provider = $this->inputToProvider($input);
+        $type = 'Aanbieder';
 
-        if (!isset($result['errorMessage'])) {
-            // No errors so lets continue... to:
-            // Save Provider
-            $result = array_merge($result, $this->providerService->updateProvider($provider, $providerId));
+        $result = $this->ccService->updateOrganization($id, $input);
+        $this->eduService->saveProgram($result);
+        $this->ucService->createUserGroups($result, $type);
 
-            if (isset($result['provider'])) {
-                // Now put together the expected result in $provider for Lifely:
-                $resourceResult = $this->providerService->handleResult($result['provider']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($result['provider']['id']));
-            }
-        }
-
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
-        $this->entityManager->persist($resourceResult);
-        return $resourceResult;
+        return $this->ccService->createOrganizationObject($result, $type);
     }
 
-    public function removeProvider(array $input): ?Provider
+    /**
+     * Delete a Provider.
+     *
+     * @param array $input the input data.
+     *
+     * @throws \Exception
+     *
+     * @return Provider The resulting Provider properties
+     */
+    public function deleteProvider(array $input): ?Provider
     {
-        $result['result'] = [];
-
         $id = explode('/', $input['id']);
-        $id = end($id);
-        $result = array_merge($result, $this->providerService->deleteProvider($id));
-
-        $result['result'] = False;
-        if (isset($result['provider'])){
-            $result['result'] = True;
+        if (is_array($id)) {
+            $id = end($id);
         }
 
-        // If any error was caught throw it
-        if (isset($result['errorMessage'])) {
-            throw new Exception($result['errorMessage']);
-        }
+        //delete userGroups
+        $this->ucService->deleteUserGroups($id);
+
+        //delete employees
+        $this->mrcService->deleteEmployees($id);
+
+        //delete participants, this should just be done with the studentService!
+        $programId = $this->eduService->deleteParticipants($id);
+
+        $this->ccService->deleteOrganization($id, $programId);
 
         return null;
     }
-
-    private function dtoToProvider(Provider $resource)
-    {
-        // Get all info from the dto for creating/updating a Provider and return the body for this
-        $provider['address'] = $resource->getAddress();
-        $provider['email'] = $resource->getEmail();
-        $provider['phoneNumber'] = $resource->getPhoneNumber();
-        $provider['name'] = $resource->getName();
-
-        return $provider;
-    }
-
-
-    private function inputToProvider(array $input)
-    {
-        // Get all info from the input array for updating a LearningNeed and return the body for this
-        $provider['address'] = $input['address'];
-        $provider['email'] = $input['email'];
-        $provider['phoneNumber'] = $input['phoneNumber'];
-        $provider['name'] = $input['name'];
-
-        return $provider;
-    }
-
 }

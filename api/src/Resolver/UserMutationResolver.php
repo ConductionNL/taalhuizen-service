@@ -1,26 +1,24 @@
 <?php
 
-
 namespace App\Resolver;
-
 
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\User;
 use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Exception;
 
 class UserMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private UcService $ucService;
 
-    public function __construct(EntityManagerInterface $entityManager, UcService $ucService){
+    public function __construct(EntityManagerInterface $entityManager, UcService $ucService)
+    {
         $this->entityManager = $entityManager;
         $this->ucService = $ucService;
     }
+
     /**
      * @inheritDoc
      */
@@ -29,7 +27,7 @@ class UserMutationResolver implements MutationResolverInterface
         if (!$item instanceof User && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createUser':
                 return $this->createUser($context['info']->variableValues['input']);
             case 'updateUser':
@@ -38,6 +36,8 @@ class UserMutationResolver implements MutationResolverInterface
                 return $this->deleteUser($context['info']->variableValues['input']);
             case 'loginUser':
                 return $this->login($context['info']->variableValues['input']);
+            case 'logoutUser':
+                return $this->logout();
             case 'requestPasswordResetUser':
                 return $this->requestPasswordReset($context['info']->variableValues['input']);
             case 'resetPasswordUser':
@@ -47,31 +47,70 @@ class UserMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Creates a user.
+     *
+     * @param array $userArray the input data for the user
+     *
+     * @return User The resulting user object
+     */
     public function createUser(array $userArray): User
     {
         return $this->ucService->createUser($userArray);
     }
 
+    /**
+     * Updates a user.
+     *
+     * @param array $input The input data for the user
+     *
+     * @return User The resulting user object
+     */
     public function updateUser(array $input): User
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
         $id = end($id);
+
         return $this->ucService->updateUser($id, $input);
     }
 
+    /**
+     * Deletes a user.
+     *
+     * @param array $user The input data for the user
+     *
+     * @return User|null The resulting user if the delete fails
+     */
     public function deleteUser(array $user): ?User
     {
-        $id = explode('/',$user['id']);
+        $id = explode('/', $user['id']);
         $id = end($id);
         $this->ucService->deleteUser($id);
+
         return null;
     }
 
+    /**
+     * Sets a new password for a user.
+     *
+     * @param array $input The input for the user
+     *
+     * @throws Exception Thrown if the JWT is invalid
+     *
+     * @return User The resulting user
+     */
     public function resetPassword(array $input): User
     {
         return $this->ucService->updatePasswordWithToken($input['email'], $input['token'], $input['password']);
     }
 
+    /**
+     * Logs in a user.
+     *
+     * @param array $user The username/password combination to log in the user
+     *
+     * @return User The resulting user
+     */
     public function login(array $user): User
     {
         $userObject = new User();
@@ -81,12 +120,33 @@ class UserMutationResolver implements MutationResolverInterface
         return $userObject;
     }
 
+    /**
+     * Requests a password reset for a user.
+     *
+     * @param array $input The input needed to retrieve a password reset token
+     *
+     * @return User|null The resulting user object
+     */
     public function requestPasswordReset(array $input): ?User
     {
         $userObject = new User();
-        $userObject->setToken($this->ucService->requestPasswordReset($input['email']));
+        $userObject->setToken($this->ucService->createPasswordResetToken($input['email']));
         $this->entityManager->persist($userObject);
 
         return $userObject;
+    }
+
+    /**
+     * Logs out the user by invalidating the user token.
+     *
+     * @throws \Psr\Cache\InvalidArgumentException Thrown when the cache cannot invalidate the token
+     *
+     * @return User|null The result of the logout action, usually null
+     */
+    public function logout(): ?User
+    {
+        $this->ucService->logout();
+
+        return null;
     }
 }

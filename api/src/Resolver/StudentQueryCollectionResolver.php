@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\ResolverService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use App\Entity\Student;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -19,15 +14,26 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
+    private ResolverService $resolverService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService){
+    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
+    {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
+     * This function determines what function to execute next based on the context.
+     *
      * @inheritDoc
-     * @throws Exception;
+     *
+     * @param object|null $item    Post object
+     * @param array       $context Information about post
+     *
+     * @throws \Exception
+     *
+     * @return iterable|object|null Returns a iterable
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
@@ -39,45 +45,36 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         }
         switch ($context['info']->operation->name->value) {
             case 'students':
-                return $this->createPaginator($this->students($context), $context['args']);
+                return $this->resolverService->createPaginator($this->students($context), $context['args']);
             case 'newRefferedStudents':
-                return $this->createPaginator($this->newRefferedStudents($context), $context['args']);
+                return $this->resolverService->createPaginator($this->newRefferedStudents($context), $context['args']);
             case 'activeStudents':
-                return $this->createPaginator($this->activeStudents($context), $context['args']);
+                return $this->resolverService->createPaginator($this->activeStudents($context), $context['args']);
             case 'completedStudents':
-                return $this->createPaginator($this->completedStudents($context), $context['args']);
+                return $this->resolverService->createPaginator($this->completedStudents($context), $context['args']);
             case 'groupStudents':
-                return $this->createPaginator($this->groupStudents($context), $context['args']);
+                return $this->resolverService->createPaginator($this->groupStudents($context), $context['args']);
             case 'aanbiederEmployeeMenteesStudents':
-                return $this->createPaginator($this->aanbiederEmployeeMenteesStudents($context), $context['args']);
+                return $this->resolverService->createPaginator($this->aanbiederEmployeeMenteesStudents($context), $context['args']);
             default:
-                return $this->createPaginator(new ArrayCollection(), $context['args']);
+                return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
+
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args){
-        if(key_exists('first', $args)){
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif(key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if(key_exists('after', $args)){
-            $firstItem = base64_decode($args['after']);
-        } elseif(key_exists('before', $args)){
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
-
+    /**
+     * This function checks if the students have a language house id.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null
+     */
     public function students(array $context): ?ArrayCollection
     {
-        if(key_exists('languageHouseId', $context['args'])){
-            $languageHouseId = explode('/',$context['args']['languageHouseId']);
+        if (key_exists('languageHouseId', $context['args'])) {
+            $languageHouseId = explode('/', $context['args']['languageHouseId']);
             if (is_array($languageHouseId)) {
                 $languageHouseId = end($languageHouseId);
             }
@@ -88,16 +85,29 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $languageHouseUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
         $query = [
             'program.provider' => $languageHouseUrl,
-            'status' => 'accepted'
+            'status'           => 'accepted',
         ];
 
+        return $this->handleStudentCollection($query);
+    }
+
+    /**
+     * This function handles the student collection query.
+     *
+     * @param array $query Array with query
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Returns ArrayCollection with students
+     */
+    public function handleStudentCollection(array $query): ArrayCollection
+    {
         $students = $this->studentService->getStudents($query);
 
         $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
+                $resourceResult = $this->studentService->handleResult($student);
                 $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                 $collection->add($resourceResult);
             }
@@ -106,10 +116,19 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $collection;
     }
 
+    /**
+     * This function checks if new referred students have a referred status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function newRefferedStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -120,10 +139,19 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'REFERRED');
     }
 
+    /**
+     * This function checks if students have a active status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function activeStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -134,10 +162,19 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'ACTIVE');
     }
 
+    /**
+     * This function checks if students have a completed status.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function completedStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('providerId', $context['args'])){
-            $providerId = explode('/',$context['args']['providerId']);
+        if (key_exists('providerId', $context['args'])) {
+            $providerId = explode('/', $context['args']['providerId']);
             if (is_array($providerId)) {
                 $providerId = end($providerId);
             }
@@ -148,10 +185,19 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         return $this->studentService->getStudentsWithStatus($providerId, 'COMPLETED');
     }
 
+    /**
+     * This function checks if students have a group.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function groupStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('groupId', $context['args'])){
-            $groupId = explode('/',$context['args']['groupId']);
+        if (key_exists('groupId', $context['args'])) {
+            $groupId = explode('/', $context['args']['groupId']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
@@ -161,28 +207,25 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
 
         $query = [
             'participantGroups.id' => $groupId,
-            'status' => 'accepted'
+            'status'               => 'accepted',
         ];
 
-        $students = $this->studentService->getStudents($query);
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->handleStudentCollection($query);
     }
 
+    /**
+     * This function checks if student have a aanbieder employee.
+     *
+     * @param array $context Array with context
+     *
+     * @throws \Exception
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection|null Returns ArrayCollection with students
+     */
     public function aanbiederEmployeeMenteesStudents(array $context): ?ArrayCollection
     {
-        if(key_exists('aanbiederEmployeeId', $context['args'])){
-            $aanbiederEmployeeId = explode('/',$context['args']['aanbiederEmployeeId']);
+        if (key_exists('aanbiederEmployeeId', $context['args'])) {
+            $aanbiederEmployeeId = explode('/', $context['args']['aanbiederEmployeeId']);
             if (is_array($aanbiederEmployeeId)) {
                 $aanbiederEmployeeId = end($aanbiederEmployeeId);
             }
@@ -193,21 +236,9 @@ class StudentQueryCollectionResolver implements QueryCollectionResolverInterface
         $mentorUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
         $query = [
             'mentor' => $mentorUrl,
-            'status' => 'accepted'
+            'status' => 'accepted',
         ];
 
-        $students = $this->studentService->getStudents($query);
-
-        $collection = new ArrayCollection();
-        // Now put together the expected result for Lifely:
-        foreach ($students as $student) {
-            if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
-                $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
-                $collection->add($resourceResult);
-            }
-        }
-
-        return $collection;
+        return $this->handleStudentCollection($query);
     }
 }

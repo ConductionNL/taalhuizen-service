@@ -47,7 +47,7 @@ class Email
     private UuidInterface $id;
 
     /**
-     * @var ?string Name of this email
+     * @var string|null Name of this email
      *
      * @Assert\Length(
      *     max = 255
@@ -58,15 +58,16 @@ class Email
     private ?string $name;
 
     /**
-     * @var ?string The actual mail address
+     * @var string The actual mail address
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $email;
+    private string $email;
 
     public function getId(): UuidInterface
     {
@@ -91,12 +92,12 @@ class Email
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 

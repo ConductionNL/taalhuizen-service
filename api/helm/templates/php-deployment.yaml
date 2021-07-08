@@ -54,6 +54,11 @@ spec:
                 configMapKeyRef:
                   name: {{ template "fullname" . }}
                   key: app-name
+            - name: APP_TITLE
+              valueFrom:
+                  configMapKeyRef:
+                      name: {{ template "fullname" . }}
+                      key: app-title
             - name: APP_DESCRIPTION
               valueFrom:
                 configMapKeyRef:
@@ -150,7 +155,7 @@ spec:
                 secretKeyRef:
                   name: {{ template "fullname" . }}
                   key: app_application_key
-            {{- if (eq $.Values.settings.type "application" ) }}
+            {{- if .Values.redis.enabled }}
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:

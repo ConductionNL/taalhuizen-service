@@ -1,50 +1,43 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use App\Entity\Group;
 use App\Service\EAVService;
 use App\Service\EDUService;
-use App\Entity\LanguageHouse;
-use App\Entity\User;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class GroupMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private EAVService $eavService;
     private EDUService $eduService;
     private CommonGroundService $commonGroundService;
 
-    public function __construct(EntityManagerInterface $entityManager, EAVService $eavService, EDUService $eduService, CommonGroundService $commonGroundService){
+    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService)
+    {
         $this->entityManager = $entityManager;
-        $this->eavService = $eavService;
-        $this->eduService = $eduService;
+        $this->eavService = new EAVService($commonGroundService);
+        $this->eduService = new EDUService($commonGroundService, $entityManager);
         $this->commonGroundService = $commonGroundService;
     }
+
     /**
      * @inheritDoc
+     *
+     * @throws Exception
      */
     public function __invoke($item, array $context)
     {
         if (!$item instanceof Group && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        /**@todo: changeTeacher,
-         * done: create, update, remove
-         */
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createGroup':
                 return $this->createGroup($item);
             case 'updateGroup':
@@ -58,6 +51,15 @@ class GroupMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Creates a new Group.
+     *
+     * @param Group $input the input data for the new Group.
+     *
+     * @throws Exception
+     *
+     * @return Group the created Group
+     */
     public function createGroup(Group $input): Group
     {
         $result['result'] = [];
@@ -65,29 +67,36 @@ class GroupMutationResolver implements MutationResolverInterface
         $group = $this->dtoToGroup($input);
         $course = $this->createCourse($group);
 
-        $result = array_merge($result,$this->checkGroupValues($group));
+        $result = array_merge($result, $this->checkGroupValues($group));
 
         if (!isset($result['errorMessage'])) {
+            $result = array_merge($result, $this->makeGroup($course, $result['group']));
 
-            $result = array_merge($result, $this->makeGroup($course, $group));
-
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $group['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
 
-        if (isset($result['errorMessage'])){
+        if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return $resourceResult;
     }
 
+    /**
+     * Updates an existing Group.
+     *
+     * @param array $groupArray the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group the updated Group.
+     */
     public function updateGroup(array $groupArray): Group
     {
-        $id = explode('/',$groupArray['id']);
+        $id = explode('/', $groupArray['id']);
         $id = end($id);
-        $aanbiederId = explode('/',$groupArray['aanbiederId']);
-        $groupArray['aanbiederId'] = end($aanbiederId);
         $result['result'] = [];
 
         $groupArray = array_merge(
@@ -95,27 +104,36 @@ class GroupMutationResolver implements MutationResolverInterface
             $groupArray
         );
         $course = $this->createCourse($groupArray);
-        $result = array_merge($result,$this->checkGroupValues($groupArray));
+        $result = array_merge($result, $this->checkGroupValues($groupArray));
 
         if (!isset($result['errorMessage'])) {
+            $result = array_merge($result, $this->makeGroup($course, $result['group'], $id));
 
-            $result = array_merge($result, $this->makeGroup($course, $groupArray, $id));
-
-            $resourceResult = $this->eduService->convertGroupObject($result['group']);
+            $resourceResult = $this->eduService->convertGroupObject($result['group'], $groupArray['aanbiederId']);
             $resourceResult->setId(Uuid::getFactory()->fromString($result['group']['id']));
             $this->entityManager->persist($resourceResult);
         }
 
-        if (isset($result['errorMessage'])){
+        if (isset($result['errorMessage'])) {
             throw new Exception($result['errorMessage']);
         }
+
         return $resourceResult;
     }
 
-    public function removeGroup($group): ?Group
+    /**
+     * Deletes a Group.
+     *
+     * @param array $group the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group|null null if successful.
+     */
+    public function removeGroup(array $group): ?Group
     {
         if (isset($group['id'])) {
-            $groupId = explode('/',$group['id']);
+            $groupId = explode('/', $group['id']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
@@ -128,191 +146,255 @@ class GroupMutationResolver implements MutationResolverInterface
         return null;
     }
 
-    public function changeTeachersOfTheGroup($input): ?Group
+    /**
+     * Changes the teachers of a group.
+     *
+     * @param array $input the input data for a Group.
+     *
+     * @throws Exception
+     *
+     * @return Group|null the updated Group.
+     */
+    public function changeTeachersOfTheGroup(array $input): ?Group
     {
         if (isset($input['id'])) {
-            $groupId = explode('/',$input['id']);
+            $groupId = explode('/', $input['id']);
             if (is_array($groupId)) {
                 $groupId = end($groupId);
             }
         } else {
             throw new Exception('No id was specified!');
         }
-        if (isset($input['aanbiederEmployeeIds'])){
+        if (isset($input['aanbiederEmployeeIds'])) {
             $employeeIds = $input['aanbiederEmployeeIds'];
-        }else{
+        } else {
             throw new Exception('No EmployeeIds were specified!');
         }
-        return $this->eduService->changeGroupTeachers($groupId,$employeeIds);
+
+        return $this->eduService->changeGroupTeachers($groupId, $employeeIds);
     }
 
-    public function createCourse($group){
-        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations','id' => $group['aanbiederId']]);
+    /**
+     * Creates an edu/course for a group.
+     *
+     * @param array $group the input data for a Group.
+     *
+     * @return array the created edu/course.
+     */
+    public function createCourse(array $group): array
+    {
+        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $group['aanbiederId']]);
         $course = [];
-        $course['name'] = 'course of '. $organization['name'];
+        $course['name'] = 'course of '.$organization['name'];
         $course['organization'] = $organization['@id'];
-        if ($this->eduService->hasProgram($organization)){
+        if ($this->eduService->hasProgram($organization)) {
             $program = $this->eduService->getProgram($organization);
-            $course['programs'][0] = $program;
+            $course['programs'][0] = '/programs/'.$program['id'];
         }
         $course['additionalType'] = $group['typeCourse'];
-        $course['timeRequired'] = (string)$group['detailsTotalClassHours'];
-        $course = $this->commonGroundService->saveResource($course,['component' => 'edu', 'type' => 'courses']);
-        return $course;
+        $course['timeRequired'] = (string) $group['totalClassHours'];
+
+        return $this->commonGroundService->saveResource($course, ['component' => 'edu', 'type' => 'courses']);
     }
 
-    public function makeGroup($course,$group,$groupId = null)
+    /**
+     * Makes a new edu/group object with the eav-component. Or updates an existing one.
+     *
+     * @param array       $course  the course this group is connected to.
+     * @param array       $group   the input data for a Group.
+     * @param string|null $groupId the id of an already existing group, to update it.
+     *
+     * @throws Exception
+     *
+     * @return array the result array, containing the created or updated group.
+     */
+    public function makeGroup(array $course, array $group, string $groupId = null): array
     {
-        $now = new DateTime('now', new DateTimeZone('Europe/Paris'));
-        $now = $now->format('d-m-Y H:i:s');
-
-        foreach($group as $key=>$value)
-        {
-            switch($key){
-                case 'outComesGoal':
-                    $group['goal'] = $value;
-                    break;
-                case 'aanbiederId':
-                    $group['aanbiederId'] = $value;
-                    break;
-                case 'id':
-                    $group['groupId'] = $value;
-                    break;
-                case 'outComesTopic':
-                    $group['topic'] = $value;
-                    break;
-                case 'outComesTopicOther':
-                    $group['topicOther'] = $value;
-                    break;
-                case 'outComesApplication':
-                    $group['application'] = $value;
-                    break;
-                case 'outComesApplicationOther':
-                    $group['applicationOther'] = $value;
-                    break;
-                case 'outComesLevel':
-                    $group['level'] = $value;
-                    break;
-                case 'outComesLevelOther':
-                    $group['levelOther'] = $value;
-                    break;
-                case 'detailsIsFormal':
-                    $group['isFormal'] = (bool)$value;
-                    break;
-                case 'detailsCertificateWillBeAwarded':
-                    $group['certificateWillBeAwarded'] = (bool)$value;
-                    break;
-                case 'detailsStartDate':
-                    if($value instanceof DateTime){
-                        $value = $value->format("YmdHis");
-                    }
-                    $group['startDate'] = $value;
-                    break;
-                case 'detailsEndDate':
-
-                    if($value instanceof DateTime){
-                        $value = $value->format("YmdHis");
-                    }
-                    $group['endDate'] = $value;
-                    break;
-                case 'generalLocation':
-                    $group['location'] = $value;
-                    break;
-                case 'generalParticipantsMin':
-                    $group['participantsMin'] = $value;
-                    break;
-                case 'generalParticipantsMax':
-                    $group['participantsMax'] = $value;
-                    break;
-                case 'generalEvaluation':
-                    $group['evaluation'] = $value;
-                    break;
-                case 'aanbiederEmployeeIds':
-                    $group['mentors'] = $value;
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (isset($groupId)){
+        $group['course'] = '/courses/'.$course['id'];
+        if (isset($groupId)) {
             //update
-            $group['course'] ='/courses/'.$course['id'];
-
-//            $group['dateModified'] = $now;
-           // var_dump($group);
-            $group = $this->eavService->saveObject($group,'groups','edu', $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId]));
-        }else{
+            $group = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'groups', 'id' => $groupId])]);
+        } else {
             //create
-            $group['course'] ='/courses/'.$course['id'];
-         //   var_dump($group);
-            $group = $this->eavService->saveObject($group,'groups','edu');
+            $group = $this->eavService->saveObject($group, ['entityName' => 'groups', 'componentCode' => 'edu']);
         }
         $result['group'] = $group;
+
         return $result;
     }
 
-    public function dtoToGroup(Group $resource){
-        if ($resource->getGroupId()){
+    /**
+     * This function converts the input data for creating a Group from the DTO to a valid Group body.
+     *
+     * @param Group $resource the Group DTO input.
+     *
+     * @return array a valid group body.
+     */
+    public function dtoToGroup(Group $resource): array
+    {
+        $group = [];
+        if ($resource->getGroupId()) {
             $group['GroupId'] = $resource->getGroupId();
         }
-        $aanbieder = explode('/', $resource->getAanbiederId());
-        if (is_array($aanbieder)) $aanbieder = end($aanbieder);
-        $group['aanbiederId'] = $aanbieder;
+        //set aanbieder
+        $group = $this->setAanbieder($resource, $group);
         $group['name'] = $resource->getName();
         $group['typeCourse'] = $resource->getTypeCourse();
-        $group['outComesGoal'] = $resource->getOutComesGoal();
-        $group['outComesTopic'] = $resource->getOutComesTopic();
-        if ($resource->getOutComesTopicOther()){
-            $group['outComesTopicOther'] = $resource->getOutComesTopicOther();
-        }
-        $group['outComesApplication'] = $resource->getOutComesApplication();
-        if ($resource->getOutComesApplicationOther()){
-            $group['outComesApplicationOther'] = $resource->getOutComesApplicationOther();
-        }
-        $group['outComesLevel'] = $resource->getOutComesLevel();
-        if ($resource->getOutComesLevelOther()){
-            $group['outComesLevelOther'] = $resource->getOutComesLevelOther();
-        }
-        $group['detailsIsFormal'] = $resource->getDetailsIsFormal();
-        $group['detailsTotalClassHours'] = $resource->getDetailsTotalClassHours();
-        $group['detailsCertificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
-        if ($resource->getDetailsStartDate()) {
-            $group['detailsStartDate'] = $resource->getDetailsStartDate();
-        }
-        if ($resource->getDetailsEndDate()){
-            $group['detailsEndDate'] = $resource->getDetailsEndDate();
-        }
-        if ($resource->getAvailability()){
-            $group['availability'] = $resource->getAvailability();
-        }
-        if ($resource->getAvailabilityNotes()){
-            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
-        }
-        $group['generalLocation'] = $resource->getGeneralLocation();
-        if ($resource->getGeneralParticipantsMin()) {
-            $group['generalParticipantsMin'] = $resource->getGeneralParticipantsMin();
-        }
-        if ($resource->getGeneralParticipantsMax()){
-            $group['generalParticipantsMax'] = $resource->getGeneralParticipantsMax();
-        }
-        if ($resource->getGeneralEvaluation()){
-            $group['generalEvaluation'] = $resource->getGeneralEvaluation();
+        $group['goal'] = $resource->getOutComesGoal();
+        $group['topic'] = $resource->getOutComesTopic();
+        $group['application'] = $resource->getOutComesApplication();
+        $group['level'] = $resource->getOutComesLevel();
+        //set outcomes other
+        $group = $this->setOutcomesOther($resource, $group);
+        $group['isFormal'] = (bool) $resource->getDetailsIsFormal();
+        $group['totalClassHours'] = $resource->getDetailsTotalClassHours();
+        $group['certificateWillBeAwarded'] = $resource->getDetailsCertificateWillBeAwarded();
+        // set detail dates
+        $group = $this->setDetailDates($resource, $group);
+        // set availabilities
+        $group = $this->setGroupAvailabilities($resource, $group);
+        $group['location'] = $resource->getGeneralLocation();
+        //set participant limits
+        $group = $this->setParticipantLimits($resource, $group);
+        if ($resource->getGeneralEvaluation()) {
+            $group['evaluation'] = $resource->getGeneralEvaluation();
         }
         $group['mentors'] = $resource->getAanbiederEmployeeIds();
+
         return $group;
     }
 
-    public function checkGroupValues($group){
-        $result = [];
-        if ($group['outComesTopic'] == 'OTHER' && !isset($group['outComesTopicOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
-        }elseif ($group['outComesApplication'] == 'OTHER' && !isset($group['outComesApplicationOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
-        }elseif ($group['outComesLevel'] == 'OTHER' && !isset($group['outComesLevelOther'])){
-            $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+    /**
+     * This function gets the aanbieder id from the given input Group DTO and adds it to the given group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group    the group array.
+     *
+     * @return array the group body now containing the aanbiederId.
+     */
+    public function setAanbieder(Group $resource, array $group): array
+    {
+        $aanbieder = explode('/', $resource->getAanbiederId());
+        if (is_array($aanbieder)) {
+            $aanbieder = end($aanbieder);
         }
-        $result['group'] = $group;
-        return $result;
+        $group['aanbiederId'] = $aanbieder;
+
+        return $group;
     }
 
+    /**
+     * This function checks if the topic, application and level 'other' inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group    the group array.
+     *
+     * @return array a valid group body containing the other options if they where set in the input.
+     */
+    public function setOutcomesOther(Group $resource, array $group): array
+    {
+        if ($resource->getOutComesTopicOther()) {
+            $group['topicOther'] = $resource->getOutComesTopicOther();
+        }
+        if ($resource->getOutComesApplicationOther()) {
+            $group['applicationOther'] = $resource->getOutComesApplicationOther();
+        }
+        if ($resource->getOutComesLevelOther()) {
+            $group['levelOther'] = $resource->getOutComesLevelOther();
+        }
+
+        return $group;
+    }
+
+    /**
+     * This function checks if the startDate and endDate inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group    the group array.
+     *
+     * @return array a valid group body containing the startDate and/or endDate if they where set in the input.
+     */
+    public function setDetailDates(Group $resource, array $group): array
+    {
+        if ($resource->getDetailsStartDate()) {
+            $group['startDate'] = $resource->getDetailsStartDate();
+        }
+        if ($resource->getDetailsEndDate()) {
+            $group['endDate'] = $resource->getDetailsEndDate();
+        }
+
+        return $group;
+    }
+
+    /**
+     * This function checks if the participantsMin and participantsMax inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group    the group array.
+     *
+     * @return array a valid group body containing the participantsMin and/or participantsMax if they where set in the input.
+     */
+    public function setParticipantLimits(Group $resource, array $group): array
+    {
+        if ($resource->getGeneralParticipantsMin()) {
+            $group['participantsMin'] = $resource->getGeneralParticipantsMin();
+        }
+        if ($resource->getGeneralParticipantsMax()) {
+            $group['participantsMax'] = $resource->getGeneralParticipantsMax();
+        }
+
+        return $group;
+    }
+
+    /**
+     * This function checks if the availability and availabilityNotes inputs are set when creating a new Group.
+     * For each one that is set, it will be added to the group array.
+     *
+     * @param Group $resource the Group DTO input.
+     * @param array $group    the group array.
+     *
+     * @return array a valid group body containing the availability and/or availabilityNotes if they where set in the input.
+     */
+    public function setGroupAvailabilities(Group $resource, array $group): array
+    {
+        if ($resource->getAvailability()) {
+            $group['availability'] = $resource->getAvailability();
+        }
+        if ($resource->getAvailabilityNotes()) {
+            $group['availabilityNotes'] = $resource->getAvailabilityNotes();
+        }
+
+        return $group;
+    }
+
+    /**
+     * This function checks if the given group body is valid to use to create or update a Group.
+     *
+     * @param array $group the body of a Group.
+     *
+     * @return array the result array containing the group or an errorMessage.
+     */
+    public function checkGroupValues(array $group): array
+    {
+        $result = [];
+        if ($group['topic'] == 'OTHER' && !isset($group['topicOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
+        } elseif ($group['application'] == 'OTHER' && !isset($group['applicationOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
+        } elseif ($group['level'] == 'OTHER' && !isset($group['levelOther'])) {
+            $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
+        }
+        if ($group['startDate'] instanceof DateTime) {
+            $group['startDate'] = $group['startDate']->format('YmdHis');
+        }
+        if ($group['endDate'] instanceof DateTime) {
+            $group['endDate'] = $group['endDate']->format('YmdHis');
+        }
+        $result['group'] = $group;
+
+        return $result;
+    }
 }

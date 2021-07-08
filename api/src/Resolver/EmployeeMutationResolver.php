@@ -1,30 +1,34 @@
 <?php
 
-
 namespace App\Resolver;
 
-
 use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
-use App\Entity\Address;
-use App\Entity\Document;
 use App\Entity\Employee;
-use App\Entity\LanguageHouse;
-use App\Entity\User;
+use App\Service\LayerService;
 use App\Service\MrcService;
+use App\Service\ParticipationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Exception;
 
 class EmployeeMutationResolver implements MutationResolverInterface
 {
-
     private EntityManagerInterface $entityManager;
     private MrcService $mrcService;
+    private ParticipationService $participationService;
 
-    public function __construct(EntityManagerInterface $entityManager, MrcService $mrcService){
-        $this->entityManager = $entityManager;
+    /**
+     * EmployeeMutationResolver constructor.
+     *
+     * @param MrcService   $mrcService
+     * @param LayerService $layerService
+     */
+    public function __construct(MrcService $mrcService, LayerService $layerService)
+    {
+        $this->entityManager = $layerService->entityManager;
         $this->mrcService = $mrcService;
+        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
+
     /**
      * @inheritDoc
      */
@@ -33,33 +37,79 @@ class EmployeeMutationResolver implements MutationResolverInterface
         if (!$item instanceof Employee && !key_exists('input', $context['info']->variableValues)) {
             return null;
         }
-        switch($context['info']->operation->name->value){
+        switch ($context['info']->operation->name->value) {
             case 'createEmployee':
                 return $this->createEmployee($context['info']->variableValues['input']);
             case 'updateEmployee':
                 return $this->updateEmployee($context['info']->variableValues['input']);
             case 'removeEmployee':
                 return $this->deleteEmployee($context['info']->variableValues['input']);
+            case 'addMentoredParticipationToEmployee':
+                return $this->addMentorToParticipation($context['info']->variableValues['input']);
             default:
                 return $item;
         }
     }
 
+    /**
+     * Creates an employee.
+     *
+     * @param array $employeeArray The input data for an employee
+     *
+     * @throws Exception Thrown when the EAV cannot handle the employee
+     *
+     * @return Employee The resulting employee
+     */
     public function createEmployee(array $employeeArray): Employee
     {
         return $this->mrcService->createEmployee($employeeArray);
     }
 
+    /**
+     * @param array $input The input data for the employee
+     *
+     * @throws Exception Thrown when the EAV cannot handle the employee
+     *
+     * @return Employee The resulting employee
+     */
     public function updateEmployee(array $input): Employee
     {
-        $id = explode('/',$input['id']);
-        return $this->mrcService->updateEmployee(end($id), $input);
+        $id = explode('/', $input['id']);
+
+        return $this->mrcService->createEmployeeObject($this->mrcService->updateEmployeeArray(end($id), $input));
     }
 
+    /**
+     * Deletes a user.
+     *
+     * @param array $input The data needed to delete the employee
+     *
+     * @throws Exception Thrown when the EAV cannot handle the deletion of the employee
+     *
+     * @return Employee|null The resulting employee (usually null)
+     */
     public function deleteEmployee(array $input): ?Employee
     {
-        $id = explode('/',$input['id']);
+        $id = explode('/', $input['id']);
         $this->mrcService->deleteEmployee(end($id));
+
         return null;
+    }
+
+    /**
+     * Adds an employee as mentor to a participation.
+     *
+     * @param array $input The inputted data needed to perform this operation
+     *
+     * @throws Exception Thrown if the EAV cannot handle the action
+     *
+     * @return Employee The resulting employee object
+     */
+    public function addMentorToParticipation(array $input): Employee
+    {
+        $participationId = explode('/', $input['participationId']);
+        $aanbiederEmployeeId = explode('/', $input['aanbiederEmployeeId']);
+
+        return $this->participationService->addMentoredParticipationToEmployee(end($participationId), end($aanbiederEmployeeId));
     }
 }

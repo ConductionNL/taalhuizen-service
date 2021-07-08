@@ -2,26 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\StudentCourseRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=StudentCourseRepository::class)
  */
 class StudentCourse
@@ -36,46 +33,85 @@ class StudentCourse
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var bool|null A boolean that is true if this student is following a course right now.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isFollowingCourseRightNow;
+    private ?bool $isFollowingCourseRightNow;
 
     /**
+     * @var String|null The name of the course this student is following.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $courseName;
+    private ?string $courseName;
 
     /**
+     * @var String|null The type of teacher this student has for his course.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
      */
-    private $courseTeacher;
+    private ?string $courseTeacher;
 
     /**
+     * @var String|null The group type, Individually or Group, of the course this student is following.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
      */
-    private $courseGroup;
+    private ?string $courseGroup;
 
     /**
+     * @var int|null The amount of hours the course takes, that this student is following.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $amountOfHours;
+    private ?int $amountOfHours;
 
     /**
+     * @var bool|null A boolean that is true if the course this student is following provides a certificate when completed.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $doesCourseProvideCertificate;
+    private ?bool $doesCourseProvideCertificate;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

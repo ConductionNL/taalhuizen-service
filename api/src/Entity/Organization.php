@@ -58,7 +58,7 @@ class Organization
     private string $name;
 
     /**
-     * @var ?Telephone Telephone of this organization
+     * @var Telephone|null Telephone of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
@@ -68,7 +68,7 @@ class Organization
     private ?Telephone $telephones;
 
     /**
-     * @var ?Email Email of this organization
+     * @var Email|null Email of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
@@ -78,7 +78,7 @@ class Organization
     private ?Email $emails;
 
     /**
-     * @var ?string Type of this organization
+     * @var string|null Type of this organization
      *
      * @Assert\Length(
      *     max = 255
@@ -89,7 +89,7 @@ class Organization
     private ?string $type;
 
     /**
-     * @var ?Address Address of this organization
+     * @var Address|null Address of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})

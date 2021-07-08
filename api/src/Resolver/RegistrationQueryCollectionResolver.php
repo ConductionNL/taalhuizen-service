@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Resolver;
 
-
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\ResolverService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use ContainerB9GRdr1\getDebug_Security_UserValueResolverService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -19,11 +14,19 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
 {
     private CommonGroundService $commonGroundService;
     private StudentService $studentService;
+    private ResolverService $resolverService;
 
+    /**
+     * RegistrationQueryCollectionResolver constructor.
+     *
+     * @param CommongroundService $commonGroundService
+     * @param StudentService      $studentService
+     */
     public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
     {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
@@ -36,32 +39,23 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         }
         switch ($context['info']->operation->name->value) {
             case 'registrations':
-                return $this->createPaginator($this->students($context), $context['args']);
+                return $this->resolverService->createPaginator($this->students($context), $context['args']);
+
             default:
-                return $this->createPaginator(new ArrayCollection(), $context['args']);
+                return $this->resolverService->createPaginator(new ArrayCollection(), $context['args']);
+
         }
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args)
-    {
-        if (key_exists('first', $args)) {
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif (key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
-        }
-        if (key_exists('after', $args)) {
-            $firstItem = base64_decode($args['after']);
-        } elseif (key_exists('before', $args)) {
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
-    }
-
+    /**
+     * Gets all the students with the languageHouseId.
+     *
+     * @param array $context The context data.
+     *
+     * @throws Exception
+     *
+     * @return ArrayCollection The resulting Student ArrayCollection object
+     */
     public function students(array $context): ?ArrayCollection
     {
         if (key_exists('languageHouseId', $context['args'])) {
@@ -82,11 +76,12 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         // Now put together the expected result for Lifely:
         foreach ($students as $student) {
             if (isset($student['participant']['id'])) {
-                $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo'], true);
+                $resourceResult = $this->studentService->handleResult($student, true);
                 $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
                 $collection->add($resourceResult);
             }
         }
+
         return $collection;
     }
 }

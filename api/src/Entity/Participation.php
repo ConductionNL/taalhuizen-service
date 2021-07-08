@@ -60,17 +60,9 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *              "validate" = false,
  *              "write" = false
  *          },
- *          "addMentorTo" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
  *          "removeMentorFrom" = {
  *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
+ *              "args" = {"participationId"={"type" = "ID!"}, "providerEmployeeId"={"type" = "ID!"}},
  *              "read" = false,
  *              "deserialize" = false,
  *              "validate" = false,
@@ -374,6 +366,7 @@ class Participation
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

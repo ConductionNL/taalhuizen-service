@@ -1,14 +1,21 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FConductionNL%2Ftaalhuizen-service?ref=badge_shield)
+[![BCH compliance](https://bettercodehub.com/edge/badge/ConductionNL/taalhuizen-service?branch=master)](https://bettercodehub.com/results/ConductionNL/taalhuizen-service)
+[![StyleCI](https://github.styleci.io/repos/355113584/shield?branch=master)](https://github.styleci.io/repos/355113584)
+[![Docker Image CI](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml/badge.svg)](https://github.com/ConductionNL/taalhuizen-service/actions/workflows/dockerimage.yml)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/taalhuizen-service)](https://artifacthub.io/packages/helm/taalhuizen-service/taalhuizen-service)
+[![Componenten Catalogus](https://img.shields.io/badge/vng--componentencatalogus-posted-green)](https://componentencatalogus.commonground.nl/componenten/180?)
+[![codecov](https://codecov.io/gh/ConductionNL/taalhuizen-service/branch/master/graph/badge.svg?token=UP5F3S1SVS)](https://codecov.io/gh/ConductionNL/taalhuizen-service)
+[![Status badge](https://shields.api-test.nl/endpoint.svg?style=for-the-badge&url=https%3A//api-test.nl/api/v1/provider-latest-badge/e97a7133-21b5-4a7d-bcbf-b41fe257e142/)](https://api-test.nl/server/4/323b99e2-9bdc-4fc3-9c7d-ab4efade07e7/e97a7133-21b5-4a7d-bcbf-b41fe257e142/latest/)
+
 # Readme
 -------
-Welcome to the the VNG Common Ground proto component!
+Welcome to the the Taalhuizen component!
 
-This "proto" component provides a plug and play solution for component generation on Common Ground. That means that it takes away all the hassle of setting op codebases, containers and following the VNG Api Standaard. It does all that for you! 
-
-For that we use **[Api Platform](https://api-platform.com)**, a next-generation web framework designed to easily create API-first projects, without compromising extensibility and flexibility. 
+This component is developed for BISC (https://www.biscutrecht.nl/) as a part of the TOP application. The Taalhuizen component provides a service for the Taalhuizen frontend and is situated on the businesslogic layer of the common ground architectural model (https://commonground.pleio-test.nl/cms/view/31b19f4f-0e71-404b-aec0-db0e989854f3/over-common-ground/1544dde9-d6f3-4846-b8a5-7c999b346bbb). It function is to connect the front-end to the back-end components and apply business rules.
 
 Getting started
 -------
-Do you want to create your own Commonground component? Take a look at our in depht [tutorial](TUTORIAL.md) on spinning up your own component!
+To get started you need to install the TOP application. You can find more information on: https://commonground.nl/cms/view/12f73f0d-ae26-4021-ba52-849eef37d11f/de-common-ground-principes/5755e446-ba18-41ec-9463-b40c03258db1
 
 The commonground bundle
 -------
@@ -23,7 +30,7 @@ Be sure to read our [design considerations](/design.md) concerning the [VNG Api 
 
 Requesting features
 -------
-Do you need a feature that is not on this list? don't hesitate to send us a [feature request](https://github.com/ConductionNL/commonground-component/issues/new?assignees=&labels=&template=feature_request.md&title=).  
+Do you need a feature that is not on this list? don't hesitate to send us a [feature request]
 
 Staying up to date
 -------

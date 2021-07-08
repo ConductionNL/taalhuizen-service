@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -8,23 +7,20 @@ use App\Entity\Participation;
 use App\Service\EAVService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\Response;
 
 class ParticipationSubscriber implements EventSubscriberInterface
 {
-    private $em;
-    private $params;
+    private $entityManager;
     private $commonGroundService;
     private $eavService;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, CommongroundService $commonGroundService, EAVService $eavService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, EAVService $eavService)
     {
-        $this->em = $em;
-        $this->params = $params;
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
     }
@@ -108,11 +104,12 @@ class ParticipationSubscriber implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    private function checkDtoValues(Participation $resource, $aanbiederUrl, $learningNeedId) {
+    private function checkDtoValues(Participation $resource, $aanbiederUrl, $learningNeedId)
+    {
         $result = [];
         if ($resource->getOutComesTopic() == 'OTHER' && !$resource->getOutComesTopicOther()) {
             $result['errorMessage'] = 'Invalid request, outComesTopicOther is not set!';
-        } elseif($resource->getOutComesApplication() == 'OTHER' && !$resource->getOutComesApplicationOther()) {
+        } elseif ($resource->getOutComesApplication() == 'OTHER' && !$resource->getOutComesApplicationOther()) {
             $result['errorMessage'] = 'Invalid request, outComesApplicationOther is not set!';
         } elseif ($resource->getOutComesLevel() == 'OTHER' && !$resource->getOutComesLevelOther()) {
             $result['errorMessage'] = 'Invalid request, outComesLevelOther is not set!';
@@ -121,10 +118,12 @@ class ParticipationSubscriber implements EventSubscriberInterface
         } elseif (($resource->getLearningNeedId() || $resource->getLearningNeedUrl()) and !$this->eavService->hasEavObject(null, 'learning_needs', $learningNeedId)) {
             $result['errorMessage'] = 'Invalid request, learningNeedId and/or learningNeedUrl is not an existing eav/learning_need!';
         }
+
         return $result;
     }
 
-    private function dtoToParticipation(Participation $resource) {
+    private function dtoToParticipation(Participation $resource)
+    {
         // Get all info from the dto for creating/updating a LearningNeed and return the body for this
         $participation['goal'] = $resource->getOutComesGoal();
         $participation['topic'] = $resource->getOutComesTopic();
@@ -142,6 +141,7 @@ class ParticipationSubscriber implements EventSubscriberInterface
         if ($resource->getDetailsEngagements()) {
             $participation['offerEngagements'] = $resource->getDetailsEngagements();
         }
+
         return $participation;
     }
 }

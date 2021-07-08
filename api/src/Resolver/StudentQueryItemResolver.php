@@ -1,39 +1,43 @@
 <?php
 
-
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryItemResolverInterface;
 use App\Service\StudentService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use App\Entity\Student;
 
 class StudentQueryItemResolver implements QueryItemResolverInterface
 {
-    private CommonGroundService $commonGroundService;
     private StudentService $studentService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService){
-        $this->commonGroundService = $commonGroundService;
+    public function __construct(StudentService $studentService)
+    {
         $this->studentService = $studentService;
     }
 
     /**
+     * This function fetches a student with the given ID.
+     *
      * @inheritDoc
-     * @throws Exception;
+     *
+     * @param object|null $item    Object with the students data
+     * @param array       $context Context of the call
+     *
+     * @throws \Exception
+     *
+     * @return object Returns a student object
      */
-    public function __invoke($item, array $context)
+    public function __invoke($item, array $context): object
     {
-        if(key_exists('studentId', $context['info']->variableValues)){
+        if (key_exists('studentId', $context['info']->variableValues)) {
             $studentId = $context['info']->variableValues['studentId'];
         } elseif (key_exists('id', $context['args'])) {
             $studentId = $context['args']['id'];
         } else {
             throw new Exception('The studentId was not specified');
         }
-        $studentId = explode('/',$studentId);
+        $studentId = explode('/', $studentId);
         if (is_array($studentId)) {
             $studentId = end($studentId);
         }
@@ -41,7 +45,7 @@ class StudentQueryItemResolver implements QueryItemResolverInterface
         $student = $this->studentService->getStudent($studentId);
 
         if (isset($student['participant']['id'])) {
-            $resourceResult = $this->studentService->handleResult($student['person'], $student['participant'], $student['employee'], $student['registrarPerson'], $student['registrarOrganization'], $student['registrarMemo']);
+            $resourceResult = $this->studentService->handleResult($student);
             $resourceResult->setId(Uuid::getFactory()->fromString($student['participant']['id']));
         } else {
             throw new Exception('No participation id was found for this student!');

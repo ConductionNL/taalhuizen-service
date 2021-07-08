@@ -1,48 +1,46 @@
 <?php
 
-
 namespace App\Resolver;
 
-
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
 use App\Service\LearningNeedService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use App\Service\ResolverService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
 class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private CommonGroundService $commonGroundService;
+    private ResolverService $resolverService;
     private LearningNeedService $learningNeedService;
 
-    public function __construct(CommongroundService $commonGroundService, LearningNeedService $learningNeedService){
-        $this->commonGroundService = $commonGroundService;
+    /**
+     * LearningNeedQueryCollectionResolver constructor.
+     *
+     * @param ResolverService     $resolverService
+     * @param LearningNeedService $learningNeedService
+     */
+    public function __construct(ResolverService $resolverService, LearningNeedService $learningNeedService)
+    {
+        $this->resolverService = $resolverService;
         $this->learningNeedService = $learningNeedService;
     }
 
     /**
      * @inheritDoc
+     *
      * @throws Exception;
      */
     public function __invoke(iterable $collection, array $context): iterable
     {
         $result['result'] = [];
-        if(key_exists('studentId', $context['args'])){
-            $studentId = explode('/',$context['args']['studentId']);
-            if (is_array($studentId)) {
-                $studentId = end($studentId);
-            }
-        } else {
+
+        if (!key_exists('studentId', $context['args'])) {
             throw new Exception('The studentId was not specified');
         }
-
+        $studentId = $this->handleStudentId($context);
         // Get the learningNeeds of this student from EAV
         $result = array_merge($result, $this->learningNeedService->getLearningNeeds($studentId));
-
         $collection = new ArrayCollection();
         if (isset($result['learningNeeds'])) {
             // Now put together the expected result for Lifely:
@@ -51,7 +49,7 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
                     $resourceResult = $this->learningNeedService->handleResult($learningNeed, $studentId);
                     $resourceResult->setId(Uuid::getFactory()->fromString($learningNeed['id']));
                     $collection->add($resourceResult);
-                    $learningNeed = $learningNeed['@id']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
+                    $learningNeed = $learningNeed['@eav']; // Can be removed to show the entire body of all the learningNeeds when dumping $result
                 }
             }
         }
@@ -61,25 +59,23 @@ class LearningNeedQueryCollectionResolver implements QueryCollectionResolverInte
             throw new Exception($result['errorMessage']);
         }
 
-        return $this->createPaginator($collection, $context['args']);
+        return $this->resolverService->createPaginator($collection, $context['args']);
     }
 
-    public function createPaginator(ArrayCollection $collection, array $args){
-        if(key_exists('first', $args)){
-            $maxItems = $args['first'];
-            $firstItem = 0;
-        } elseif(key_exists('last', $args)) {
-            $maxItems = $args['last'];
-            $firstItem = (count($collection) - 1) - $maxItems;
-        } else {
-            $maxItems = count($collection);
-            $firstItem = 0;
+    /**
+     * This function gets the student (edu/participant) id from the given input context.
+     *
+     * @param array $context the context from the api call.
+     *
+     * @return string the student id.
+     */
+    public function handleStudentId(array $context): string
+    {
+        $studentId = explode('/', $context['args']['studentId']);
+        if (is_array($studentId)) {
+            $studentId = end($studentId);
         }
-        if(key_exists('after', $args)){
-            $firstItem = base64_decode($args['after']);
-        } elseif(key_exists('before', $args)){
-            $firstItem = base64_decode($args['before']) - $maxItems;
-        }
-        return new ArrayPaginator($collection->toArray(), $firstItem, $maxItems);
+
+        return $studentId;
     }
 }
