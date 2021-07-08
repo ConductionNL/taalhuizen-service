@@ -23,56 +23,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = LearningNeedQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = LearningNeedQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     },
- *  collectionOperations={
- *          "get",
- *          "get_learning_need"={
- *              "method"="GET",
- *              "path"="/learning_needs/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific learningNeed",
- *                  "description"="Returns a learningNeed"
- *              }
- *          },
- *          "delete_learning_need"={
- *              "method"="GET",
- *              "path"="/learning_needs/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific learningNeed",
- *                  "description"="Returns true if this learningNeed was deleted"
- *              }
- *          },
- *          "post"
- *     },
- * )
+ *     })
  * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
@@ -91,7 +42,6 @@ class LearningNeed
      */
     private UuidInterface $id;
 
-// @todo outcomes properties toevoegen
     /**
      * @var string Description of this learning need.
      *
@@ -117,109 +67,14 @@ class LearningNeed
     private string $motivation;
 
     /**
-     * @var string Desired out comes goal of this learning need.
+     * @var ?LearningNeedOutCome The learning need out come of this learning need.
      *
-     * @Assert\NotNull
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private string $desiredOutComesGoal;
-
-    /**
-     * @var string Desired out comes topic of this learning need.
-     *
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
-     *
-     * @Assert\NotNull
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"},
-     *             "example"="DUTCH_READING"
-     *         }
-     *     }
-     * )
-     */
-    private string $desiredOutComesTopic;
-
-    /**
-     * @var ?string Desired outcomes topic other of this learning need.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $desiredOutComesTopicOther;
-
-    /**
-     * @var string Desired out comes topic of this learning need.
-     *
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     *
-     * @Assert\NotNull
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"},
-     *             "example"="FAMILY_AND_PARENTING"
-     *         }
-     *     }
-     * )
-     */
-    private string $desiredOutComesApplication;
-
-    /**
-     * @var ?string Desired out comes application other of this learning need.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $desiredOutComesApplicationOther;
-
-    /**
-     * @var string Desired out comes level of this learning need.
-     *
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     *
-     * @Assert\NotNull
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"},
-     *             "example"="INFLOW"
-     *         }
-     *     }
-     * )
-     */
-    private string $desiredOutComesLevel;
-
-    /**
-     * @var ?string Desired out comes level other of this learning need.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $desiredOutComesLevelOther;
+    private ?LearningNeedOutCome $learningNeedOutCome;
 
     /**
      * @var string Offer desired offer of this learning need.
@@ -347,86 +202,14 @@ class LearningNeed
         return $this;
     }
 
-    public function getDesiredOutComesGoal(): string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->desiredOutComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setDesiredOutComesGoal(string $desiredOutComesGoal): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->desiredOutComesGoal = $desiredOutComesGoal;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesTopic(): string
-    {
-        return $this->desiredOutComesTopic;
-    }
-
-    public function setDesiredOutComesTopic(string $desiredOutComesTopic): self
-    {
-        $this->desiredOutComesTopic = $desiredOutComesTopic;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesTopicOther(): ?string
-    {
-        return $this->desiredOutComesTopicOther;
-    }
-
-    public function setDesiredOutComesTopicOther(?string $desiredOutComesTopicOther): self
-    {
-        $this->desiredOutComesTopicOther = $desiredOutComesTopicOther;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesApplication(): string
-    {
-        return $this->desiredOutComesApplication;
-    }
-
-    public function setDesiredOutComesApplication(string $desiredOutComesApplication): self
-    {
-        $this->desiredOutComesApplication = $desiredOutComesApplication;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesApplicationOther(): ?string
-    {
-        return $this->desiredOutComesApplicationOther;
-    }
-
-    public function setDesiredOutComesApplicationOther(?string $desiredOutComesApplicationOther): self
-    {
-        $this->desiredOutComesApplicationOther = $desiredOutComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesLevel(): string
-    {
-        return $this->desiredOutComesLevel;
-    }
-
-    public function setDesiredOutComesLevel(string $desiredOutComesLevel): self
-    {
-        $this->desiredOutComesLevel = $desiredOutComesLevel;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesLevelOther(): ?string
-    {
-        return $this->desiredOutComesLevelOther;
-    }
-
-    public function setDesiredOutComesLevelOther(?string $desiredOutComesLevelOther): self
-    {
-        $this->desiredOutComesLevelOther = $desiredOutComesLevelOther;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }

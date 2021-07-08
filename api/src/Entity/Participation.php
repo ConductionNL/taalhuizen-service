@@ -32,88 +32,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ParticipationQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = ParticipationQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeMentorFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "providerEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateMentor" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "addGroupTo" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateGroup" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeGroupFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     })
  * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
@@ -176,6 +95,16 @@ class Participation
     private ?string $organizationNote;
 
     /**
+     * @var ?LearningNeedOutCome The learning need out come of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?LearningNeedOutCome $learningNeedOutCome;
+
+    /**
      * @var ?string Offer name of this participation
      *
      * @Assert\Length(
@@ -204,65 +133,6 @@ class Participation
      * )
      */
     private ?string $offerCourse;
-
-    /**
-     * @var ?bool Details is formal of this participation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $detailsIsFormal;
-
-    /**
-     * @var ?string Details group formation of this participation.
-     *
-     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
-     *             "example"="INDIVIDUALLY"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $detailsGroupFormation;
-
-    /**
-     * @var ?float Details total class hours of this participation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private ?float $detailsTotalClassHours;
-
-    /**
-     * @var ?bool Details certificate will be awarded of this participation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $detailsCertificateWillBeAwarded;
-
-    /**
-     * @var ?DateTime Details start date of this participation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTime $detailsStartDate;
-
-    /**
-     * @var ?DateTime Details end date of this participation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTime $detailsEndDate;
 
     /**
      * @var ?string Details engagements of this participation
@@ -430,74 +300,14 @@ class Participation
         return $this;
     }
 
-    public function getDetailsIsFormal(): ?bool
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->detailsIsFormal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setDetailsIsFormal(?bool $detailsIsFormal): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->detailsIsFormal = $detailsIsFormal;
-
-        return $this;
-    }
-
-    public function getDetailsGroupFormation(): ?string
-    {
-        return $this->detailsGroupFormation;
-    }
-
-    public function setDetailsGroupFormation(?string $detailsGroupFormation): self
-    {
-        $this->detailsGroupFormation = $detailsGroupFormation;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): ?float
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(?float $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): ?bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }

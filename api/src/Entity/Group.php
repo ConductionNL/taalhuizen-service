@@ -27,57 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = GroupQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "write" = false,
- *
- *          },
- *          "update" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "active" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "future" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "completed" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "participantsOfThe" = {
- *              "collection_query" = GroupQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
- *          "changeTeachersOfThe" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     })
  * @ORM\Entity(repositoryClass=GroupRepository::class)
  * @ApiFilter(SearchFilter::class, properties={"aanbiederId" = "exact"})
  * @ORM\Table(name="`group`")
