@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * All properties that the DTO entity User holds.
  *
- * The main entity associated with this DTO is the uc/User https://taalhuizen-bisc.commonground.nu/api/v1/uc#tag/User.
+ * The main entity associated with this DTO is the uc/User: https://taalhuizen-bisc.commonground.nu/api/v1/uc#tag/User.
  * DTO User exists of at least a username, a password and a Person.
  * And can also have a organization (id and/or name), a userEnvironment, 0 or more userRoles and a password reset token.
  *

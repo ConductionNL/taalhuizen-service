@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * All properties that the DTO entity Student holds.
  *
- * The main entity associated with this DTO is the edu/Participant https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
+ * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
  * DTO Student exists of a few properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Participant.
  * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16795
  * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-76.

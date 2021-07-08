@@ -13,6 +13,10 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * All properties that the DTO entity Report holds.
+ *
+ * DTO Report exists of variables based on the following jira epics: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=17185%2C17210
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},

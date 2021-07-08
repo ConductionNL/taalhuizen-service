@@ -18,6 +18,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Registration holds.
+ *
+ * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
+ * DTO Registration exists of variables based on the following jira epics: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16794%2C16925.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-166.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -25,7 +31,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get",
  *          "post",
  *     })
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
 class Registration
