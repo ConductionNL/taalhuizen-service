@@ -2,12 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AvailabilityRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -16,7 +27,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     })
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=AvailabilityRepository::class)
  */
 class Availability
@@ -33,46 +45,81 @@ class Availability
     private UuidInterface $id;
 
     /**
+     * @var AvailabilityDay Monday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $monday;
+    private AvailabilityDay $monday;
 
     /**
+     * @var AvailabilityDay Tuesday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $tuesday;
+    private AvailabilityDay $tuesday;
 
     /**
+     * @var AvailabilityDay Wednesday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $wednesday;
+    private AvailabilityDay $wednesday;
 
     /**
+     * @var AvailabilityDay Thursday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $thursday;
+    private AvailabilityDay $thursday;
 
     /**
+     * @var AvailabilityDay Friday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $friday;
+    private AvailabilityDay $friday;
 
     /**
+     * @var AvailabilityDay Saturday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $saturday;
+    private AvailabilityDay $saturday;
 
     /**
+     * @var AvailabilityDay Sunday of this availability
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
-    private ?AvailabilityDay $sunday;
+    private AvailabilityDay $sunday;
 
     public function getId(): UuidInterface
     {

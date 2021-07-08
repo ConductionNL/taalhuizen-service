@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ApiResource(
@@ -21,61 +23,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = LearningNeedQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = LearningNeedQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = LearningNeedMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     },
- *  collectionOperations={
- *          "get",
- *          "get_learning_need"={
- *              "method"="GET",
- *              "path"="/learning_needs/{id}",
- *              "swagger_context" = {
- *                  "summary"="Gets a specific learningNeed",
- *                  "description"="Returns a learningNeed"
- *              }
- *          },
- *          "delete_learning_need"={
- *              "method"="GET",
- *              "path"="/learning_needs/{id}/delete",
- *              "swagger_context" = {
- *                  "summary"="Deletes a specific learningNeed",
- *                  "description"="Returns true if this learningNeed was deleted"
- *              }
- *          },
- *          "post"
- *     },
- * )
+ *     })
  * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
 class LearningNeed
 {
+//   Id of the learning need, was called in the graphql-schema 'learningNeedId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -85,132 +39,131 @@ class LearningNeed
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @Groups({"write"})
+     * @var string Description of this learning need.
+     *
+     * @Assert\NotNull
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $learningNeedDescription;
+    private string $description;
 
     /**
-     * @Groups({"write"})
+     * @var string Motivation of this learning need.
+     *
+     * @Assert\NotNull
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
-    private $learningNeedMotivation;
+    private string $motivation;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @var ?LearningNeedOutCome The learning need out come of this learning need.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private $desiredOutComesGoal;
+    private ?LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $desiredOutComesTopic;
-
-    /**
-     * @Groups({"write"})
+     * @var string Offer desired offer of this learning need.
+     *
+     * @Assert\NotNull
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $desiredOutComesTopicOther;
+    private string $offerDesiredOffer;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $desiredOutComesApplication;
-
-    /**
-     * @Groups({"write"})
+     * @var string Offer advised offer of this learning need.
+     *
+     * @Assert\NotNull
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $desiredOutComesApplicationOther;
+    private string $offerAdvisedOffer;
 
     /**
-     * @Groups({"write"})
+     * @var string Offer difference of this learning need.
+     *
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $desiredOutComesLevel;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $desiredOutComesLevelOther;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $offerDesiredOffer;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $offerAdvisedOffer;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $offerDifference;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $offerDifferenceOther;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=2550, nullable=true)
-     */
-    private $offerEngagements;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="json", length=255, nullable=true)
-     */
-    private $participations;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $studentId;
-
-    /**
-     * @var string The dateCreated of a learningNeed, used for reports.
      *
-     * @Groups({"write"})
+     * @Assert\NotNull
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"},
+     *             "example"="INFLOW"
+     *         }
+     *     }
+     * )
      */
-    private $dateCreated;
+    private string $offerDifference;
 
     /**
-     * @var string The id of the objectEntity of an eav/learning_need.
+     * @var ?string Offer difference other of this learning need.
      *
-     * @Groups({"write"})
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $learningNeedId;
+    private ?string $offerDifferenceOther;
 
     /**
-     * @var string The url of the objectEntity of an eav/learning_need '@eav'.
+     * @var ?string Offer engagements of this learning need.
      *
-     * @Groups({"write"})
-     * @Assert\Url
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $learningNeedUrl;
+    private ?string $offerEngagements;
+
+    /**
+     * @var ?Participation Participation's of this learning need.
+     *
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=Participation::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?Participation $participations;
+
+    /**
+     * @var string Student id of this learning need.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $studentId;
 
     public function getId(): UuidInterface
     {
@@ -224,115 +177,43 @@ class LearningNeed
         return $this;
     }
 
-    public function getLearningNeedDescription(): ?string
+    public function getDescription(): string
     {
-        return $this->learningNeedDescription;
+        return $this->description;
     }
 
-    public function setLearningNeedDescription(string $learningNeedDescription): self
+    public function setDescription(string $description): self
     {
-        $this->learningNeedDescription = $learningNeedDescription;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function getLearningNeedMotivation(): ?string
+    public function getMotivation(): string
     {
-        return $this->learningNeedMotivation;
+        return $this->motivation;
     }
 
-    public function setLearningNeedMotivation(string $learningNeedMotivation): self
+    public function setMotivation(string $motivation): self
     {
-        $this->learningNeedMotivation = $learningNeedMotivation;
+        $this->motivation = $motivation;
 
         return $this;
     }
 
-    public function getDesiredOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->desiredOutComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setDesiredOutComesGoal(string $desiredOutComesGoal): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->desiredOutComesGoal = $desiredOutComesGoal;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getDesiredOutComesTopic(): ?string
-    {
-        return $this->desiredOutComesTopic;
-    }
-
-    public function setDesiredOutComesTopic(string $desiredOutComesTopic): self
-    {
-        $this->desiredOutComesTopic = $desiredOutComesTopic;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesTopicOther(): ?string
-    {
-        return $this->desiredOutComesTopicOther;
-    }
-
-    public function setDesiredOutComesTopicOther(string $desiredOutComesTopicOther): self
-    {
-        $this->desiredOutComesTopicOther = $desiredOutComesTopicOther;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesApplication(): ?string
-    {
-        return $this->desiredOutComesApplication;
-    }
-
-    public function setDesiredOutComesApplication(string $desiredOutComesApplication): self
-    {
-        $this->desiredOutComesApplication = $desiredOutComesApplication;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesApplicationOther(): ?string
-    {
-        return $this->desiredOutComesApplicationOther;
-    }
-
-    public function setDesiredOutComesApplicationOther(string $desiredOutComesApplicationOther): self
-    {
-        $this->desiredOutComesApplicationOther = $desiredOutComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesLevel(): ?string
-    {
-        return $this->desiredOutComesLevel;
-    }
-
-    public function setDesiredOutComesLevel(string $desiredOutComesLevel): self
-    {
-        $this->desiredOutComesLevel = $desiredOutComesLevel;
-
-        return $this;
-    }
-
-    public function getDesiredOutComesLevelOther(): ?string
-    {
-        return $this->desiredOutComesLevelOther;
-    }
-
-    public function setDesiredOutComesLevelOther(string $desiredOutComesLevelOther): self
-    {
-        $this->desiredOutComesLevelOther = $desiredOutComesLevelOther;
-
-        return $this;
-    }
-
-    public function getOfferDesiredOffer(): ?string
+    public function getOfferDesiredOffer(): string
     {
         return $this->offerDesiredOffer;
     }
@@ -344,7 +225,7 @@ class LearningNeed
         return $this;
     }
 
-    public function getOfferAdvisedOffer(): ?string
+    public function getOfferAdvisedOffer(): string
     {
         return $this->offerAdvisedOffer;
     }
@@ -356,7 +237,7 @@ class LearningNeed
         return $this;
     }
 
-    public function getOfferDifference(): ?string
+    public function getOfferDifference(): string
     {
         return $this->offerDifference;
     }
@@ -373,7 +254,7 @@ class LearningNeed
         return $this->offerDifferenceOther;
     }
 
-    public function setOfferDifferenceOther(string $offerDifferenceOther): self
+    public function setOfferDifferenceOther(?string $offerDifferenceOther): self
     {
         $this->offerDifferenceOther = $offerDifferenceOther;
 
@@ -392,63 +273,28 @@ class LearningNeed
         return $this;
     }
 
-    public function getParticipations(): ?array
+    public function getParticipations(): ?Participation
     {
         return $this->participations;
     }
 
-    public function setParticipations(?array $participations): self
+    public function setParticipations(?Participation $participations): self
     {
         $this->participations = $participations;
 
         return $this;
     }
 
-    public function getStudentId(): ?string
+    public function getStudentId(): string
     {
         return $this->studentId;
     }
 
-    public function setStudentId(?string $studentId): self
+    public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
 
         return $this;
     }
 
-    public function getDateCreated(): ?string
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(?string $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    public function getLearningNeedId(): ?string
-    {
-        return $this->learningNeedId;
-    }
-
-    public function setLearningNeedId(?string $learningNeedId): self
-    {
-        $this->learningNeedId = $learningNeedId;
-
-        return $this;
-    }
-
-    public function getLearningNeedUrl(): ?string
-    {
-        return $this->learningNeedUrl;
-    }
-
-    public function setLearningNeedUrl(?string $learningNeedUrl): self
-    {
-        $this->learningNeedUrl = $learningNeedUrl;
-
-        return $this;
-    }
 }

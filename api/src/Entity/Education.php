@@ -27,7 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     })
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=EducationRepository::class)
  */
 class Education
@@ -41,15 +42,15 @@ class Education
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
 //   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
     /**
      * @var ?DateTime Start date of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -59,21 +60,21 @@ class Education
     /**
      * @var ?DateTime End date of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $enddate;
+    private ?DateTime $endDate;
 
 //   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
-     * @var ?string Start date of this education.
+     * @var ?string Institution of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -83,25 +84,25 @@ class Education
     /**
      * @var ?string Isced education level code of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $iscedEducationLevelCode;
+    private ?string $iscedEducationLevelCode;
 
 //   degree granted status of the education, was called in the graphql-schema 'doesProvideCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
      * @var ?string Degree granted status of this education.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $degreeGrantedStatus;
+    private ?string $degreeGrantedStatus;
 
     public function getId(): UuidInterface
     {
@@ -128,12 +129,12 @@ class Education
 
     public function getEnddate(): ?\DateTimeInterface
     {
-        return $this->enddate;
+        return $this->endDate;
     }
 
-    public function setEnddate(?\DateTimeInterface $enddate): self
+    public function setEnddate(?\DateTimeInterface $endDate): self
     {
-        $this->enddate = $enddate;
+        $this->endDate = $endDate;
 
         return $this;
     }

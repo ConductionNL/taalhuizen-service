@@ -27,7 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     })
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=OrganizationRepository::class)
  */
 class Organization
@@ -104,7 +105,6 @@ class Organization
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
         return $this;
     }
 

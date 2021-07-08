@@ -28,7 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     })
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=EmailRepository::class)
  */
 class Email
@@ -42,7 +43,7 @@ class Email
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var string|null Name of this email
@@ -75,7 +76,6 @@ class Email
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
         return $this;
     }
 

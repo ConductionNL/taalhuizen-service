@@ -36,37 +36,26 @@ class StudentEducation
      */
     private UuidInterface $id;
 
+//   Education of the employee, was called in the graphql-schema;
+// 'lastFollowedEducation', 'didGraduate', 'followingEducationRightNowYesStartDate',
+// 'followingEducationRightNowYesLevel', 'followingEducationRightNowYesInstitute', 'followingEducationRightNowYesProvidesCertificate',
+// 'followingEducationRightNowNoEndDate', 'followingEducationRightNowNoLevel', 'followingEducationRightNowNoGotCertificate',
+// changed to 'education'(Education entity) related to schema.org
     /**
-     * @var String|null The last followed education of this StudentEducation.
+     * @var ?Education Education of this studentEducation.
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"},
-     *             "example"="NO_EDUCATION"
-     *         }
-     *     }
-     * )
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      */
-    private ?string $lastFollowedEducation;
+    private ?Education $education;
 
     /**
-     * @var bool|null A boolean that is true when the student graduated for his/her last followed education.
+     * @var ?string Following education right now of this studentEducation.
      *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $didGraduate;
-
-    /**
-     * @var String|null A enum for if the student is following an education right now or not.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
+     *  @Assert\Length(
+     *     max = 255
+     *)
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
@@ -80,80 +69,6 @@ class StudentEducation
      */
     private ?string $followingEducationRightNow;
 
-    /**
-     * @var DateTimeInterface|null If the student is following an education right now this is used for the start date of that education.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $followingEducationRightNowYesStartDate;
-
-    /**
-     * @var DateTimeInterface|null If the student is following an education right now this is used for the end date of that education.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $followingEducationRightNowYesEndDate;
-
-    /**
-     * @var String|null If the student is following an education right now this is used for the level of that education.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"},
-     *             "example"="LANGUAGE_COURSE"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $followingEducationRightNowYesLevel;
-
-    /**
-     * @var String|null If the student is following an education right now this is used for the institute of that education.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $followingEducationRightNowYesInstitute;
-
-    /**
-     * @var bool|null If the student is following an education right now this is true if that education provides a certificate.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $followingEducationRightNowYesProvidesCertificate;
-
-    /**
-     * @var DateTimeInterface|null If the student is not following an education right now this can be used for the end date of the last education.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $followingEducationRightNowNoEndDate;
-
-    /**
-     * @var String|null If the student is not following an education right now this is used for the level of the last education.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $followingEducationRightNowNoLevel;
-
-    /**
-     * @var bool|null If the student is not following an education right now this is true if the last education provides a certificate.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $followingEducationRightNowNoGotCertificate;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -162,30 +77,6 @@ class StudentEducation
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
-        return $this;
-    }
-
-    public function getLastFollowedEducation(): ?string
-    {
-        return $this->lastFollowedEducation;
-    }
-
-    public function setLastFollowedEducation(?string $lastFollowedEducation): self
-    {
-        $this->lastFollowedEducation = $lastFollowedEducation;
-
-        return $this;
-    }
-
-    public function getDidGraduate(): ?bool
-    {
-        return $this->didGraduate;
-    }
-
-    public function setDidGraduate(?bool $didGraduate): self
-    {
-        $this->didGraduate = $didGraduate;
 
         return $this;
     }
@@ -202,98 +93,14 @@ class StudentEducation
         return $this;
     }
 
-    public function getFollowingEducationRightNowYesStartDate(): ?DateTimeInterface
+    public function getEducation(): ?Education
     {
-        return $this->followingEducationRightNowYesStartDate;
+        return $this->education;
     }
 
-    public function setFollowingEducationRightNowYesStartDate(?DateTimeInterface $followingEducationRightNowYesStartDate): self
+    public function setEducation(?Education $education): self
     {
-        $this->followingEducationRightNowYesStartDate = $followingEducationRightNowYesStartDate;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowYesEndDate(): ?DateTimeInterface
-    {
-        return $this->followingEducationRightNowYesEndDate;
-    }
-
-    public function setFollowingEducationRightNowYesEndDate(?DateTimeInterface $followingEducationRightNowYesEndDate): self
-    {
-        $this->followingEducationRightNowYesEndDate = $followingEducationRightNowYesEndDate;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowYesLevel(): ?string
-    {
-        return $this->followingEducationRightNowYesLevel;
-    }
-
-    public function setFollowingEducationRightNowYesLevel(?string $followingEducationRightNowYesLevel): self
-    {
-        $this->followingEducationRightNowYesLevel = $followingEducationRightNowYesLevel;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowYesInstitute(): ?string
-    {
-        return $this->followingEducationRightNowYesInstitute;
-    }
-
-    public function setFollowingEducationRightNowYesInstitute(?string $followingEducationRightNowYesInstitute): self
-    {
-        $this->followingEducationRightNowYesInstitute = $followingEducationRightNowYesInstitute;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowYesProvidesCertificate(): ?bool
-    {
-        return $this->followingEducationRightNowYesProvidesCertificate;
-    }
-
-    public function setFollowingEducationRightNowYesProvidesCertificate(?bool $followingEducationRightNowYesProvidesCertificate): self
-    {
-        $this->followingEducationRightNowYesProvidesCertificate = $followingEducationRightNowYesProvidesCertificate;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowNoEndDate(): ?DateTimeInterface
-    {
-        return $this->followingEducationRightNowNoEndDate;
-    }
-
-    public function setFollowingEducationRightNowNoEndDate(?DateTimeInterface $followingEducationRightNowNoEndDate): self
-    {
-        $this->followingEducationRightNowNoEndDate = $followingEducationRightNowNoEndDate;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowNoLevel(): ?string
-    {
-        return $this->followingEducationRightNowNoLevel;
-    }
-
-    public function setFollowingEducationRightNowNoLevel(?string $followingEducationRightNowNoLevel): self
-    {
-        $this->followingEducationRightNowNoLevel = $followingEducationRightNowNoLevel;
-
-        return $this;
-    }
-
-    public function getFollowingEducationRightNowNoGotCertificate(): ?bool
-    {
-        return $this->followingEducationRightNowNoGotCertificate;
-    }
-
-    public function setFollowingEducationRightNowNoGotCertificate(?bool $followingEducationRightNowNoGotCertificate): self
-    {
-        $this->followingEducationRightNowNoGotCertificate = $followingEducationRightNowNoGotCertificate;
+        $this->education = $education;
 
         return $this;
     }
