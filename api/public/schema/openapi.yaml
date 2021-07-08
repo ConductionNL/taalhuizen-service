@@ -22468,36 +22468,48 @@ components:
       type: object
       description: ''
       properties:
+        languageHouseId:
+          description: 'A language house for this registration.'
+          type: string
+          nullable: true
         student:
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-read'
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-read'
-        status:
+        memo:
+          description: 'A note for/with this registration.'
           type: string
           nullable: true
     Registration-write:
       type: object
       description: ''
       properties:
+        languageHouseId:
+          description: 'A language house for this registration.'
+          type: string
+          nullable: true
         student:
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-write'
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-write'
-        status:
+        memo:
+          description: 'A note for/with this registration.'
           type: string
           nullable: true
     Registration.jsonld-read:
@@ -22527,18 +22539,24 @@ components:
         '@type':
           readOnly: true
           type: string
+        languageHouseId:
+          description: 'A language house for this registration.'
+          type: string
+          nullable: true
         student:
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
-        status:
+        memo:
+          description: 'A note for/with this registration.'
           type: string
           nullable: true
     Registration.jsonld-write:
@@ -22568,26 +22586,82 @@ components:
         '@type':
           readOnly: true
           type: string
+        languageHouseId:
+          description: 'A language house for this registration.'
+          type: string
+          nullable: true
         student:
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
-        status:
+        memo:
+          description: 'A note for/with this registration.'
           type: string
           nullable: true
     Report-read:
       type: object
       description: ''
+      properties:
+        languageHouseId:
+          description: 'The language house the report applies to.'
+          type: string
+          nullable: true
+        providerId:
+          description: 'The provider this report applies to.'
+          type: string
+          nullable: true
+        dateFrom:
+          description: 'A date from which you want data in the report.'
+          type: string
+          nullable: true
+        dateUntil:
+          description: 'A date until which you want data in the report.'
+          type: string
+          nullable: true
+        filename:
+          description: 'The filename of the report.'
+          type: string
+          nullable: true
+        base64:
+          description: 'A base64 encoded string containing the file''s contents.'
+          type: string
+          nullable: true
     Report-write:
       type: object
       description: ''
+      properties:
+        languageHouseId:
+          description: 'The language house the report applies to.'
+          type: string
+          nullable: true
+        providerId:
+          description: 'The provider this report applies to.'
+          type: string
+          nullable: true
+        dateFrom:
+          description: 'A date from which you want data in the report.'
+          type: string
+          nullable: true
+        dateUntil:
+          description: 'A date until which you want data in the report.'
+          type: string
+          nullable: true
+        filename:
+          description: 'The filename of the report.'
+          type: string
+          nullable: true
+        base64:
+          description: 'A base64 encoded string containing the file''s contents.'
+          type: string
+          nullable: true
     Report.jsonld-read:
       type: object
       description: ''
@@ -22615,6 +22689,30 @@ components:
         '@type':
           readOnly: true
           type: string
+        languageHouseId:
+          description: 'The language house the report applies to.'
+          type: string
+          nullable: true
+        providerId:
+          description: 'The provider this report applies to.'
+          type: string
+          nullable: true
+        dateFrom:
+          description: 'A date from which you want data in the report.'
+          type: string
+          nullable: true
+        dateUntil:
+          description: 'A date until which you want data in the report.'
+          type: string
+          nullable: true
+        filename:
+          description: 'The filename of the report.'
+          type: string
+          nullable: true
+        base64:
+          description: 'A base64 encoded string containing the file''s contents.'
+          type: string
+          nullable: true
     Report.jsonld-write:
       type: object
       description: ''
@@ -22642,71 +22740,110 @@ components:
         '@type':
           readOnly: true
           type: string
+        languageHouseId:
+          description: 'The language house the report applies to.'
+          type: string
+          nullable: true
+        providerId:
+          description: 'The provider this report applies to.'
+          type: string
+          nullable: true
+        dateFrom:
+          description: 'A date from which you want data in the report.'
+          type: string
+          nullable: true
+        dateUntil:
+          description: 'A date until which you want data in the report.'
+          type: string
+          nullable: true
+        filename:
+          description: 'The filename of the report.'
+          type: string
+          nullable: true
+        base64:
+          description: 'A base64 encoded string containing the file''s contents.'
+          type: string
+          nullable: true
     Student-read:
       type: object
       description: ''
       properties:
-        status:
-          type: string
-          nullable: true
-        memo:
-          type: string
-          nullable: true
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-read'
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCivicIntegration of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCivicIntegration-read'
         person:
-          description: 'a contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-read'
         generalDetails:
+          description: 'The StudentGeneral of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentGeneral-read'
+        referrerDetails:
+          description: 'The StudentReferrer of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentReferrer-read'
         backgroundDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentBackground of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentBackground-read'
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentDutchNT of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentDutchNT-read'
         speakingLevel:
+          description: 'The speakingLevel of this Student.'
           type: string
           nullable: true
         educationDetails:
+          description: 'The StudentEducation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentEducation-read'
         courseDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCourse of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCourse-read'
         jobDetails:
+          description: 'The StudentJob of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentJob-read'
         motivationDetails:
+          description: 'The StudentMotivation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentMotivation-read'
         availabilityDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentAvailability of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentAvailability-read'
         readingTestResult:
           type: string
           nullable: true
@@ -22714,6 +22851,7 @@ components:
           type: string
           nullable: true
         permissionDetails:
+          description: 'The StudentPermission of this Student.'
           nullable: true
           anyOf:
             -
@@ -22722,67 +22860,82 @@ components:
       type: object
       description: ''
       properties:
-        status:
-          type: string
-          nullable: true
-        memo:
-          type: string
-          nullable: true
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-write'
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCivicIntegration of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCivicIntegration-write'
         person:
-          description: 'a contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-write'
         generalDetails:
+          description: 'The StudentGeneral of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentGeneral-write'
+        referrerDetails:
+          description: 'The StudentReferrer of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentReferrer-write'
         backgroundDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentBackground of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentBackground-write'
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentDutchNT of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentDutchNT-write'
         speakingLevel:
+          description: 'The speakingLevel of this Student.'
           type: string
           nullable: true
         educationDetails:
+          description: 'The StudentEducation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentEducation-write'
         courseDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCourse of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCourse-write'
         jobDetails:
+          description: 'The StudentJob of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentJob-write'
         motivationDetails:
+          description: 'The StudentMotivation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentMotivation-write'
         availabilityDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentAvailability of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentAvailability-write'
         readingTestResult:
           type: string
           nullable: true
@@ -22790,6 +22943,7 @@ components:
           type: string
           nullable: true
         permissionDetails:
+          description: 'The StudentPermission of this Student.'
           nullable: true
           anyOf:
             -
@@ -22837,67 +22991,82 @@ components:
         '@type':
           readOnly: true
           type: string
-        status:
-          type: string
-          nullable: true
-        memo:
-          type: string
-          nullable: true
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCivicIntegration of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
         person:
-          description: 'a contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
         generalDetails:
+          description: 'The StudentGeneral of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentGeneral.jsonld-read'
+        referrerDetails:
+          description: 'The StudentReferrer of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentReferrer.jsonld-read'
         backgroundDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentBackground of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentBackground.jsonld-read'
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentDutchNT of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
         speakingLevel:
+          description: 'The speakingLevel of this Student.'
           type: string
           nullable: true
         educationDetails:
+          description: 'The StudentEducation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentEducation.jsonld-read'
         courseDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCourse of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCourse.jsonld-read'
         jobDetails:
+          description: 'The StudentJob of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentJob.jsonld-read'
         motivationDetails:
+          description: 'The StudentMotivation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentMotivation.jsonld-read'
         availabilityDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentAvailability of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentAvailability.jsonld-read'
         readingTestResult:
           type: string
           nullable: true
@@ -22905,6 +23074,7 @@ components:
           type: string
           nullable: true
         permissionDetails:
+          description: 'The StudentPermission of this Student.'
           nullable: true
           anyOf:
             -
@@ -22936,67 +23106,82 @@ components:
         '@type':
           readOnly: true
           type: string
-        status:
-          type: string
-          nullable: true
-        memo:
-          type: string
-          nullable: true
         registrar:
-          description: 'a contact catalogue person for the registrar, this person should have a organization with a name set.'
+          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
         civicIntegrationDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCivicIntegration of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCivicIntegration.jsonld-write'
         person:
-          description: 'a contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
         generalDetails:
+          description: 'The StudentGeneral of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentGeneral.jsonld-write'
+        referrerDetails:
+          description: 'The StudentReferrer of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentReferrer.jsonld-write'
         backgroundDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentBackground of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentBackground.jsonld-write'
         dutchNTDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentDutchNT of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentDutchNT.jsonld-write'
         speakingLevel:
+          description: 'The speakingLevel of this Student.'
           type: string
           nullable: true
         educationDetails:
+          description: 'The StudentEducation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentEducation.jsonld-write'
         courseDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentCourse of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentCourse.jsonld-write'
         jobDetails:
+          description: 'The StudentJob of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentJob.jsonld-write'
         motivationDetails:
+          description: 'The StudentMotivation of this Student.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/StudentMotivation.jsonld-write'
         availabilityDetails:
-          type: string
-          format: iri-reference
+          description: 'The StudentAvailability of this Student.'
           nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentAvailability.jsonld-write'
         readingTestResult:
           type: string
           nullable: true
@@ -23004,6 +23189,7 @@ components:
           type: string
           nullable: true
         permissionDetails:
+          description: 'The StudentPermission of this Student.'
           nullable: true
           anyOf:
             -
@@ -23027,9 +23213,29 @@ components:
     StudentAvailability-read:
       type: object
       description: ''
+      properties:
+        availability:
+          description: 'The Availability of this student.'
+          type: string
+          format: iri-reference
+          nullable: true
+        availabilityNotes:
+          description: 'The note for/with this Availability.'
+          type: string
+          nullable: true
     StudentAvailability-write:
       type: object
       description: ''
+      properties:
+        availability:
+          description: 'The Availability of this student.'
+          type: string
+          format: iri-reference
+          nullable: true
+        availabilityNotes:
+          description: 'The note for/with this Availability.'
+          type: string
+          nullable: true
     StudentAvailability.jsonld-read:
       type: object
       description: ''
@@ -23057,6 +23263,15 @@ components:
         '@type':
           readOnly: true
           type: string
+        availability:
+          description: 'The Availability of this student.'
+          type: string
+          format: iri-reference
+          nullable: true
+        availabilityNotes:
+          description: 'The note for/with this Availability.'
+          type: string
+          nullable: true
     StudentAvailability.jsonld-write:
       type: object
       description: ''
@@ -23084,12 +23299,83 @@ components:
         '@type':
           readOnly: true
           type: string
+        availability:
+          description: 'The Availability of this student.'
+          type: string
+          format: iri-reference
+          nullable: true
+        availabilityNotes:
+          description: 'The note for/with this Availability.'
+          type: string
+          nullable: true
     StudentBackground-read:
       type: object
       description: ''
+      properties:
+        foundVia:
+          description: 'The way this student found the languageHouse.'
+          type: string
+          nullable: true
+        foundViaOther:
+          description: 'The way this student found the languageHouse for if the OTHER option is selected.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBefore:
+          description: 'A boolean that is true if this student went to this languageHouse before.'
+          type: boolean
+          nullable: true
+        wentToLanguageHouseBeforeReason:
+          description: 'The reason why this student went to this languageHouse before.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBeforeYear:
+          description: 'The year this student went to this languageHouse before.'
+          type: number
+          nullable: true
+        network:
+          description: 'The network of this student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        participationLadder:
+          description: 'The place this student has on the participationLadder.'
+          type: integer
+          nullable: true
     StudentBackground-write:
       type: object
       description: ''
+      properties:
+        foundVia:
+          description: 'The way this student found the languageHouse.'
+          type: string
+          nullable: true
+        foundViaOther:
+          description: 'The way this student found the languageHouse for if the OTHER option is selected.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBefore:
+          description: 'A boolean that is true if this student went to this languageHouse before.'
+          type: boolean
+          nullable: true
+        wentToLanguageHouseBeforeReason:
+          description: 'The reason why this student went to this languageHouse before.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBeforeYear:
+          description: 'The year this student went to this languageHouse before.'
+          type: number
+          nullable: true
+        network:
+          description: 'The network of this student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        participationLadder:
+          description: 'The place this student has on the participationLadder.'
+          type: integer
+          nullable: true
     StudentBackground.jsonld-read:
       type: object
       description: ''
@@ -23117,6 +23403,36 @@ components:
         '@type':
           readOnly: true
           type: string
+        foundVia:
+          description: 'The way this student found the languageHouse.'
+          type: string
+          nullable: true
+        foundViaOther:
+          description: 'The way this student found the languageHouse for if the OTHER option is selected.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBefore:
+          description: 'A boolean that is true if this student went to this languageHouse before.'
+          type: boolean
+          nullable: true
+        wentToLanguageHouseBeforeReason:
+          description: 'The reason why this student went to this languageHouse before.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBeforeYear:
+          description: 'The year this student went to this languageHouse before.'
+          type: number
+          nullable: true
+        network:
+          description: 'The network of this student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        participationLadder:
+          description: 'The place this student has on the participationLadder.'
+          type: integer
+          nullable: true
     StudentBackground.jsonld-write:
       type: object
       description: ''
@@ -23144,12 +23460,70 @@ components:
         '@type':
           readOnly: true
           type: string
+        foundVia:
+          description: 'The way this student found the languageHouse.'
+          type: string
+          nullable: true
+        foundViaOther:
+          description: 'The way this student found the languageHouse for if the OTHER option is selected.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBefore:
+          description: 'A boolean that is true if this student went to this languageHouse before.'
+          type: boolean
+          nullable: true
+        wentToLanguageHouseBeforeReason:
+          description: 'The reason why this student went to this languageHouse before.'
+          type: string
+          nullable: true
+        wentToLanguageHouseBeforeYear:
+          description: 'The year this student went to this languageHouse before.'
+          type: number
+          nullable: true
+        network:
+          description: 'The network of this student.'
+          type: array
+          items:
+            type: string
+          nullable: true
+        participationLadder:
+          description: 'The place this student has on the participationLadder.'
+          type: integer
+          nullable: true
     StudentCivicIntegration-read:
       type: object
       description: ''
+      properties:
+        civicIntegrationRequirement:
+          description: 'A enum for the status of the civic integration requirement of the student.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementReason:
+          description: 'The reason why this student has no civic integration requirement.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementFinishDate:
+          description: 'The civic integration requirement finish date for this student.'
+          type: string
+          format: date-time
+          nullable: true
     StudentCivicIntegration-write:
       type: object
       description: ''
+      properties:
+        civicIntegrationRequirement:
+          description: 'A enum for the status of the civic integration requirement of the student.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementReason:
+          description: 'The reason why this student has no civic integration requirement.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementFinishDate:
+          description: 'The civic integration requirement finish date for this student.'
+          type: string
+          format: date-time
+          nullable: true
     StudentCivicIntegration.jsonld-read:
       type: object
       description: ''
@@ -23177,6 +23551,19 @@ components:
         '@type':
           readOnly: true
           type: string
+        civicIntegrationRequirement:
+          description: 'A enum for the status of the civic integration requirement of the student.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementReason:
+          description: 'The reason why this student has no civic integration requirement.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementFinishDate:
+          description: 'The civic integration requirement finish date for this student.'
+          type: string
+          format: date-time
+          nullable: true
     StudentCivicIntegration.jsonld-write:
       type: object
       description: ''
@@ -23204,12 +23591,75 @@ components:
         '@type':
           readOnly: true
           type: string
+        civicIntegrationRequirement:
+          description: 'A enum for the status of the civic integration requirement of the student.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementReason:
+          description: 'The reason why this student has no civic integration requirement.'
+          type: string
+          nullable: true
+        civicIntegrationRequirementFinishDate:
+          description: 'The civic integration requirement finish date for this student.'
+          type: string
+          format: date-time
+          nullable: true
     StudentCourse-read:
       type: object
       description: ''
+      properties:
+        isFollowingCourseRightNow:
+          description: 'A boolean that is true if this student is following a course right now.'
+          type: boolean
+          nullable: true
+        courseName:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
+        courseTeacher:
+          description: 'The type of teacher this student has for his course.'
+          type: string
+          nullable: true
+        courseGroup:
+          description: 'The group type, Individually or Group, of the course this student is following.'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
+          nullable: true
+        doesCourseProvideCertificate:
+          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
+          type: boolean
+          nullable: true
     StudentCourse-write:
       type: object
       description: ''
+      properties:
+        isFollowingCourseRightNow:
+          description: 'A boolean that is true if this student is following a course right now.'
+          type: boolean
+          nullable: true
+        courseName:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
+        courseTeacher:
+          description: 'The type of teacher this student has for his course.'
+          type: string
+          nullable: true
+        courseGroup:
+          description: 'The group type, Individually or Group, of the course this student is following.'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
+          nullable: true
+        doesCourseProvideCertificate:
+          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
+          type: boolean
+          nullable: true
     StudentCourse.jsonld-read:
       type: object
       description: ''
@@ -23237,6 +23687,30 @@ components:
         '@type':
           readOnly: true
           type: string
+        isFollowingCourseRightNow:
+          description: 'A boolean that is true if this student is following a course right now.'
+          type: boolean
+          nullable: true
+        courseName:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
+        courseTeacher:
+          description: 'The type of teacher this student has for his course.'
+          type: string
+          nullable: true
+        courseGroup:
+          description: 'The group type, Individually or Group, of the course this student is following.'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
+          nullable: true
+        doesCourseProvideCertificate:
+          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
+          type: boolean
+          nullable: true
     StudentCourse.jsonld-write:
       type: object
       description: ''
@@ -23264,6 +23738,30 @@ components:
         '@type':
           readOnly: true
           type: string
+        isFollowingCourseRightNow:
+          description: 'A boolean that is true if this student is following a course right now.'
+          type: boolean
+          nullable: true
+        courseName:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
+        courseTeacher:
+          description: 'The type of teacher this student has for his course.'
+          type: string
+          nullable: true
+        courseGroup:
+          description: 'The group type, Individually or Group, of the course this student is following.'
+          type: string
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
+          nullable: true
+        doesCourseProvideCertificate:
+          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
+          type: boolean
+          nullable: true
     StudentDossierEvent-read:
       type: object
       description: ''
@@ -23277,21 +23775,21 @@ components:
           description: 'The Event of this Student.'
           type: string
         eventDate:
-          description: 'date of this student Dossier.'
+          description: 'Date of this student Dossier.'
           type: string
           format: date-time
         eventDescription:
-          description: 'description of this student Dossier.'
+          description: 'Description of this student Dossier.'
           type: string
         studentId:
-          description: 'studentId of this student Dossier.'
+          description: 'StudentId of this student Dossier.'
           type: string
         creatorGivenName:
-          description: 'creator of this student Dossier.'
+          description: 'Creator of this student Dossier.'
           type: string
           nullable: true
         employeeId:
-          description: 'employeeId of this student Dossier.'
+          description: 'EmployeeId of this student Dossier.'
           type: string
           nullable: true
     StudentDossierEvent-write:
@@ -23307,17 +23805,17 @@ components:
           description: 'The Event of this Student.'
           type: string
         eventDate:
-          description: 'date of this student Dossier.'
+          description: 'Date of this student Dossier.'
           type: string
           format: date-time
         eventDescription:
-          description: 'description of this student Dossier.'
+          description: 'Description of this student Dossier.'
           type: string
         studentId:
-          description: 'studentId of this student Dossier.'
+          description: 'StudentId of this student Dossier.'
           type: string
         creatorGivenName:
-          description: 'creator of this student Dossier.'
+          description: 'Creator of this student Dossier.'
           type: string
           nullable: true
     StudentDossierEvent.jsonld-read:
@@ -23356,21 +23854,21 @@ components:
           description: 'The Event of this Student.'
           type: string
         eventDate:
-          description: 'date of this student Dossier.'
+          description: 'Date of this student Dossier.'
           type: string
           format: date-time
         eventDescription:
-          description: 'description of this student Dossier.'
+          description: 'Description of this student Dossier.'
           type: string
         studentId:
-          description: 'studentId of this student Dossier.'
+          description: 'StudentId of this student Dossier.'
           type: string
         creatorGivenName:
-          description: 'creator of this student Dossier.'
+          description: 'Creator of this student Dossier.'
           type: string
           nullable: true
         employeeId:
-          description: 'employeeId of this student Dossier.'
+          description: 'EmployeeId of this student Dossier.'
           type: string
           nullable: true
     StudentDossierEvent.jsonld-write:
@@ -23409,25 +23907,67 @@ components:
           description: 'The Event of this Student.'
           type: string
         eventDate:
-          description: 'date of this student Dossier.'
+          description: 'Date of this student Dossier.'
           type: string
           format: date-time
         eventDescription:
-          description: 'description of this student Dossier.'
+          description: 'Description of this student Dossier.'
           type: string
         studentId:
-          description: 'studentId of this student Dossier.'
+          description: 'StudentId of this student Dossier.'
           type: string
         creatorGivenName:
-          description: 'creator of this student Dossier.'
+          description: 'Creator of this student Dossier.'
           type: string
           nullable: true
     StudentDutchNT-read:
       type: object
       description: ''
+      properties:
+        dutchNTLevel:
+          description: 'The dutch NT level of this Student.'
+          type: string
+          nullable: true
+        inNetherlandsSinceYear:
+          description: 'The year since when this student is in the Netherlands.'
+          type: number
+          nullable: true
+        languageInDailyLife:
+          description: 'The language this student speaks in his/her daily life.'
+          type: string
+          nullable: true
+        knowsLatinAlphabet:
+          description: 'A boolean that is true if this student knows the latin alphabet.'
+          type: boolean
+          nullable: true
+        lastKnownLevel:
+          description: 'The last known language level of this student.'
+          type: string
+          nullable: true
     StudentDutchNT-write:
       type: object
       description: ''
+      properties:
+        dutchNTLevel:
+          description: 'The dutch NT level of this Student.'
+          type: string
+          nullable: true
+        inNetherlandsSinceYear:
+          description: 'The year since when this student is in the Netherlands.'
+          type: number
+          nullable: true
+        languageInDailyLife:
+          description: 'The language this student speaks in his/her daily life.'
+          type: string
+          nullable: true
+        knowsLatinAlphabet:
+          description: 'A boolean that is true if this student knows the latin alphabet.'
+          type: boolean
+          nullable: true
+        lastKnownLevel:
+          description: 'The last known language level of this student.'
+          type: string
+          nullable: true
     StudentDutchNT.jsonld-read:
       type: object
       description: ''
@@ -23455,6 +23995,26 @@ components:
         '@type':
           readOnly: true
           type: string
+        dutchNTLevel:
+          description: 'The dutch NT level of this Student.'
+          type: string
+          nullable: true
+        inNetherlandsSinceYear:
+          description: 'The year since when this student is in the Netherlands.'
+          type: number
+          nullable: true
+        languageInDailyLife:
+          description: 'The language this student speaks in his/her daily life.'
+          type: string
+          nullable: true
+        knowsLatinAlphabet:
+          description: 'A boolean that is true if this student knows the latin alphabet.'
+          type: boolean
+          nullable: true
+        lastKnownLevel:
+          description: 'The last known language level of this student.'
+          type: string
+          nullable: true
     StudentDutchNT.jsonld-write:
       type: object
       description: ''
@@ -23482,6 +24042,26 @@ components:
         '@type':
           readOnly: true
           type: string
+        dutchNTLevel:
+          description: 'The dutch NT level of this Student.'
+          type: string
+          nullable: true
+        inNetherlandsSinceYear:
+          description: 'The year since when this student is in the Netherlands.'
+          type: number
+          nullable: true
+        languageInDailyLife:
+          description: 'The language this student speaks in his/her daily life.'
+          type: string
+          nullable: true
+        knowsLatinAlphabet:
+          description: 'A boolean that is true if this student knows the latin alphabet.'
+          type: boolean
+          nullable: true
+        lastKnownLevel:
+          description: 'The last known language level of this student.'
+          type: string
+          nullable: true
     StudentEducation-read:
       type: object
       description: ''
@@ -24062,7 +24642,7 @@ components:
           description: 'The reason why the student wants to learn these skills right now.'
           type: string
           nullable: true
-        desiredLearingMethod:
+        desiredLearningMethod:
           description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
@@ -24102,7 +24682,7 @@ components:
           description: 'The reason why the student wants to learn these skills right now.'
           type: string
           nullable: true
-        desiredLearingMethod:
+        desiredLearningMethod:
           description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
@@ -24165,7 +24745,7 @@ components:
           description: 'The reason why the student wants to learn these skills right now.'
           type: string
           nullable: true
-        desiredLearingMethod:
+        desiredLearningMethod:
           description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
@@ -24228,7 +24808,7 @@ components:
           description: 'The reason why the student wants to learn these skills right now.'
           type: string
           nullable: true
-        desiredLearingMethod:
+        desiredLearningMethod:
           description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
