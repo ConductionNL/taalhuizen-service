@@ -91,23 +91,6 @@ class Student
     private UuidInterface $id;
 
     /**
-     * @var String|null The status of this Student.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"pending", "accepted"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $status;
-
-    /**
-     * @var String|null The memo of this Student.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $memo;
-
-    /**
      * @var Person|null A contact catalogue person for the registrar, this person should have a Organization with at least the name set.
      *
      * @Groups({"read", "write"})
@@ -247,6 +230,8 @@ class Student
      */
     private StudentPermission $permissionDetails;
 
+    //TODO: some of these 'ID' variables can be removed:
+    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the cc/organization of a languageHouse.
      *
@@ -255,6 +240,7 @@ class Student
      */
     private ?string $languageHouseId;
 
+    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the cc/organization of a provider.
      *
@@ -263,6 +249,7 @@ class Student
      */
     private ?string $providerId;
 
+    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the edu/group of a group.
      *
@@ -271,6 +258,7 @@ class Student
      */
     private ?string $groupId;
 
+    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the mrc/employee of a mentor.
      *
@@ -287,30 +275,6 @@ class Student
     public function setId(?UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?string $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getMemo(): ?string
-    {
-        return $this->memo;
-    }
-
-    public function setMemo(?string $memo): self
-    {
-        $this->memo = $memo;
 
         return $this;
     }

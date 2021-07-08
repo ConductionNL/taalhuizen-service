@@ -93,7 +93,7 @@ class Report
     private UuidInterface $id;
 
     /**
-     * @var string|null The language house the report applies to
+     * @var string|null The language house the report applies to.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -101,7 +101,7 @@ class Report
     private ?string $languageHouseId;
 
     /**
-     * @var string|null The provider this report applies to
+     * @var string|null The provider this report applies to.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -109,19 +109,23 @@ class Report
     private ?string $providerId;
 
     /**
+     * @var string|null A date from which you want data in the report.
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateFrom;
 
     /**
+     * @var string|null A date until which you want data in the report.
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateUntil;
 
     /**
-     * @var string|null The filename of the report
+     * @var string|null The filename of the report.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -130,7 +134,7 @@ class Report
 
     // Renamed from base64data to base64.
     /**
-     * @var string|null A base64 encoded string containing the file's contents
+     * @var string|null A base64 encoded string containing the file's contents.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)

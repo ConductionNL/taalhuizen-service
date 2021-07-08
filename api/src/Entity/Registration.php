@@ -70,18 +70,28 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class Registration
 {
     /**
+     * @var UuidInterface The UUID identifier of this resource
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
 
     /**
+     * @var String|null A language house for this registration.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;
 
     /**
+     * @var Person|null A contact catalogue person for the student.
+     *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @MaxDepth(1)
@@ -89,7 +99,7 @@ class Registration
     private ?Person $student;
 
     /**
-     * @var ?Person a contact catalogue person for the registrar, this person should have a organization with a name set.
+     * @var Person|null A contact catalogue person for the registrar, this person should have a Organization with at least the name set.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
@@ -98,27 +108,19 @@ class Registration
     private ?Person $registrar;
 
     /**
+     * @var String|null A note for/with this registration.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private ?string $memo;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $studentId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $status;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -169,30 +171,6 @@ class Registration
     public function setRegistrar(?Person $registrar): self
     {
         $this->registrar = $registrar;
-
-        return $this;
-    }
-
-    public function getStudentId(): ?string
-    {
-        return $this->studentId;
-    }
-
-    public function setStudentId(?string $studentId): self
-    {
-        $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
