@@ -20443,6 +20443,15 @@ components:
           example: PROFESSIONAL
           description: 'The professionalism of the teacher for this Education.'
           nullable: true
+        courseProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
         provideCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
@@ -20493,6 +20502,15 @@ components:
           description: 'The group formation type of this (course) Education.'
           nullable: true
         teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        courseProfessionalism:
           type: string
           enum:
             - PROFESSIONAL
@@ -20587,6 +20605,15 @@ components:
           example: PROFESSIONAL
           description: 'The professionalism of the teacher for this Education.'
           nullable: true
+        courseProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
         provideCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
@@ -20660,6 +20687,15 @@ components:
           description: 'The group formation type of this (course) Education.'
           nullable: true
         teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        courseProfessionalism:
           type: string
           enum:
             - PROFESSIONAL
