@@ -28,16 +28,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     })
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  */
 class Person
 {
     /**
-     * @var UuidInterface The UUID identifier of this telephone
+     * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -65,8 +65,9 @@ class Person
     /**
      * @var string|null Family name of this person
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $familyName;
 
@@ -137,34 +138,6 @@ class Person
      */
     private ?Organization $organization;
 
-    /**
-     * @var string|null The contact preference of the person.
-     *
-     * @example Whatsapp
-     *
-     * @Groups({"read","write"})
-     * @Assert\Choice({"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"},
-     *             "example"="PHONECALL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $contactPreference;
-
-    /**
-     * @var string|null The contact preference of the person for when the OTHER option is selected.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $contactPreferenceOther;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -173,7 +146,6 @@ class Person
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
         return $this;
     }
 

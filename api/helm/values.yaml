@@ -6,6 +6,7 @@ settings:
   registryBase: ghcr.io/conductionnl
   projectName: taalhuizen-service
   name: taalhuizen-service
+  title: Taalhuizen Service
   version: V1.0
   majorVersion: v1
   description: '&amp;'

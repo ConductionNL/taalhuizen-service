@@ -2,19 +2,28 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ParticipationRepository;
 use App\Resolver\ParticipationMutationResolver;
 use App\Resolver\ParticipationQueryCollectionResolver;
 use App\Resolver\ParticipationQueryItemResolver;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiProperty;
+
 
 /**
  * @ApiResource(
@@ -23,203 +32,200 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ParticipationQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = ParticipationQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeMentorFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "providerEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateMentor" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "addGroupTo" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateGroup" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeGroupFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     })
  * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation
 {
+//   Id of the participation, was called in the graphql-schema 'participationId', changed to 'id'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
+// @todo outcomes properties toevoegen
     /**
-     * @Groups({"write"})
+     * @var ?string Status of this participation.
+     *
      * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"ACTIVE", "COMPLETED", "REFERRED"},
+     *             "example"="ACTIVE"
+     *         }
+     *     }
+     * )
      */
-    private $status;
+    private ?string $status;
 
+//   Organization of the participation, was called in the graphql-schema 'aanbiederId' and 'aanbiederName', changed to 'organization'(Organization entity) related to schema.org
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $providerId;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $providerName;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $providerNote;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $offerName;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"LANGUAGE", "MATH", "DIGITAL", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $offerCourse;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @var ?Organization Organization of this participation
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?string $learningNeedOutCome;
+    private ?Organization $organization;
 
+//   Organization note of the participation, was called in the graphql-schema 'aanbiederNote', changed to 'organizationNote'
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsEngagements;
-
-    /**
-     * @var string The id of the objectEntity of an eav/learning_need.
+     * @var ?string Organization note of this participation
      *
-     * @Groups({"write"})
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $learningNeedId;
+    private ?string $organizationNote;
 
     /**
-     * @var string The url of the objectEntity of an eav/learning_need '@eav'.
+     * @var ?LearningNeedOutCome The learning need out come of this participation.
      *
-     * @Groups({"write"})
-     * @Assert\Url
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private $learningNeedUrl;
+    private ?LearningNeedOutCome $learningNeedOutCome;
 
     /**
+     * @var ?string Offer name of this participation
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $presenceEngagements;
+    private ?string $offerName;
 
     /**
+     * @var ?string Offer course of this participation.
+     *
+     * @Assert\Choice({"LANGUAGE", "MATH", "DIGITAL", "OTHER"})
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"LANGUAGE", "MATH", "DIGITAL", "OTHER"},
+     *             "example"="LANGUAGE"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $offerCourse;
+
+    /**
+     * @var ?string Details engagements of this participation
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $detailsEngagements;
+
+//   Learning need of the participation, was called in the graphql-schema 'learningNeedId' and 'learningNeedUrl', changed to 'LearningNeed'
+    /**
+     * @var LearningNeed LearningNeed of this participation
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=LearningNeed::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private LearningNeed $learningNeed;
+
+    /**
+     * @var ?string Presence engagements of this participation.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $presenceEngagements;
+
+    /**
+     * @var ?DateTime Presence start date of this participation.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $presenceStartDate;
+    private ?DateTime $presenceStartDate;
 
     /**
+     * @var ?DateTime Presence end date of this participation.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $presenceEndDate;
+    private ?DateTime $presenceEndDate;
 
     /**
+     * @var ?string Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**
+     *
      * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"},
+     *             "example"="MOVED"
+     *         }
+     *     }
+     * )
      */
-    private $presenceEndParticipationReason;
+    private ?string $presenceEndParticipationReason;
 
     /**
+     * @var ?string Employee id of this participation
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $providerEmployeeId;
+    private ?string $employeeId;
 
     /**
+     * @var ?string Group id of this participation
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $groupId;
+    private ?string $groupId;
 
     public function getId(): UuidInterface
     {
@@ -245,38 +251,26 @@ class Participation
         return $this;
     }
 
-    public function getProviderId(): ?string
+    public function getOrganization(): ?Organization
     {
-        return $this->providerId;
+        return $this->organization;
     }
 
-    public function setProviderId(?string $providerId): self
+    public function setOrganization(?Organization $organization): self
     {
-        $this->providerId = $providerId;
+        $this->organization = $organization;
 
         return $this;
     }
 
-    public function getProviderName(): ?string
+    public function getOrganizationNote(): ?string
     {
-        return $this->providerName;
+        return $this->organizationNote;
     }
 
-    public function setProviderName(?string $providerName): self
+    public function setOrganizationNote(?string $organizationNote): self
     {
-        $this->providerName = $providerName;
-
-        return $this;
-    }
-
-    public function getProviderNote(): ?string
-    {
-        return $this->providerNote;
-    }
-
-    public function setProviderNote(?string $providerNote): self
-    {
-        $this->providerNote = $providerNote;
+        $this->organizationNote = $organizationNote;
 
         return $this;
     }
@@ -305,12 +299,12 @@ class Participation
         return $this;
     }
 
-    public function getLearningNeedOutCome(): ?string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(string $learningNeedOutCome): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 
@@ -325,30 +319,6 @@ class Participation
     public function setDetailsEngagements(?string $detailsEngagements): self
     {
         $this->detailsEngagements = $detailsEngagements;
-
-        return $this;
-    }
-
-    public function getLearningNeedId(): ?string
-    {
-        return $this->learningNeedId;
-    }
-
-    public function setLearningNeedId(?string $learningNeedId): self
-    {
-        $this->learningNeedId = $learningNeedId;
-
-        return $this;
-    }
-
-    public function getLearningNeedUrl(): ?string
-    {
-        return $this->learningNeedUrl;
-    }
-
-    public function setLearningNeedUrl(?string $learningNeedUrl): self
-    {
-        $this->learningNeedUrl = $learningNeedUrl;
 
         return $this;
     }
@@ -401,14 +371,14 @@ class Participation
         return $this;
     }
 
-    public function getProviderEmployeeId(): ?string
+    public function getEmployeeId(): ?string
     {
-        return $this->providerEmployeeId;
+        return $this->employeeId;
     }
 
-    public function setProviderEmployeeId(?string $providerEmployeeId): self
+    public function setEmployeeId(?string $employeeId): self
     {
-        $this->providerEmployeeId = $providerEmployeeId;
+        $this->employeeId = $employeeId;
 
         return $this;
     }
@@ -421,6 +391,18 @@ class Participation
     public function setGroupId(?string $groupId): self
     {
         $this->groupId = $groupId;
+
+        return $this;
+    }
+
+    public function getLearningNeed(): LearningNeed
+    {
+        return $this->learningNeed;
+    }
+
+    public function setLearningNeed(LearningNeed $learningNeed): self
+    {
+        $this->learningNeed = $learningNeed;
 
         return $this;
     }
