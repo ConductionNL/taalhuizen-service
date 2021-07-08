@@ -20843,11 +20843,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-read'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -20983,11 +20978,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-write'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21147,11 +21137,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-read'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21310,11 +21295,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-write'
-        employeeId:
-          maxLength: 255
-          description: 'Bisc employee id of this Employee.'
-          type: string
-          nullable: true
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21335,9 +21315,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization-read'
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21346,15 +21323,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-read'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21395,28 +21369,17 @@ components:
           type: string
           nullable: true
       required:
-        - organization
         - name
         - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
         - generalLocation
     Group-write:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization-write'
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21425,15 +21388,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-write'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21473,6 +21433,10 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     Group.jsonld-read:
       type: object
       description: ''
@@ -21505,9 +21469,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization.jsonld-read'
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21516,15 +21477,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21565,24 +21523,12 @@ components:
           type: string
           nullable: true
       required:
-        - organization
         - name
         - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
         - generalLocation
     Group.jsonld-write:
       type: object
       description: ''
-      required:
-        - organization
-        - name
-        - typeCourse
-        - detailsIsFormal
-        - detailsTotalClassHours
-        - detailsCertificateWillBeAwarded
-        - generalLocation
       properties:
         '@context':
           readOnly: true
@@ -21607,9 +21553,10 @@ components:
         '@type':
           readOnly: true
           type: string
-        organization:
-          description: 'Organization of this group'
-          $ref: '#/components/schemas/Organization.jsonld-write'
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21618,15 +21565,12 @@ components:
           maxLength: 255
           description: 'Type course of this group.'
           type: string
-        detailsIsFormal:
-          description: 'Detail is formal of this group.'
-          type: boolean
-        detailsTotalClassHours:
-          description: 'Detail is formal of this group.'
-          type: integer
-        detailsCertificateWillBeAwarded:
-          description: 'Details certificate will be awarded of this group.'
-          type: boolean
+        learningNeedOutCome:
+          description: 'The learning need out come of this Group.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21666,6 +21610,10 @@ components:
           description: 'General evaluation of this group.'
           type: string
           nullable: true
+      required:
+        - name
+        - typeCourse
+        - generalLocation
     LearningNeed-read:
       type: object
       description: ''
@@ -22086,16 +22034,6 @@ components:
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
-        startDate:
-          description: 'The start date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
-        endDate:
-          description: 'The end date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
     LearningNeedOutCome.jsonld-read:
       type: object
       description: ''
@@ -22237,16 +22175,6 @@ components:
         certificateWillBeAwarded:
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
-          nullable: true
-        startDate:
-          description: 'The start date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
-          nullable: true
-        endDate:
-          description: 'The end date of this LearningNeedOutcome.'
-          type: string
-          format: date-time
           nullable: true
     Organization-read:
       type: object
@@ -22556,6 +22484,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22797,6 +22735,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -23664,6 +23612,10 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission-write'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails
@@ -23939,6 +23891,10 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission.jsonld-write'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails

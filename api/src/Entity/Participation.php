@@ -13,6 +13,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -50,7 +51,6 @@ class Participation
      */
     private UuidInterface $id;
 
-// @todo outcomes properties toevoegen
     /**
      * @var ?string Status of this participation.
      *
@@ -102,6 +102,22 @@ class Participation
      * @MaxDepth(1)
      */
     private ?LearningNeedOutCome $learningNeedOutCome;
+
+    /**
+     * @var DateTimeInterface|null The start date of this participation.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $startDate;
+
+    /**
+     * @var DateTimeInterface|null The end date of this participation.
+     *
+     * @Groups({"write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $endDate;
 
     /**
      * @var ?string Offer name of this participation
@@ -307,6 +323,30 @@ class Participation
     public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
 
         return $this;
     }

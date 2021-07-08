@@ -316,19 +316,6 @@ class Employee
     private ?Organization $organization;
 
     /**
-     * @var ?string Bisc employee id of this Employee.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $employeeId;
-
-    /**
      * @var ?string User id of this Employee.
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
@@ -623,18 +610,6 @@ class Employee
     public function setOrganization(?Organization $organization): self
     {
         $this->organization = $organization;
-
-        return $this;
-    }
-
-    public function getEmployeeId(): ?string
-    {
-        return $this->employeeId;
-    }
-
-    public function setEmployeeId(?string $employeeId): self
-    {
-        $this->employeeId = $employeeId;
 
         return $this;
     }

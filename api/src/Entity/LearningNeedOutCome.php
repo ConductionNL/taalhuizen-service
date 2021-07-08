@@ -171,22 +171,6 @@ class LearningNeedOutCome
      */
     private ?bool $certificateWillBeAwarded;
 
-    /**
-     * @var DateTimeInterface|null The start date of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $startDate;
-
-    /**
-     * @var DateTimeInterface|null The end date of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $endDate;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -327,30 +311,6 @@ class LearningNeedOutCome
     public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
     {
         $this->certificateWillBeAwarded = $certificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getStartDate(): ?DateTimeInterface
-    {
-        return $this->startDate;
-    }
-
-    public function setStartDate(?DateTimeInterface $startDate): self
-    {
-        $this->startDate = $startDate;
-
-        return $this;
-    }
-
-    public function getEndDate(): ?DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate(?DateTimeInterface $endDate): self
-    {
-        $this->endDate = $endDate;
 
         return $this;
     }
