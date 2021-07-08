@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * All properties that the DTO entity Telephone holds.
  *
- * The main entity associated with this DTO is the cc/Telephone https://taalhuizen-bisc.commonground.nu/api/v1/cc#tag/Telephone.
+ * The main entity associated with this DTO is the cc/Telephone: https://taalhuizen-bisc.commonground.nu/api/v1/cc#tag/Telephone.
  * DTO Telephone exists of properties based on this contact catalogue entity, that is based on the following schema.org schema: https://schema.org/telephone.
  *
  * @ApiResource(
