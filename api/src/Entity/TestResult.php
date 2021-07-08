@@ -16,6 +16,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity TestResult holds.
+ *
+ * The main entity associated with this DTO is the edu/Result https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Result.
+ * DTO TestResult exists of variables based on the following jira epic: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16799%2C16919.
+ * And mainly the following issues: hhttps://lifely.atlassian.net/browse/BISC-93 & https://lifely.atlassian.net/browse/BISC-140.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -44,7 +50,7 @@ class TestResult
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $participationId;
@@ -52,7 +58,7 @@ class TestResult
     /**
      * @var LearningNeedOutCome|null The learningNeedOutCome of this TestResult.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -63,7 +69,7 @@ class TestResult
      * @var String The used exam for this TestResult.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $usedExam;
@@ -72,7 +78,7 @@ class TestResult
      * @var String The date of the exam that this TestResult is a result of.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $examDate;
@@ -80,7 +86,7 @@ class TestResult
     /**
      * @var String|null A memo/note for this TestResult.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $examMemo;

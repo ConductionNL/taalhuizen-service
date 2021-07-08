@@ -82,7 +82,7 @@ class Organization
      * @Assert\Length(
      *     max = 255
      * )
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $type;

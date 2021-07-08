@@ -21947,6 +21947,89 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        goal:
+          description: 'The goal of this LearningNeedOutcome.'
+          type: string
+        topic:
+          type: string
+          enum:
+            - DUTCH_READING
+            - DUTCH_WRITING
+            - MATH_NUMBERS
+            - MATH_PROPORTION
+            - MATH_GEOMETRY
+            - MATH_LINKS
+            - DIGITAL_USING_ICT_SYSTEMS
+            - DIGITAL_SEARCHING_INFORMATION
+            - DIGITAL_PROCESSING_INFORMATION
+            - DIGITAL_COMMUNICATION
+            - KNOWLEDGE
+            - SKILLS
+            - ATTITUDE
+            - BEHAVIOUR
+            - OTHER
+          example: DUTCH_READING
+          description: 'The topic of this LearningNeedOutcome.'
+        topicOther:
+          description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        application:
+          type: string
+          enum:
+            - FAMILY_AND_PARENTING
+            - LABOR_MARKET_AND_WORK
+            - HEALTH_AND_WELLBEING
+            - ADMINISTRATION_AND_FINANCE
+            - HOUSING_AND_NEIGHBORHOOD
+            - SELFRELIANCE
+            - OTHER
+          example: FAMILY_AND_PARENTING
+          description: 'The application of this LearningNeedOutcome.'
+        applicationOther:
+          description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        level:
+          type: string
+          enum:
+            - INFLOW
+            - NLQF1
+            - NLQF2
+            - NLQF3
+            - NLQF4
+            - OTHER
+          example: INFLOW
+          description: 'The level of this LearningNeedOutcome.'
+        levelOther:
+          description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+      required:
+        - goal
+        - topic
+        - application
+        - level
     LearningNeedOutCome-write:
       type: object
       description: ''
@@ -22066,6 +22149,89 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        goal:
+          description: 'The goal of this LearningNeedOutcome.'
+          type: string
+        topic:
+          type: string
+          enum:
+            - DUTCH_READING
+            - DUTCH_WRITING
+            - MATH_NUMBERS
+            - MATH_PROPORTION
+            - MATH_GEOMETRY
+            - MATH_LINKS
+            - DIGITAL_USING_ICT_SYSTEMS
+            - DIGITAL_SEARCHING_INFORMATION
+            - DIGITAL_PROCESSING_INFORMATION
+            - DIGITAL_COMMUNICATION
+            - KNOWLEDGE
+            - SKILLS
+            - ATTITUDE
+            - BEHAVIOUR
+            - OTHER
+          example: DUTCH_READING
+          description: 'The topic of this LearningNeedOutcome.'
+        topicOther:
+          description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        application:
+          type: string
+          enum:
+            - FAMILY_AND_PARENTING
+            - LABOR_MARKET_AND_WORK
+            - HEALTH_AND_WELLBEING
+            - ADMINISTRATION_AND_FINANCE
+            - HOUSING_AND_NEIGHBORHOOD
+            - SELFRELIANCE
+            - OTHER
+          example: FAMILY_AND_PARENTING
+          description: 'The application of this LearningNeedOutcome.'
+        applicationOther:
+          description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        level:
+          type: string
+          enum:
+            - INFLOW
+            - NLQF1
+            - NLQF2
+            - NLQF3
+            - NLQF4
+            - OTHER
+          example: INFLOW
+          description: 'The level of this LearningNeedOutcome.'
+        levelOther:
+          description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
+          type: string
+          nullable: true
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+      required:
+        - goal
+        - topic
+        - application
+        - level
     LearningNeedOutCome.jsonld-write:
       type: object
       description: ''
@@ -22201,6 +22367,11 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email-read'
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
         addresses:
           description: 'Address of this organization'
           nullable: true
@@ -22290,6 +22461,11 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email.jsonld-read'
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
         addresses:
           description: 'Address of this organization'
           nullable: true
@@ -22389,6 +22565,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -22617,6 +22803,16 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+        startDate:
+          description: 'The start date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
+        endDate:
+          description: 'The end date of this participation.'
+          type: string
+          format: date-time
+          nullable: true
         offerName:
           maxLength: 255
           description: 'Offer name of this participation'
@@ -24644,7 +24840,7 @@ components:
           nullable: true
     StudentDossierEvent-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDossierEvent holds.'
       properties:
         id:
           readOnly: true
@@ -24682,7 +24878,7 @@ components:
         - studentId
     StudentDossierEvent-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDossierEvent holds.'
       required:
         - event
         - eventDate
@@ -24715,7 +24911,7 @@ components:
           nullable: true
     StudentDossierEvent.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDossierEvent holds.'
       properties:
         '@context':
           readOnly: true
@@ -24776,7 +24972,7 @@ components:
         - studentId
     StudentDossierEvent.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDossierEvent holds.'
       required:
         - event
         - eventDate
@@ -26296,16 +26492,39 @@ components:
         - telephone
     TestResult-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity TestResult holds.'
       properties:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        participationId:
+          description: 'The id of a participation this TestResult is connected to.'
+          type: string
+        learningNeedOutCome:
+          description: 'The learningNeedOutCome of this TestResult.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome-read'
+        usedExam:
+          description: 'The used exam for this TestResult.'
+          type: string
+        examDate:
+          description: 'The date of the exam that this TestResult is a result of.'
+          type: string
+        examMemo:
+          description: 'A memo/note for this TestResult.'
+          type: string
+          nullable: true
+      required:
+        - participationId
+        - usedExam
+        - examDate
     TestResult-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity TestResult holds.'
       required:
         - participationId
         - usedExam
@@ -26332,7 +26551,7 @@ components:
           nullable: true
     TestResult.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity TestResult holds.'
       properties:
         '@context':
           readOnly: true
@@ -26362,9 +26581,32 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        participationId:
+          description: 'The id of a participation this TestResult is connected to.'
+          type: string
+        learningNeedOutCome:
+          description: 'The learningNeedOutCome of this TestResult.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+        usedExam:
+          description: 'The used exam for this TestResult.'
+          type: string
+        examDate:
+          description: 'The date of the exam that this TestResult is a result of.'
+          type: string
+        examMemo:
+          description: 'A memo/note for this TestResult.'
+          type: string
+          nullable: true
+      required:
+        - participationId
+        - usedExam
+        - examDate
     TestResult.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity TestResult holds.'
       required:
         - participationId
         - usedExam
@@ -26414,7 +26656,7 @@ components:
           nullable: true
     User-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds.'
       properties:
         id:
           readOnly: true
@@ -26429,13 +26671,22 @@ components:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person-read'
         userEnvironment:
-          maxLength: 2550
+          type: string
+          enum:
+            - BISC
+            - TAALHUIS
+            - AANBIEDER
+          example: BISC
           description: 'The userEnvironment of this User.'
+          nullable: true
+        organizationId:
+          description: 'A contact component organization id of this User.'
           type: string
           nullable: true
-        organization:
-          description: 'A contact component organization of this User.'
-          $ref: '#/components/schemas/Organization-read'
+        organizationName:
+          description: 'The organization name of this User.'
+          type: string
+          nullable: true
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -26450,14 +26701,12 @@ components:
       required:
         - username
         - person
-        - organization
     User-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds.'
       required:
         - username
         - person
-        - organization
         - password
       properties:
         username:
@@ -26468,13 +26717,22 @@ components:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person-write'
         userEnvironment:
-          maxLength: 2550
+          type: string
+          enum:
+            - BISC
+            - TAALHUIS
+            - AANBIEDER
+          example: BISC
           description: 'The userEnvironment of this User.'
+          nullable: true
+        organizationId:
+          description: 'A contact component organization id of this User.'
           type: string
           nullable: true
-        organization:
-          description: 'A contact component organization of this User.'
-          $ref: '#/components/schemas/Organization-write'
+        organizationName:
+          description: 'The organization name of this User.'
+          type: string
+          nullable: true
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -26492,7 +26750,7 @@ components:
           nullable: true
     User.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds.'
       properties:
         '@context':
           readOnly: true
@@ -26530,13 +26788,22 @@ components:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person.jsonld-read'
         userEnvironment:
-          maxLength: 2550
+          type: string
+          enum:
+            - BISC
+            - TAALHUIS
+            - AANBIEDER
+          example: BISC
           description: 'The userEnvironment of this User.'
+          nullable: true
+        organizationId:
+          description: 'A contact component organization id of this User.'
           type: string
           nullable: true
-        organization:
-          description: 'A contact component organization of this User.'
-          $ref: '#/components/schemas/Organization.jsonld-read'
+        organizationName:
+          description: 'The organization name of this User.'
+          type: string
+          nullable: true
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -26551,14 +26818,12 @@ components:
       required:
         - username
         - person
-        - organization
     User.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds.'
       required:
         - username
         - person
-        - organization
         - password
       properties:
         '@context':
@@ -26592,13 +26857,22 @@ components:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person.jsonld-write'
         userEnvironment:
-          maxLength: 2550
+          type: string
+          enum:
+            - BISC
+            - TAALHUIS
+            - AANBIEDER
+          example: BISC
           description: 'The userEnvironment of this User.'
+          nullable: true
+        organizationId:
+          description: 'A contact component organization id of this User.'
           type: string
           nullable: true
-        organization:
-          description: 'A contact component organization of this User.'
-          $ref: '#/components/schemas/Organization.jsonld-write'
+        organizationName:
+          description: 'The organization name of this User.'
+          type: string
+          nullable: true
         userRoles:
           description: 'The userRoles of this User.'
           type: array

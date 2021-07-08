@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use App\Resolver\UserMutationResolver;
@@ -18,6 +19,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity User holds.
+ *
+ * The main entity associated with this DTO is the uc/User https://taalhuizen-bisc.commonground.nu/api/v1/uc#tag/User.
+ * DTO User exists of at least a username, a password and a Person.
+ * And can also have a organization (id and/or name), a userEnvironment, 0 or more userRoles and a password reset token.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -66,24 +73,38 @@ class User
     /**
      * @var string|null The userEnvironment of this User.
      *
-     * @Assert\Length(
-     *     max = 2550
+     * @Assert\Choice(
+     *      {"BISC","TAALHUIS","AANBIEDER"}
      * )
      * @Groups({"read", "write"})
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"BISC","TAALHUIS","AANBIEDER"},
+     *             "example"="BISC"
+     *         }
+     *     }
+     * )
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $userEnvironment;
 
     /**
-     * @var Organization A contact component organization of this User.
+     * @var String|null A contact component organization id of this User.
      *
-     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private Organization $organization;
+    private ?string $organizationId;
+
+    /**
+     * @var String|null The organization name of this User.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $organizationName;
 
     /**
      * @var array|null The userRoles of this User.
@@ -164,14 +185,26 @@ class User
         return $this;
     }
 
-    public function getOrganization(): Organization
+    public function getOrganizationId(): ?string
     {
-        return $this->organization;
+        return $this->organizationId;
     }
 
-    public function setOrganization(Organization $organization): self
+    public function setOrganizationId(?string $organizationId): self
     {
-        $this->organization = $organization;
+        $this->organizationId = $organizationId;
+
+        return $this;
+    }
+
+    public function getOrganizationName(): ?string
+    {
+        return $this->organizationName;
+    }
+
+    public function setOrganizationName(?string $organizationName): self
+    {
+        $this->organizationName = $organizationName;
 
         return $this;
     }
