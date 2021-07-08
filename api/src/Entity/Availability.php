@@ -51,6 +51,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $monday;
 
@@ -59,7 +60,8 @@ class Availability
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $tuesday;
 
@@ -69,6 +71,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $wednesday;
 
@@ -78,6 +81,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $thursday;
 
@@ -87,6 +91,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $friday;
 
@@ -96,6 +101,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $saturday;
 
@@ -105,6 +111,7 @@ class Availability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private AvailabilityDay $sunday;
 

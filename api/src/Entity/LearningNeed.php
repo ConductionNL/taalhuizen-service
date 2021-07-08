@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ApiResource(
@@ -91,47 +93,60 @@ class LearningNeed
 
 // @todo outcomes properties toevoegen
     /**
-     * @var ?string Description of this learning need.
+     * @var string Description of this learning need.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $description;
+    private string $description;
 
     /**
-     * @var ?string Motivation of this learning need.
+     * @var string Motivation of this learning need.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $motivation;
+    private string $motivation;
 
     /**
-     * @var ?string Desired out comes goal of this learning need.
+     * @var string Desired out comes goal of this learning need.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $desiredOutComesGoal;
+    private string $desiredOutComesGoal;
 
     /**
-     * @var ?string Desired out comes topic of this learning need.
+     * @var string Desired out comes topic of this learning need.
      *
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"},
+     *             "example"="DUTCH_READING"
+     *         }
+     *     }
+     * )
      */
-    private ?string $desiredOutComesTopic;
+    private string $desiredOutComesTopic;
 
     /**
      * @var ?string Desired outcomes topic other of this learning need.
@@ -145,14 +160,24 @@ class LearningNeed
     private ?string $desiredOutComesTopicOther;
 
     /**
-     * @var ?string Desired out comes topic of this learning need.
+     * @var string Desired out comes topic of this learning need.
      *
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"},
+     *             "example"="FAMILY_AND_PARENTING"
+     *         }
+     *     }
+     * )
      */
-    private ?string $desiredOutComesApplication;
+    private string $desiredOutComesApplication;
 
     /**
      * @var ?string Desired out comes application other of this learning need.
@@ -166,14 +191,24 @@ class LearningNeed
     private ?string $desiredOutComesApplicationOther;
 
     /**
-     * @var ?string Desired out comes level of this learning need.
+     * @var string Desired out comes level of this learning need.
      *
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"},
+     *             "example"="INFLOW"
+     *         }
+     *     }
+     * )
      */
-    private ?string $desiredOutComesLevel;
+    private string $desiredOutComesLevel;
 
     /**
      * @var ?string Desired out comes level other of this learning need.
@@ -187,35 +222,48 @@ class LearningNeed
     private ?string $desiredOutComesLevelOther;
 
     /**
-     * @var ?string Offer desired offer of this learning need.
+     * @var string Offer desired offer of this learning need.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $offerDesiredOffer;
+    private string $offerDesiredOffer;
 
     /**
-     * @var ?string Offer advised offer of this learning need.
+     * @var string Offer advised offer of this learning need.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $offerAdvisedOffer;
+    private string $offerAdvisedOffer;
 
     /**
-     * @var ?string Offer difference of this learning need.
+     * @var string Offer difference of this learning need.
      *
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
+     *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"},
+     *             "example"="INFLOW"
+     *         }
+     *     }
+     * )
      */
-    private ?string $offerDifference;
+    private string $offerDifference;
 
     /**
      * @var ?string Offer difference other of this learning need.
@@ -244,19 +292,24 @@ class LearningNeed
      *
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=Participation::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Participation $participations;
 
     /**
-     * @var ?string Student id of this learning need.
+     * @var string Student id of this learning need.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $studentId;
+    private string $studentId;
 
     public function getId(): UuidInterface
     {
@@ -269,48 +322,48 @@ class LearningNeed
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getMotivation(): ?string
+    public function getMotivation(): string
     {
         return $this->motivation;
     }
 
-    public function setMotivation(?string $motivation): self
+    public function setMotivation(string $motivation): self
     {
         $this->motivation = $motivation;
 
         return $this;
     }
 
-    public function getDesiredOutComesGoal(): ?string
+    public function getDesiredOutComesGoal(): string
     {
         return $this->desiredOutComesGoal;
     }
 
-    public function setDesiredOutComesGoal(?string $desiredOutComesGoal): self
+    public function setDesiredOutComesGoal(string $desiredOutComesGoal): self
     {
         $this->desiredOutComesGoal = $desiredOutComesGoal;
 
         return $this;
     }
 
-    public function getDesiredOutComesTopic(): ?string
+    public function getDesiredOutComesTopic(): string
     {
         return $this->desiredOutComesTopic;
     }
 
-    public function setDesiredOutComesTopic(?string $desiredOutComesTopic): self
+    public function setDesiredOutComesTopic(string $desiredOutComesTopic): self
     {
         $this->desiredOutComesTopic = $desiredOutComesTopic;
 
@@ -329,12 +382,12 @@ class LearningNeed
         return $this;
     }
 
-    public function getDesiredOutComesApplication(): ?string
+    public function getDesiredOutComesApplication(): string
     {
         return $this->desiredOutComesApplication;
     }
 
-    public function setDesiredOutComesApplication(?string $desiredOutComesApplication): self
+    public function setDesiredOutComesApplication(string $desiredOutComesApplication): self
     {
         $this->desiredOutComesApplication = $desiredOutComesApplication;
 
@@ -353,12 +406,12 @@ class LearningNeed
         return $this;
     }
 
-    public function getDesiredOutComesLevel(): ?string
+    public function getDesiredOutComesLevel(): string
     {
         return $this->desiredOutComesLevel;
     }
 
-    public function setDesiredOutComesLevel(?string $desiredOutComesLevel): self
+    public function setDesiredOutComesLevel(string $desiredOutComesLevel): self
     {
         $this->desiredOutComesLevel = $desiredOutComesLevel;
 
@@ -377,36 +430,36 @@ class LearningNeed
         return $this;
     }
 
-    public function getOfferDesiredOffer(): ?string
+    public function getOfferDesiredOffer(): string
     {
         return $this->offerDesiredOffer;
     }
 
-    public function setOfferDesiredOffer(?string $offerDesiredOffer): self
+    public function setOfferDesiredOffer(string $offerDesiredOffer): self
     {
         $this->offerDesiredOffer = $offerDesiredOffer;
 
         return $this;
     }
 
-    public function getOfferAdvisedOffer(): ?string
+    public function getOfferAdvisedOffer(): string
     {
         return $this->offerAdvisedOffer;
     }
 
-    public function setOfferAdvisedOffer(?string $offerAdvisedOffer): self
+    public function setOfferAdvisedOffer(string $offerAdvisedOffer): self
     {
         $this->offerAdvisedOffer = $offerAdvisedOffer;
 
         return $this;
     }
 
-    public function getOfferDifference(): ?string
+    public function getOfferDifference(): string
     {
         return $this->offerDifference;
     }
 
-    public function setOfferDifference(?string $offerDifference): self
+    public function setOfferDifference(string $offerDifference): self
     {
         $this->offerDifference = $offerDifference;
 
@@ -449,12 +502,12 @@ class LearningNeed
         return $this;
     }
 
-    public function getStudentId(): ?string
+    public function getStudentId(): string
     {
         return $this->studentId;
     }
 
-    public function setStudentId(?string $studentId): self
+    public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
 

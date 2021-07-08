@@ -2,19 +2,28 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ParticipationRepository;
 use App\Resolver\ParticipationMutationResolver;
 use App\Resolver\ParticipationQueryCollectionResolver;
 use App\Resolver\ParticipationQueryItemResolver;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiProperty;
+
 
 /**
  * @ApiResource(
@@ -133,11 +142,21 @@ class Participation
 
 // @todo outcomes properties toevoegen
     /**
-     * @var ?string Status of this participation. **ACTIVE**, **COMPLETED**, **REFERRED**
+     * @var ?string Status of this participation.
      *
      * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"ACTIVE", "COMPLETED", "REFERRED"},
+     *             "example"="ACTIVE"
+     *         }
+     *     }
+     * )
      */
     private ?string $status;
 
@@ -147,6 +166,8 @@ class Participation
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Organization $organization;
 
@@ -174,11 +195,21 @@ class Participation
     private ?string $offerName;
 
     /**
-     * @var ?string Offer course of this participation. **MATH**, **DIGITAL**, **OTHER**
+     * @var ?string Offer course of this participation.
      *
      * @Assert\Choice({"LANGUAGE", "MATH", "DIGITAL", "OTHER"})
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"LANGUAGE", "MATH", "DIGITAL", "OTHER"},
+     *             "example"="LANGUAGE"
+     *         }
+     *     }
+     * )
      */
     private ?string $offerCourse;
 
@@ -191,11 +222,21 @@ class Participation
     private ?bool $detailsIsFormal;
 
     /**
-     * @var ?string Details group formation of this participation. **INDIVIDUALLY**, **IN_A_GROUP**
+     * @var ?string Details group formation of this participation.
      *
      * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
      */
     private ?string $detailsGroupFormation;
 
@@ -244,12 +285,14 @@ class Participation
 
 //   Learning need of the participation, was called in the graphql-schema 'learningNeedId' and 'learningNeedUrl', changed to 'LearningNeed'
     /**
-     * @var ?LearningNeed LearningNeed of this participation
+     * @var LearningNeed LearningNeed of this participation
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=LearningNeed::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private ?LearningNeed $learningNeed;
+    private LearningNeed $learningNeed;
 
     /**
      * @var ?string Presence engagements of this participation.
@@ -285,11 +328,22 @@ class Participation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"},
+     *             "example"="MOVED"
+     *         }
+     *     }
+     * )
      */
     private ?string $presenceEndParticipationReason;
 
     /**
      * @var ?string Employee id of this participation
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\Length(
      *     max = 255
@@ -301,6 +355,8 @@ class Participation
 
     /**
      * @var ?string Group id of this participation
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\Length(
      *     max = 255
@@ -537,12 +593,12 @@ class Participation
         return $this;
     }
 
-    public function getLearningNeed(): ?LearningNeed
+    public function getLearningNeed(): LearningNeed
     {
         return $this->learningNeed;
     }
 
-    public function setLearningNeed(?LearningNeed $learningNeed): self
+    public function setLearningNeed(LearningNeed $learningNeed): self
     {
         $this->learningNeed = $learningNeed;
 

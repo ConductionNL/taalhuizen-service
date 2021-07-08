@@ -105,9 +105,11 @@ class Group
     /**
      * @var Organization Organization of this group
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private Organization $organization;
 
@@ -136,16 +138,13 @@ class Group
     private string $typeCourse;
 
     /**
-     * @var string Detail is formal of this group.
+     * @var bool Detail is formal of this group.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean")
      */
-    private string $detailsIsFormal;
+    private bool $detailsIsFormal;
 
     /**
      * @var int Detail is formal of this group.
@@ -194,7 +193,10 @@ class Group
     /**
      * @var ?Availability Availability of this group.
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Availability $availability;
 
@@ -258,6 +260,8 @@ class Group
     /**
      * @var array Employee ids of this group.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Assert\NotNull
      * @ORM\Column(type="array")
      */
@@ -298,12 +302,12 @@ class Group
         return $this;
     }
 
-    public function getDetailsIsFormal(): string
+    public function getDetailsIsFormal(): bool
     {
         return $this->detailsIsFormal;
     }
 
-    public function setDetailsIsFormal(string $detailsIsFormal): self
+    public function setDetailsIsFormal(bool $detailsIsFormal): self
     {
         $this->detailsIsFormal = $detailsIsFormal;
 

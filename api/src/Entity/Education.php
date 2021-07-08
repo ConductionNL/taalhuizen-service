@@ -67,7 +67,7 @@ class Education
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private ?DateTime $enddate;
+    private ?DateTime $endDate;
 
 //   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
@@ -130,12 +130,12 @@ class Education
 
     public function getEnddate(): ?\DateTimeInterface
     {
-        return $this->enddate;
+        return $this->endDate;
     }
 
-    public function setEnddate(?\DateTimeInterface $enddate): self
+    public function setEnddate(?\DateTimeInterface $endDate): self
     {
-        $this->enddate = $enddate;
+        $this->endDate = $endDate;
 
         return $this;
     }

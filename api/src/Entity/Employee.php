@@ -22,6 +22,7 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
  * @ApiResource(
@@ -87,8 +88,11 @@ class Employee
     /**
      * @var Person Person of this employee
      *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private Person $person;
 
@@ -104,13 +108,22 @@ class Employee
     private ?string $contactTelephone;
 
     /**
-     * @var ?string Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
+     * @var ?string Contact Preference of this Employee.
      *
      * @Assert\Choice(
      *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"},
+     *             "example"="PHONECALL"
+     *         }
+     *     }
+     * )
      */
     private ?string $contactPreference;
 
@@ -128,7 +141,10 @@ class Employee
     /**
      * @var ?Availability The Availability of this Employee.
      *
+     * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Availability $availability;
 
@@ -144,13 +160,25 @@ class Employee
     private ?string $availabilityNotes;
 
     /**
-     * @var ?array Target Group Preference of this Employee. **NT1**, **NT2**
+     * @var ?array Target Group Preference of this Employee.
      *
      * @example NT1
      * @Assert\Choice(multiple=true, choices={"NT1","NT2"})
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"NT1", "NT2"},
+     *               "example"="NT1"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private ?array $targetGroupPreferences = [];
 
@@ -212,6 +240,8 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Education $education;
 
@@ -246,24 +276,42 @@ class Employee
     private ?string $currentlyFollowingCourseInstitute;
 
     /***
-     * @var ?string Currently following course teacher professionalism of this Employee. **PROFESSIONAL**, **VOLUNTEER**, **BOTH**
+     * @var ?string Currently following course teacher professionalism of this Employee.
      *
      * @Assert\Choice(
      *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
      */
     private ?string $currentlyFollowingCourseTeacherProfessionalism;
 
     /**
-     * @var ?string Currently following course professionalism of this Employee. **PROFESSIONAL**, **VOLUNTEER**, **BOTH**
+     * @var ?string Currently following course professionalism of this Employee.
      *
      * @Assert\Choice(
      *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
      */
     private ?string $currentlyFollowingCourseCourseProfessionalism;
 
@@ -299,11 +347,15 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Organization $organization;
 
     /**
      * @var ?string Bisc employee id of this Employee.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\Length(
      *     max = 255
@@ -311,10 +363,12 @@ class Employee
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $biscEmployeeId;
+    private ?string $employeeId;
 
     /**
      * @var ?string User id of this Employee.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\Length(
      *     max = 255
@@ -326,6 +380,8 @@ class Employee
 
     /**
      * @var ?array User Group ids of this Employee.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
@@ -607,14 +663,14 @@ class Employee
         return $this;
     }
 
-    public function getBiscEmployeeId(): ?string
+    public function getEmployeeId(): ?string
     {
-        return $this->biscEmployeeId;
+        return $this->employeeId;
     }
 
-    public function setBiscEmployeeId(?string $biscEmployeeId): self
+    public function setEmployeeId(?string $employeeId): self
     {
-        $this->biscEmployeeId = $biscEmployeeId;
+        $this->employeeId = $employeeId;
 
         return $this;
     }
