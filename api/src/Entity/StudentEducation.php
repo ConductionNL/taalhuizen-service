@@ -2,15 +2,25 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentEducationRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=StudentEducationRepository::class)
  */
 class StudentEducation
@@ -25,69 +35,132 @@ class StudentEducation
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var String|null The last followed education of this StudentEducation.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"},
+     *             "example"="NO_EDUCATION"
+     *         }
+     *     }
+     * )
      */
-    private $lastFollowedEducation;
+    private ?string $lastFollowedEducation;
 
     /**
+     * @var bool|null A boolean that is true when the student graduated for his/her last followed education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $didGraduate;
+    private ?bool $didGraduate;
 
     /**
+     * @var String|null A enum for if the student is following an education right now or not.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"YES", "NO", "NO_BUT_DID_EARLIER"},
+     *             "example"="YES"
+     *         }
+     *     }
+     * )
      */
-    private $followingEducationRightNow;
+    private ?string $followingEducationRightNow;
 
     /**
+     * @var DateTimeInterface|null If the student is following an education right now this is used for the start date of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowYesStartDate;
+    private ?DateTimeInterface $followingEducationRightNowYesStartDate;
 
     /**
+     * @var DateTimeInterface|null If the student is following an education right now this is used for the end date of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowYesEndDate;
+    private ?DateTimeInterface $followingEducationRightNowYesEndDate;
 
     /**
+     * @var String|null If the student is following an education right now this is used for the level of that education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"},
+     *             "example"="LANGUAGE_COURSE"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $followingEducationRightNowYesLevel;
+
+    /**
+     * @var String|null If the student is following an education right now this is used for the institute of that education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $followingEducationRightNowYesLevel;
+    private ?string $followingEducationRightNowYesInstitute;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $followingEducationRightNowYesInstitute;
-
-    /**
+     * @var bool|null If the student is following an education right now this is true if that education provides a certificate.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $followingEducationRightNowYesProvidesCertificate;
+    private ?bool $followingEducationRightNowYesProvidesCertificate;
 
     /**
+     * @var DateTimeInterface|null If the student is not following an education right now this can be used for the end date of the last education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $followingEducationRightNowNoEndDate;
+    private ?DateTimeInterface $followingEducationRightNowNoEndDate;
 
     /**
+     * @var String|null If the student is not following an education right now this is used for the level of the last education.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $followingEducationRightNowNoLevel;
+    private ?string $followingEducationRightNowNoLevel;
 
     /**
+     * @var bool|null If the student is not following an education right now this is true if the last education provides a certificate.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $followingEducationRightNowNoGotCertificate;
+    private ?bool $followingEducationRightNowNoGotCertificate;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -130,24 +203,24 @@ class StudentEducation
         return $this;
     }
 
-    public function getFollowingEducationRightNowYesStartDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowYesStartDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowYesStartDate;
     }
 
-    public function setFollowingEducationRightNowYesStartDate(?\DateTimeInterface $followingEducationRightNowYesStartDate): self
+    public function setFollowingEducationRightNowYesStartDate(?DateTimeInterface $followingEducationRightNowYesStartDate): self
     {
         $this->followingEducationRightNowYesStartDate = $followingEducationRightNowYesStartDate;
 
         return $this;
     }
 
-    public function getFollowingEducationRightNowYesEndDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowYesEndDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowYesEndDate;
     }
 
-    public function setFollowingEducationRightNowYesEndDate(?\DateTimeInterface $followingEducationRightNowYesEndDate): self
+    public function setFollowingEducationRightNowYesEndDate(?DateTimeInterface $followingEducationRightNowYesEndDate): self
     {
         $this->followingEducationRightNowYesEndDate = $followingEducationRightNowYesEndDate;
 
@@ -190,12 +263,12 @@ class StudentEducation
         return $this;
     }
 
-    public function getFollowingEducationRightNowNoEndDate(): ?\DateTimeInterface
+    public function getFollowingEducationRightNowNoEndDate(): ?DateTimeInterface
     {
         return $this->followingEducationRightNowNoEndDate;
     }
 
-    public function setFollowingEducationRightNowNoEndDate(?\DateTimeInterface $followingEducationRightNowNoEndDate): self
+    public function setFollowingEducationRightNowNoEndDate(?DateTimeInterface $followingEducationRightNowNoEndDate): self
     {
         $this->followingEducationRightNowNoEndDate = $followingEducationRightNowNoEndDate;
 

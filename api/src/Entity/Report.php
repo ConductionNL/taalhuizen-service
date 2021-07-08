@@ -10,65 +10,16 @@ use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ReportQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = ReportQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadParticipants" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadDesiredLearningOutcomes" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadVolunteers" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */
 class Report
@@ -86,38 +37,57 @@ class Report
     private UuidInterface $id;
 
     /**
-     * @var string|null The language house the report applies to
+     * @var string|null The language house the report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;
 
     /**
-     * @var string|null The provider this report applies to
+     * @var string|null The provider this report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $providerId;
 
     /**
+     * @var string|null A date from which you want data in the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateFrom;
 
     /**
+     * @var string|null A date until which you want data in the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $dateUntil;
 
     /**
-     * @var string|null The filename of the report
+     * @var string|null The filename of the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $filename;
 
+    // Renamed from base64data to base64.
     /**
-     * @var string|null A base64 encoded string containing the file's contents
+     * @var string|null A base64 encoded string containing the file's contents.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $base64data;
+    private ?string $base64;
 
     public function getId(): UuidInterface
     {
@@ -191,14 +161,14 @@ class Report
         return $this;
     }
 
-    public function getBase64data(): ?string
+    public function getBase64(): ?string
     {
-        return $this->base64data;
+        return $this->base64;
     }
 
-    public function setBase64data(?string $base64data): self
+    public function setBase64(?string $base64): self
     {
-        $this->base64data = $base64data;
+        $this->base64 = $base64;
 
         return $this;
     }

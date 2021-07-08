@@ -20,6 +20,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = EmployeeQueryItemResolver::class,
@@ -82,116 +88,39 @@ class Employee
     private $id;
 
     /**
-     * @var string The Name of this Employee.
+     * @var Person Person of this employee
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $givenName;
+    private Person $person;
 
     /**
-     * @var string The PrefixName of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $additionalName;
-
-    /**
-     * @var string The LastName of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $familyName;
-
-    /**
-     * @var string The Telephone of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $telephone;
-
-    /**
-     * @var array|null The availability for this employee
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $availability = [];
-
-    /**
-     * @var string The Availability Note of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=2550, nullable=true)
-     */
-    private $availabilityNotes;
-
-    /**
-     * @var string The Email of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 2550
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $email;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $userGroupIds = [];
-
-    /**
-     * @var string The Gender of this Employee. **Male**, **Female**, **X**
-     *
-     * @example Male
-     *
-     * @Assert\Choice(
-     *      {"Male","Female","X"}
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $gender;
-
-    /**
-     * @var string Date of birth of this Employee.
-     *
-     * @example 15-03-2000
+     * @var ?Address Address of this employee
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
      */
-    private $dateOfBirth;
+    private ?Address $addresses;
 
     /**
-     * @var array|null The address of this Employee.
+     * @var ?Telephone Telephone of this employee
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
      */
-    private ?array $address = [];
+    private ?Telephone $telephones;
 
     /**
-     * @var string Contact Telephone of this Employee.
+     * @var ?Email Email of this employee
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     */
+    private ?Email $emails;
+
+    /**
+     * @var string Contact telephone of this Employee.
      *
      * @Assert\Length(
      *     max = 255
@@ -216,6 +145,26 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $contactPreferenceOther;
+
+    // @todo do we want the availability as a object?
+    /**
+     * @var array|null The availability for this employee
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private ?array $availability = [];
+
+    // @todo do we want the availability note as a object?
+    /**
+     * @var string The Availability Note of this Employee.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=2550, nullable=true)
+     */
+    private $availabilityNotes;
 
     /**
      * @var array|null Target Preference of this Employee. **NT1**, **NT2**
@@ -335,20 +284,12 @@ class Employee
     private ?bool $isVOGChecked = false;
 
     /**
-     * @var string|null The provider this employee works for
+     * @var ?Organization Organization of this person
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      */
-    private ?string $providerId;
-
-    /**
-     * @var string|null The language house this employee works for
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
+    private ?Organization $organization;
 
     /**
      * @Groups({"read", "write"})
@@ -393,57 +334,57 @@ class Employee
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getGivenName(): ?string
+    public function getPerson(): ?Person
     {
-        return $this->givenName;
+        return $this->person;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setPerson(Person $person): self
     {
-        $this->givenName = $givenName;
+        $this->person = $person;
 
         return $this;
     }
 
-    public function getAdditionalName(): ?string
+    public function getAddresses(): ?Address
     {
-        return $this->additionalName;
+        return $this->addresses;
     }
 
-    public function setAdditionalName(?string $additionalName): self
+    public function setAddresses(?Address $addresses): self
     {
-        $this->additionalName = $additionalName;
+        $this->addresses = $addresses;
 
         return $this;
     }
 
-    public function getFamilyName(): ?string
+    public function getTelephones(): ?Telephone
     {
-        return $this->familyName;
+        return $this->telephones;
     }
 
-    public function setFamilyName(string $familyName): self
+    public function setTelephones(?Telephone $telephones): self
     {
-        $this->familyName = $familyName;
+        $this->telephones = $telephones;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getEmails(): ?Email
     {
-        return $this->telephone;
+        return $this->emails;
     }
 
-    public function setTelephone(?string $telephone): self
+    public function setEmails(?Email $emails): self
     {
-        $this->telephone = $telephone;
+        $this->emails = $emails;
 
         return $this;
     }
@@ -456,42 +397,6 @@ class Employee
     public function setAvailabilityNotes(?string $availabilityNotes): self
     {
         $this->availabilityNotes = $availabilityNotes;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?string $gender): self
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getDateOfBirth(): ?\DateTimeInterface
-    {
-        return $this->dateOfBirth;
-    }
-
-    public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
-    {
-        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }
@@ -540,18 +445,6 @@ class Employee
     public function setVolunteeringPreference(?string $volunteeringPreference): self
     {
         $this->volunteeringPreference = $volunteeringPreference;
-
-        return $this;
-    }
-
-    public function getAddress(): array
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?array $address = []): self
-    {
-        $this->address = $address;
 
         return $this;
     }
@@ -724,26 +617,14 @@ class Employee
         return $this;
     }
 
-    public function getProviderId(): ?string
+    public function getOrganization(): ?Organization
     {
-        return $this->providerId;
+        return $this->organization;
     }
 
-    public function setProviderId(?string $providerId): self
+    public function setOrganization(?Organization $organization): self
     {
-        $this->providerId = $providerId;
-
-        return $this;
-    }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(?string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
+        $this->organization = $organization;
 
         return $this;
     }
@@ -843,4 +724,5 @@ class Employee
 
         return $this;
     }
+
 }

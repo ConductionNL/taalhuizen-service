@@ -15,10 +15,17 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     },
  *     graphql={
  *          "item_query" = {
  *              "item_query" = GroupQueryItemResolver::class,
@@ -103,68 +110,11 @@ class Group
     private $typeCourse;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesGoal;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopic;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopicOther;
-
-    /**
      * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @MaxDepth(1)
      */
-    private $outComesApplication;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevel;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsIsFormal;
-
-    /**
-     * @ORM\Column(type="integer", length=255, nullable=true)
-     */
-    private $detailsTotalClassHours;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $detailsCertificateWillBeAwarded;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true, nullable=true)
-     */
-    private $detailsStartDate;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $detailsEndDate;
+    private ?string $learningNeedOutCome;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -201,17 +151,12 @@ class Group
      */
     private $aanbiederEmployeeIds = [];
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $groupId;
-
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -242,74 +187,14 @@ class Group
         return $this;
     }
 
-    public function getOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): ?string
     {
-        return $this->outComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesGoal(?string $outComesGoal): self
+    public function setLearningNeedOutCome(string $learningNeedOutCome): self
     {
-        $this->outComesGoal = $outComesGoal;
-
-        return $this;
-    }
-
-    public function getDetailsIsFormal(): ?string
-    {
-        return $this->detailsIsFormal;
-    }
-
-    public function setDetailsIsFormal(?string $detailsIsFormal): self
-    {
-        $this->detailsIsFormal = $detailsIsFormal;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): ?int
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(?int $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): ?bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
@@ -386,66 +271,6 @@ class Group
         return $this;
     }
 
-    public function getOutComesTopic(): ?string
-    {
-        return $this->outComesTopic;
-    }
-
-    public function setOutComesTopic(?string $outComesTopic): self
-    {
-        $this->outComesTopic = $outComesTopic;
-
-        return $this;
-    }
-
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(?string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
     public function getAvailability(): ?array
     {
         return $this->availability;
@@ -458,18 +283,6 @@ class Group
         return $this;
     }
 
-    public function getOutComesLevel(): ?string
-    {
-        return $this->outComesLevel;
-    }
-
-    public function setOutComesLevel(?string $outComesLevel): self
-    {
-        $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
     public function getAanbiederId(): ?string
     {
         return $this->aanbiederId;
@@ -478,18 +291,6 @@ class Group
     public function setAanbiederId(?string $aanbiederId): self
     {
         $this->aanbiederId = $aanbiederId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
 
         return $this;
     }

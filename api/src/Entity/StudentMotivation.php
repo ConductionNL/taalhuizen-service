@@ -2,14 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentMotivationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=StudentMotivationRepository::class)
  */
 class StudentMotivation
@@ -24,54 +33,111 @@ class StudentMotivation
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @ORM\Column(type="array")
+     * @var array|null The desired skills for a StudentMotivation.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice(multiple=true, choices={
+     *     "KLIKTIK", "USING_WHATSAPP", "USING_SKYPE", "DEVICE_FUNCTIONALITIES", "DIGITAL_GOVERNMENT", "RESERVE_BOOKS_IN_LIBRARY",
+     *     "ADS_ON_MARKTPLAATS", "READ_FOR_CHILDREN", "UNDERSTAND_PRESCRIPTIONS", "WRITE_APPLICATION_LETTER", "WRITE_POSTCARD_FOR_FAMILY",
+     *     "DO_ADMINISTRATION", "CALCULATIONS_FOR_RECIPES", "OTHER"
+     * })
+     * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={
+     *                  "KLIKTIK", "USING_WHATSAPP", "USING_SKYPE", "DEVICE_FUNCTIONALITIES", "DIGITAL_GOVERNMENT", "RESERVE_BOOKS_IN_LIBRARY",
+     *                  "ADS_ON_MARKTPLAATS", "READ_FOR_CHILDREN", "UNDERSTAND_PRESCRIPTIONS", "WRITE_APPLICATION_LETTER", "WRITE_POSTCARD_FOR_FAMILY",
+     *                  "DO_ADMINISTRATION", "CALCULATIONS_FOR_RECIPES", "OTHER"},
+     *               "example"="USING_WHATSAPP"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $desiredSkills = [];
+    private ?array $desiredSkills = [];
 
     /**
+     * @var String|null The desired skills for when the OTHER option is selected.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $desiredSkillsOther;
+    private ?string $desiredSkillsOther;
 
     /**
+     * @var bool|null A boolean that is true when the student has tried this before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $hasTriedThisBefore;
+    private ?bool $hasTriedThisBefore;
 
     /**
+     * @var String|null The explanation why the student has or has not tried this before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $hasTriedThisBeforeExplanation;
+    private ?string $hasTriedThisBeforeExplanation;
 
     /**
+     * @var String|null The reason why the student wants to learn these skills.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $whyWantTheseSkills;
+    private ?string $whyWantTheseSkills;
 
     /**
+     * @var String|null The reason why the student wants to learn these skills right now.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $whyWantThisNow;
+    private ?string $whyWantThisNow;
 
     /**
-     * @ORM\Column(type="array")
+     * @var array|null The desired learning methods for this StudentMotivation.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice(multiple=true, choices={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"})
+     * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"},
+     *               "example"="IN_A_GROUP"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $desiredLearingMethod = [];
+    private ?array $desiredLearningMethod = [];
 
     /**
+     * @var String|null The final remark/note for the StudentMotivation.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $remarks;
+    private ?string $remarks;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -83,7 +149,7 @@ class StudentMotivation
         return $this->desiredSkills;
     }
 
-    public function setDesiredSkills(array $desiredSkills): self
+    public function setDesiredSkills(?array $desiredSkills): self
     {
         $this->desiredSkills = $desiredSkills;
 
@@ -150,14 +216,14 @@ class StudentMotivation
         return $this;
     }
 
-    public function getDesiredLearingMethod(): ?array
+    public function getDesiredLearningMethod(): ?array
     {
-        return $this->desiredLearingMethod;
+        return $this->desiredLearningMethod;
     }
 
-    public function setDesiredLearingMethod(array $desiredLearingMethod): self
+    public function setDesiredLearningMethod(?array $desiredLearningMethod): self
     {
-        $this->desiredLearingMethod = $desiredLearingMethod;
+        $this->desiredLearningMethod = $desiredLearningMethod;
 
         return $this;
     }
