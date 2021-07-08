@@ -40,26 +40,6 @@ class Report
     private UuidInterface $id;
 
     /**
-     * @var string|null The language house the report applies to.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
-
-    /**
-     * @var string|null The provider this report applies to.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $providerId;
-
-    /**
      * @var string|null A date from which you want data in the report.
      *
      * @Groups({"read", "write"})
@@ -100,30 +80,6 @@ class Report
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
-        return $this;
-    }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(?string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
-    public function getProviderId(): ?string
-    {
-        return $this->providerId;
-    }
-
-    public function setProviderId(?string $providerId): self
-    {
-        $this->providerId = $providerId;
 
         return $this;
     }

@@ -138,6 +138,34 @@ class Person
      */
     private ?Organization $organization;
 
+    /**
+     * @var string|null The contact preference of the person.
+     *
+     * @example Whatsapp
+     *
+     * @Groups({"read","write"})
+     * @Assert\Choice({"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"},
+     *             "example"="PHONECALL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $contactPreference;
+
+    /**
+     * @var string|null The contact preference of the person for when the OTHER option is selected.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $contactPreferenceOther;
+
     public function getId(): UuidInterface
     {
         return $this->id;

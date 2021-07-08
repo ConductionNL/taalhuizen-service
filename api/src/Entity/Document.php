@@ -71,16 +71,6 @@ class Document
     private string $base64;
 
 //   person of the document, was called in the graphql-schema 'studentId' and 'aanbiederEmployeeId', changed to 'person'(Person entity)
-    /**
-     * @var Person Person of this document.
-     *
-     * @Assert\NotNull
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @MaxDepth(1)
-     */
-    private Person $person;
 
     public function getId(): UuidInterface
     {
@@ -116,17 +106,4 @@ class Document
 
         return $this;
     }
-
-    public function getPerson(): ?Person
-    {
-        return $this->person;
-    }
-
-    public function setPerson(Person $person): self
-    {
-        $this->person = $person;
-
-        return $this;
-    }
-
 }

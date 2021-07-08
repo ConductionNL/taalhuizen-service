@@ -9349,32 +9349,6 @@ paths:
           style: form
           explode: false
           allowReserved: false
-        -
-          name: languageHouseId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'languageHouseId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
       deprecated: false
     post:
       operationId: postRegistrationCollection
@@ -20318,20 +20292,15 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
-        person:
-          description: 'Person of this document.'
-          $ref: '#/components/schemas/Person-read'
       required:
         - name
         - base64
-        - person
     Document-write:
       type: object
       description: ''
       required:
         - name
         - base64
-        - person
       properties:
         name:
           maxLength: 255
@@ -20340,9 +20309,6 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
-        person:
-          description: 'Person of this document.'
-          $ref: '#/components/schemas/Person-write'
     Document.jsonld-read:
       type: object
       description: ''
@@ -20382,20 +20348,15 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
-        person:
-          description: 'Person of this document.'
-          $ref: '#/components/schemas/Person.jsonld-read'
       required:
         - name
         - base64
-        - person
     Document.jsonld-write:
       type: object
       description: ''
       required:
         - name
         - base64
-        - person
       properties:
         '@context':
           readOnly: true
@@ -20427,9 +20388,6 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
-        person:
-          description: 'Person of this document.'
-          $ref: '#/components/schemas/Person.jsonld-write'
     Education-read:
       type: object
       description: ''
@@ -20439,6 +20397,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        name:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20463,11 +20425,40 @@ components:
           maxLength: 255
           description: 'Degree granted status of this education.'
           type: string
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation type of this (course) Education.'
+          nullable: true
+        teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        provideCertificate:
+          description: 'A boolean that is true if the Education provides a certificate when completed.'
+          type: boolean
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
           nullable: true
     Education-write:
       type: object
       description: ''
       properties:
+        name:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20492,6 +20483,31 @@ components:
           maxLength: 255
           description: 'Degree granted status of this education.'
           type: string
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation type of this (course) Education.'
+          nullable: true
+        teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        provideCertificate:
+          description: 'A boolean that is true if the Education provides a certificate when completed.'
+          type: boolean
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
           nullable: true
     Education.jsonld-read:
       type: object
@@ -20525,6 +20541,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        name:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20549,6 +20569,31 @@ components:
           maxLength: 255
           description: 'Degree granted status of this education.'
           type: string
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation type of this (course) Education.'
+          nullable: true
+        teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        provideCertificate:
+          description: 'A boolean that is true if the Education provides a certificate when completed.'
+          type: boolean
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
           nullable: true
     Education.jsonld-write:
       type: object
@@ -20577,6 +20622,10 @@ components:
         '@type':
           readOnly: true
           type: string
+        name:
+          description: 'The name of the course this student is following.'
+          type: string
+          nullable: true
         startDate:
           description: 'Start date of this education.'
           type: string
@@ -20601,6 +20650,31 @@ components:
           maxLength: 255
           description: 'Degree granted status of this education.'
           type: string
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation type of this (course) Education.'
+          nullable: true
+        teacherProfessionalism:
+          type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The professionalism of the teacher for this Education.'
+          nullable: true
+        provideCertificate:
+          description: 'A boolean that is true if the Education provides a certificate when completed.'
+          type: boolean
+          nullable: true
+        amountOfHours:
+          description: 'The amount of hours the course takes, that this student is following.'
+          type: integer
           nullable: true
     Email-read:
       type: object
@@ -20730,26 +20804,6 @@ components:
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person-read'
-        contactTelephone:
-          maxLength: 255
-          description: 'Contact telephone of this Employee.'
-          type: string
-          nullable: true
-        contactPreference:
-          type: string
-          enum:
-            - PHONECALL
-            - WHATSAPP
-            - EMAIL
-            - OTHER
-          example: PHONECALL
-          description: 'Contact Preference of this Employee.'
-          nullable: true
-        contactPreferenceOther:
-          maxLength: 255
-          description: 'The Contact preference other of this Employee.'
-          type: string
-          nullable: true
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -20760,16 +20814,6 @@ components:
           maxLength: 2550
           description: 'The Availability Note of this Employee.'
           type: string
-          nullable: true
-        targetGroupPreferences:
-          type: array
-          items:
-            type: string
-            enum:
-              - NT1
-              - NT2
-            example: NT1
-          description: 'Target Group Preference of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
@@ -20805,29 +20849,12 @@ components:
           description: 'Does currently follow course of this Employee.'
           type: boolean
           nullable: true
-        currentlyFollowingCourseName:
-          maxLength: 255
-          description: 'Currently following course name of this Employee.'
-          type: string
+        followingCourse:
+          description: 'Currently following course (Education) of this Employee.'
           nullable: true
-        currentlyFollowingCourseInstitute:
-          maxLength: 255
-          description: 'Currently following course institute of this Employee.'
-          type: string
-          nullable: true
-        currentlyFollowingCourseCourseProfessionalism:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'Currently following course professionalism of this Employee.'
-          nullable: true
-        doesCurrentlyFollowingCourseProvideCertificate:
-          description: 'Does currently follow course provide certificate of this Employee.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education-read'
         otherRelevantCertificates:
           maxLength: 255
           description: 'Other relevant certificates of this Employee.'
@@ -20837,12 +20864,10 @@ components:
           description: 'Whether the employee has submitted a police certificate'
           type: boolean
           nullable: true
-        organization:
-          description: 'Organization of this person'
+        organizationId:
+          description: 'A contact component organization id of this Employee.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-read'
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -20865,26 +20890,6 @@ components:
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person-write'
-        contactTelephone:
-          maxLength: 255
-          description: 'Contact telephone of this Employee.'
-          type: string
-          nullable: true
-        contactPreference:
-          type: string
-          enum:
-            - PHONECALL
-            - WHATSAPP
-            - EMAIL
-            - OTHER
-          example: PHONECALL
-          description: 'Contact Preference of this Employee.'
-          nullable: true
-        contactPreferenceOther:
-          maxLength: 255
-          description: 'The Contact preference other of this Employee.'
-          type: string
-          nullable: true
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -20895,16 +20900,6 @@ components:
           maxLength: 2550
           description: 'The Availability Note of this Employee.'
           type: string
-          nullable: true
-        targetGroupPreferences:
-          type: array
-          items:
-            type: string
-            enum:
-              - NT1
-              - NT2
-            example: NT1
-          description: 'Target Group Preference of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
@@ -20940,29 +20935,12 @@ components:
           description: 'Does currently follow course of this Employee.'
           type: boolean
           nullable: true
-        currentlyFollowingCourseName:
-          maxLength: 255
-          description: 'Currently following course name of this Employee.'
-          type: string
+        followingCourse:
+          description: 'Currently following course (Education) of this Employee.'
           nullable: true
-        currentlyFollowingCourseInstitute:
-          maxLength: 255
-          description: 'Currently following course institute of this Employee.'
-          type: string
-          nullable: true
-        currentlyFollowingCourseCourseProfessionalism:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'Currently following course professionalism of this Employee.'
-          nullable: true
-        doesCurrentlyFollowingCourseProvideCertificate:
-          description: 'Does currently follow course provide certificate of this Employee.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education-write'
         otherRelevantCertificates:
           maxLength: 255
           description: 'Other relevant certificates of this Employee.'
@@ -20972,12 +20950,10 @@ components:
           description: 'Whether the employee has submitted a police certificate'
           type: boolean
           nullable: true
-        organization:
-          description: 'Organization of this person'
+        organizationId:
+          description: 'A contact component organization id of this Employee.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-write'
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21024,26 +21000,6 @@ components:
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person.jsonld-read'
-        contactTelephone:
-          maxLength: 255
-          description: 'Contact telephone of this Employee.'
-          type: string
-          nullable: true
-        contactPreference:
-          type: string
-          enum:
-            - PHONECALL
-            - WHATSAPP
-            - EMAIL
-            - OTHER
-          example: PHONECALL
-          description: 'Contact Preference of this Employee.'
-          nullable: true
-        contactPreferenceOther:
-          maxLength: 255
-          description: 'The Contact preference other of this Employee.'
-          type: string
-          nullable: true
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -21054,16 +21010,6 @@ components:
           maxLength: 2550
           description: 'The Availability Note of this Employee.'
           type: string
-          nullable: true
-        targetGroupPreferences:
-          type: array
-          items:
-            type: string
-            enum:
-              - NT1
-              - NT2
-            example: NT1
-          description: 'Target Group Preference of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
@@ -21099,29 +21045,12 @@ components:
           description: 'Does currently follow course of this Employee.'
           type: boolean
           nullable: true
-        currentlyFollowingCourseName:
-          maxLength: 255
-          description: 'Currently following course name of this Employee.'
-          type: string
+        followingCourse:
+          description: 'Currently following course (Education) of this Employee.'
           nullable: true
-        currentlyFollowingCourseInstitute:
-          maxLength: 255
-          description: 'Currently following course institute of this Employee.'
-          type: string
-          nullable: true
-        currentlyFollowingCourseCourseProfessionalism:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'Currently following course professionalism of this Employee.'
-          nullable: true
-        doesCurrentlyFollowingCourseProvideCertificate:
-          description: 'Does currently follow course provide certificate of this Employee.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-read'
         otherRelevantCertificates:
           maxLength: 255
           description: 'Other relevant certificates of this Employee.'
@@ -21131,12 +21060,10 @@ components:
           description: 'Whether the employee has submitted a police certificate'
           type: boolean
           nullable: true
-        organization:
-          description: 'Organization of this person'
+        organizationId:
+          description: 'A contact component organization id of this Employee.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-read'
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21182,26 +21109,6 @@ components:
         person:
           description: 'Person of this employee'
           $ref: '#/components/schemas/Person.jsonld-write'
-        contactTelephone:
-          maxLength: 255
-          description: 'Contact telephone of this Employee.'
-          type: string
-          nullable: true
-        contactPreference:
-          type: string
-          enum:
-            - PHONECALL
-            - WHATSAPP
-            - EMAIL
-            - OTHER
-          example: PHONECALL
-          description: 'Contact Preference of this Employee.'
-          nullable: true
-        contactPreferenceOther:
-          maxLength: 255
-          description: 'The Contact preference other of this Employee.'
-          type: string
-          nullable: true
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -21212,16 +21119,6 @@ components:
           maxLength: 2550
           description: 'The Availability Note of this Employee.'
           type: string
-          nullable: true
-        targetGroupPreferences:
-          type: array
-          items:
-            type: string
-            enum:
-              - NT1
-              - NT2
-            example: NT1
-          description: 'Target Group Preference of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
@@ -21257,29 +21154,12 @@ components:
           description: 'Does currently follow course of this Employee.'
           type: boolean
           nullable: true
-        currentlyFollowingCourseName:
-          maxLength: 255
-          description: 'Currently following course name of this Employee.'
-          type: string
+        followingCourse:
+          description: 'Currently following course (Education) of this Employee.'
           nullable: true
-        currentlyFollowingCourseInstitute:
-          maxLength: 255
-          description: 'Currently following course institute of this Employee.'
-          type: string
-          nullable: true
-        currentlyFollowingCourseCourseProfessionalism:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'Currently following course professionalism of this Employee.'
-          nullable: true
-        doesCurrentlyFollowingCourseProvideCertificate:
-          description: 'Does currently follow course provide certificate of this Employee.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-write'
         otherRelevantCertificates:
           maxLength: 255
           description: 'Other relevant certificates of this Employee.'
@@ -21289,12 +21169,10 @@ components:
           description: 'Whether the employee has submitted a police certificate'
           type: boolean
           nullable: true
-        organization:
-          description: 'Organization of this person'
+        organizationId:
+          description: 'A contact component organization id of this Employee.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-write'
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
@@ -21637,14 +21515,14 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
-        offerDesiredOffer:
+        desiredOffer:
           maxLength: 255
-          description: 'Offer desired offer of this learning need.'
+          description: 'Desired offer of this learning need.'
           type: string
           nullable: true
-        offerAdvisedOffer:
+        advisedOffer:
           maxLength: 255
-          description: 'Offer advised offer of this learning need.'
+          description: 'Advised offer of this learning need.'
           type: string
           nullable: true
         offerDifference:
@@ -21669,12 +21547,6 @@ components:
           description: 'Offer engagements of this learning need.'
           type: string
           nullable: true
-        participations:
-          description: 'Participation''s of this learning need.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Participation-read'
         studentId:
           maxLength: 255
           description: 'Student id of this learning need.'
@@ -21682,8 +21554,8 @@ components:
       required:
         - description
         - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
+        - desiredOffer
+        - advisedOffer
         - offerDifference
         - studentId
     LearningNeed-write:
@@ -21692,8 +21564,8 @@ components:
       required:
         - description
         - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
+        - desiredOffer
+        - advisedOffer
         - offerDifference
         - studentId
       properties:
@@ -21711,14 +21583,14 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
-        offerDesiredOffer:
+        desiredOffer:
           maxLength: 255
-          description: 'Offer desired offer of this learning need.'
+          description: 'Desired offer of this learning need.'
           type: string
           nullable: true
-        offerAdvisedOffer:
+        advisedOffer:
           maxLength: 255
-          description: 'Offer advised offer of this learning need.'
+          description: 'Advised offer of this learning need.'
           type: string
           nullable: true
         offerDifference:
@@ -21743,12 +21615,6 @@ components:
           description: 'Offer engagements of this learning need.'
           type: string
           nullable: true
-        participations:
-          description: 'Participation''s of this learning need.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Participation-write'
         studentId:
           maxLength: 255
           description: 'Student id of this learning need.'
@@ -21799,14 +21665,14 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
-        offerDesiredOffer:
+        desiredOffer:
           maxLength: 255
-          description: 'Offer desired offer of this learning need.'
+          description: 'Desired offer of this learning need.'
           type: string
           nullable: true
-        offerAdvisedOffer:
+        advisedOffer:
           maxLength: 255
-          description: 'Offer advised offer of this learning need.'
+          description: 'Advised offer of this learning need.'
           type: string
           nullable: true
         offerDifference:
@@ -21831,12 +21697,6 @@ components:
           description: 'Offer engagements of this learning need.'
           type: string
           nullable: true
-        participations:
-          description: 'Participation''s of this learning need.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Participation.jsonld-read'
         studentId:
           maxLength: 255
           description: 'Student id of this learning need.'
@@ -21844,8 +21704,8 @@ components:
       required:
         - description
         - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
+        - desiredOffer
+        - advisedOffer
         - offerDifference
         - studentId
     LearningNeed.jsonld-write:
@@ -21854,8 +21714,8 @@ components:
       required:
         - description
         - motivation
-        - offerDesiredOffer
-        - offerAdvisedOffer
+        - desiredOffer
+        - advisedOffer
         - offerDifference
         - studentId
       properties:
@@ -21896,14 +21756,14 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
-        offerDesiredOffer:
+        desiredOffer:
           maxLength: 255
-          description: 'Offer desired offer of this learning need.'
+          description: 'Desired offer of this learning need.'
           type: string
           nullable: true
-        offerAdvisedOffer:
+        advisedOffer:
           maxLength: 255
-          description: 'Offer advised offer of this learning need.'
+          description: 'Advised offer of this learning need.'
           type: string
           nullable: true
         offerDifference:
@@ -21928,12 +21788,6 @@ components:
           description: 'Offer engagements of this learning need.'
           type: string
           nullable: true
-        participations:
-          description: 'Participation''s of this learning need.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Participation.jsonld-write'
         studentId:
           maxLength: 255
           description: 'Student id of this learning need.'
@@ -22539,21 +22393,14 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
+        organizationId:
+          description: 'A contact component organization id of this Participation.'
           type: string
-          enum:
-            - ACTIVE
-            - COMPLETED
-            - REFERRED
-          example: ACTIVE
-          description: 'Status of this participation.'
           nullable: true
-        organization:
-          description: 'Organization of this participation'
+        organizationName:
+          description: 'The organization name of this Participation.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-read'
         organizationNote:
           maxLength: 255
           description: 'Organization note of this participation'
@@ -22595,12 +22442,9 @@ components:
           description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeed:
-          description: 'LearningNeed of this participation'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/LearningNeed-read'
+        learningNeedId:
+          description: 'The id of the LearningNeed connected to this Participation.'
+          type: string
         presenceEngagements:
           maxLength: 255
           description: 'Presence engagements of this participation.'
@@ -22628,37 +22472,22 @@ components:
             - DOES_NOT_MEET_EXPECTATIONS
             - OTHER
           example: MOVED
-          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+          description: 'Currently following course professionalism of this Employee.'
           nullable: true
-        employeeId:
-          maxLength: 255
-          description: 'Employee id of this participation'
-          type: string
-          nullable: true
-        groupId:
-          maxLength: 255
-          description: 'Group id of this participation'
-          type: string
-          nullable: true
+      required:
+        - learningNeedId
     Participation-write:
       type: object
       description: ''
       properties:
-        status:
+        organizationId:
+          description: 'A contact component organization id of this Participation.'
           type: string
-          enum:
-            - ACTIVE
-            - COMPLETED
-            - REFERRED
-          example: ACTIVE
-          description: 'Status of this participation.'
           nullable: true
-        organization:
-          description: 'Organization of this participation'
+        organizationName:
+          description: 'The organization name of this Participation.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-write'
         organizationNote:
           maxLength: 255
           description: 'Organization note of this participation'
@@ -22700,12 +22529,9 @@ components:
           description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeed:
-          description: 'LearningNeed of this participation'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/LearningNeed-write'
+        learningNeedId:
+          description: 'The id of the LearningNeed connected to this Participation.'
+          type: string
         presenceEngagements:
           maxLength: 255
           description: 'Presence engagements of this participation.'
@@ -22733,18 +22559,10 @@ components:
             - DOES_NOT_MEET_EXPECTATIONS
             - OTHER
           example: MOVED
-          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+          description: 'Currently following course professionalism of this Employee.'
           nullable: true
-        employeeId:
-          maxLength: 255
-          description: 'Employee id of this participation'
-          type: string
-          nullable: true
-        groupId:
-          maxLength: 255
-          description: 'Group id of this participation'
-          type: string
-          nullable: true
+      required:
+        - learningNeedId
     Participation.jsonld-read:
       type: object
       description: ''
@@ -22777,21 +22595,14 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        status:
+        organizationId:
+          description: 'A contact component organization id of this Participation.'
           type: string
-          enum:
-            - ACTIVE
-            - COMPLETED
-            - REFERRED
-          example: ACTIVE
-          description: 'Status of this participation.'
           nullable: true
-        organization:
-          description: 'Organization of this participation'
+        organizationName:
+          description: 'The organization name of this Participation.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-read'
         organizationNote:
           maxLength: 255
           description: 'Organization note of this participation'
@@ -22833,12 +22644,9 @@ components:
           description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeed:
-          description: 'LearningNeed of this participation'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/LearningNeed.jsonld-read'
+        learningNeedId:
+          description: 'The id of the LearningNeed connected to this Participation.'
+          type: string
         presenceEngagements:
           maxLength: 255
           description: 'Presence engagements of this participation.'
@@ -22866,18 +22674,10 @@ components:
             - DOES_NOT_MEET_EXPECTATIONS
             - OTHER
           example: MOVED
-          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+          description: 'Currently following course professionalism of this Employee.'
           nullable: true
-        employeeId:
-          maxLength: 255
-          description: 'Employee id of this participation'
-          type: string
-          nullable: true
-        groupId:
-          maxLength: 255
-          description: 'Group id of this participation'
-          type: string
-          nullable: true
+      required:
+        - learningNeedId
     Participation.jsonld-write:
       type: object
       description: ''
@@ -22905,21 +22705,14 @@ components:
         '@type':
           readOnly: true
           type: string
-        status:
+        organizationId:
+          description: 'A contact component organization id of this Participation.'
           type: string
-          enum:
-            - ACTIVE
-            - COMPLETED
-            - REFERRED
-          example: ACTIVE
-          description: 'Status of this participation.'
           nullable: true
-        organization:
-          description: 'Organization of this participation'
+        organizationName:
+          description: 'The organization name of this Participation.'
+          type: string
           nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-write'
         organizationNote:
           maxLength: 255
           description: 'Organization note of this participation'
@@ -22961,12 +22754,9 @@ components:
           description: 'Details engagements of this participation'
           type: string
           nullable: true
-        learningNeed:
-          description: 'LearningNeed of this participation'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/LearningNeed.jsonld-write'
+        learningNeedId:
+          description: 'The id of the LearningNeed connected to this Participation.'
+          type: string
         presenceEngagements:
           maxLength: 255
           description: 'Presence engagements of this participation.'
@@ -22994,18 +22784,10 @@ components:
             - DOES_NOT_MEET_EXPECTATIONS
             - OTHER
           example: MOVED
-          description: 'Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**'
+          description: 'Currently following course professionalism of this Employee.'
           nullable: true
-        employeeId:
-          maxLength: 255
-          description: 'Employee id of this participation'
-          type: string
-          nullable: true
-        groupId:
-          maxLength: 255
-          description: 'Group id of this participation'
-          type: string
-          nullable: true
+      required:
+        - learningNeedId
     Person-read:
       type: object
       description: ''
@@ -23061,6 +22843,20 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-read'
+        contactPreference:
+          type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
+          type: string
+          nullable: true
       required:
         - givenName
         - familyName
@@ -23117,6 +22913,20 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization-write'
+        contactPreference:
+          type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
+          type: string
+          nullable: true
     Person.jsonld-read:
       type: object
       description: ''
@@ -23195,6 +23005,20 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-read'
+        contactPreference:
+          type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
+          type: string
+          nullable: true
       required:
         - givenName
         - familyName
@@ -23274,9 +23098,23 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Organization.jsonld-write'
+        contactPreference:
+          type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
+          type: string
+          nullable: true
     Registration-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Registration holds.'
       properties:
         id:
           readOnly: true
@@ -23302,7 +23140,7 @@ components:
         - registrar
     Registration-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Registration holds.'
       required:
         - languageHouseId
         - student
@@ -23323,7 +23161,7 @@ components:
           nullable: true
     Registration.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Registration holds.'
       properties:
         '@context':
           readOnly: true
@@ -23372,7 +23210,7 @@ components:
         - registrar
     Registration.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Registration holds.'
       required:
         - languageHouseId
         - student
@@ -23416,21 +23254,13 @@ components:
           nullable: true
     Report-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Report holds.'
       properties:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        languageHouseId:
-          description: 'The language house the report applies to.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The provider this report applies to.'
-          type: string
-          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -23449,16 +23279,8 @@ components:
           nullable: true
     Report-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Report holds.'
       properties:
-        languageHouseId:
-          description: 'The language house the report applies to.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The provider this report applies to.'
-          type: string
-          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -23477,7 +23299,7 @@ components:
           nullable: true
     Report.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Report holds.'
       properties:
         '@context':
           readOnly: true
@@ -23507,14 +23329,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        languageHouseId:
-          description: 'The language house the report applies to.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The provider this report applies to.'
-          type: string
-          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -23533,7 +23347,7 @@ components:
           nullable: true
     Report.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Report holds.'
       properties:
         '@context':
           readOnly: true
@@ -23558,14 +23372,6 @@ components:
         '@type':
           readOnly: true
           type: string
-        languageHouseId:
-          description: 'The language house the report applies to.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The provider this report applies to.'
-          type: string
-          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -23584,7 +23390,7 @@ components:
           nullable: true
     Student-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Student holds.'
       properties:
         id:
           readOnly: true
@@ -23701,7 +23507,7 @@ components:
         - permissionDetails
     Student-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Student holds.'
       properties:
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
@@ -23817,7 +23623,7 @@ components:
         - permissionDetails
     Student.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Student holds.'
       properties:
         '@context':
           readOnly: true
@@ -23957,7 +23763,7 @@ components:
         - permissionDetails
     Student.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Student holds.'
       properties:
         '@context':
           readOnly: true
@@ -24647,35 +24453,12 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        courseName:
-          description: 'The name of the course this student is following.'
-          type: string
+        education:
+          description: 'Education of this studentCourse.'
           nullable: true
-        courseTeacher:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'The type of teacher this student has for his course.'
-          nullable: true
-        courseGroup:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - GROUP
-          example: INDIVIDUALLY
-          description: 'The group type, Individually or Group, of the course this student is following.'
-          nullable: true
-        amountOfHours:
-          description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
-          nullable: true
-        doesCourseProvideCertificate:
-          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education-read'
     StudentCourse-write:
       type: object
       description: ''
@@ -24684,35 +24467,12 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        courseName:
-          description: 'The name of the course this student is following.'
-          type: string
+        education:
+          description: 'Education of this studentCourse.'
           nullable: true
-        courseTeacher:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'The type of teacher this student has for his course.'
-          nullable: true
-        courseGroup:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - GROUP
-          example: INDIVIDUALLY
-          description: 'The group type, Individually or Group, of the course this student is following.'
-          nullable: true
-        amountOfHours:
-          description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
-          nullable: true
-        doesCourseProvideCertificate:
-          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education-write'
     StudentCourse.jsonld-read:
       type: object
       description: ''
@@ -24749,35 +24509,12 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        courseName:
-          description: 'The name of the course this student is following.'
-          type: string
+        education:
+          description: 'Education of this studentCourse.'
           nullable: true
-        courseTeacher:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'The type of teacher this student has for his course.'
-          nullable: true
-        courseGroup:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - GROUP
-          example: INDIVIDUALLY
-          description: 'The group type, Individually or Group, of the course this student is following.'
-          nullable: true
-        amountOfHours:
-          description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
-          nullable: true
-        doesCourseProvideCertificate:
-          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-read'
     StudentCourse.jsonld-write:
       type: object
       description: ''
@@ -24809,35 +24546,12 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        courseName:
-          description: 'The name of the course this student is following.'
-          type: string
+        education:
+          description: 'Education of this studentCourse.'
           nullable: true
-        courseTeacher:
-          type: string
-          enum:
-            - PROFESSIONAL
-            - VOLUNTEER
-            - BOTH
-          example: PROFESSIONAL
-          description: 'The type of teacher this student has for his course.'
-          nullable: true
-        courseGroup:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - GROUP
-          example: INDIVIDUALLY
-          description: 'The group type, Individually or Group, of the course this student is following.'
-          nullable: true
-        amountOfHours:
-          description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
-          nullable: true
-        doesCourseProvideCertificate:
-          description: 'A boolean that is true if the course this student is following provides a certificate when completed.'
-          type: boolean
-          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-write'
     StudentDossierEvent-read:
       type: object
       description: 'All properties that the DTO entity StudentDossierEvent holds.'
@@ -25243,12 +24957,31 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        followingEducationRightNow:
+          maxLength: 255
+          type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
+          description: |-
+            Following education right now of this studentEducation.
+
+             @Assert\Length(
+                max = 255
+            )
+          nullable: true
         education:
           description: 'Education of this studentEducation.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-read'
+    StudentEducation-write:
+      type: object
+      description: ''
+      properties:
         followingEducationRightNow:
           maxLength: 255
           type: string
@@ -25264,31 +24997,12 @@ components:
                 max = 255
             )
           nullable: true
-    StudentEducation-write:
-      type: object
-      description: ''
-      properties:
         education:
           description: 'Education of this studentEducation.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-write'
-        followingEducationRightNow:
-          maxLength: 255
-          type: string
-          enum:
-            - 'YES'
-            - 'NO'
-            - NO_BUT_DID_EARLIER
-          example: 'YES'
-          description: |-
-            Following education right now of this studentEducation.
-
-             @Assert\Length(
-                max = 255
-            )
-          nullable: true
     StudentEducation.jsonld-read:
       type: object
       description: ''
@@ -25321,12 +25035,6 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        education:
-          description: 'Education of this studentEducation.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Education.jsonld-read'
         followingEducationRightNow:
           maxLength: 255
           type: string
@@ -25342,6 +25050,12 @@ components:
                 max = 255
             )
           nullable: true
+        education:
+          description: 'Education of this studentEducation.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-read'
     StudentEducation.jsonld-write:
       type: object
       description: ''
@@ -25369,12 +25083,6 @@ components:
         '@type':
           readOnly: true
           type: string
-        education:
-          description: 'Education of this studentEducation.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Education.jsonld-write'
         followingEducationRightNow:
           maxLength: 255
           type: string
@@ -25390,6 +25098,12 @@ components:
                 max = 255
             )
           nullable: true
+        education:
+          description: 'Education of this studentEducation.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Education.jsonld-write'
     StudentGeneral-read:
       type: object
       description: ''
@@ -26376,7 +26090,7 @@ components:
           nullable: true
     Telephone-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Telephone holds.'
       properties:
         id:
           readOnly: true
@@ -26396,7 +26110,7 @@ components:
         - telephone
     Telephone-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Telephone holds.'
       properties:
         name:
           maxLength: 255
@@ -26411,7 +26125,7 @@ components:
         - telephone
     Telephone.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Telephone holds.'
       properties:
         '@context':
           readOnly: true
@@ -26454,7 +26168,7 @@ components:
         - telephone
     Telephone.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Telephone holds.'
       properties:
         '@context':
           readOnly: true

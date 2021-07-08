@@ -34,7 +34,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *          "get",
  *          "post",
  *     })
- * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation
@@ -52,34 +51,20 @@ class Participation
     private UuidInterface $id;
 
     /**
-     * @var ?string Status of this participation.
-     *
-     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     * @var String|null A contact component organization id of this Participation.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"ACTIVE", "COMPLETED", "REFERRED"},
-     *             "example"="ACTIVE"
-     *         }
-     *     }
-     * )
      */
-    private ?string $status;
+    private ?string $organizationId;
 
-//   Organization of the participation, was called in the graphql-schema 'aanbiederId' and 'aanbiederName', changed to 'organization'(Organization entity) related to schema.org
     /**
-     * @var ?Organization Organization of this participation
+     * @var String|null The organization name of this Participation.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?Organization $organization;
+    private ?string $organizationName;
 
 //   Organization note of the participation, was called in the graphql-schema 'aanbiederNote', changed to 'organizationNote'
     /**
@@ -160,16 +145,14 @@ class Participation
      */
     private ?string $detailsEngagements;
 
-//   Learning need of the participation, was called in the graphql-schema 'learningNeedId' and 'learningNeedUrl', changed to 'LearningNeed'
     /**
-     * @var LearningNeed LearningNeed of this participation
+     * @var string The id of the LearningNeed connected to this Participation.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=LearningNeed::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255)
      */
-    private LearningNeed $learningNeed;
+    private string $learningNeedId;
 
     /**
      * @var ?string Presence engagements of this participation.
@@ -199,10 +182,9 @@ class Participation
     private ?DateTime $presenceEndDate;
 
     /**
-     * @var ?string Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**
+     * @var ?string Currently following course professionalism of this Employee.
      *
      * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
-     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
@@ -217,32 +199,6 @@ class Participation
      */
     private ?string $presenceEndParticipationReason;
 
-    /**
-     * @var ?string Employee id of this participation
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $employeeId;
-
-    /**
-     * @var ?string Group id of this participation
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $groupId;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -255,14 +211,26 @@ class Participation
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getOrganizationId(): ?string
     {
-        return $this->status;
+        return $this->organizationId;
     }
 
-    public function setStatus(?string $status): self
+    public function setOrganizationId(?string $organizationId): self
     {
-        $this->status = $status;
+        $this->organizationId = $organizationId;
+
+        return $this;
+    }
+
+    public function getOrganizationName(): ?string
+    {
+        return $this->organizationName;
+    }
+
+    public function setOrganizationName(?string $organizationName): self
+    {
+        $this->organizationName = $organizationName;
 
         return $this;
     }
@@ -411,38 +379,14 @@ class Participation
         return $this;
     }
 
-    public function getEmployeeId(): ?string
+    public function getLearningNeedId(): string
     {
-        return $this->employeeId;
+        return $this->learningNeedId;
     }
 
-    public function setEmployeeId(?string $employeeId): self
+    public function setLearningNeedId(string $learningNeedId): self
     {
-        $this->employeeId = $employeeId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
-
-        return $this;
-    }
-
-    public function getLearningNeed(): LearningNeed
-    {
-        return $this->learningNeed;
-    }
-
-    public function setLearningNeed(LearningNeed $learningNeed): self
-    {
-        $this->learningNeed = $learningNeed;
+        $this->learningNeedId = $learningNeedId;
 
         return $this;
     }
