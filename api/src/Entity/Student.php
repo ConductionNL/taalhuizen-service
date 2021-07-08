@@ -26,55 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = StudentQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = StudentMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "newReffered" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "active" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "completed" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "group" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          },
- *          "providerEmployeeMentees" = {
- *              "collection_query" = StudentQueryCollectionResolver::class
- *          }
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact", "providerId": "exact", "groupId": "exact", "providerEmployeeId": "exact"})
+ *     })
  * @ORM\Entity(repositoryClass=StudentRepository::class)
  */
 class Student

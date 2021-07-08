@@ -24,76 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = UserQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "current" = {
- *              "item_query" = UserQueryItemResolver::class,
- *              "args" = {},
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = UserQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = UserMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "login" = {
- *              "mutation"=UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"username" = {"type" = "String!"}, "password" = {"type" = "String!"}}
- *          },
- *          "logout" = {
- *              "mutation"=UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {}
- *          },
- *          "requestPasswordReset" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"email" = {"type" = "String!"}}
- *          },
- *          "resetPassword" = {
- *              "mutation" = UserMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false,
- *              "args" = {"email" = {"type" = "String!"}, "password" = {"type" = "String!"}, "token" = {"type" = "String!"}}
- *          }
- *     },
- * )
+ *     })
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User

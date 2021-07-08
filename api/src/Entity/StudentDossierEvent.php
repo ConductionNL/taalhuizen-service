@@ -26,40 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = StudentDossierEventQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = StudentDossierEventQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
+ *     })
  * @ORM\Entity(repositoryClass=DossierRepository::class)
  */
 class StudentDossierEvent

@@ -22,37 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = TestResultQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = TestResultQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     },
- * )
- * @ApiFilter(SearchFilter::class, properties={"participationId": "exact"})
+ *     })
  * @ORM\Entity(repositoryClass=TestResultRepository::class)
  */
 class TestResult

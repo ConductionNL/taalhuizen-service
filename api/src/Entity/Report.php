@@ -19,63 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     collectionOperations={
  *          "get",
  *          "post",
- *     },
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ReportQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = ReportQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadParticipants" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadDesiredLearningOutcomes" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadVolunteers" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     })
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */
 class Report
