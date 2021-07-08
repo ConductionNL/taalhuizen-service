@@ -26414,7 +26414,7 @@ components:
           nullable: true
     User-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds. DTO User exists of variables based on the following schema.org schema: https://schema.org/Person.'
       properties:
         id:
           readOnly: true
@@ -26453,7 +26453,7 @@ components:
         - organization
     User-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds. DTO User exists of variables based on the following schema.org schema: https://schema.org/Person.'
       required:
         - username
         - person
@@ -26492,7 +26492,7 @@ components:
           nullable: true
     User.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds. DTO User exists of variables based on the following schema.org schema: https://schema.org/Person.'
       properties:
         '@context':
           readOnly: true
@@ -26554,7 +26554,7 @@ components:
         - organization
     User.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity User holds. DTO User exists of variables based on the following schema.org schema: https://schema.org/Person.'
       required:
         - username
         - person

@@ -43,7 +43,7 @@ class LearningNeedOutCome
      * @var String The goal of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $goal;
@@ -52,7 +52,7 @@ class LearningNeedOutCome
      * @var String The topic of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -70,7 +70,7 @@ class LearningNeedOutCome
     /**
      * @var String|null The topic of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $topicOther;
@@ -79,7 +79,7 @@ class LearningNeedOutCome
      * @var String The application of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -97,7 +97,7 @@ class LearningNeedOutCome
     /**
      * @var String|null The application of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $applicationOther;
@@ -106,7 +106,7 @@ class LearningNeedOutCome
      * @var String The level of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -124,7 +124,7 @@ class LearningNeedOutCome
     /**
      * @var String|null The level of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $levelOther;
@@ -132,7 +132,7 @@ class LearningNeedOutCome
     /**
      * @var bool|null The isFormal boolean of this LearningNeedOutcome.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $isFormal;
@@ -140,7 +140,7 @@ class LearningNeedOutCome
     /**
      * @var String|null The group formation of this LearningNeedOutcome.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
@@ -158,7 +158,7 @@ class LearningNeedOutCome
     /**
      * @var float|null The total class hours of this LearningNeedOutcome.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="float", nullable=true)
      */
     private ?float $totalClassHours;
@@ -166,7 +166,7 @@ class LearningNeedOutCome
     /**
      * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
     private ?bool $certificateWillBeAwarded;

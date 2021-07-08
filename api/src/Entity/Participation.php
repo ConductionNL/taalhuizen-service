@@ -106,7 +106,7 @@ class Participation
     /**
      * @var DateTimeInterface|null The start date of this participation.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTimeInterface $startDate;
@@ -114,7 +114,7 @@ class Participation
     /**
      * @var DateTimeInterface|null The end date of this participation.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private ?DateTimeInterface $endDate;
