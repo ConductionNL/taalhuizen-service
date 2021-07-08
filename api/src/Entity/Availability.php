@@ -48,6 +48,7 @@ class Availability
     /**
      * @var AvailabilityDay Monday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -58,6 +59,7 @@ class Availability
     /**
      * @var AvailabilityDay Tuesday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
@@ -68,6 +70,7 @@ class Availability
     /**
      * @var AvailabilityDay Wednesday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -78,6 +81,7 @@ class Availability
     /**
      * @var AvailabilityDay Thursday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -88,6 +92,7 @@ class Availability
     /**
      * @var AvailabilityDay Friday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -98,6 +103,7 @@ class Availability
     /**
      * @var AvailabilityDay Saturday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -108,6 +114,7 @@ class Availability
     /**
      * @var AvailabilityDay Sunday of this availability
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
