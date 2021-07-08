@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,6 +57,15 @@ class StudentCourse
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
      */
     private ?string $courseTeacher;
 
@@ -65,6 +75,15 @@ class StudentCourse
      * @Groups({"read", "write"})
      * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
      */
     private ?string $courseGroup;
 
@@ -89,7 +108,7 @@ class StudentCourse
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentDutchNTRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,6 +41,15 @@ class StudentDutchNT
      * @Groups({"read", "write"})
      * @Assert\Choice({"NT1", "NT2"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"NT1", "NT2"},
+     *             "example"="NT1"
+     *         }
+     *     }
+     * )
      */
     private ?string $dutchNTLevel;
 
@@ -73,6 +83,15 @@ class StudentDutchNT
      * @Groups({"read", "write"})
      * @Assert\Choice({"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"},
+     *             "example"="A0"
+     *         }
+     *     }
+     * )
      */
     private ?string $lastKnownLevel;
 
@@ -81,7 +100,7 @@ class StudentDutchNT
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

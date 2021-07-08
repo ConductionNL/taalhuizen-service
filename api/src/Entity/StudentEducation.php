@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentEducationRepository;
 use DateTime;
@@ -42,6 +43,15 @@ class StudentEducation
      * @Groups({"read", "write"})
      * @Assert\Choice({"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"NO_EDUCATION", "SOME_YEARS_PO", "PO", "VO", "MBO", "HBO", "UNIVERSITY"},
+     *             "example"="NO_EDUCATION"
+     *         }
+     *     }
+     * )
      */
     private ?string $lastFollowedEducation;
 
@@ -59,6 +69,15 @@ class StudentEducation
      * @Groups({"read", "write"})
      * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"YES", "NO", "NO_BUT_DID_EARLIER"},
+     *             "example"="YES"
+     *         }
+     *     }
+     * )
      */
     private ?string $followingEducationRightNow;
 
@@ -84,6 +103,15 @@ class StudentEducation
      * @Groups({"read", "write"})
      * @Assert\Choice({"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"LANGUAGE_COURSE", "BO", "HBO", "WO", "OTHER"},
+     *             "example"="LANGUAGE_COURSE"
+     *         }
+     *     }
+     * )
      */
     private ?string $followingEducationRightNowYesLevel;
 
@@ -132,7 +160,7 @@ class StudentEducation
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentGeneralRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -64,6 +65,18 @@ class StudentGeneral
      * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"},
+     *               "example"="MARRIED_PARTNER"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private ?array $familyComposition = [];
 
@@ -88,7 +101,7 @@ class StudentGeneral
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

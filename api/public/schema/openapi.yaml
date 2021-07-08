@@ -22230,8 +22230,12 @@ components:
           type: string
           nullable: true
         gender:
-          description: 'Gender of this person'
           type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+          description: 'Gender of this person'
           nullable: true
         birthday:
           description: 'Birthday of this person'
@@ -22262,8 +22266,14 @@ components:
             -
               $ref: '#/components/schemas/Organization-read'
         contactPreference:
-          description: 'The contact preference of the person.'
           type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
           description: 'The contact preference of the person for when the OTHER option is selected.'
@@ -22285,8 +22295,12 @@ components:
           type: string
           nullable: true
         gender:
-          description: 'Gender of this person'
           type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+          description: 'Gender of this person'
           nullable: true
         birthday:
           description: 'Birthday of this person'
@@ -22317,8 +22331,14 @@ components:
             -
               $ref: '#/components/schemas/Organization-write'
         contactPreference:
-          description: 'The contact preference of the person.'
           type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
           description: 'The contact preference of the person for when the OTHER option is selected.'
@@ -22363,8 +22383,12 @@ components:
           type: string
           nullable: true
         gender:
-          description: 'Gender of this person'
           type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+          description: 'Gender of this person'
           nullable: true
         birthday:
           description: 'Birthday of this person'
@@ -22395,8 +22419,14 @@ components:
             -
               $ref: '#/components/schemas/Organization.jsonld-read'
         contactPreference:
-          description: 'The contact preference of the person.'
           type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
           description: 'The contact preference of the person for when the OTHER option is selected.'
@@ -22441,8 +22471,12 @@ components:
           type: string
           nullable: true
         gender:
-          description: 'Gender of this person'
           type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+          description: 'Gender of this person'
           nullable: true
         birthday:
           description: 'Birthday of this person'
@@ -22473,8 +22507,14 @@ components:
             -
               $ref: '#/components/schemas/Organization.jsonld-write'
         contactPreference:
-          description: 'The contact preference of the person.'
           type: string
+          enum:
+            - PHONECALL
+            - WHATSAPP
+            - EMAIL
+            - OTHER
+          example: PHONECALL
+          description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
           description: 'The contact preference of the person for when the OTHER option is selected.'
@@ -22824,8 +22864,13 @@ components:
             -
               $ref: '#/components/schemas/StudentDutchNT-read'
         speakingLevel:
-          description: 'The speakingLevel of this Student.'
           type: string
+          enum:
+            - BEGINNER
+            - REASONABLE
+            - ADVANCED
+          example: BEGINNER
+          description: 'The speakingLevel of this Student.'
           nullable: true
         educationDetails:
           description: 'The StudentEducation of this Student.'
@@ -22859,9 +22904,27 @@ components:
               $ref: '#/components/schemas/StudentAvailability-read'
         readingTestResult:
           type: string
+          enum:
+            - CAN_NOT_READ
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+          example: A0
+          description: 'The reading test result of this Student.'
           nullable: true
         writingTestResult:
           type: string
+          enum:
+            - CAN_NOT_WRITE
+            - WRITE_NAW_DETAILS
+            - WRITE_SIMPLE_TEXTS
+            - WRITE_SIMPLE_LETTERS
+          example: WRITE_NAW_DETAILS
+          description: 'The writing test result of this Student.'
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
@@ -22910,8 +22973,13 @@ components:
             -
               $ref: '#/components/schemas/StudentDutchNT-write'
         speakingLevel:
-          description: 'The speakingLevel of this Student.'
           type: string
+          enum:
+            - BEGINNER
+            - REASONABLE
+            - ADVANCED
+          example: BEGINNER
+          description: 'The speakingLevel of this Student.'
           nullable: true
         educationDetails:
           description: 'The StudentEducation of this Student.'
@@ -22945,9 +23013,27 @@ components:
               $ref: '#/components/schemas/StudentAvailability-write'
         readingTestResult:
           type: string
+          enum:
+            - CAN_NOT_READ
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+          example: A0
+          description: 'The reading test result of this Student.'
           nullable: true
         writingTestResult:
           type: string
+          enum:
+            - CAN_NOT_WRITE
+            - WRITE_NAW_DETAILS
+            - WRITE_SIMPLE_TEXTS
+            - WRITE_SIMPLE_LETTERS
+          example: WRITE_NAW_DETAILS
+          description: 'The writing test result of this Student.'
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
@@ -23035,8 +23121,13 @@ components:
             -
               $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
         speakingLevel:
-          description: 'The speakingLevel of this Student.'
           type: string
+          enum:
+            - BEGINNER
+            - REASONABLE
+            - ADVANCED
+          example: BEGINNER
+          description: 'The speakingLevel of this Student.'
           nullable: true
         educationDetails:
           description: 'The StudentEducation of this Student.'
@@ -23070,9 +23161,27 @@ components:
               $ref: '#/components/schemas/StudentAvailability.jsonld-read'
         readingTestResult:
           type: string
+          enum:
+            - CAN_NOT_READ
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+          example: A0
+          description: 'The reading test result of this Student.'
           nullable: true
         writingTestResult:
           type: string
+          enum:
+            - CAN_NOT_WRITE
+            - WRITE_NAW_DETAILS
+            - WRITE_SIMPLE_TEXTS
+            - WRITE_SIMPLE_LETTERS
+          example: WRITE_NAW_DETAILS
+          description: 'The writing test result of this Student.'
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
@@ -23144,8 +23253,13 @@ components:
             -
               $ref: '#/components/schemas/StudentDutchNT.jsonld-write'
         speakingLevel:
-          description: 'The speakingLevel of this Student.'
           type: string
+          enum:
+            - BEGINNER
+            - REASONABLE
+            - ADVANCED
+          example: BEGINNER
+          description: 'The speakingLevel of this Student.'
           nullable: true
         educationDetails:
           description: 'The StudentEducation of this Student.'
@@ -23179,9 +23293,27 @@ components:
               $ref: '#/components/schemas/StudentAvailability.jsonld-write'
         readingTestResult:
           type: string
+          enum:
+            - CAN_NOT_READ
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+          example: A0
+          description: 'The reading test result of this Student.'
           nullable: true
         writingTestResult:
           type: string
+          enum:
+            - CAN_NOT_WRITE
+            - WRITE_NAW_DETAILS
+            - WRITE_SIMPLE_TEXTS
+            - WRITE_SIMPLE_LETTERS
+          example: WRITE_NAW_DETAILS
+          description: 'The writing test result of this Student.'
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
@@ -23305,8 +23437,16 @@ components:
       description: ''
       properties:
         foundVia:
-          description: 'The way this student found the languageHouse.'
           type: string
+          enum:
+            - VOLUNTEER_CENTER
+            - LIBRARY_WEBSITE
+            - SOCIAL_MEDIA
+            - NEWSPAPER
+            - VIA_VIA
+            - OTHER
+          example: VOLUNTEER_CENTER
+          description: 'The way this student found the languageHouse.'
           nullable: true
         foundViaOther:
           description: 'The way this student found the languageHouse for if the OTHER option is selected.'
@@ -23325,10 +23465,20 @@ components:
           type: number
           nullable: true
         network:
-          description: 'The network of this student.'
           type: array
           items:
             type: string
+            enum:
+              - HOUSEHOLD_MEMBERS
+              - NEIGHBORS
+              - FAMILY_MEMBERS
+              - AID_WORKERS
+              - FRIENDS_ACQUAINTANCES
+              - PEOPLE_AT_MOSQUE_CHURCH
+              - ACQUAINTANCES_SPEAKING_OWN_LANGUAGE
+              - ACQUAINTANCES_SPEAKING_DUTCH
+            example: HOUSEHOLD_MEMBERS
+          description: 'The network of this student.'
           nullable: true
         participationLadder:
           description: 'The place this student has on the participationLadder.'
@@ -23339,8 +23489,16 @@ components:
       description: ''
       properties:
         foundVia:
-          description: 'The way this student found the languageHouse.'
           type: string
+          enum:
+            - VOLUNTEER_CENTER
+            - LIBRARY_WEBSITE
+            - SOCIAL_MEDIA
+            - NEWSPAPER
+            - VIA_VIA
+            - OTHER
+          example: VOLUNTEER_CENTER
+          description: 'The way this student found the languageHouse.'
           nullable: true
         foundViaOther:
           description: 'The way this student found the languageHouse for if the OTHER option is selected.'
@@ -23359,10 +23517,20 @@ components:
           type: number
           nullable: true
         network:
-          description: 'The network of this student.'
           type: array
           items:
             type: string
+            enum:
+              - HOUSEHOLD_MEMBERS
+              - NEIGHBORS
+              - FAMILY_MEMBERS
+              - AID_WORKERS
+              - FRIENDS_ACQUAINTANCES
+              - PEOPLE_AT_MOSQUE_CHURCH
+              - ACQUAINTANCES_SPEAKING_OWN_LANGUAGE
+              - ACQUAINTANCES_SPEAKING_DUTCH
+            example: HOUSEHOLD_MEMBERS
+          description: 'The network of this student.'
           nullable: true
         participationLadder:
           description: 'The place this student has on the participationLadder.'
@@ -23396,8 +23564,16 @@ components:
           readOnly: true
           type: string
         foundVia:
-          description: 'The way this student found the languageHouse.'
           type: string
+          enum:
+            - VOLUNTEER_CENTER
+            - LIBRARY_WEBSITE
+            - SOCIAL_MEDIA
+            - NEWSPAPER
+            - VIA_VIA
+            - OTHER
+          example: VOLUNTEER_CENTER
+          description: 'The way this student found the languageHouse.'
           nullable: true
         foundViaOther:
           description: 'The way this student found the languageHouse for if the OTHER option is selected.'
@@ -23416,10 +23592,20 @@ components:
           type: number
           nullable: true
         network:
-          description: 'The network of this student.'
           type: array
           items:
             type: string
+            enum:
+              - HOUSEHOLD_MEMBERS
+              - NEIGHBORS
+              - FAMILY_MEMBERS
+              - AID_WORKERS
+              - FRIENDS_ACQUAINTANCES
+              - PEOPLE_AT_MOSQUE_CHURCH
+              - ACQUAINTANCES_SPEAKING_OWN_LANGUAGE
+              - ACQUAINTANCES_SPEAKING_DUTCH
+            example: HOUSEHOLD_MEMBERS
+          description: 'The network of this student.'
           nullable: true
         participationLadder:
           description: 'The place this student has on the participationLadder.'
@@ -23453,8 +23639,16 @@ components:
           readOnly: true
           type: string
         foundVia:
-          description: 'The way this student found the languageHouse.'
           type: string
+          enum:
+            - VOLUNTEER_CENTER
+            - LIBRARY_WEBSITE
+            - SOCIAL_MEDIA
+            - NEWSPAPER
+            - VIA_VIA
+            - OTHER
+          example: VOLUNTEER_CENTER
+          description: 'The way this student found the languageHouse.'
           nullable: true
         foundViaOther:
           description: 'The way this student found the languageHouse for if the OTHER option is selected.'
@@ -23473,10 +23667,20 @@ components:
           type: number
           nullable: true
         network:
-          description: 'The network of this student.'
           type: array
           items:
             type: string
+            enum:
+              - HOUSEHOLD_MEMBERS
+              - NEIGHBORS
+              - FAMILY_MEMBERS
+              - AID_WORKERS
+              - FRIENDS_ACQUAINTANCES
+              - PEOPLE_AT_MOSQUE_CHURCH
+              - ACQUAINTANCES_SPEAKING_OWN_LANGUAGE
+              - ACQUAINTANCES_SPEAKING_DUTCH
+            example: HOUSEHOLD_MEMBERS
+          description: 'The network of this student.'
           nullable: true
         participationLadder:
           description: 'The place this student has on the participationLadder.'
@@ -23487,12 +23691,22 @@ components:
       description: ''
       properties:
         civicIntegrationRequirement:
-          description: 'A enum for the status of the civic integration requirement of the student.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - CURRENTLY_WORKING_ON_INTEGRATION
+          example: 'YES'
+          description: 'A enum for the status of the civic integration requirement of the student.'
           nullable: true
         civicIntegrationRequirementReason:
-          description: 'The reason why this student has no civic integration requirement.'
           type: string
+          enum:
+            - FINISHED
+            - FROM_EU_COUNTRY
+            - EXEMPTED_OR_ZROUTE
+          example: FINISHED
+          description: 'The reason why this student has no civic integration requirement.'
           nullable: true
         civicIntegrationRequirementFinishDate:
           description: 'The civic integration requirement finish date for this student.'
@@ -23504,12 +23718,22 @@ components:
       description: ''
       properties:
         civicIntegrationRequirement:
-          description: 'A enum for the status of the civic integration requirement of the student.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - CURRENTLY_WORKING_ON_INTEGRATION
+          example: 'YES'
+          description: 'A enum for the status of the civic integration requirement of the student.'
           nullable: true
         civicIntegrationRequirementReason:
-          description: 'The reason why this student has no civic integration requirement.'
           type: string
+          enum:
+            - FINISHED
+            - FROM_EU_COUNTRY
+            - EXEMPTED_OR_ZROUTE
+          example: FINISHED
+          description: 'The reason why this student has no civic integration requirement.'
           nullable: true
         civicIntegrationRequirementFinishDate:
           description: 'The civic integration requirement finish date for this student.'
@@ -23544,12 +23768,22 @@ components:
           readOnly: true
           type: string
         civicIntegrationRequirement:
-          description: 'A enum for the status of the civic integration requirement of the student.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - CURRENTLY_WORKING_ON_INTEGRATION
+          example: 'YES'
+          description: 'A enum for the status of the civic integration requirement of the student.'
           nullable: true
         civicIntegrationRequirementReason:
-          description: 'The reason why this student has no civic integration requirement.'
           type: string
+          enum:
+            - FINISHED
+            - FROM_EU_COUNTRY
+            - EXEMPTED_OR_ZROUTE
+          example: FINISHED
+          description: 'The reason why this student has no civic integration requirement.'
           nullable: true
         civicIntegrationRequirementFinishDate:
           description: 'The civic integration requirement finish date for this student.'
@@ -23584,12 +23818,22 @@ components:
           readOnly: true
           type: string
         civicIntegrationRequirement:
-          description: 'A enum for the status of the civic integration requirement of the student.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - CURRENTLY_WORKING_ON_INTEGRATION
+          example: 'YES'
+          description: 'A enum for the status of the civic integration requirement of the student.'
           nullable: true
         civicIntegrationRequirementReason:
-          description: 'The reason why this student has no civic integration requirement.'
           type: string
+          enum:
+            - FINISHED
+            - FROM_EU_COUNTRY
+            - EXEMPTED_OR_ZROUTE
+          example: FINISHED
+          description: 'The reason why this student has no civic integration requirement.'
           nullable: true
         civicIntegrationRequirementFinishDate:
           description: 'The civic integration requirement finish date for this student.'
@@ -23609,12 +23853,21 @@ components:
           type: string
           nullable: true
         courseTeacher:
-          description: 'The type of teacher this student has for his course.'
           type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The type of teacher this student has for his course.'
           nullable: true
         courseGroup:
-          description: 'The group type, Individually or Group, of the course this student is following.'
           type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group type, Individually or Group, of the course this student is following.'
           nullable: true
         amountOfHours:
           description: 'The amount of hours the course takes, that this student is following.'
@@ -23637,12 +23890,21 @@ components:
           type: string
           nullable: true
         courseTeacher:
-          description: 'The type of teacher this student has for his course.'
           type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The type of teacher this student has for his course.'
           nullable: true
         courseGroup:
-          description: 'The group type, Individually or Group, of the course this student is following.'
           type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group type, Individually or Group, of the course this student is following.'
           nullable: true
         amountOfHours:
           description: 'The amount of hours the course takes, that this student is following.'
@@ -23688,12 +23950,21 @@ components:
           type: string
           nullable: true
         courseTeacher:
-          description: 'The type of teacher this student has for his course.'
           type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The type of teacher this student has for his course.'
           nullable: true
         courseGroup:
-          description: 'The group type, Individually or Group, of the course this student is following.'
           type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group type, Individually or Group, of the course this student is following.'
           nullable: true
         amountOfHours:
           description: 'The amount of hours the course takes, that this student is following.'
@@ -23739,12 +24010,21 @@ components:
           type: string
           nullable: true
         courseTeacher:
-          description: 'The type of teacher this student has for his course.'
           type: string
+          enum:
+            - PROFESSIONAL
+            - VOLUNTEER
+            - BOTH
+          example: PROFESSIONAL
+          description: 'The type of teacher this student has for his course.'
           nullable: true
         courseGroup:
-          description: 'The group type, Individually or Group, of the course this student is following.'
           type: string
+          enum:
+            - INDIVIDUALLY
+            - GROUP
+          example: INDIVIDUALLY
+          description: 'The group type, Individually or Group, of the course this student is following.'
           nullable: true
         amountOfHours:
           description: 'The amount of hours the course takes, that this student is following.'
@@ -23764,8 +24044,15 @@ components:
         - studentId
       properties:
         event:
-          description: 'The Event of this Student.'
           type: string
+          enum:
+            - FINAL_TALK
+            - REMARK
+            - FOLLOW_UP_TALK
+            - INFO_FOR_STORYTELLING
+            - INTAKE
+          example: FINAL_TALK
+          description: 'The Event of this Student.'
         eventDate:
           description: 'Date of this student Dossier.'
           type: string
@@ -23790,8 +24077,15 @@ components:
         - studentId
       properties:
         event:
-          description: 'The Event of this Student.'
           type: string
+          enum:
+            - FINAL_TALK
+            - REMARK
+            - FOLLOW_UP_TALK
+            - INFO_FOR_STORYTELLING
+            - INTAKE
+          example: FINAL_TALK
+          description: 'The Event of this Student.'
         eventDate:
           description: 'Date of this student Dossier.'
           type: string
@@ -23835,8 +24129,15 @@ components:
           readOnly: true
           type: string
         event:
-          description: 'The Event of this Student.'
           type: string
+          enum:
+            - FINAL_TALK
+            - REMARK
+            - FOLLOW_UP_TALK
+            - INFO_FOR_STORYTELLING
+            - INTAKE
+          example: FINAL_TALK
+          description: 'The Event of this Student.'
         eventDate:
           description: 'Date of this student Dossier.'
           type: string
@@ -23884,8 +24185,15 @@ components:
           readOnly: true
           type: string
         event:
-          description: 'The Event of this Student.'
           type: string
+          enum:
+            - FINAL_TALK
+            - REMARK
+            - FOLLOW_UP_TALK
+            - INFO_FOR_STORYTELLING
+            - INTAKE
+          example: FINAL_TALK
+          description: 'The Event of this Student.'
         eventDate:
           description: 'Date of this student Dossier.'
           type: string
@@ -23901,8 +24209,12 @@ components:
       description: ''
       properties:
         dutchNTLevel:
-          description: 'The dutch NT level of this Student.'
           type: string
+          enum:
+            - NT1
+            - NT2
+          example: NT1
+          description: 'The dutch NT level of this Student.'
           nullable: true
         inNetherlandsSinceYear:
           description: 'The year since when this student is in the Netherlands.'
@@ -23917,16 +24229,30 @@ components:
           type: boolean
           nullable: true
         lastKnownLevel:
-          description: 'The last known language level of this student.'
           type: string
+          enum:
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+            - UNKNOWN
+          example: A0
+          description: 'The last known language level of this student.'
           nullable: true
     StudentDutchNT-write:
       type: object
       description: ''
       properties:
         dutchNTLevel:
-          description: 'The dutch NT level of this Student.'
           type: string
+          enum:
+            - NT1
+            - NT2
+          example: NT1
+          description: 'The dutch NT level of this Student.'
           nullable: true
         inNetherlandsSinceYear:
           description: 'The year since when this student is in the Netherlands.'
@@ -23941,8 +24267,18 @@ components:
           type: boolean
           nullable: true
         lastKnownLevel:
-          description: 'The last known language level of this student.'
           type: string
+          enum:
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+            - UNKNOWN
+          example: A0
+          description: 'The last known language level of this student.'
           nullable: true
     StudentDutchNT.jsonld-read:
       type: object
@@ -23972,8 +24308,12 @@ components:
           readOnly: true
           type: string
         dutchNTLevel:
-          description: 'The dutch NT level of this Student.'
           type: string
+          enum:
+            - NT1
+            - NT2
+          example: NT1
+          description: 'The dutch NT level of this Student.'
           nullable: true
         inNetherlandsSinceYear:
           description: 'The year since when this student is in the Netherlands.'
@@ -23988,8 +24328,18 @@ components:
           type: boolean
           nullable: true
         lastKnownLevel:
-          description: 'The last known language level of this student.'
           type: string
+          enum:
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+            - UNKNOWN
+          example: A0
+          description: 'The last known language level of this student.'
           nullable: true
     StudentDutchNT.jsonld-write:
       type: object
@@ -24019,8 +24369,12 @@ components:
           readOnly: true
           type: string
         dutchNTLevel:
-          description: 'The dutch NT level of this Student.'
           type: string
+          enum:
+            - NT1
+            - NT2
+          example: NT1
+          description: 'The dutch NT level of this Student.'
           nullable: true
         inNetherlandsSinceYear:
           description: 'The year since when this student is in the Netherlands.'
@@ -24035,24 +24389,48 @@ components:
           type: boolean
           nullable: true
         lastKnownLevel:
-          description: 'The last known language level of this student.'
           type: string
+          enum:
+            - A0
+            - A1
+            - A2
+            - B1
+            - B2
+            - C1
+            - C2
+            - UNKNOWN
+          example: A0
+          description: 'The last known language level of this student.'
           nullable: true
     StudentEducation-read:
       type: object
       description: ''
       properties:
         lastFollowedEducation:
-          description: 'The last followed education of this StudentEducation.'
           type: string
+          enum:
+            - NO_EDUCATION
+            - SOME_YEARS_PO
+            - PO
+            - VO
+            - MBO
+            - HBO
+            - UNIVERSITY
+          example: NO_EDUCATION
+          description: 'The last followed education of this StudentEducation.'
           nullable: true
         didGraduate:
           description: 'A boolean that is true when the student graduated for his/her last followed education.'
           type: boolean
           nullable: true
         followingEducationRightNow:
-          description: 'A enum for if the student is following an education right now or not.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
+          description: 'A enum for if the student is following an education right now or not.'
           nullable: true
         followingEducationRightNowYesStartDate:
           description: 'If the student is following an education right now this is used for the start date of that education.'
@@ -24065,8 +24443,15 @@ components:
           format: date-time
           nullable: true
         followingEducationRightNowYesLevel:
-          description: 'If the student is following an education right now this is used for the level of that education.'
           type: string
+          enum:
+            - LANGUAGE_COURSE
+            - BO
+            - HBO
+            - WO
+            - OTHER
+          example: LANGUAGE_COURSE
+          description: 'If the student is following an education right now this is used for the level of that education.'
           nullable: true
         followingEducationRightNowYesInstitute:
           description: 'If the student is following an education right now this is used for the institute of that education.'
@@ -24094,16 +24479,30 @@ components:
       description: ''
       properties:
         lastFollowedEducation:
-          description: 'The last followed education of this StudentEducation.'
           type: string
+          enum:
+            - NO_EDUCATION
+            - SOME_YEARS_PO
+            - PO
+            - VO
+            - MBO
+            - HBO
+            - UNIVERSITY
+          example: NO_EDUCATION
+          description: 'The last followed education of this StudentEducation.'
           nullable: true
         didGraduate:
           description: 'A boolean that is true when the student graduated for his/her last followed education.'
           type: boolean
           nullable: true
         followingEducationRightNow:
-          description: 'A enum for if the student is following an education right now or not.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
+          description: 'A enum for if the student is following an education right now or not.'
           nullable: true
         followingEducationRightNowYesStartDate:
           description: 'If the student is following an education right now this is used for the start date of that education.'
@@ -24116,8 +24515,15 @@ components:
           format: date-time
           nullable: true
         followingEducationRightNowYesLevel:
-          description: 'If the student is following an education right now this is used for the level of that education.'
           type: string
+          enum:
+            - LANGUAGE_COURSE
+            - BO
+            - HBO
+            - WO
+            - OTHER
+          example: LANGUAGE_COURSE
+          description: 'If the student is following an education right now this is used for the level of that education.'
           nullable: true
         followingEducationRightNowYesInstitute:
           description: 'If the student is following an education right now this is used for the institute of that education.'
@@ -24168,16 +24574,30 @@ components:
           readOnly: true
           type: string
         lastFollowedEducation:
-          description: 'The last followed education of this StudentEducation.'
           type: string
+          enum:
+            - NO_EDUCATION
+            - SOME_YEARS_PO
+            - PO
+            - VO
+            - MBO
+            - HBO
+            - UNIVERSITY
+          example: NO_EDUCATION
+          description: 'The last followed education of this StudentEducation.'
           nullable: true
         didGraduate:
           description: 'A boolean that is true when the student graduated for his/her last followed education.'
           type: boolean
           nullable: true
         followingEducationRightNow:
-          description: 'A enum for if the student is following an education right now or not.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
+          description: 'A enum for if the student is following an education right now or not.'
           nullable: true
         followingEducationRightNowYesStartDate:
           description: 'If the student is following an education right now this is used for the start date of that education.'
@@ -24190,8 +24610,15 @@ components:
           format: date-time
           nullable: true
         followingEducationRightNowYesLevel:
-          description: 'If the student is following an education right now this is used for the level of that education.'
           type: string
+          enum:
+            - LANGUAGE_COURSE
+            - BO
+            - HBO
+            - WO
+            - OTHER
+          example: LANGUAGE_COURSE
+          description: 'If the student is following an education right now this is used for the level of that education.'
           nullable: true
         followingEducationRightNowYesInstitute:
           description: 'If the student is following an education right now this is used for the institute of that education.'
@@ -24242,16 +24669,30 @@ components:
           readOnly: true
           type: string
         lastFollowedEducation:
-          description: 'The last followed education of this StudentEducation.'
           type: string
+          enum:
+            - NO_EDUCATION
+            - SOME_YEARS_PO
+            - PO
+            - VO
+            - MBO
+            - HBO
+            - UNIVERSITY
+          example: NO_EDUCATION
+          description: 'The last followed education of this StudentEducation.'
           nullable: true
         didGraduate:
           description: 'A boolean that is true when the student graduated for his/her last followed education.'
           type: boolean
           nullable: true
         followingEducationRightNow:
-          description: 'A enum for if the student is following an education right now or not.'
           type: string
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
+          description: 'A enum for if the student is following an education right now or not.'
           nullable: true
         followingEducationRightNowYesStartDate:
           description: 'If the student is following an education right now this is used for the start date of that education.'
@@ -24264,8 +24705,15 @@ components:
           format: date-time
           nullable: true
         followingEducationRightNowYesLevel:
-          description: 'If the student is following an education right now this is used for the level of that education.'
           type: string
+          enum:
+            - LANGUAGE_COURSE
+            - BO
+            - HBO
+            - WO
+            - OTHER
+          example: LANGUAGE_COURSE
+          description: 'If the student is following an education right now this is used for the level of that education.'
           nullable: true
         followingEducationRightNowYesInstitute:
           description: 'If the student is following an education right now this is used for the institute of that education.'
@@ -24305,10 +24753,16 @@ components:
           type: string
           nullable: true
         familyComposition:
-          description: 'The family composition of this student.'
           type: array
           items:
             type: string
+            enum:
+              - MARRIED_PARTNER
+              - SINGLE
+              - DIVORCED
+              - WIDOW
+            example: MARRIED_PARTNER
+          description: 'The family composition of this student.'
           nullable: true
         childrenCount:
           description: 'The amount of children of this student.'
@@ -24335,10 +24789,16 @@ components:
           type: string
           nullable: true
         familyComposition:
-          description: 'The family composition of this student.'
           type: array
           items:
             type: string
+            enum:
+              - MARRIED_PARTNER
+              - SINGLE
+              - DIVORCED
+              - WIDOW
+            example: MARRIED_PARTNER
+          description: 'The family composition of this student.'
           nullable: true
         childrenCount:
           description: 'The amount of children of this student.'
@@ -24388,10 +24848,16 @@ components:
           type: string
           nullable: true
         familyComposition:
-          description: 'The family composition of this student.'
           type: array
           items:
             type: string
+            enum:
+              - MARRIED_PARTNER
+              - SINGLE
+              - DIVORCED
+              - WIDOW
+            example: MARRIED_PARTNER
+          description: 'The family composition of this student.'
           nullable: true
         childrenCount:
           description: 'The amount of children of this student.'
@@ -24441,10 +24907,16 @@ components:
           type: string
           nullable: true
         familyComposition:
-          description: 'The family composition of this student.'
           type: array
           items:
             type: string
+            enum:
+              - MARRIED_PARTNER
+              - SINGLE
+              - DIVORCED
+              - WIDOW
+            example: MARRIED_PARTNER
+          description: 'The family composition of this student.'
           nullable: true
         childrenCount:
           description: 'The amount of children of this student.'
@@ -24467,10 +24939,18 @@ components:
           type: string
           nullable: true
         dayTimeActivities:
-          description: 'The daytime activities of this StudentJob.'
           type: array
           items:
             type: string
+            enum:
+              - SEARCHING_FOR_JOB
+              - RE_INTEGRATION
+              - SCHOOL
+              - VOLUNTEER_JOB
+              - JOB
+              - OTHER
+            example: SEARCHING_FOR_JOB
+          description: 'The daytime activities of this StudentJob.'
           nullable: true
         dayTimeActivitiesOther:
           description: 'The daytime activities for when the OTHER option is selected.'
@@ -24489,10 +24969,18 @@ components:
           type: string
           nullable: true
         dayTimeActivities:
-          description: 'The daytime activities of this StudentJob.'
           type: array
           items:
             type: string
+            enum:
+              - SEARCHING_FOR_JOB
+              - RE_INTEGRATION
+              - SCHOOL
+              - VOLUNTEER_JOB
+              - JOB
+              - OTHER
+            example: SEARCHING_FOR_JOB
+          description: 'The daytime activities of this StudentJob.'
           nullable: true
         dayTimeActivitiesOther:
           description: 'The daytime activities for when the OTHER option is selected.'
@@ -24534,10 +25022,18 @@ components:
           type: string
           nullable: true
         dayTimeActivities:
-          description: 'The daytime activities of this StudentJob.'
           type: array
           items:
             type: string
+            enum:
+              - SEARCHING_FOR_JOB
+              - RE_INTEGRATION
+              - SCHOOL
+              - VOLUNTEER_JOB
+              - JOB
+              - OTHER
+            example: SEARCHING_FOR_JOB
+          description: 'The daytime activities of this StudentJob.'
           nullable: true
         dayTimeActivitiesOther:
           description: 'The daytime activities for when the OTHER option is selected.'
@@ -24579,10 +25075,18 @@ components:
           type: string
           nullable: true
         dayTimeActivities:
-          description: 'The daytime activities of this StudentJob.'
           type: array
           items:
             type: string
+            enum:
+              - SEARCHING_FOR_JOB
+              - RE_INTEGRATION
+              - SCHOOL
+              - VOLUNTEER_JOB
+              - JOB
+              - OTHER
+            example: SEARCHING_FOR_JOB
+          description: 'The daytime activities of this StudentJob.'
           nullable: true
         dayTimeActivitiesOther:
           description: 'The daytime activities for when the OTHER option is selected.'
@@ -24593,10 +25097,26 @@ components:
       description: ''
       properties:
         desiredSkills:
-          description: 'The desired skills for a StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - KLIKTIK
+              - USING_WHATSAPP
+              - USING_SKYPE
+              - DEVICE_FUNCTIONALITIES
+              - DIGITAL_GOVERNMENT
+              - RESERVE_BOOKS_IN_LIBRARY
+              - ADS_ON_MARKTPLAATS
+              - READ_FOR_CHILDREN
+              - UNDERSTAND_PRESCRIPTIONS
+              - WRITE_APPLICATION_LETTER
+              - WRITE_POSTCARD_FOR_FAMILY
+              - DO_ADMINISTRATION
+              - CALCULATIONS_FOR_RECIPES
+              - OTHER
+            example: USING_WHATSAPP
+          description: 'The desired skills for a StudentMotivation.'
           nullable: true
         desiredSkillsOther:
           description: 'The desired skills for when the OTHER option is selected.'
@@ -24619,10 +25139,17 @@ components:
           type: string
           nullable: true
         desiredLearningMethod:
-          description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - IN_A_GROUP
+              - ONE_ON_ONE
+              - HOME_ENVIRONMENT
+              - IN_LIBRARY_OR_OTHER
+              - ONLINE
+            example: IN_A_GROUP
+          description: 'The desired learning methods for this StudentMotivation.'
           nullable: true
         remarks:
           description: 'The final remark/note for the StudentMotivation.'
@@ -24633,10 +25160,26 @@ components:
       description: ''
       properties:
         desiredSkills:
-          description: 'The desired skills for a StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - KLIKTIK
+              - USING_WHATSAPP
+              - USING_SKYPE
+              - DEVICE_FUNCTIONALITIES
+              - DIGITAL_GOVERNMENT
+              - RESERVE_BOOKS_IN_LIBRARY
+              - ADS_ON_MARKTPLAATS
+              - READ_FOR_CHILDREN
+              - UNDERSTAND_PRESCRIPTIONS
+              - WRITE_APPLICATION_LETTER
+              - WRITE_POSTCARD_FOR_FAMILY
+              - DO_ADMINISTRATION
+              - CALCULATIONS_FOR_RECIPES
+              - OTHER
+            example: USING_WHATSAPP
+          description: 'The desired skills for a StudentMotivation.'
           nullable: true
         desiredSkillsOther:
           description: 'The desired skills for when the OTHER option is selected.'
@@ -24659,10 +25202,17 @@ components:
           type: string
           nullable: true
         desiredLearningMethod:
-          description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - IN_A_GROUP
+              - ONE_ON_ONE
+              - HOME_ENVIRONMENT
+              - IN_LIBRARY_OR_OTHER
+              - ONLINE
+            example: IN_A_GROUP
+          description: 'The desired learning methods for this StudentMotivation.'
           nullable: true
         remarks:
           description: 'The final remark/note for the StudentMotivation.'
@@ -24696,10 +25246,26 @@ components:
           readOnly: true
           type: string
         desiredSkills:
-          description: 'The desired skills for a StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - KLIKTIK
+              - USING_WHATSAPP
+              - USING_SKYPE
+              - DEVICE_FUNCTIONALITIES
+              - DIGITAL_GOVERNMENT
+              - RESERVE_BOOKS_IN_LIBRARY
+              - ADS_ON_MARKTPLAATS
+              - READ_FOR_CHILDREN
+              - UNDERSTAND_PRESCRIPTIONS
+              - WRITE_APPLICATION_LETTER
+              - WRITE_POSTCARD_FOR_FAMILY
+              - DO_ADMINISTRATION
+              - CALCULATIONS_FOR_RECIPES
+              - OTHER
+            example: USING_WHATSAPP
+          description: 'The desired skills for a StudentMotivation.'
           nullable: true
         desiredSkillsOther:
           description: 'The desired skills for when the OTHER option is selected.'
@@ -24722,10 +25288,17 @@ components:
           type: string
           nullable: true
         desiredLearningMethod:
-          description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - IN_A_GROUP
+              - ONE_ON_ONE
+              - HOME_ENVIRONMENT
+              - IN_LIBRARY_OR_OTHER
+              - ONLINE
+            example: IN_A_GROUP
+          description: 'The desired learning methods for this StudentMotivation.'
           nullable: true
         remarks:
           description: 'The final remark/note for the StudentMotivation.'
@@ -24759,10 +25332,26 @@ components:
           readOnly: true
           type: string
         desiredSkills:
-          description: 'The desired skills for a StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - KLIKTIK
+              - USING_WHATSAPP
+              - USING_SKYPE
+              - DEVICE_FUNCTIONALITIES
+              - DIGITAL_GOVERNMENT
+              - RESERVE_BOOKS_IN_LIBRARY
+              - ADS_ON_MARKTPLAATS
+              - READ_FOR_CHILDREN
+              - UNDERSTAND_PRESCRIPTIONS
+              - WRITE_APPLICATION_LETTER
+              - WRITE_POSTCARD_FOR_FAMILY
+              - DO_ADMINISTRATION
+              - CALCULATIONS_FOR_RECIPES
+              - OTHER
+            example: USING_WHATSAPP
+          description: 'The desired skills for a StudentMotivation.'
           nullable: true
         desiredSkillsOther:
           description: 'The desired skills for when the OTHER option is selected.'
@@ -24785,10 +25374,17 @@ components:
           type: string
           nullable: true
         desiredLearningMethod:
-          description: 'The desired learning methods for this StudentMotivation.'
           type: array
           items:
             type: string
+            enum:
+              - IN_A_GROUP
+              - ONE_ON_ONE
+              - HOME_ENVIRONMENT
+              - IN_LIBRARY_OR_OTHER
+              - ONLINE
+            example: IN_A_GROUP
+          description: 'The desired learning methods for this StudentMotivation.'
           nullable: true
         remarks:
           description: 'The final remark/note for the StudentMotivation.'
@@ -24909,8 +25505,18 @@ components:
       description: ''
       properties:
         referringOrganization:
-          description: 'The StudentReferrer organization name.'
           type: string
+          enum:
+            - UWV
+            - SOCIAL_SERVICE
+            - LIBRARY
+            - WELFARE_WORK
+            - NEIGHBORHOOD_TEAM
+            - VOLUNTEER_ORGANIZATION
+            - LANGUAGE_PROVIDER
+            - OTHER
+          example: UWV
+          description: 'The StudentReferrer organization name.'
           nullable: true
         referringOrganizationOther:
           description: 'The StudentReferrer organization name when the OTHER option is selected.'
@@ -24925,8 +25531,18 @@ components:
       description: ''
       properties:
         referringOrganization:
-          description: 'The StudentReferrer organization name.'
           type: string
+          enum:
+            - UWV
+            - SOCIAL_SERVICE
+            - LIBRARY
+            - WELFARE_WORK
+            - NEIGHBORHOOD_TEAM
+            - VOLUNTEER_ORGANIZATION
+            - LANGUAGE_PROVIDER
+            - OTHER
+          example: UWV
+          description: 'The StudentReferrer organization name.'
           nullable: true
         referringOrganizationOther:
           description: 'The StudentReferrer organization name when the OTHER option is selected.'
@@ -24964,8 +25580,18 @@ components:
           readOnly: true
           type: string
         referringOrganization:
-          description: 'The StudentReferrer organization name.'
           type: string
+          enum:
+            - UWV
+            - SOCIAL_SERVICE
+            - LIBRARY
+            - WELFARE_WORK
+            - NEIGHBORHOOD_TEAM
+            - VOLUNTEER_ORGANIZATION
+            - LANGUAGE_PROVIDER
+            - OTHER
+          example: UWV
+          description: 'The StudentReferrer organization name.'
           nullable: true
         referringOrganizationOther:
           description: 'The StudentReferrer organization name when the OTHER option is selected.'
@@ -25003,8 +25629,18 @@ components:
           readOnly: true
           type: string
         referringOrganization:
-          description: 'The StudentReferrer organization name.'
           type: string
+          enum:
+            - UWV
+            - SOCIAL_SERVICE
+            - LIBRARY
+            - WELFARE_WORK
+            - NEIGHBORHOOD_TEAM
+            - VOLUNTEER_ORGANIZATION
+            - LANGUAGE_PROVIDER
+            - OTHER
+          example: UWV
+          description: 'The StudentReferrer organization name.'
           nullable: true
         referringOrganizationOther:
           description: 'The StudentReferrer organization name when the OTHER option is selected.'

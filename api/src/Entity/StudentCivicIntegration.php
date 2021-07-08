@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentCivicIntegrationRepository;
 use DateTimeInterface;
@@ -39,8 +40,17 @@ class StudentCivicIntegration
      * @var String|null A enum for the status of the civic integration requirement of the student.
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"NO", "YES", "CURRENTLY_WORKING_ON_INTEGRATION"})
+     * @Assert\Choice({"YES", "NO", "CURRENTLY_WORKING_ON_INTEGRATION"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"YES", "NO", "CURRENTLY_WORKING_ON_INTEGRATION"},
+     *             "example"="YES"
+     *         }
+     *     }
+     * )
      */
     private ?string $civicIntegrationRequirement;
 
@@ -50,6 +60,15 @@ class StudentCivicIntegration
      * @Groups({"read", "write"})
      * @Assert\Choice({"FINISHED", "FROM_EU_COUNTRY", "EXEMPTED_OR_ZROUTE"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"FINISHED", "FROM_EU_COUNTRY", "EXEMPTED_OR_ZROUTE"},
+     *             "example"="FINISHED"
+     *         }
+     *     }
+     * )
      */
     private ?string $civicIntegrationRequirementReason;
 
@@ -66,7 +85,7 @@ class StudentCivicIntegration
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\StudentRepository;
@@ -166,6 +167,15 @@ class Student
      * @Groups({"read", "write"})
      * @Assert\Choice({"BEGINNER", "REASONABLE", "ADVANCED"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"BEGINNER", "REASONABLE", "ADVANCED"},
+     *             "example"="BEGINNER"
+     *         }
+     *     }
+     * )
      */
     private ?string $speakingLevel;
 
@@ -220,16 +230,38 @@ class Student
     private ?StudentAvailability $availabilityDetails;
 
     /**
+     * @var String|null The reading test result of this Student.
+     *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_READ", "A0", "A1", "A2", "B1", "B2", "C1", "C2"})
      * @ORM\Column(type="json", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"CAN_NOT_READ", "A0", "A1", "A2", "B1", "B2", "C1", "C2"},
+     *             "example"="A0"
+     *         }
+     *     }
+     * )
      */
     private ?string $readingTestResult;
 
     /**
+     * @var String|null The writing test result of this Student.
+     *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_WRITE", "WRITE_NAW_DETAILS", "WRITE_SIMPLE_TEXTS", "WRITE_SIMPLE_LETTERS"})
      * @ORM\Column(type="json", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"CAN_NOT_WRITE", "WRITE_NAW_DETAILS", "WRITE_SIMPLE_TEXTS", "WRITE_SIMPLE_LETTERS"},
+     *             "example"="WRITE_NAW_DETAILS"
+     *         }
+     *     }
+     * )
      */
     private ?string $writingTestResult;
 
@@ -293,7 +325,7 @@ class Student
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

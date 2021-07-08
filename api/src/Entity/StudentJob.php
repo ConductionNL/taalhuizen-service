@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentJobRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,6 +57,18 @@ class StudentJob
      * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={"SEARCHING_FOR_JOB", "RE_INTEGRATION", "SCHOOL", "VOLUNTEER_JOB", "JOB", "OTHER"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"SEARCHING_FOR_JOB", "RE_INTEGRATION", "SCHOOL", "VOLUNTEER_JOB", "JOB", "OTHER"},
+     *               "example"="SEARCHING_FOR_JOB"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private ?array $dayTimeActivities = [];
 
@@ -72,7 +85,7 @@ class StudentJob
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

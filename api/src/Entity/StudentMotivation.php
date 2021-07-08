@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentMotivationRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -44,6 +45,21 @@ class StudentMotivation
      *     "DO_ADMINISTRATION", "CALCULATIONS_FOR_RECIPES", "OTHER"
      * })
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={
+     *                  "KLIKTIK", "USING_WHATSAPP", "USING_SKYPE", "DEVICE_FUNCTIONALITIES", "DIGITAL_GOVERNMENT", "RESERVE_BOOKS_IN_LIBRARY",
+     *                  "ADS_ON_MARKTPLAATS", "READ_FOR_CHILDREN", "UNDERSTAND_PRESCRIPTIONS", "WRITE_APPLICATION_LETTER", "WRITE_POSTCARD_FOR_FAMILY",
+     *                  "DO_ADMINISTRATION", "CALCULATIONS_FOR_RECIPES", "OTHER"},
+     *               "example"="USING_WHATSAPP"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private ?array $desiredSkills = [];
 
@@ -93,6 +109,18 @@ class StudentMotivation
      * @Groups({"read", "write"})
      * @Assert\Choice(multiple=true, choices={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"IN_A_GROUP", "ONE_ON_ONE", "HOME_ENVIRONMENT", "IN_LIBRARY_OR_OTHER", "ONLINE"},
+     *               "example"="IN_A_GROUP"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private ?array $desiredLearningMethod = [];
 
@@ -109,7 +137,7 @@ class StudentMotivation
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

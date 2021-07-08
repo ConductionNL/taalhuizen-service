@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\PersonRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
@@ -74,6 +75,15 @@ class Person
      * @Groups({"read", "write"})
      * @Assert\Choice({"Male", "Female"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"Male", "Female"},
+     *             "example"="Male"
+     *         }
+     *     }
+     * )
      */
     private ?string $gender;
 
@@ -134,6 +144,15 @@ class Person
      * @Groups({"read","write"})
      * @Assert\Choice({"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"},
+     *             "example"="PHONECALL"
+     *         }
+     *     }
+     * )
      */
     private ?string $contactPreference;
 
