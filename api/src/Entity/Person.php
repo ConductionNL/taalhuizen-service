@@ -48,6 +48,7 @@ class Person
     /**
      * @var string Given name of this person
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */

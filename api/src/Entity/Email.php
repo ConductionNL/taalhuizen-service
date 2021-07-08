@@ -59,6 +59,7 @@ class Email
     /**
      * @var string The actual mail address
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )

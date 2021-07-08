@@ -113,17 +113,19 @@ class User
     /**
      * @var string The Username of this User.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 2550
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private string $username;
 
     /**
      * @var Person A contact component person of this User.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -132,7 +134,7 @@ class User
     private Person $person;
 
     /**
-     * @var string The userEnvironment of this User.
+     * @var string|null The userEnvironment of this User.
      *
      * @Assert\Length(
      *     max = 2550
@@ -140,11 +142,12 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $userEnvironment;
+    private ?string $userEnvironment;
 
     /**
      * @var Organization A contact component organization of this User.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -153,26 +156,27 @@ class User
     private Organization $organization;
 
     /**
-     * @var array The userRoles of this User.
+     * @var array|null The userRoles of this User.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="array", nullable=true)
      */
-    private array $userRoles = [];
+    private ?array $userRoles = [];
 
     /**
      * @var string The Password of this User.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 2550
      * )
      * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private string $password;
 
     /**
-     * @var string The Token for password reset.
+     * @var string|null The Token for password reset.
      *
      * @Assert\Length(
      *     max = 2550
@@ -180,7 +184,7 @@ class User
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $token;
+    private ?string $token;
 
     public function getId(): UuidInterface
     {
@@ -194,7 +198,7 @@ class User
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -206,7 +210,7 @@ class User
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }
@@ -223,14 +227,14 @@ class User
         return $this->userEnvironment;
     }
 
-    public function setUserEnvironment(string $userEnvironment): self
+    public function setUserEnvironment(?string $userEnvironment): self
     {
         $this->userEnvironment = $userEnvironment;
 
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getOrganization(): Organization
     {
         return $this->organization;
     }
@@ -247,14 +251,14 @@ class User
         return $this->userRoles;
     }
 
-    public function setUserRoles(array $userRoles): self
+    public function setUserRoles(?array $userRoles): self
     {
         $this->userRoles = $userRoles;
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -271,7 +275,7 @@ class User
         return $this->token;
     }
 
-    public function setToken(string $token): self
+    public function setToken(?string $token): self
     {
         $this->token = $token;
 

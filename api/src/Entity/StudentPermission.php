@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -36,6 +37,7 @@ class StudentPermission
     /**
      * @var Bool A boolean that is true when the permission form was signed.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
@@ -44,6 +46,7 @@ class StudentPermission
     /**
      * @var Bool A boolean that is true when the student gives permission to share his/her data with providers.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
@@ -52,6 +55,7 @@ class StudentPermission
     /**
      * @var Bool A boolean that is true when the student gives permission to share his/her data with libraries.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
@@ -60,6 +64,7 @@ class StudentPermission
     /**
      * @var Bool A boolean that is true when the student gives permission to send information about libraries.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */

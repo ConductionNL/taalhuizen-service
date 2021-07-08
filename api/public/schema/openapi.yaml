@@ -17503,110 +17503,6 @@ paths:
           style: form
           explode: false
           allowReserved: false
-        -
-          name: languageHouseId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'languageHouseId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
-        -
-          name: providerId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'providerId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
-        -
-          name: groupId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'groupId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
-        -
-          name: providerEmployeeId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'providerEmployeeId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
       deprecated: false
     post:
       operationId: postStudentCollection
@@ -20881,6 +20777,8 @@ components:
           maxLength: 255
           description: 'The actual mail address'
           type: string
+      required:
+        - email
     Email-write:
       type: object
       description: ''
@@ -20894,6 +20792,8 @@ components:
           maxLength: 255
           description: 'The actual mail address'
           type: string
+      required:
+        - email
     Email.jsonld-read:
       type: object
       description: ''
@@ -20930,6 +20830,8 @@ components:
           maxLength: 255
           description: 'The actual mail address'
           type: string
+      required:
+        - email
     Email.jsonld-write:
       type: object
       description: ''
@@ -20966,6 +20868,8 @@ components:
           maxLength: 255
           description: 'The actual mail address'
           type: string
+      required:
+        - email
     Employee-read:
       type: object
       description: ''
@@ -21784,41 +21688,97 @@ components:
     LearningNeedOutCome-write:
       type: object
       description: ''
+      required:
+        - goal
+        - topic
+        - application
+        - level
       properties:
         goal:
+          description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
           type: string
+          enum:
+            - DUTCH_READING
+            - DUTCH_WRITING
+            - MATH_NUMBERS
+            - MATH_PROPORTION
+            - MATH_GEOMETRY
+            - MATH_LINKS
+            - DIGITAL_USING_ICT_SYSTEMS
+            - DIGITAL_SEARCHING_INFORMATION
+            - DIGITAL_PROCESSING_INFORMATION
+            - DIGITAL_COMMUNICATION
+            - KNOWLEDGE
+            - SKILLS
+            - ATTITUDE
+            - BEHAVIOUR
+            - OTHER
+          example: DUTCH_READING
+          description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         application:
           type: string
+          enum:
+            - FAMILY_AND_PARENTING
+            - LABOR_MARKET_AND_WORK
+            - HEALTH_AND_WELLBEING
+            - ADMINISTRATION_AND_FINANCE
+            - HOUSING_AND_NEIGHBORHOOD
+            - SELFRELIANCE
+            - OTHER
+          example: FAMILY_AND_PARENTING
+          description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         level:
           type: string
+          enum:
+            - INFLOW
+            - NLQF1
+            - NLQF2
+            - NLQF3
+            - NLQF4
+            - OTHER
+          example: INFLOW
+          description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
         groupFormation:
           type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
           type: number
           nullable: true
         certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
         startDate:
+          description: 'The start date of this LearningNeedOutcome.'
           type: string
           format: date-time
           nullable: true
         endDate:
+          description: 'The end date of this LearningNeedOutcome.'
           type: string
           format: date-time
           nullable: true
@@ -21852,6 +21812,11 @@ components:
     LearningNeedOutCome.jsonld-write:
       type: object
       description: ''
+      required:
+        - goal
+        - topic
+        - application
+        - level
       properties:
         '@context':
           readOnly: true
@@ -21877,39 +21842,90 @@ components:
           readOnly: true
           type: string
         goal:
+          description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
           type: string
+          enum:
+            - DUTCH_READING
+            - DUTCH_WRITING
+            - MATH_NUMBERS
+            - MATH_PROPORTION
+            - MATH_GEOMETRY
+            - MATH_LINKS
+            - DIGITAL_USING_ICT_SYSTEMS
+            - DIGITAL_SEARCHING_INFORMATION
+            - DIGITAL_PROCESSING_INFORMATION
+            - DIGITAL_COMMUNICATION
+            - KNOWLEDGE
+            - SKILLS
+            - ATTITUDE
+            - BEHAVIOUR
+            - OTHER
+          example: DUTCH_READING
+          description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         application:
           type: string
+          enum:
+            - FAMILY_AND_PARENTING
+            - LABOR_MARKET_AND_WORK
+            - HEALTH_AND_WELLBEING
+            - ADMINISTRATION_AND_FINANCE
+            - HOUSING_AND_NEIGHBORHOOD
+            - SELFRELIANCE
+            - OTHER
+          example: FAMILY_AND_PARENTING
+          description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         level:
           type: string
+          enum:
+            - INFLOW
+            - NLQF1
+            - NLQF2
+            - NLQF3
+            - NLQF4
+            - OTHER
+          example: INFLOW
+          description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
         isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
         groupFormation:
           type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
           type: number
           nullable: true
         certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           type: boolean
           nullable: true
         startDate:
+          description: 'The start date of this LearningNeedOutcome.'
           type: string
           format: date-time
           nullable: true
         endDate:
+          description: 'The end date of this LearningNeedOutcome.'
           type: string
           format: date-time
           nullable: true
@@ -22217,6 +22233,8 @@ components:
     Person-read:
       type: object
       description: ''
+      required:
+        - givenName
       properties:
         givenName:
           description: 'Given name of this person'
@@ -22282,6 +22300,8 @@ components:
     Person-write:
       type: object
       description: ''
+      required:
+        - givenName
       properties:
         givenName:
           description: 'Given name of this person'
@@ -22347,6 +22367,8 @@ components:
     Person.jsonld-read:
       type: object
       description: ''
+      required:
+        - givenName
       properties:
         '@context':
           readOnly: true
@@ -22435,6 +22457,8 @@ components:
     Person.jsonld-write:
       type: object
       description: ''
+      required:
+        - givenName
       properties:
         '@context':
           readOnly: true
@@ -22523,23 +22547,20 @@ components:
     Registration-read:
       type: object
       description: ''
+      required:
+        - languageHouseId
+        - student
+        - registrar
       properties:
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
-          nullable: true
         student:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-read'
+          $ref: '#/components/schemas/Person-read'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-read'
+          $ref: '#/components/schemas/Person-read'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -22547,23 +22568,20 @@ components:
     Registration-write:
       type: object
       description: ''
+      required:
+        - languageHouseId
+        - student
+        - registrar
       properties:
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
-          nullable: true
         student:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-write'
+          $ref: '#/components/schemas/Person-write'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-write'
+          $ref: '#/components/schemas/Person-write'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -22571,6 +22589,10 @@ components:
     Registration.jsonld-read:
       type: object
       description: ''
+      required:
+        - languageHouseId
+        - student
+        - registrar
       properties:
         '@context':
           readOnly: true
@@ -22598,19 +22620,12 @@ components:
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
-          nullable: true
         student:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-read'
+          $ref: '#/components/schemas/Person.jsonld-read'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-read'
+          $ref: '#/components/schemas/Person.jsonld-read'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -22618,6 +22633,10 @@ components:
     Registration.jsonld-write:
       type: object
       description: ''
+      required:
+        - languageHouseId
+        - student
+        - registrar
       properties:
         '@context':
           readOnly: true
@@ -22645,19 +22664,12 @@ components:
         languageHouseId:
           description: 'A language house for this registration.'
           type: string
-          nullable: true
         student:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-write'
+          $ref: '#/components/schemas/Person.jsonld-write'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-write'
+          $ref: '#/components/schemas/Person.jsonld-write'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -22929,6 +22941,9 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission-read'
+      required:
+        - person
+        - permissionDetails
     Student-write:
       type: object
       description: ''
@@ -23038,22 +23053,9 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission-write'
-        languageHouseId:
-          description: 'The id of the cc/organization of a languageHouse.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The id of the cc/organization of a provider.'
-          type: string
-          nullable: true
-        groupId:
-          description: 'The id of the edu/group of a group.'
-          type: string
-          nullable: true
-        providerEmployeeId:
-          description: 'The id of the mrc/employee of a mentor.'
-          type: string
-          nullable: true
+      required:
+        - person
+        - permissionDetails
     Student.jsonld-read:
       type: object
       description: ''
@@ -23186,6 +23188,9 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission.jsonld-read'
+      required:
+        - person
+        - permissionDetails
     Student.jsonld-write:
       type: object
       description: ''
@@ -23318,22 +23323,9 @@ components:
         permissionDetails:
           description: 'The StudentPermission of this Student.'
           $ref: '#/components/schemas/StudentPermission.jsonld-write'
-        languageHouseId:
-          description: 'The id of the cc/organization of a languageHouse.'
-          type: string
-          nullable: true
-        providerId:
-          description: 'The id of the cc/organization of a provider.'
-          type: string
-          nullable: true
-        groupId:
-          description: 'The id of the edu/group of a group.'
-          type: string
-          nullable: true
-        providerEmployeeId:
-          description: 'The id of the mrc/employee of a mentor.'
-          type: string
-          nullable: true
+      required:
+        - person
+        - permissionDetails
     StudentAvailability-read:
       type: object
       description: ''
@@ -24096,6 +24088,10 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
+        employeeId:
+          description: 'EmployeeId of this student Dossier.'
+          type: string
+          nullable: true
     StudentDossierEvent.jsonld-read:
       type: object
       description: ''
@@ -24204,6 +24200,10 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
+        employeeId:
+          description: 'EmployeeId of this student Dossier.'
+          type: string
+          nullable: true
     StudentDutchNT-read:
       type: object
       description: ''
@@ -25393,6 +25393,11 @@ components:
     StudentPermission-read:
       type: object
       description: ''
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
       properties:
         didSignPermissionForm:
           description: 'A boolean that is true when the permission form was signed.'
@@ -25409,6 +25414,11 @@ components:
     StudentPermission-write:
       type: object
       description: ''
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
       properties:
         didSignPermissionForm:
           description: 'A boolean that is true when the permission form was signed.'
@@ -25425,6 +25435,11 @@ components:
     StudentPermission.jsonld-read:
       type: object
       description: ''
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
       properties:
         '@context':
           readOnly: true
@@ -25464,6 +25479,11 @@ components:
     StudentPermission.jsonld-write:
       type: object
       description: ''
+      required:
+        - didSignPermissionForm
+        - hasPermissionToShareDataWithProviders
+        - hasPermissionToShareDataWithLibraries
+        - hasPermissionToSendInformationAboutLibraries
       properties:
         '@context':
           readOnly: true
@@ -25663,6 +25683,8 @@ components:
           maxLength: 255
           description: 'The actual phone number.'
           type: string
+      required:
+        - telephone
     Telephone-write:
       type: object
       description: ''
@@ -25676,6 +25698,8 @@ components:
           maxLength: 255
           description: 'The actual phone number.'
           type: string
+      required:
+        - telephone
     Telephone.jsonld-read:
       type: object
       description: ''
@@ -25712,6 +25736,8 @@ components:
           maxLength: 255
           description: 'The actual phone number.'
           type: string
+      required:
+        - telephone
     Telephone.jsonld-write:
       type: object
       description: ''
@@ -25748,12 +25774,18 @@ components:
           maxLength: 255
           description: 'The actual phone number.'
           type: string
+      required:
+        - telephone
     TestResult-read:
       type: object
       description: ''
     TestResult-write:
       type: object
       description: ''
+      required:
+        - participationId
+        - usedExam
+        - examDate
       properties:
         participationId:
           description: 'The id of a participation this TestResult is connected to.'
@@ -25804,6 +25836,10 @@ components:
     TestResult.jsonld-write:
       type: object
       description: ''
+      required:
+        - participationId
+        - usedExam
+        - examDate
       properties:
         '@context':
           readOnly: true
@@ -25850,12 +25886,15 @@ components:
     User-read:
       type: object
       description: ''
+      required:
+        - username
+        - person
+        - organization
       properties:
         username:
           maxLength: 2550
           description: 'The Username of this User.'
           type: string
-          nullable: true
         person:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person-read'
@@ -25881,12 +25920,16 @@ components:
     User-write:
       type: object
       description: ''
+      required:
+        - username
+        - person
+        - organization
+        - password
       properties:
         username:
           maxLength: 2550
           description: 'The Username of this User.'
           type: string
-          nullable: true
         person:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person-write'
@@ -25908,7 +25951,6 @@ components:
           maxLength: 2550
           description: 'The Password of this User.'
           type: string
-          nullable: true
         token:
           maxLength: 2550
           description: 'The Token for password reset.'
@@ -25917,6 +25959,10 @@ components:
     User.jsonld-read:
       type: object
       description: ''
+      required:
+        - username
+        - person
+        - organization
       properties:
         '@context':
           readOnly: true
@@ -25945,7 +25991,6 @@ components:
           maxLength: 2550
           description: 'The Username of this User.'
           type: string
-          nullable: true
         person:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person.jsonld-read'
@@ -25971,6 +26016,11 @@ components:
     User.jsonld-write:
       type: object
       description: ''
+      required:
+        - username
+        - person
+        - organization
+        - password
       properties:
         '@context':
           readOnly: true
@@ -25999,7 +26049,6 @@ components:
           maxLength: 2550
           description: 'The Username of this User.'
           type: string
-          nullable: true
         person:
           description: 'A contact component person of this User.'
           $ref: '#/components/schemas/Person.jsonld-write'
@@ -26021,7 +26070,6 @@ components:
           maxLength: 2550
           description: 'The Password of this User.'
           type: string
-          nullable: true
         token:
           maxLength: 2550
           description: 'The Token for password reset.'

@@ -114,6 +114,7 @@ class Student
     /**
      * @var Person A contact catalogue person for the student.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
@@ -268,57 +269,13 @@ class Student
     /**
      * @var StudentPermission The StudentPermission of this Student.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;
-
-    //TODO: some of these 'ID' variables can be removed:
-    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
-    /**
-     * @var string|null The id of the cc/organization of a languageHouse.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
-
-    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
-    /**
-     * @var string|null The id of the cc/organization of a provider.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $providerId;
-
-    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
-    /**
-     * @var string|null The id of the edu/group of a group.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $groupId;
-
-    //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
-    /**
-     * @var string|null The id of the mrc/employee of a mentor.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $providerEmployeeId;
 
     public function getId(): UuidInterface
     {
@@ -520,54 +477,6 @@ class Student
     public function setPermissionDetails(StudentPermission $permissionDetails): self
     {
         $this->permissionDetails = $permissionDetails;
-
-        return $this;
-    }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(?string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
-    public function getProviderId(): ?string
-    {
-        return $this->providerId;
-    }
-
-    public function setProviderId(?string $providerId): self
-    {
-        $this->providerId = $providerId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
-
-        return $this;
-    }
-
-    public function getProviderEmployeeId(): ?string
-    {
-        return $this->providerEmployeeId;
-    }
-
-    public function setProviderEmployeeId(?string $providerEmployeeId): self
-    {
-        $this->providerEmployeeId = $providerEmployeeId;
 
         return $this;
     }

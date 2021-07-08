@@ -131,7 +131,7 @@ class StudentDossierEvent
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $employeeId;

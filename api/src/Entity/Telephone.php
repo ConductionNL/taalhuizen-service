@@ -45,7 +45,7 @@ class Telephone
     private UuidInterface $id;
 
     /**
-     * @var ?string Name of this telephone.
+     * @var string|null Name of this telephone.
      *
      * @Assert\Length(
      *     max = 255
@@ -58,6 +58,7 @@ class Telephone
     /**
      * @var string The actual phone number.
      *
+     * @Assert\NotNull
      * @Assert\Length(
      *     max = 255
      * )
