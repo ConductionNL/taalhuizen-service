@@ -149,6 +149,24 @@ class Education
     private ?string $teacherProfessionalism;
 
     /**
+     * @var String|null The professionalism of the teacher for this Education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $courseProfessionalism;
+
+    /**
      * @var bool|null A boolean that is true if the Education provides a certificate when completed.
      *
      * @Groups({"read", "write"})
@@ -267,6 +285,18 @@ class Education
     public function setTeacherProfessionalism(?string $teacherProfessionalism): self
     {
         $this->teacherProfessionalism = $teacherProfessionalism;
+
+        return $this;
+    }
+
+    public function getCourseProfessionalism(): ?string
+    {
+        return $this->courseProfessionalism;
+    }
+
+    public function setCourseProfessionalism(?string $courseProfessionalism): self
+    {
+        $this->courseProfessionalism = $courseProfessionalism;
 
         return $this;
     }
