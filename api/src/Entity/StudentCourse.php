@@ -43,64 +43,12 @@ class StudentCourse
     private ?bool $isFollowingCourseRightNow;
 
     /**
-     * @var String|null The name of the course this student is following.
+     * @var ?Education Education of this studentCourse.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      */
-    private ?string $courseName;
-
-    /**
-     * @var String|null The type of teacher this student has for his course.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
-     *             "example"="PROFESSIONAL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $courseTeacher;
-
-    /**
-     * @var String|null The group type, Individually or Group, of the course this student is following.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INDIVIDUALLY", "GROUP"},
-     *             "example"="INDIVIDUALLY"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $courseGroup;
-
-    /**
-     * @var int|null The amount of hours the course takes, that this student is following.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $amountOfHours;
-
-    /**
-     * @var bool|null A boolean that is true if the course this student is following provides a certificate when completed.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $doesCourseProvideCertificate;
+    private ?Education $education;
 
     public function getId(): UuidInterface
     {
@@ -126,62 +74,14 @@ class StudentCourse
         return $this;
     }
 
-    public function getCourseName(): ?string
+    public function getEducation(): ?Education
     {
-        return $this->courseName;
+        return $this->education;
     }
 
-    public function setCourseName(?string $courseName): self
+    public function setEducation(?Education $education): self
     {
-        $this->courseName = $courseName;
-
-        return $this;
-    }
-
-    public function getCourseTeacher(): ?string
-    {
-        return $this->courseTeacher;
-    }
-
-    public function setCourseTeacher(?string $courseTeacher): self
-    {
-        $this->courseTeacher = $courseTeacher;
-
-        return $this;
-    }
-
-    public function getCourseGroup(): ?string
-    {
-        return $this->courseGroup;
-    }
-
-    public function setCourseGroup(?string $courseGroup): self
-    {
-        $this->courseGroup = $courseGroup;
-
-        return $this;
-    }
-
-    public function getAmountOfHours(): ?int
-    {
-        return $this->amountOfHours;
-    }
-
-    public function setAmountOfHours(?int $amountOfHours): self
-    {
-        $this->amountOfHours = $amountOfHours;
-
-        return $this;
-    }
-
-    public function getDoesCourseProvideCertificate(): ?bool
-    {
-        return $this->doesCourseProvideCertificate;
-    }
-
-    public function setDoesCourseProvideCertificate(?bool $doesCourseProvideCertificate): self
-    {
-        $this->doesCourseProvideCertificate = $doesCourseProvideCertificate;
+        $this->education = $education;
 
         return $this;
     }

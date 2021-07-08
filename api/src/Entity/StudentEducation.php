@@ -36,19 +36,6 @@ class StudentEducation
      */
     private UuidInterface $id;
 
-//   Education of the employee, was called in the graphql-schema;
-// 'lastFollowedEducation', 'didGraduate', 'followingEducationRightNowYesStartDate',
-// 'followingEducationRightNowYesLevel', 'followingEducationRightNowYesInstitute', 'followingEducationRightNowYesProvidesCertificate',
-// 'followingEducationRightNowNoEndDate', 'followingEducationRightNowNoLevel', 'followingEducationRightNowNoGotCertificate',
-// changed to 'education'(Education entity) related to schema.org
-    /**
-     * @var ?Education Education of this studentEducation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
-     */
-    private ?Education $education;
-
     /**
      * @var ?string Following education right now of this studentEducation.
      *
@@ -68,6 +55,19 @@ class StudentEducation
      * )
      */
     private ?string $followingEducationRightNow;
+
+    //   Education of the employee, was called in the graphql-schema;
+    // 'lastFollowedEducation', 'didGraduate', 'followingEducationRightNowYesStartDate',
+    // 'followingEducationRightNowYesLevel', 'followingEducationRightNowYesInstitute', 'followingEducationRightNowYesProvidesCertificate',
+    // 'followingEducationRightNowNoEndDate', 'followingEducationRightNowNoLevel', 'followingEducationRightNowNoGotCertificate',
+    // changed to 'education'(Education entity) related to schema.org
+    /**
+     * @var ?Education Education of this studentEducation.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     */
+    private ?Education $education;
 
     public function getId(): UuidInterface
     {

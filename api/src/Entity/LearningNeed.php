@@ -76,7 +76,7 @@ class LearningNeed
     private ?LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @var string Offer desired offer of this learning need.
+     * @var string Desired offer of this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -85,10 +85,10 @@ class LearningNeed
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $offerDesiredOffer;
+    private string $desiredOffer;
 
     /**
-     * @var string Offer advised offer of this learning need.
+     * @var string Advised offer of this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -97,7 +97,7 @@ class LearningNeed
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $offerAdvisedOffer;
+    private string $advisedOffer;
 
     /**
      * @var string Offer difference of this learning need.
@@ -140,16 +140,6 @@ class LearningNeed
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $offerEngagements;
-
-    /**
-     * @var ?Participation Participation's of this learning need.
-     *
-     * @Groups({"read","write"})
-     * @ORM\OneToOne(targetEntity=Participation::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?Participation $participations;
 
     /**
      * @var string Student id of this learning need.
@@ -213,26 +203,26 @@ class LearningNeed
         return $this;
     }
 
-    public function getOfferDesiredOffer(): string
+    public function getDesiredOffer(): string
     {
-        return $this->offerDesiredOffer;
+        return $this->desiredOffer;
     }
 
-    public function setOfferDesiredOffer(string $offerDesiredOffer): self
+    public function setDesiredOffer(string $desiredOffer): self
     {
-        $this->offerDesiredOffer = $offerDesiredOffer;
+        $this->desiredOffer = $desiredOffer;
 
         return $this;
     }
 
-    public function getOfferAdvisedOffer(): string
+    public function getAdvisedOffer(): string
     {
-        return $this->offerAdvisedOffer;
+        return $this->advisedOffer;
     }
 
-    public function setOfferAdvisedOffer(string $offerAdvisedOffer): self
+    public function setAdvisedOffer(string $advisedOffer): self
     {
-        $this->offerAdvisedOffer = $offerAdvisedOffer;
+        $this->advisedOffer = $advisedOffer;
 
         return $this;
     }
@@ -269,18 +259,6 @@ class LearningNeed
     public function setOfferEngagements(?string $offerEngagements): self
     {
         $this->offerEngagements = $offerEngagements;
-
-        return $this;
-    }
-
-    public function getParticipations(): ?Participation
-    {
-        return $this->participations;
-    }
-
-    public function setParticipations(?Participation $participations): self
-    {
-        $this->participations = $participations;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\EducationRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -43,6 +44,14 @@ class Education
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
+
+    /**
+     * @var String|null The name of the course this student is following.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $name;
 
 //   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
     /**
@@ -92,7 +101,6 @@ class Education
      */
     private ?string $iscedEducationLevelCode;
 
-//   degree granted status of the education, was called in the graphql-schema 'doesProvideCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
      * @var ?string Degree granted status of this education.
      *
@@ -104,6 +112,58 @@ class Education
      */
     private ?string $degreeGrantedStatus;
 
+    /**
+     * @var String|null The group formation type of this (course) Education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $groupFormation;
+
+    /**
+     * @var String|null The professionalism of the teacher for this Education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $teacherProfessionalism;
+
+    /**
+     * @var bool|null A boolean that is true if the Education provides a certificate when completed.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $provideCertificate;
+
+    /**
+     * @var int|null The amount of hours the course takes, that this student is following.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $amountOfHours;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -112,6 +172,18 @@ class Education
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
         return $this;
     }
 
@@ -171,6 +243,54 @@ class Education
     public function setIscedEducationLevelCode(?string $iscedEducationLevelCode): self
     {
         $this->iscedEducationLevelCode = $iscedEducationLevelCode;
+
+        return $this;
+    }
+
+    public function getGroupFormation(): ?string
+    {
+        return $this->groupFormation;
+    }
+
+    public function setGroupFormation(?string $groupFormation): self
+    {
+        $this->groupFormation = $groupFormation;
+
+        return $this;
+    }
+
+    public function getTeacherProfessionalism(): ?string
+    {
+        return $this->teacherProfessionalism;
+    }
+
+    public function setTeacherProfessionalism(?string $teacherProfessionalism): self
+    {
+        $this->teacherProfessionalism = $teacherProfessionalism;
+
+        return $this;
+    }
+
+    public function getProvideCertificate(): ?bool
+    {
+        return $this->provideCertificate;
+    }
+
+    public function setProvideCertificate(?bool $provideCertificate): self
+    {
+        $this->provideCertificate = $provideCertificate;
+
+        return $this;
+    }
+
+    public function getAmountOfHours(): ?int
+    {
+        return $this->amountOfHours;
+    }
+
+    public function setAmountOfHours(?int $amountOfHours): self
+    {
+        $this->amountOfHours = $amountOfHours;
 
         return $this;
     }
