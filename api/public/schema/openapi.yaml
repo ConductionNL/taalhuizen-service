@@ -22244,7 +22244,7 @@ components:
             -
               $ref: '#/components/schemas/Address-read'
         telephones:
-          description: 'Telephone of this person'
+          description: 'Telephones of this person'
           nullable: true
           anyOf:
             -
@@ -22263,6 +22263,10 @@ components:
               $ref: '#/components/schemas/Organization-read'
         contactPreference:
           description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
           nullable: true
     Person-write:
@@ -22295,7 +22299,7 @@ components:
             -
               $ref: '#/components/schemas/Address-write'
         telephones:
-          description: 'Telephone of this person'
+          description: 'Telephones of this person'
           nullable: true
           anyOf:
             -
@@ -22314,6 +22318,10 @@ components:
               $ref: '#/components/schemas/Organization-write'
         contactPreference:
           description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
           nullable: true
     Person.jsonld-read:
@@ -22369,7 +22377,7 @@ components:
             -
               $ref: '#/components/schemas/Address.jsonld-read'
         telephones:
-          description: 'Telephone of this person'
+          description: 'Telephones of this person'
           nullable: true
           anyOf:
             -
@@ -22388,6 +22396,10 @@ components:
               $ref: '#/components/schemas/Organization.jsonld-read'
         contactPreference:
           description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
           nullable: true
     Person.jsonld-write:
@@ -22443,7 +22455,7 @@ components:
             -
               $ref: '#/components/schemas/Address.jsonld-write'
         telephones:
-          description: 'Telephone of this person'
+          description: 'Telephones of this person'
           nullable: true
           anyOf:
             -
@@ -22462,6 +22474,10 @@ components:
               $ref: '#/components/schemas/Organization.jsonld-write'
         contactPreference:
           description: 'The contact preference of the person.'
+          type: string
+          nullable: true
+        contactPreferenceOther:
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
           nullable: true
     Registration-read:
@@ -22782,10 +22798,7 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration-read'
         person:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-read'
+          $ref: '#/components/schemas/Person-read'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -22852,10 +22865,7 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/StudentPermission-read'
+          $ref: '#/components/schemas/StudentPermission-read'
     Student-write:
       type: object
       description: ''
@@ -22874,10 +22884,7 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration-write'
         person:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-write'
+          $ref: '#/components/schemas/Person-write'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -22944,10 +22951,7 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/StudentPermission-write'
+          $ref: '#/components/schemas/StudentPermission-write'
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse.'
           type: string
@@ -23005,10 +23009,7 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
         person:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-read'
+          $ref: '#/components/schemas/Person.jsonld-read'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23075,10 +23076,7 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/StudentPermission.jsonld-read'
+          $ref: '#/components/schemas/StudentPermission.jsonld-read'
     Student.jsonld-write:
       type: object
       description: ''
@@ -23120,10 +23118,7 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration.jsonld-write'
         person:
           description: 'A contact catalogue person for the student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-write'
+          $ref: '#/components/schemas/Person.jsonld-write'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23190,10 +23185,7 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/StudentPermission.jsonld-write'
+          $ref: '#/components/schemas/StudentPermission.jsonld-write'
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse.'
           type: string
@@ -23784,10 +23776,6 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
-        creatorGivenName:
-          description: 'Creator of this student Dossier.'
-          type: string
-          nullable: true
         employeeId:
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -23814,10 +23802,6 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
-        creatorGivenName:
-          description: 'Creator of this student Dossier.'
-          type: string
-          nullable: true
     StudentDossierEvent.jsonld-read:
       type: object
       description: ''
@@ -23863,10 +23847,6 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
-        creatorGivenName:
-          description: 'Creator of this student Dossier.'
-          type: string
-          nullable: true
         employeeId:
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -23916,10 +23896,6 @@ components:
         studentId:
           description: 'StudentId of this student Dossier.'
           type: string
-        creatorGivenName:
-          description: 'Creator of this student Dossier.'
-          type: string
-          nullable: true
     StudentDutchNT-read:
       type: object
       description: ''
@@ -25246,10 +25222,7 @@ components:
           nullable: true
         person:
           description: 'A contact component person of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-read'
+          $ref: '#/components/schemas/Person-read'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
@@ -25257,10 +25230,7 @@ components:
           nullable: true
         organization:
           description: 'A contact component organization of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-read'
+          $ref: '#/components/schemas/Organization-read'
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -25283,10 +25253,7 @@ components:
           nullable: true
         person:
           description: 'A contact component person of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person-write'
+          $ref: '#/components/schemas/Person-write'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
@@ -25294,10 +25261,7 @@ components:
           nullable: true
         organization:
           description: 'A contact component organization of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization-write'
+          $ref: '#/components/schemas/Organization-write'
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -25348,10 +25312,7 @@ components:
           nullable: true
         person:
           description: 'A contact component person of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-read'
+          $ref: '#/components/schemas/Person.jsonld-read'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
@@ -25359,10 +25320,7 @@ components:
           nullable: true
         organization:
           description: 'A contact component organization of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-read'
+          $ref: '#/components/schemas/Organization.jsonld-read'
         userRoles:
           description: 'The userRoles of this User.'
           type: array
@@ -25408,10 +25366,7 @@ components:
           nullable: true
         person:
           description: 'A contact component person of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Person.jsonld-write'
+          $ref: '#/components/schemas/Person.jsonld-write'
         userEnvironment:
           maxLength: 2550
           description: 'The userEnvironment of this User.'
@@ -25419,10 +25374,7 @@ components:
           nullable: true
         organization:
           description: 'A contact component organization of this User.'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Organization.jsonld-write'
+          $ref: '#/components/schemas/Organization.jsonld-write'
         userRoles:
           description: 'The userRoles of this User.'
           type: array

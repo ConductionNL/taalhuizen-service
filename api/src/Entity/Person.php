@@ -53,7 +53,7 @@ class Person
     private string $givenName;
 
     /**
-     * @var ?string Additional name of this person
+     * @var string|null Additional name of this person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -61,7 +61,7 @@ class Person
     private ?string $additionalName;
 
     /**
-     * @var ?string Family name of this person
+     * @var string|null Family name of this person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -69,7 +69,7 @@ class Person
     private ?string $familyName;
 
     /**
-     * @var ?string Gender of this person
+     * @var string|null Gender of this person
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"Male", "Female"})
@@ -78,7 +78,7 @@ class Person
     private ?string $gender;
 
     /**
-     * @var ?string Birthday of this person
+     * @var string|null Birthday of this person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -86,35 +86,43 @@ class Person
     private ?string $birthday;
 
     /**
-     * @var ?Address Address of this person
+     * @var Address|null Address of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Address $addresses;
 
     // TODO:this should be a oneToMany so we can add an extra telephone for the $contactPersonTelephone of a student
     /**
-     * @var ?Telephone Telephone of this person
+     * @var Telephone|null Telephones of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Telephone $telephones;
 
     /**
-     * @var ?Email Email of this person
+     * @var Email|null Email of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Email $emails;
 
     /**
-     * @var ?Organization Organization of this person
+     * @var Organization|null Organization of this person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Organization $organization;
 
@@ -132,16 +140,17 @@ class Person
     /**
      * @var string|null The contact preference of the person for when the OTHER option is selected.
      *
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $contactPreferenceOther;
 
-    public function getId(): ?UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

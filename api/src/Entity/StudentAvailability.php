@@ -39,6 +39,7 @@ class StudentAvailability
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?Availability $availability;

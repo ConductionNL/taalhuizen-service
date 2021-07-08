@@ -95,6 +95,8 @@ class Report
     /**
      * @var string|null The language house the report applies to.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -102,6 +104,8 @@ class Report
 
     /**
      * @var string|null The provider this report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

@@ -95,6 +95,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?Person $registrar;
@@ -104,15 +105,17 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentCivicIntegration $civicIntegrationDetails;
 
     /**
-     * @var Person|null A contact catalogue person for the student.
+     * @var Person A contact catalogue person for the student.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $person;
@@ -122,6 +125,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentGeneral $generalDetails;
@@ -131,6 +135,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentReferrer $referrerDetails;
@@ -140,6 +145,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentBackground $backgroundDetails;
@@ -149,6 +155,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentDutchNT $dutchNTDetails;
@@ -167,6 +174,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentEducation $educationDetails;
@@ -176,6 +184,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentCourse $courseDetails;
@@ -185,6 +194,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentJob $jobDetails;
@@ -194,6 +204,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentMotivation $motivationDetails;
@@ -203,6 +214,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentAvailability $availabilityDetails;
@@ -222,10 +234,11 @@ class Student
     private ?string $writingTestResult;
 
     /**
-     * @var StudentPermission|null The StudentPermission of this Student.
+     * @var StudentPermission The StudentPermission of this Student.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;
@@ -234,6 +247,8 @@ class Student
     //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the cc/organization of a languageHouse.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -244,6 +259,8 @@ class Student
     /**
      * @var string|null The id of the cc/organization of a provider.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -253,6 +270,8 @@ class Student
     /**
      * @var string|null The id of the edu/group of a group.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -261,6 +280,8 @@ class Student
     //TODO: this variable is/was here for custom get api-calls. can be done with query params for example, or just use id?
     /**
      * @var string|null The id of the mrc/employee of a mentor.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255, nullable=true)

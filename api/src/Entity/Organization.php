@@ -57,23 +57,27 @@ class Organization
     private string $name;
 
     /**
-     * @var ?Telephone Telephone of this organization
+     * @var Telephone|null Telephone of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Telephone $telephones;
 
     /**
-     * @var ?Email Email of this organization
+     * @var Email|null Email of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Email $emails;
 
     /**
-     * @var ?string Type of this organization
+     * @var string|null Type of this organization
      *
      * @Assert\Length(
      *     max = 255
@@ -84,19 +88,21 @@ class Organization
     private ?string $type;
 
     /**
-     * @var ?Address Address of this organization
+     * @var Address|null Address of this organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
     private ?Address $addresses;
 
-    public function getId(): ?UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

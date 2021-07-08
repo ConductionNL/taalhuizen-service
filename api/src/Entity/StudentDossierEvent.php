@@ -108,22 +108,18 @@ class StudentDossierEvent
     /**
      * @var string|null StudentId of this student Dossier.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $studentId;
-
-    /**
-     * @var string|null Creator of this student Dossier.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $creatorGivenName;
+    private string $studentId;
 
     /**
      * @var string|null EmployeeId of this student Dossier.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Groups({"read"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -178,26 +174,14 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getStudentId(): ?string
+    public function getStudentId(): string
     {
         return $this->studentId;
     }
 
-    public function setStudentId(?string $studentId): self
+    public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getCreatorGivenName(): ?string
-    {
-        return $this->creatorGivenName;
-    }
-
-    public function setCreatorGivenName(?string $creatorGivenName): self
-    {
-        $this->creatorGivenName = $creatorGivenName;
 
         return $this;
     }

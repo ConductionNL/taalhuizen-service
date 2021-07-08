@@ -46,7 +46,7 @@ class Email
     private $id;
 
     /**
-     * @var ?string Name of this email
+     * @var string|null Name of this email
      *
      * @Assert\Length(
      *     max = 255
@@ -57,7 +57,7 @@ class Email
     private ?string $name;
 
     /**
-     * @var ?string The actual mail address
+     * @var string The actual mail address
      *
      * @Assert\Length(
      *     max = 255

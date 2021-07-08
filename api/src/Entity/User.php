@@ -108,7 +108,7 @@ class User
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var string The Username of this User.
@@ -126,6 +126,7 @@ class User
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $person;
@@ -146,6 +147,7 @@ class User
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Organization $organization;
@@ -185,7 +187,7 @@ class User
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

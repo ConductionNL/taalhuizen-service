@@ -42,7 +42,7 @@ class Telephone
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
      * @var ?string Name of this telephone.
@@ -56,7 +56,7 @@ class Telephone
     private ?string $name;
 
     /**
-     * @var ?string The actual phone number.
+     * @var string The actual phone number.
      *
      * @Assert\Length(
      *     max = 255
@@ -71,7 +71,7 @@ class Telephone
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

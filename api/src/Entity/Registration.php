@@ -84,6 +84,8 @@ class Registration
     /**
      * @var String|null A language house for this registration.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -94,6 +96,7 @@ class Registration
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?Person $student;
@@ -103,6 +106,7 @@ class Registration
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?Person $registrar;

@@ -72,6 +72,8 @@ class TestResult
     /**
      * @var String|null The id of a participation this TestResult is connected to.
      *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
      */
