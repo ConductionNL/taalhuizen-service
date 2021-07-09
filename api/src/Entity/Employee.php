@@ -21,6 +21,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
+ * All properties that the DTO entity Employee holds.
+ *
+ * The main entity associated with this DTO is the mrc/Employee: https://taalhuizen-bisc.commonground.nu/api/v1/mrc#tag/Employee.
+ * DTO Employee exists of a few properties based on this medewerker catalogue entity, that is based on the following schema.org schema: https://schema.org/employee and a https://www.hropenstandards.org/ schema.
+ * But the other main source that properties of this Employee entity are based on, are the following jira epics: https://lifely.atlassian.net/browse/BISC-67, https://lifely.atlassian.net/browse/BISC-119 and https://lifely.atlassian.net/browse/BISC-167.
+ * And mainly the following issues: https://lifely.atlassian.net/browse/BISC-106, https://lifely.atlassian.net/browse/BISC-156 and https://lifely.atlassian.net/browse/BISC-169.
+ * The person input fields match the Person Entity, that is why there is a Person object used here instead of matching the exact properties in the graphql schema.
+ * Similarly, education and followingCourse input fields match the Education Entity, that is why there are two Education objects used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -49,7 +58,6 @@ class Employee
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $person;
@@ -150,7 +158,6 @@ class Employee
      */
     private ?string $currentEducation;
 
-//   Education of the employee, was called in the graphql-schema 'currentEducationYes' and 'currentEducationNoButDidFollow', changed to 'education'(Education entity) related to schema.org
     /**
      * @var ?Education Education of this employee
      *

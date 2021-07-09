@@ -22,6 +22,13 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Education holds.
+ *
+ * The main entity associated with this DTO is the mrc/Education: https://taalhuizen-bisc.commonground.nu/api/v1/mrc#tag/Education.
+ * DTO Education exists of properties based on this medewerker catalogue entity, that is based on a https://www.hropenstandards.org/ schema.
+ * The Education input is a recurring thing throughout multiple DTO entities like: StudentEducation, StudentCourse and Employee.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was done for consistency and cleaner names, but mostly to match the mrc/Education Entity.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -53,7 +60,6 @@ class Education
      */
     private ?string $name;
 
-//   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
     /**
      * @var ?DateTime Start date of this education.
      *
@@ -65,7 +71,6 @@ class Education
      */
     private ?DateTime $startDate;
 
-//   endDate of the education, was called in the graphql-schema 'dateUntil', changed to 'endDate' related to schema.org
     /**
      * @var ?DateTime End date of this education.
      *
@@ -77,7 +82,6 @@ class Education
      */
     private ?DateTime $endDate;
 
-//   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
      * @var ?string Institution of this education.
      *
@@ -89,7 +93,6 @@ class Education
      */
     private ?string $institution;
 
-//   isced education level code of the education, was called in the graphql-schema 'level', changed to 'iscedEducationLevelCode' related to schema.org
     /**
      * @var ?string Isced education level code of this education.
      *
@@ -149,7 +152,7 @@ class Education
     private ?string $teacherProfessionalism;
 
     /**
-     * @var String|null The professionalism of the teacher for this Education.
+     * @var String|null The professionalism of this Education if this education is a course.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
@@ -172,7 +175,7 @@ class Education
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private ?bool $provideCertificate;
+    private ?bool $providesCertificate;
 
     /**
      * @var int|null The amount of hours the course takes, that this student is following.
@@ -301,14 +304,14 @@ class Education
         return $this;
     }
 
-    public function getProvideCertificate(): ?bool
+    public function getProvidesCertificate(): ?bool
     {
-        return $this->provideCertificate;
+        return $this->providesCertificate;
     }
 
-    public function setProvideCertificate(?bool $provideCertificate): self
+    public function setProvidesCertificate(?bool $providesCertificate): self
     {
-        $this->provideCertificate = $provideCertificate;
+        $this->providesCertificate = $providesCertificate;
 
         return $this;
     }

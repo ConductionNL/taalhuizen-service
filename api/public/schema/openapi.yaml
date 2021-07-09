@@ -19781,7 +19781,7 @@ components:
           type: string
     Availability-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Availability holds.'
       properties:
         id:
           readOnly: true
@@ -19790,7 +19790,10 @@ components:
           format: uuid
         monday:
           description: 'Monday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
         tuesday:
           description: 'Tuesday of this availability'
           nullable: true
@@ -19799,19 +19802,34 @@ components:
               $ref: '#/components/schemas/AvailabilityDay-read'
         wednesday:
           description: 'Wednesday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
         thursday:
           description: 'Thursday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
         friday:
           description: 'Friday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
         saturday:
           description: 'Saturday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
         sunday:
           description: 'Sunday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-read'
       required:
         - monday
         - tuesday
@@ -19822,7 +19840,7 @@ components:
         - sunday
     Availability-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Availability holds.'
       required:
         - monday
         - tuesday
@@ -19834,7 +19852,10 @@ components:
       properties:
         monday:
           description: 'Monday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
         tuesday:
           description: 'Tuesday of this availability'
           nullable: true
@@ -19843,22 +19864,37 @@ components:
               $ref: '#/components/schemas/AvailabilityDay-write'
         wednesday:
           description: 'Wednesday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
         thursday:
           description: 'Thursday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
         friday:
           description: 'Friday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
         saturday:
           description: 'Saturday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
         sunday:
           description: 'Sunday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay-write'
     Availability.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Availability holds.'
       properties:
         '@context':
           readOnly: true
@@ -19890,7 +19926,10 @@ components:
           format: uuid
         monday:
           description: 'Monday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         tuesday:
           description: 'Tuesday of this availability'
           nullable: true
@@ -19899,19 +19938,34 @@ components:
               $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         wednesday:
           description: 'Wednesday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         thursday:
           description: 'Thursday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         friday:
           description: 'Friday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         saturday:
           description: 'Saturday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
         sunday:
           description: 'Sunday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
       required:
         - monday
         - tuesday
@@ -19922,7 +19976,7 @@ components:
         - sunday
     Availability.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Availability holds.'
       required:
         - monday
         - tuesday
@@ -19957,7 +20011,10 @@ components:
           type: string
         monday:
           description: 'Monday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         tuesday:
           description: 'Tuesday of this availability'
           nullable: true
@@ -19966,22 +20023,37 @@ components:
               $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         wednesday:
           description: 'Wednesday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         thursday:
           description: 'Thursday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         friday:
           description: 'Friday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         saturday:
           description: 'Saturday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
         sunday:
           description: 'Sunday of this availability'
-          $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/AvailabilityDay.jsonld-write'
     AvailabilityDay-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity AvailabilityDay holds.'
       properties:
         id:
           readOnly: true
@@ -20003,7 +20075,7 @@ components:
         - evening
     AvailabilityDay-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity AvailabilityDay holds.'
       required:
         - morning
         - afternoon
@@ -20020,7 +20092,7 @@ components:
           type: boolean
     AvailabilityDay.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity AvailabilityDay holds.'
       properties:
         '@context':
           readOnly: true
@@ -20065,7 +20137,7 @@ components:
         - evening
     AvailabilityDay.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity AvailabilityDay holds.'
       required:
         - morning
         - afternoon
@@ -20252,40 +20324,40 @@ components:
           type: string
     Document-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Document holds.'
       properties:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        name:
+        filename:
           maxLength: 255
-          description: 'Name of this document.'
+          description: 'Filename of this document.'
           type: string
         base64:
           description: 'Base64 of this document.'
           type: string
       required:
-        - name
+        - filename
         - base64
     Document-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Document holds.'
       required:
-        - name
+        - filename
         - base64
       properties:
-        name:
+        filename:
           maxLength: 255
-          description: 'Name of this document.'
+          description: 'Filename of this document.'
           type: string
         base64:
           description: 'Base64 of this document.'
           type: string
     Document.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Document holds.'
       properties:
         '@context':
           readOnly: true
@@ -20315,21 +20387,21 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        name:
+        filename:
           maxLength: 255
-          description: 'Name of this document.'
+          description: 'Filename of this document.'
           type: string
         base64:
           description: 'Base64 of this document.'
           type: string
       required:
-        - name
+        - filename
         - base64
     Document.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Document holds.'
       required:
-        - name
+        - filename
         - base64
       properties:
         '@context':
@@ -20355,16 +20427,16 @@ components:
         '@type':
           readOnly: true
           type: string
-        name:
+        filename:
           maxLength: 255
-          description: 'Name of this document.'
+          description: 'Filename of this document.'
           type: string
         base64:
           description: 'Base64 of this document.'
           type: string
     Education-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Education holds.'
       properties:
         id:
           readOnly: true
@@ -20424,9 +20496,9 @@ components:
             - VOLUNTEER
             - BOTH
           example: PROFESSIONAL
-          description: 'The professionalism of the teacher for this Education.'
+          description: 'The professionalism of this Education if this education is a course.'
           nullable: true
-        provideCertificate:
+        providesCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
           nullable: true
@@ -20436,7 +20508,7 @@ components:
           nullable: true
     Education-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Education holds.'
       properties:
         name:
           description: 'The name of the course this student is following.'
@@ -20491,9 +20563,9 @@ components:
             - VOLUNTEER
             - BOTH
           example: PROFESSIONAL
-          description: 'The professionalism of the teacher for this Education.'
+          description: 'The professionalism of this Education if this education is a course.'
           nullable: true
-        provideCertificate:
+        providesCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
           nullable: true
@@ -20503,7 +20575,7 @@ components:
           nullable: true
     Education.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Education holds.'
       properties:
         '@context':
           readOnly: true
@@ -20586,9 +20658,9 @@ components:
             - VOLUNTEER
             - BOTH
           example: PROFESSIONAL
-          description: 'The professionalism of the teacher for this Education.'
+          description: 'The professionalism of this Education if this education is a course.'
           nullable: true
-        provideCertificate:
+        providesCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
           nullable: true
@@ -20598,7 +20670,7 @@ components:
           nullable: true
     Education.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Education holds.'
       properties:
         '@context':
           readOnly: true
@@ -20676,9 +20748,9 @@ components:
             - VOLUNTEER
             - BOTH
           example: PROFESSIONAL
-          description: 'The professionalism of the teacher for this Education.'
+          description: 'The professionalism of this Education if this education is a course.'
           nullable: true
-        provideCertificate:
+        providesCertificate:
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           type: boolean
           nullable: true
@@ -20804,7 +20876,7 @@ components:
         - email
     Employee-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Employee holds.'
       properties:
         id:
           readOnly: true
@@ -20813,7 +20885,10 @@ components:
           format: uuid
         person:
           description: 'Person of this employee'
-          $ref: '#/components/schemas/Person-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -20893,13 +20968,16 @@ components:
         - person
     Employee-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Employee holds.'
       required:
         - person
       properties:
         person:
           description: 'Person of this employee'
-          $ref: '#/components/schemas/Person-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -20977,7 +21055,7 @@ components:
           nullable: true
     Employee.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Employee holds.'
       properties:
         '@context':
           readOnly: true
@@ -21009,7 +21087,10 @@ components:
           format: uuid
         person:
           description: 'Person of this employee'
-          $ref: '#/components/schemas/Person.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -21089,7 +21170,7 @@ components:
         - person
     Employee.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Employee holds.'
       required:
         - person
       properties:
@@ -21118,7 +21199,10 @@ components:
           type: string
         person:
           description: 'Person of this employee'
-          $ref: '#/components/schemas/Person.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
         availability:
           description: 'The Availability of this Employee.'
           nullable: true
@@ -21196,13 +21280,17 @@ components:
           nullable: true
     Group-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Group holds.'
       properties:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21238,9 +21326,9 @@ components:
           description: 'Availability note of this group.'
           type: string
           nullable: true
-        generalLocation:
+        location:
           maxLength: 255
-          description: 'General location of this group.'
+          description: 'Location of this group.'
           type: string
           nullable: true
         minParticipations:
@@ -21251,18 +21339,19 @@ components:
           description: 'Max participation''s of this group.'
           type: integer
           nullable: true
-        generalEvaluation:
+        evaluation:
           maxLength: 255
-          description: 'General evaluation of this group.'
+          description: 'Evaluation of this group.'
           type: string
           nullable: true
       required:
         - name
         - typeCourse
-        - generalLocation
+        - learningNeedOutCome
+        - location
     Group-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Group holds.'
       properties:
         providerId:
           description: 'The id of the cc/organization of a provider'
@@ -21303,9 +21392,9 @@ components:
           description: 'Availability note of this group.'
           type: string
           nullable: true
-        generalLocation:
+        location:
           maxLength: 255
-          description: 'General location of this group.'
+          description: 'Location of this group.'
           type: string
           nullable: true
         minParticipations:
@@ -21316,18 +21405,19 @@ components:
           description: 'Max participation''s of this group.'
           type: integer
           nullable: true
-        generalEvaluation:
+        evaluation:
           maxLength: 255
-          description: 'General evaluation of this group.'
+          description: 'Evaluation of this group.'
           type: string
           nullable: true
       required:
         - name
         - typeCourse
-        - generalLocation
+        - learningNeedOutCome
+        - location
     Group.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Group holds.'
       properties:
         '@context':
           readOnly: true
@@ -21357,6 +21447,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        providerId:
+          description: 'The id of the cc/organization of a provider'
+          type: string
+          nullable: true
         name:
           maxLength: 255
           description: 'Name of this group.'
@@ -21392,9 +21486,9 @@ components:
           description: 'Availability note of this group.'
           type: string
           nullable: true
-        generalLocation:
+        location:
           maxLength: 255
-          description: 'General location of this group.'
+          description: 'Location of this group.'
           type: string
           nullable: true
         minParticipations:
@@ -21405,18 +21499,19 @@ components:
           description: 'Max participation''s of this group.'
           type: integer
           nullable: true
-        generalEvaluation:
+        evaluation:
           maxLength: 255
-          description: 'General evaluation of this group.'
+          description: 'Evaluation of this group.'
           type: string
           nullable: true
       required:
         - name
         - typeCourse
-        - generalLocation
+        - learningNeedOutCome
+        - location
     Group.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Group holds.'
       properties:
         '@context':
           readOnly: true
@@ -21480,9 +21575,9 @@ components:
           description: 'Availability note of this group.'
           type: string
           nullable: true
-        generalLocation:
+        location:
           maxLength: 255
-          description: 'General location of this group.'
+          description: 'Location of this group.'
           type: string
           nullable: true
         minParticipations:
@@ -21493,15 +21588,16 @@ components:
           description: 'Max participation''s of this group.'
           type: integer
           nullable: true
-        generalEvaluation:
+        evaluation:
           maxLength: 255
-          description: 'General evaluation of this group.'
+          description: 'Evaluation of this group.'
           type: string
           nullable: true
       required:
         - name
         - typeCourse
-        - generalLocation
+        - learningNeedOutCome
+        - location
     LearningNeed-read:
       type: object
       description: 'All properties that the DTO entity LearningNeed holds.'
@@ -21564,6 +21660,7 @@ components:
       required:
         - description
         - motivation
+        - desiredLearningNeedOutCome
         - desiredOffer
         - advisedOffer
         - offerDifference
@@ -21574,6 +21671,7 @@ components:
       required:
         - description
         - motivation
+        - desiredLearningNeedOutCome
         - desiredOffer
         - advisedOffer
         - offerDifference
@@ -21714,6 +21812,7 @@ components:
       required:
         - description
         - motivation
+        - desiredLearningNeedOutCome
         - desiredOffer
         - advisedOffer
         - offerDifference
@@ -21724,6 +21823,7 @@ components:
       required:
         - description
         - motivation
+        - desiredLearningNeedOutCome
         - desiredOffer
         - advisedOffer
         - offerDifference
@@ -23132,10 +23232,16 @@ components:
           type: string
         student:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          $ref: '#/components/schemas/Person-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -23157,10 +23263,16 @@ components:
           type: string
         student:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          $ref: '#/components/schemas/Person-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -23202,10 +23314,16 @@ components:
           type: string
         student:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          $ref: '#/components/schemas/Person.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -23250,10 +23368,16 @@ components:
           type: string
         student:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
         registrar:
           description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
-          $ref: '#/components/schemas/Person.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
         memo:
           description: 'A note for/with this registration.'
           type: string
@@ -23417,7 +23541,10 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration-read'
         person:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23507,7 +23634,14 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          $ref: '#/components/schemas/StudentPermission-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission-read'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails
@@ -23529,7 +23663,10 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration-write'
         person:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23619,7 +23756,10 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          $ref: '#/components/schemas/StudentPermission-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission-write'
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -23673,7 +23813,10 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
         person:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23763,7 +23906,14 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          $ref: '#/components/schemas/StudentPermission.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission.jsonld-read'
+        languageHouseId:
+          description: 'The id of the cc/organization of a languageHouse'
+          type: string
+          nullable: true
       required:
         - person
         - permissionDetails
@@ -23808,7 +23958,10 @@ components:
               $ref: '#/components/schemas/StudentCivicIntegration.jsonld-write'
         person:
           description: 'A contact catalogue person for the student.'
-          $ref: '#/components/schemas/Person.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
         generalDetails:
           description: 'The StudentGeneral of this Student.'
           nullable: true
@@ -23898,7 +24051,10 @@ components:
           nullable: true
         permissionDetails:
           description: 'The StudentPermission of this Student.'
-          $ref: '#/components/schemas/StudentPermission.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission.jsonld-write'
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -26389,7 +26545,10 @@ components:
           type: string
         person:
           description: 'A contact component person of this User.'
-          $ref: '#/components/schemas/Person-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-read'
         userEnvironment:
           type: string
           enum:
@@ -26435,7 +26594,10 @@ components:
           type: string
         person:
           description: 'A contact component person of this User.'
-          $ref: '#/components/schemas/Person-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person-write'
         userEnvironment:
           type: string
           enum:
@@ -26506,7 +26668,10 @@ components:
           type: string
         person:
           description: 'A contact component person of this User.'
-          $ref: '#/components/schemas/Person.jsonld-read'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-read'
         userEnvironment:
           type: string
           enum:
@@ -26575,7 +26740,10 @@ components:
           type: string
         person:
           description: 'A contact component person of this User.'
-          $ref: '#/components/schemas/Person.jsonld-write'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Person.jsonld-write'
         userEnvironment:
           type: string
           enum:

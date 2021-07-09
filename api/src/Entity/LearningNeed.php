@@ -72,14 +72,14 @@ class LearningNeed
     private string $motivation;
 
     /**
-     * @var ?LearningNeedOutCome The desired learning need out come of this learning need.
+     * @var LearningNeedOutCome The desired learning need out come of this learning need.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $desiredLearningNeedOutCome;
+    private LearningNeedOutCome $desiredLearningNeedOutCome;
 
     /**
      * @var string Desired offer of this learning need.
@@ -202,7 +202,7 @@ class LearningNeed
         return $this->desiredLearningNeedOutCome;
     }
 
-    public function setDesiredLearningNeedOutCome(?LearningNeedOutCome $desiredLearningNeedOutCome): self
+    public function setDesiredLearningNeedOutCome(LearningNeedOutCome $desiredLearningNeedOutCome): self
     {
         $this->desiredLearningNeedOutCome = $desiredLearningNeedOutCome;
 
