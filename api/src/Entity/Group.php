@@ -10,6 +10,7 @@ use App\Resolver\GroupMutationResolver;
 use App\Resolver\GroupQueryCollectionResolver;
 use App\Resolver\GroupQueryItemResolver;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -24,7 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * All properties that the DTO entity Group holds.
  *
  * The main entity associated with this DTO is the edu/Group: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Group.
- * DTO Group exists of properties based on the following jira epic: https://lifely.atlassian.net/browse/BISC-117.
+ * DTO Group exists of a properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Group.
+ * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-117.
  * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-146.
  * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
  * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
@@ -85,14 +87,14 @@ class Group
     private string $typeCourse;
 
     /**
-     * @var ?LearningNeedOutCome The learning need out come of this Group.
+     * @var LearningNeedOutCome The learning need out come of this Group.
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private LearningNeedOutCome $learningNeedOutCome;
 
     /**
      * @var ?DateTime Start date of this group.
@@ -317,31 +319,31 @@ class Group
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getStartDate(): ?DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(?\DateTimeInterface $startDate): self
+    public function setStartDate(?DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
 

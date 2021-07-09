@@ -23,6 +23,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
+ * All properties that the DTO entity Document holds.
+ *
+ * The main entity associated with this DTO is the wrc/Document: https://taalhuizen-bisc.commonground.nu/api/v1/wrc#tag/Document.
+ * DTO Document exists of a properties based on this web resource catalogue entity.
+ * But the other main source this Document entity is based on, are the following jira epics: https://lifely.atlassian.net/browse/BISC-65, https://lifely.atlassian.net/browse/BISC-116 and https://lifely.atlassian.net/browse/BISC-120.
+ * Notable is that there are no studentId or providerEmployeeId properties present in this Entity. This is because custom endpoint can be used for this purpose.
+ * Besides that, the property base64 was renamed from base64data to base64. This name changes was mostly done for consistency and a cleaner name.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -46,9 +54,8 @@ class Document
      */
     private UuidInterface $id;
 
-//   name of the document, was called in the graphql-schema 'filename', changed to 'name' related to schema.org
     /**
-     * @var string Name of this document.
+     * @var string Filename of this document.
      *
      * @Assert\Length(
      *     max = 255
@@ -57,9 +64,8 @@ class Document
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private string $name;
+    private string $filename;
 
-//   base64 of the document, was called in the graphql-schema 'base64data', changed to 'base64' related to schema.org
     /**
      * @var string Base64 of this document.
      *
@@ -68,8 +74,6 @@ class Document
      * @ORM\Column(type="text")
      */
     private string $base64;
-
-//   person of the document, was called in the graphql-schema 'studentId' and 'aanbiederEmployeeId', changed to 'person'(Person entity)
 
     public function getId(): UuidInterface
     {
@@ -82,14 +86,14 @@ class Document
         return $this;
     }
 
-    public function getName(): ?string
+    public function getFilename(): ?string
     {
-        return $this->name;
+        return $this->filename;
     }
 
-    public function setName(string $name): self
+    public function setFilename(string $filename): self
     {
-        $this->name = $name;
+        $this->filename = $filename;
 
         return $this;
     }
