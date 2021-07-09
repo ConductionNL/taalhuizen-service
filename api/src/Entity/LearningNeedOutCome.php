@@ -17,6 +17,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity LearningNeedOutCome holds.
+ *
+ * The LearningNeedOutCome input fields are a recurring thing throughout multiple DTO entities like: TestResult, Participation and Group.
+ * That is why this LearningNeedOutCome Entity was created. To remove duplicate use of the same properties.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Mostly shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'outComes'.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},

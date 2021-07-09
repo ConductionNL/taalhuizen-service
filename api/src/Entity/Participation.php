@@ -27,6 +27,14 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 
 
 /**
+ * All properties that the DTO entity Participation holds.
+ *
+ * DTO Participation exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-63 and https://lifely.atlassian.net/browse/BISC-113.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-91
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details'.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -38,7 +46,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  */
 class Participation
 {
-//   Id of the participation, was called in the graphql-schema 'participationId', changed to 'id'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -51,22 +58,21 @@ class Participation
     private UuidInterface $id;
 
     /**
-     * @var String|null A contact component organization id of this Participation.
+     * @var String|null A contact component provider id of this Participation.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $organizationId;
+    private ?string $providerId;
 
     /**
-     * @var String|null The organization name of this Participation.
+     * @var String|null The provider name of this Participation.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $organizationName;
+    private ?string $providerName;
 
-//   Organization note of the participation, was called in the graphql-schema 'aanbiederNote', changed to 'organizationNote'
     /**
      * @var ?string Organization note of this participation
      *
@@ -76,33 +82,7 @@ class Participation
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $organizationNote;
-
-    /**
-     * @var ?LearningNeedOutCome The learning need out come of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?LearningNeedOutCome $learningNeedOutCome;
-
-    /**
-     * @var DateTimeInterface|null The start date of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $startDate;
-
-    /**
-     * @var DateTimeInterface|null The end date of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $endDate;
+    private ?string $providerNote;
 
     /**
      * @var ?string Offer name of this participation
@@ -135,6 +115,32 @@ class Participation
     private ?string $offerCourse;
 
     /**
+     * @var ?LearningNeedOutCome The learning need out come of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?LearningNeedOutCome $learningNeedOutCome;
+
+    /**
+     * @var DateTimeInterface|null The start date of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $startDate;
+
+    /**
+     * @var DateTimeInterface|null The end date of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $endDate;
+
+    /**
      * @var ?string Details engagements of this participation
      *
      * @Assert\Length(
@@ -143,7 +149,7 @@ class Participation
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $detailsEngagements;
+    private ?string $engagements;
 
     /**
      * @var string The id of the LearningNeed connected to this Participation.
@@ -211,50 +217,38 @@ class Participation
         return $this;
     }
 
-    public function getOrganizationId(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->organizationId;
+        return $this->providerId;
     }
 
-    public function setOrganizationId(?string $organizationId): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->organizationId = $organizationId;
+        $this->providerId = $providerId;
 
         return $this;
     }
 
-    public function getOrganizationName(): ?string
+    public function getProviderName(): ?string
     {
-        return $this->organizationName;
+        return $this->providerName;
     }
 
-    public function setOrganizationName(?string $organizationName): self
+    public function setProviderName(?string $providerName): self
     {
-        $this->organizationName = $organizationName;
+        $this->providerName = $providerName;
 
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getProviderNote(): ?string
     {
-        return $this->organization;
+        return $this->providerNote;
     }
 
-    public function setOrganization(?Organization $organization): self
+    public function setProviderNote(?string $providerNote): self
     {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    public function getOrganizationNote(): ?string
-    {
-        return $this->organizationNote;
-    }
-
-    public function setOrganizationNote(?string $organizationNote): self
-    {
-        $this->organizationNote = $organizationNote;
+        $this->providerNote = $providerNote;
 
         return $this;
     }
@@ -319,14 +313,14 @@ class Participation
         return $this;
     }
 
-    public function getDetailsEngagements(): ?string
+    public function getEngagements(): ?string
     {
-        return $this->detailsEngagements;
+        return $this->engagements;
     }
 
-    public function setDetailsEngagements(?string $detailsEngagements): self
+    public function setEngagements(?string $engagements): self
     {
-        $this->detailsEngagements = $detailsEngagements;
+        $this->engagements = $engagements;
 
         return $this;
     }

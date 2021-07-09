@@ -17,6 +17,14 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
+ * All properties that the DTO entity LearningNeed holds.
+ *
+ * DTO LearningNeed exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-62 and https://lifely.atlassian.net/browse/BISC-112.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-86
+ * The desiredLearningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Mostly shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'offer'. (while the rest of the name after that also had the word offer in it)
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -24,12 +32,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "get",
  *          "post",
  *     })
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
 class LearningNeed
 {
-//   Id of the learning need, was called in the graphql-schema 'learningNeedId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -66,14 +72,14 @@ class LearningNeed
     private string $motivation;
 
     /**
-     * @var ?LearningNeedOutCome The learning need out come of this learning need.
+     * @var ?LearningNeedOutCome The desired learning need out come of this learning need.
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private ?LearningNeedOutCome $desiredLearningNeedOutCome;
 
     /**
      * @var string Desired offer of this learning need.
@@ -191,14 +197,14 @@ class LearningNeed
         return $this;
     }
 
-    public function getLearningNeedOutCome(): LearningNeedOutCome
+    public function getDesiredLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->learningNeedOutCome;
+        return $this->desiredLearningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setDesiredLearningNeedOutCome(?LearningNeedOutCome $desiredLearningNeedOutCome): self
     {
-        $this->learningNeedOutCome = $learningNeedOutCome;
+        $this->desiredLearningNeedOutCome = $desiredLearningNeedOutCome;
 
         return $this;
     }

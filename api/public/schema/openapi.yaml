@@ -7087,32 +7087,6 @@ paths:
           style: form
           explode: false
           allowReserved: false
-        -
-          name: studentId
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: string
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: 'studentId[]'
-          in: query
-          description: ''
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: true
-          allowReserved: false
       deprecated: false
     post:
       operationId: postLearningNeedCollection
@@ -19296,7 +19270,7 @@ components:
   schemas:
     Address-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Address holds.'
       properties:
         id:
           readOnly: true
@@ -19331,7 +19305,7 @@ components:
         - locality
     Address-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Address holds.'
       required:
         - street
         - houseNumber
@@ -19361,7 +19335,7 @@ components:
           type: string
     Address.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Address holds.'
       properties:
         '@context':
           readOnly: true
@@ -19419,7 +19393,7 @@ components:
         - locality
     Address.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Address holds.'
       required:
         - street
         - houseNumber
@@ -20714,7 +20688,7 @@ components:
           nullable: true
     Email-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Email holds.'
       properties:
         id:
           readOnly: true
@@ -20734,7 +20708,7 @@ components:
         - email
     Email-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Email holds.'
       properties:
         name:
           maxLength: 255
@@ -20749,7 +20723,7 @@ components:
         - email
     Email.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Email holds.'
       properties:
         '@context':
           readOnly: true
@@ -20792,7 +20766,7 @@ components:
         - email
     Email.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Email holds.'
       properties:
         '@context':
           readOnly: true
@@ -21530,7 +21504,7 @@ components:
         - generalLocation
     LearningNeed-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeed holds.'
       properties:
         id:
           readOnly: true
@@ -21545,8 +21519,8 @@ components:
           maxLength: 255
           description: 'Motivation of this learning need.'
           type: string
-        learningNeedOutCome:
-          description: 'The learning need out come of this learning need.'
+        desiredLearningNeedOutCome:
+          description: 'The desired learning need out come of this learning need.'
           nullable: true
           anyOf:
             -
@@ -21596,7 +21570,7 @@ components:
         - studentId
     LearningNeed-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeed holds.'
       required:
         - description
         - motivation
@@ -21613,8 +21587,8 @@ components:
           maxLength: 255
           description: 'Motivation of this learning need.'
           type: string
-        learningNeedOutCome:
-          description: 'The learning need out come of this learning need.'
+        desiredLearningNeedOutCome:
+          description: 'The desired learning need out come of this learning need.'
           nullable: true
           anyOf:
             -
@@ -21657,7 +21631,7 @@ components:
           type: string
     LearningNeed.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeed holds.'
       properties:
         '@context':
           readOnly: true
@@ -21695,8 +21669,8 @@ components:
           maxLength: 255
           description: 'Motivation of this learning need.'
           type: string
-        learningNeedOutCome:
-          description: 'The learning need out come of this learning need.'
+        desiredLearningNeedOutCome:
+          description: 'The desired learning need out come of this learning need.'
           nullable: true
           anyOf:
             -
@@ -21746,7 +21720,7 @@ components:
         - studentId
     LearningNeed.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeed holds.'
       required:
         - description
         - motivation
@@ -21786,8 +21760,8 @@ components:
           maxLength: 255
           description: 'Motivation of this learning need.'
           type: string
-        learningNeedOutCome:
-          description: 'The learning need out come of this learning need.'
+        desiredLearningNeedOutCome:
+          description: 'The desired learning need out come of this learning need.'
           nullable: true
           anyOf:
             -
@@ -21830,7 +21804,7 @@ components:
           type: string
     LearningNeedOutCome-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeedOutCome holds.'
       properties:
         id:
           readOnly: true
@@ -21922,7 +21896,7 @@ components:
         - level
     LearningNeedOutCome-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeedOutCome holds.'
       required:
         - goal
         - topic
@@ -22009,7 +21983,7 @@ components:
           nullable: true
     LearningNeedOutCome.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeedOutCome holds.'
       properties:
         '@context':
           readOnly: true
@@ -22124,7 +22098,7 @@ components:
         - level
     LearningNeedOutCome.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity LearningNeedOutCome holds.'
       required:
         - goal
         - topic
@@ -22234,7 +22208,7 @@ components:
           nullable: true
     Organization-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Organization holds.'
       properties:
         id:
           readOnly: true
@@ -22245,6 +22219,17 @@ components:
           maxLength: 255
           description: 'Name of this organization'
           type: string
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address-read'
         telephones:
           description: 'Telephone of this organization'
           nullable: true
@@ -22257,6 +22242,18 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email-read'
+      required:
+        - name
+    Organization-write:
+      type: object
+      description: 'All properties that the DTO entity Organization holds.'
+      required:
+        - name
+      properties:
+        name:
+          maxLength: 255
+          description: 'Name of this organization'
+          type: string
         type:
           maxLength: 255
           description: 'Type of this organization'
@@ -22267,19 +22264,7 @@ components:
           nullable: true
           anyOf:
             -
-              $ref: '#/components/schemas/Address-read'
-      required:
-        - name
-    Organization-write:
-      type: object
-      description: ''
-      required:
-        - name
-      properties:
-        name:
-          maxLength: 255
-          description: 'Name of this organization'
-          type: string
+              $ref: '#/components/schemas/Address-write'
         telephones:
           description: 'Telephone of this organization'
           nullable: true
@@ -22292,20 +22277,9 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email-write'
-        type:
-          maxLength: 255
-          description: 'Type of this organization'
-          type: string
-          nullable: true
-        addresses:
-          description: 'Address of this organization'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Address-write'
     Organization.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Organization holds.'
       properties:
         '@context':
           readOnly: true
@@ -22339,6 +22313,17 @@ components:
           maxLength: 255
           description: 'Name of this organization'
           type: string
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-read'
         telephones:
           description: 'Telephone of this organization'
           nullable: true
@@ -22351,22 +22336,11 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email.jsonld-read'
-        type:
-          maxLength: 255
-          description: 'Type of this organization'
-          type: string
-          nullable: true
-        addresses:
-          description: 'Address of this organization'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Address.jsonld-read'
       required:
         - name
     Organization.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Organization holds.'
       required:
         - name
       properties:
@@ -22397,6 +22371,17 @@ components:
           maxLength: 255
           description: 'Name of this organization'
           type: string
+        type:
+          maxLength: 255
+          description: 'Type of this organization'
+          type: string
+          nullable: true
+        addresses:
+          description: 'Address of this organization'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/Address.jsonld-write'
         telephones:
           description: 'Telephone of this organization'
           nullable: true
@@ -22409,38 +22394,42 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/Email.jsonld-write'
-        type:
-          maxLength: 255
-          description: 'Type of this organization'
-          type: string
-          nullable: true
-        addresses:
-          description: 'Address of this organization'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Address.jsonld-write'
     Participation-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Participation holds.'
       properties:
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        organizationId:
-          description: 'A contact component organization id of this Participation.'
+        providerId:
+          description: 'A contact component provider id of this Participation.'
           type: string
           nullable: true
-        organizationName:
-          description: 'The organization name of this Participation.'
+        providerName:
+          description: 'The provider name of this Participation.'
           type: string
           nullable: true
-        organizationNote:
+        providerNote:
           maxLength: 255
           description: 'Organization note of this participation'
           type: string
+          nullable: true
+        offerName:
+          maxLength: 255
+          description: 'Offer name of this participation'
+          type: string
+          nullable: true
+        offerCourse:
+          type: string
+          enum:
+            - LANGUAGE
+            - MATH
+            - DIGITAL
+            - OTHER
+          example: LANGUAGE
+          description: 'Offer course of this participation.'
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
@@ -22458,22 +22447,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        offerName:
-          maxLength: 255
-          description: 'Offer name of this participation'
-          type: string
-          nullable: true
-        offerCourse:
-          type: string
-          enum:
-            - LANGUAGE
-            - MATH
-            - DIGITAL
-            - OTHER
-          example: LANGUAGE
-          description: 'Offer course of this participation.'
-          nullable: true
-        detailsEngagements:
+        engagements:
           maxLength: 255
           description: 'Details engagements of this participation'
           type: string
@@ -22514,20 +22488,35 @@ components:
         - learningNeedId
     Participation-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Participation holds.'
       properties:
-        organizationId:
-          description: 'A contact component organization id of this Participation.'
+        providerId:
+          description: 'A contact component provider id of this Participation.'
           type: string
           nullable: true
-        organizationName:
-          description: 'The organization name of this Participation.'
+        providerName:
+          description: 'The provider name of this Participation.'
           type: string
           nullable: true
-        organizationNote:
+        providerNote:
           maxLength: 255
           description: 'Organization note of this participation'
           type: string
+          nullable: true
+        offerName:
+          maxLength: 255
+          description: 'Offer name of this participation'
+          type: string
+          nullable: true
+        offerCourse:
+          type: string
+          enum:
+            - LANGUAGE
+            - MATH
+            - DIGITAL
+            - OTHER
+          example: LANGUAGE
+          description: 'Offer course of this participation.'
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
@@ -22545,22 +22534,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        offerName:
-          maxLength: 255
-          description: 'Offer name of this participation'
-          type: string
-          nullable: true
-        offerCourse:
-          type: string
-          enum:
-            - LANGUAGE
-            - MATH
-            - DIGITAL
-            - OTHER
-          example: LANGUAGE
-          description: 'Offer course of this participation.'
-          nullable: true
-        detailsEngagements:
+        engagements:
           maxLength: 255
           description: 'Details engagements of this participation'
           type: string
@@ -22601,7 +22575,7 @@ components:
         - learningNeedId
     Participation.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Participation holds.'
       properties:
         '@context':
           readOnly: true
@@ -22631,18 +22605,33 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
-        organizationId:
-          description: 'A contact component organization id of this Participation.'
+        providerId:
+          description: 'A contact component provider id of this Participation.'
           type: string
           nullable: true
-        organizationName:
-          description: 'The organization name of this Participation.'
+        providerName:
+          description: 'The provider name of this Participation.'
           type: string
           nullable: true
-        organizationNote:
+        providerNote:
           maxLength: 255
           description: 'Organization note of this participation'
           type: string
+          nullable: true
+        offerName:
+          maxLength: 255
+          description: 'Offer name of this participation'
+          type: string
+          nullable: true
+        offerCourse:
+          type: string
+          enum:
+            - LANGUAGE
+            - MATH
+            - DIGITAL
+            - OTHER
+          example: LANGUAGE
+          description: 'Offer course of this participation.'
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
@@ -22660,22 +22649,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        offerName:
-          maxLength: 255
-          description: 'Offer name of this participation'
-          type: string
-          nullable: true
-        offerCourse:
-          type: string
-          enum:
-            - LANGUAGE
-            - MATH
-            - DIGITAL
-            - OTHER
-          example: LANGUAGE
-          description: 'Offer course of this participation.'
-          nullable: true
-        detailsEngagements:
+        engagements:
           maxLength: 255
           description: 'Details engagements of this participation'
           type: string
@@ -22716,7 +22690,7 @@ components:
         - learningNeedId
     Participation.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Participation holds.'
       properties:
         '@context':
           readOnly: true
@@ -22741,18 +22715,33 @@ components:
         '@type':
           readOnly: true
           type: string
-        organizationId:
-          description: 'A contact component organization id of this Participation.'
+        providerId:
+          description: 'A contact component provider id of this Participation.'
           type: string
           nullable: true
-        organizationName:
-          description: 'The organization name of this Participation.'
+        providerName:
+          description: 'The provider name of this Participation.'
           type: string
           nullable: true
-        organizationNote:
+        providerNote:
           maxLength: 255
           description: 'Organization note of this participation'
           type: string
+          nullable: true
+        offerName:
+          maxLength: 255
+          description: 'Offer name of this participation'
+          type: string
+          nullable: true
+        offerCourse:
+          type: string
+          enum:
+            - LANGUAGE
+            - MATH
+            - DIGITAL
+            - OTHER
+          example: LANGUAGE
+          description: 'Offer course of this participation.'
           nullable: true
         learningNeedOutCome:
           description: 'The learning need out come of this participation.'
@@ -22770,22 +22759,7 @@ components:
           type: string
           format: date-time
           nullable: true
-        offerName:
-          maxLength: 255
-          description: 'Offer name of this participation'
-          type: string
-          nullable: true
-        offerCourse:
-          type: string
-          enum:
-            - LANGUAGE
-            - MATH
-            - DIGITAL
-            - OTHER
-          example: LANGUAGE
-          description: 'Offer course of this participation.'
-          nullable: true
-        detailsEngagements:
+        engagements:
           maxLength: 255
           description: 'Details engagements of this participation'
           type: string
@@ -22826,7 +22800,7 @@ components:
         - learningNeedId
     Person-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Person holds.'
       properties:
         id:
           readOnly: true
@@ -22863,10 +22837,9 @@ components:
               $ref: '#/components/schemas/Address-read'
         telephones:
           description: 'Telephones of this person'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Telephone-read'
+          type: array
+          items:
+            $ref: '#/components/schemas/Telephone-read'
         emails:
           description: 'Email of this person'
           nullable: true
@@ -22898,7 +22871,7 @@ components:
         - familyName
     Person-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Person holds.'
       required:
         - givenName
         - familyName
@@ -22933,10 +22906,9 @@ components:
               $ref: '#/components/schemas/Address-write'
         telephones:
           description: 'Telephones of this person'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Telephone-write'
+          type: array
+          items:
+            $ref: '#/components/schemas/Telephone-write'
         emails:
           description: 'Email of this person'
           nullable: true
@@ -22965,7 +22937,7 @@ components:
           nullable: true
     Person.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Person holds.'
       properties:
         '@context':
           readOnly: true
@@ -23025,10 +22997,9 @@ components:
               $ref: '#/components/schemas/Address.jsonld-read'
         telephones:
           description: 'Telephones of this person'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Telephone.jsonld-read'
+          type: array
+          items:
+            $ref: '#/components/schemas/Telephone.jsonld-read'
         emails:
           description: 'Email of this person'
           nullable: true
@@ -23060,7 +23031,7 @@ components:
         - familyName
     Person.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity Person holds.'
       required:
         - givenName
         - familyName
@@ -23118,10 +23089,9 @@ components:
               $ref: '#/components/schemas/Address.jsonld-write'
         telephones:
           description: 'Telephones of this person'
-          nullable: true
-          anyOf:
-            -
-              $ref: '#/components/schemas/Telephone.jsonld-write'
+          type: array
+          items:
+            $ref: '#/components/schemas/Telephone.jsonld-write'
         emails:
           description: 'Email of this person'
           nullable: true
@@ -23938,7 +23908,7 @@ components:
         - permissionDetails
     StudentAvailability-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentAvailability holds.'
       properties:
         id:
           readOnly: true
@@ -23957,7 +23927,7 @@ components:
           nullable: true
     StudentAvailability-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentAvailability holds.'
       properties:
         availability:
           description: 'The Availability of this student.'
@@ -23971,7 +23941,7 @@ components:
           nullable: true
     StudentAvailability.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentAvailability holds.'
       properties:
         '@context':
           readOnly: true
@@ -24013,7 +23983,7 @@ components:
           nullable: true
     StudentAvailability.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentAvailability holds.'
       properties:
         '@context':
           readOnly: true
@@ -24050,7 +24020,7 @@ components:
           nullable: true
     StudentBackground-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentBackground holds.'
       properties:
         id:
           readOnly: true
@@ -24107,7 +24077,7 @@ components:
           nullable: true
     StudentBackground-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentBackground holds.'
       properties:
         foundVia:
           type: string
@@ -24159,7 +24129,7 @@ components:
           nullable: true
     StudentBackground.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentBackground holds.'
       properties:
         '@context':
           readOnly: true
@@ -24239,7 +24209,7 @@ components:
           nullable: true
     StudentBackground.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentBackground holds.'
       properties:
         '@context':
           readOnly: true
@@ -24314,7 +24284,7 @@ components:
           nullable: true
     StudentCivicIntegration-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCivicIntegration holds.'
       properties:
         id:
           readOnly: true
@@ -24346,7 +24316,7 @@ components:
           nullable: true
     StudentCivicIntegration-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCivicIntegration holds.'
       properties:
         civicIntegrationRequirement:
           type: string
@@ -24373,7 +24343,7 @@ components:
           nullable: true
     StudentCivicIntegration.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCivicIntegration holds.'
       properties:
         '@context':
           readOnly: true
@@ -24428,7 +24398,7 @@ components:
           nullable: true
     StudentCivicIntegration.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCivicIntegration holds.'
       properties:
         '@context':
           readOnly: true
@@ -24478,7 +24448,7 @@ components:
           nullable: true
     StudentCourse-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCourse holds.'
       properties:
         id:
           readOnly: true
@@ -24489,29 +24459,29 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        education:
-          description: 'Education of this studentCourse.'
+        course:
+          description: 'The course Education of this studentCourse.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-read'
     StudentCourse-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCourse holds.'
       properties:
         isFollowingCourseRightNow:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        education:
-          description: 'Education of this studentCourse.'
+        course:
+          description: 'The course Education of this studentCourse.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-write'
     StudentCourse.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCourse holds.'
       properties:
         '@context':
           readOnly: true
@@ -24545,15 +24515,15 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        education:
-          description: 'Education of this studentCourse.'
+        course:
+          description: 'The course Education of this studentCourse.'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education.jsonld-read'
     StudentCourse.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentCourse holds.'
       properties:
         '@context':
           readOnly: true
@@ -24582,8 +24552,8 @@ components:
           description: 'A boolean that is true if this student is following a course right now.'
           type: boolean
           nullable: true
-        education:
-          description: 'Education of this studentCourse.'
+        course:
+          description: 'The course Education of this studentCourse.'
           nullable: true
           anyOf:
             -
@@ -24778,7 +24748,7 @@ components:
           nullable: true
     StudentDutchNT-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDutchNT holds.'
       properties:
         id:
           readOnly: true
@@ -24821,7 +24791,7 @@ components:
           nullable: true
     StudentDutchNT-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDutchNT holds.'
       properties:
         dutchNTLevel:
           type: string
@@ -24859,7 +24829,7 @@ components:
           nullable: true
     StudentDutchNT.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDutchNT holds.'
       properties:
         '@context':
           readOnly: true
@@ -24925,7 +24895,7 @@ components:
           nullable: true
     StudentDutchNT.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentDutchNT holds.'
       properties:
         '@context':
           readOnly: true
@@ -24986,7 +24956,7 @@ components:
           nullable: true
     StudentEducation-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
         id:
           readOnly: true
@@ -25016,7 +24986,7 @@ components:
               $ref: '#/components/schemas/Education-read'
     StudentEducation-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
         followingEducationRightNow:
           maxLength: 255
@@ -25041,7 +25011,7 @@ components:
               $ref: '#/components/schemas/Education-write'
     StudentEducation.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
         '@context':
           readOnly: true
@@ -25094,7 +25064,7 @@ components:
               $ref: '#/components/schemas/Education.jsonld-read'
     StudentEducation.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
         '@context':
           readOnly: true
@@ -25142,7 +25112,7 @@ components:
               $ref: '#/components/schemas/Education.jsonld-write'
     StudentGeneral-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentGeneral holds.'
       properties:
         id:
           readOnly: true
@@ -25183,7 +25153,7 @@ components:
           nullable: true
     StudentGeneral-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentGeneral holds.'
       properties:
         countryOfOrigin:
           description: 'The country of origin of this student.'
@@ -25219,7 +25189,7 @@ components:
           nullable: true
     StudentGeneral.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentGeneral holds.'
       properties:
         '@context':
           readOnly: true
@@ -25283,7 +25253,7 @@ components:
           nullable: true
     StudentGeneral.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentGeneral holds.'
       properties:
         '@context':
           readOnly: true
@@ -25342,7 +25312,7 @@ components:
           nullable: true
     StudentJob-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentJob holds.'
       properties:
         id:
           readOnly: true
@@ -25377,7 +25347,7 @@ components:
           nullable: true
     StudentJob-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentJob holds.'
       properties:
         trainedForJob:
           description: 'The job this student is trained for.'
@@ -25407,7 +25377,7 @@ components:
           nullable: true
     StudentJob.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentJob holds.'
       properties:
         '@context':
           readOnly: true
@@ -25465,7 +25435,7 @@ components:
           nullable: true
     StudentJob.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentJob holds.'
       properties:
         '@context':
           readOnly: true
@@ -25518,7 +25488,7 @@ components:
           nullable: true
     StudentMotivation-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentMotivation holds.'
       properties:
         id:
           readOnly: true
@@ -25586,7 +25556,7 @@ components:
           nullable: true
     StudentMotivation-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentMotivation holds.'
       properties:
         desiredSkills:
           type: array
@@ -25649,7 +25619,7 @@ components:
           nullable: true
     StudentMotivation.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentMotivation holds.'
       properties:
         '@context':
           readOnly: true
@@ -25740,7 +25710,7 @@ components:
           nullable: true
     StudentMotivation.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentMotivation holds.'
       properties:
         '@context':
           readOnly: true
@@ -25826,7 +25796,7 @@ components:
           nullable: true
     StudentPermission-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentPermission holds.'
       properties:
         id:
           readOnly: true
@@ -25852,7 +25822,7 @@ components:
         - hasPermissionToSendInformationAboutLibraries
     StudentPermission-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentPermission holds.'
       required:
         - didSignPermissionForm
         - hasPermissionToShareDataWithProviders
@@ -25873,7 +25843,7 @@ components:
           type: boolean
     StudentPermission.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentPermission holds.'
       properties:
         '@context':
           readOnly: true
@@ -25922,7 +25892,7 @@ components:
         - hasPermissionToSendInformationAboutLibraries
     StudentPermission.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentPermission holds.'
       required:
         - didSignPermissionForm
         - hasPermissionToShareDataWithProviders
@@ -25966,7 +25936,7 @@ components:
           type: boolean
     StudentReferrer-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentReferrer holds.'
       properties:
         id:
           readOnly: true
@@ -25997,7 +25967,7 @@ components:
           nullable: true
     StudentReferrer-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentReferrer holds.'
       properties:
         referringOrganization:
           type: string
@@ -26023,7 +25993,7 @@ components:
           nullable: true
     StudentReferrer.jsonld-read:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentReferrer holds.'
       properties:
         '@context':
           readOnly: true
@@ -26077,7 +26047,7 @@ components:
           nullable: true
     StudentReferrer.jsonld-write:
       type: object
-      description: ''
+      description: 'All properties that the DTO entity StudentReferrer holds.'
       properties:
         '@context':
           readOnly: true

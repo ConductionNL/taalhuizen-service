@@ -21,6 +21,13 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Organization holds.
+ *
+ * The main entity associated with this DTO is the cc/Organization: https://taalhuizen-bisc.commonground.nu/api/v1/cc#tag/Organization.
+ * DTO Organization exists of properties based on this contact catalogue entity, that is based on the following schema.org schema: https://schema.org/Organization.
+ * Notable is that the addresses, emails and telephones properties have a OneToOne relation while there names are plural.
+ * This is different than how this is done with the cc/Organization Entity, this is done (for now) because they should never contain more than one for this DTO.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -57,26 +64,6 @@ class Organization
     private string $name;
 
     /**
-     * @var Telephone|null Telephone of this organization
-     *
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?Telephone $telephones;
-
-    /**
-     * @var Email|null Email of this organization
-     *
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?Email $emails;
-
-    /**
      * @var string|null Type of this organization
      *
      * @Assert\Length(
@@ -96,6 +83,26 @@ class Organization
      * @MaxDepth(1)
      */
     private ?Address $addresses;
+
+    /**
+     * @var Telephone|null Telephone of this organization
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?Telephone $telephones;
+
+    /**
+     * @var Email|null Email of this organization
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?Email $emails;
 
     public function getId(): UuidInterface
     {

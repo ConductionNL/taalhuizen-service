@@ -21,8 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * All properties that the DTO entity Registration holds.
  *
  * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
- * DTO Registration exists of variables based on the following jira epics: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16794%2C16925.
+ * DTO Registration exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-59 and https://lifely.atlassian.net/browse/BISC-121.
  * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-166.
+ * The student and registrar input fields match the Person Entity, that is why there are two Person objects used here instead of matching the exact properties in the graphql schema.
  *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
