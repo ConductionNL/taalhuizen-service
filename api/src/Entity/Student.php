@@ -24,8 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
  * DTO Student exists of a few properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Participant.
- * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=16795
+ * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-60.
  * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-76.
+ * The registrar and person (PersonDetails + ContactDetails) input fields match the Person Entity, that is why there are two Person objects used here instead of matching the exact properties in the graphql schema.
  *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
@@ -238,7 +239,7 @@ class Student
     /**
      * @var string|null The id of the cc/organization of a languageHouse
      *
-     * @Groups("write")
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $languageHouseId;

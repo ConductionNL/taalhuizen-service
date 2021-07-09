@@ -15,7 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * All properties that the DTO entity Report holds.
  *
- * DTO Report exists of variables based on the following jira epics: https://lifely.atlassian.net/jira/software/projects/BISC/boards/70/backlog?issueParent=17185%2C17210
+ * DTO Report exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-173 and https://lifely.atlassian.net/browse/BISC-179.
+ * Notable is that there are no providerId or LanguageHouseId properties present in this Entity. This is because custom endpoint can be used for this purpose.
+ * Besides that, the property base64 was renamed from base64data to base64. This was mostly done for consistency and cleaner names.
  *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
@@ -63,7 +65,6 @@ class Report
      */
     private ?string $filename;
 
-    // Renamed from base64data to base64.
     /**
      * @var string|null A base64 encoded string containing the file's contents.
      *

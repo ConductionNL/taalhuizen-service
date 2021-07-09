@@ -22,6 +22,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Person holds.
+ *
+ * The main entity associated with this DTO is the cc/Person: https://taalhuizen-bisc.commonground.nu/api/v1/cc#tag/Person.
+ * DTO Person exists of properties based on this contact catalogue entity, that is based on the following schema.org schema: https://schema.org/Person.
+ * The contactPreference and contactPreferenceOther properties differ from the schema.org/Person and are here because of jira issues like: https://lifely.atlassian.net/browse/BISC-76.
+ * Notable is that the addresses and emails properties have a OneToOne relation while telephone has a OneToMany.
+ * This is different than how this is done with the cc/Person Entity, this is done because (for now) only telephone should ever contain more than one for this DTO.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
@@ -107,16 +115,15 @@ class Person
      */
     private ?Address $addresses;
 
-    // TODO:this should be a oneToMany so we can add an extra telephone for the $contactPersonTelephone of a student
     /**
-     * @var Telephone|null Telephones of this person
+     * @var Collection|null Telephones of this person
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity=Telephone::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Telephone $telephones;
+    private ?Collection $telephones;
 
     /**
      * @var Email|null Email of this person
@@ -165,6 +172,11 @@ class Person
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $contactPreferenceOther;
+
+    public function __construct()
+    {
+        $this->telephones = new ArrayCollection();
+    }
 
     public function getId(): UuidInterface
     {
@@ -249,14 +261,28 @@ class Person
         return $this;
     }
 
-    public function getTelephones(): ?Telephone
+    /**
+     * @return Collection|Telephone[]
+     */
+    public function getTelephones()
     {
         return $this->telephones;
     }
 
-    public function setTelephones(?Telephone $telephones): self
+    public function addTelephone(Telephone $telephone): self
     {
-        $this->telephones = $telephones;
+        if (!$this->telephones->contains($telephone)) {
+            $this->telephones[] = $telephone;
+        }
+
+        return $this;
+    }
+
+    public function removeTelephone(Telephone $telephone): self
+    {
+        if ($this->telephones->contains($telephone)) {
+            $this->telephones->removeElement($telephone);
+        }
 
         return $this;
     }

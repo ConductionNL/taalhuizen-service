@@ -35,7 +35,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Document
 {
-//   Id of the document, was called in the graphql-schema 'studentDocumentId' and 'aanbiederEmployeeDocumentId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
