@@ -57,14 +57,14 @@ class TestResult
     private string $participationId;
 
     /**
-     * @var LearningNeedOutCome|null The learningNeedOutCome of this TestResult.
+     * @var LearningNeedOutCome The learningNeedOutCome of this TestResult.
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private LearningNeedOutCome $learningNeedOutCome;
 
     /**
      * @var String The used exam for this TestResult.
@@ -121,7 +121,7 @@ class TestResult
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 

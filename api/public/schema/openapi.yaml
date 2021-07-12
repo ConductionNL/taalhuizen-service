@@ -20880,11 +20880,11 @@ components:
       properties:
         id:
           readOnly: true
-          description: 'The UUID identifier of this resource'
+          description: 'The UUID identifier of this resource.'
           type: string
           format: uuid
         person:
-          description: 'Person of this employee'
+          description: 'Person of this employee. <br /> **This person must contain an email!**'
           nullable: true
           anyOf:
             -
@@ -20950,30 +20950,31 @@ components:
           type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee.'
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
+        userGroupIds:
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
+          type: array
+          items:
+            type: string
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
           type: string
           nullable: true
-        userGroupIds:
-          description: 'User Group ids of this Employee.'
-          type: array
-          items:
-            type: string
-          nullable: true
       required:
         - person
+        - userGroupIds
     Employee-write:
       type: object
       description: 'All properties that the DTO entity Employee holds.'
       required:
         - person
+        - userGroupIds
       properties:
         person:
-          description: 'Person of this employee'
+          description: 'Person of this employee. <br /> **This person must contain an email!**'
           nullable: true
           anyOf:
             -
@@ -21039,19 +21040,18 @@ components:
           type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee.'
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
+        userGroupIds:
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
+          type: array
+          items:
+            type: string
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
           type: string
-          nullable: true
-        userGroupIds:
-          description: 'User Group ids of this Employee.'
-          type: array
-          items:
-            type: string
           nullable: true
     Employee.jsonld-read:
       type: object
@@ -21082,11 +21082,11 @@ components:
           type: string
         id:
           readOnly: true
-          description: 'The UUID identifier of this resource'
+          description: 'The UUID identifier of this resource.'
           type: string
           format: uuid
         person:
-          description: 'Person of this employee'
+          description: 'Person of this employee. <br /> **This person must contain an email!**'
           nullable: true
           anyOf:
             -
@@ -21152,27 +21152,28 @@ components:
           type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee.'
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
+        userGroupIds:
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
+          type: array
+          items:
+            type: string
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
           type: string
           nullable: true
-        userGroupIds:
-          description: 'User Group ids of this Employee.'
-          type: array
-          items:
-            type: string
-          nullable: true
       required:
         - person
+        - userGroupIds
     Employee.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Employee holds.'
       required:
         - person
+        - userGroupIds
       properties:
         '@context':
           readOnly: true
@@ -21198,7 +21199,7 @@ components:
           readOnly: true
           type: string
         person:
-          description: 'Person of this employee'
+          description: 'Person of this employee. <br /> **This person must contain an email!**'
           nullable: true
           anyOf:
             -
@@ -21264,19 +21265,18 @@ components:
           type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee.'
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
+        userGroupIds:
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
+          type: array
+          items:
+            type: string
         userId:
           maxLength: 255
           description: 'User id of this Employee.'
           type: string
-          nullable: true
-        userGroupIds:
-          description: 'User Group ids of this Employee.'
-          type: array
-          items:
-            type: string
           nullable: true
     Group-read:
       type: object
@@ -21305,6 +21305,15 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21344,11 +21353,20 @@ components:
           description: 'Evaluation of this group.'
           type: string
           nullable: true
+        employeeIds:
+          description: 'Provider employee id''s of this group. (mentors)'
+          type: array
+          items:
+            type: string
       required:
         - name
         - typeCourse
         - learningNeedOutCome
+        - isFormal
+        - totalClassHours
+        - certificateWillBeAwarded
         - location
+        - employeeIds
     Group-write:
       type: object
       description: 'All properties that the DTO entity Group holds.'
@@ -21371,6 +21389,15 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21410,11 +21437,20 @@ components:
           description: 'Evaluation of this group.'
           type: string
           nullable: true
+        employeeIds:
+          description: 'Provider employee id''s of this group. (mentors)'
+          type: array
+          items:
+            type: string
       required:
         - name
         - typeCourse
         - learningNeedOutCome
+        - isFormal
+        - totalClassHours
+        - certificateWillBeAwarded
         - location
+        - employeeIds
     Group.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Group holds.'
@@ -21465,6 +21501,15 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21504,11 +21549,20 @@ components:
           description: 'Evaluation of this group.'
           type: string
           nullable: true
+        employeeIds:
+          description: 'Provider employee id''s of this group. (mentors)'
+          type: array
+          items:
+            type: string
       required:
         - name
         - typeCourse
         - learningNeedOutCome
+        - isFormal
+        - totalClassHours
+        - certificateWillBeAwarded
         - location
+        - employeeIds
     Group.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Group holds.'
@@ -21554,6 +21608,15 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
         startDate:
           description: 'Start date of this group.'
           type: string
@@ -21593,11 +21656,20 @@ components:
           description: 'Evaluation of this group.'
           type: string
           nullable: true
+        employeeIds:
+          description: 'Provider employee id''s of this group. (mentors)'
+          type: array
+          items:
+            type: string
       required:
         - name
         - typeCourse
         - learningNeedOutCome
+        - isFormal
+        - totalClassHours
+        - certificateWillBeAwarded
         - location
+        - employeeIds
     LearningNeed-read:
       type: object
       description: 'All properties that the DTO entity LearningNeed holds.'
@@ -21969,26 +22041,6 @@ components:
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
-        isFormal:
-          description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
-          nullable: true
-        groupFormation:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - IN_A_GROUP
-          example: INDIVIDUALLY
-          description: 'The group formation of this LearningNeedOutcome.'
-          nullable: true
-        totalClassHours:
-          description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
-          nullable: true
-        certificateWillBeAwarded:
-          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
-          nullable: true
       required:
         - goal
         - topic
@@ -22060,26 +22112,6 @@ components:
         levelOther:
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
-          nullable: true
-        isFormal:
-          description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
-          nullable: true
-        groupFormation:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - IN_A_GROUP
-          example: INDIVIDUALLY
-          description: 'The group formation of this LearningNeedOutcome.'
-          nullable: true
-        totalClassHours:
-          description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
-          nullable: true
-        certificateWillBeAwarded:
-          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
     LearningNeedOutCome.jsonld-read:
       type: object
@@ -22170,26 +22202,6 @@ components:
         levelOther:
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
-          nullable: true
-        isFormal:
-          description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
-          nullable: true
-        groupFormation:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - IN_A_GROUP
-          example: INDIVIDUALLY
-          description: 'The group formation of this LearningNeedOutcome.'
-          nullable: true
-        totalClassHours:
-          description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
-          nullable: true
-        certificateWillBeAwarded:
-          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
       required:
         - goal
@@ -22285,26 +22297,6 @@ components:
         levelOther:
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
-          nullable: true
-        isFormal:
-          description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
-          nullable: true
-        groupFormation:
-          type: string
-          enum:
-            - INDIVIDUALLY
-            - IN_A_GROUP
-          example: INDIVIDUALLY
-          description: 'The group formation of this LearningNeedOutcome.'
-          nullable: true
-        totalClassHours:
-          description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
-          nullable: true
-        certificateWillBeAwarded:
-          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
     Organization-read:
       type: object
@@ -22504,16 +22496,16 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'A contact component provider id of this Participation.'
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerName:
-          description: 'The provider name of this Participation.'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Organization note of this participation'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         offerName:
@@ -22537,6 +22529,26 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
         startDate:
           description: 'The start date of this participation.'
           type: string
@@ -22591,16 +22603,16 @@ components:
       description: 'All properties that the DTO entity Participation holds.'
       properties:
         providerId:
-          description: 'A contact component provider id of this Participation.'
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerName:
-          description: 'The provider name of this Participation.'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Organization note of this participation'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         offerName:
@@ -22624,6 +22636,26 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
         startDate:
           description: 'The start date of this participation.'
           type: string
@@ -22706,16 +22738,16 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'A contact component provider id of this Participation.'
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerName:
-          description: 'The provider name of this Participation.'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Organization note of this participation'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         offerName:
@@ -22739,6 +22771,26 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
         startDate:
           description: 'The start date of this participation.'
           type: string
@@ -22816,16 +22868,16 @@ components:
           readOnly: true
           type: string
         providerId:
-          description: 'A contact component provider id of this Participation.'
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerName:
-          description: 'The provider name of this Participation.'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Organization note of this participation'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
         offerName:
@@ -22849,6 +22901,26 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
+        isFormal:
+          description: 'The isFormal boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
+        groupFormation:
+          type: string
+          enum:
+            - INDIVIDUALLY
+            - IN_A_GROUP
+          example: INDIVIDUALLY
+          description: 'The group formation of this LearningNeedOutcome.'
+          nullable: true
+        totalClassHours:
+          description: 'The total class hours of this LearningNeedOutcome.'
+          type: number
+          nullable: true
+        certificateWillBeAwarded:
+          description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
+          type: boolean
+          nullable: true
         startDate:
           description: 'The start date of this participation.'
           type: string
@@ -23231,13 +23303,13 @@ components:
           description: 'A language house for this registration.'
           type: string
         student:
-          description: 'A contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-read'
         registrar:
-          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
+          description: 'A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**'
           nullable: true
           anyOf:
             -
@@ -23262,13 +23334,13 @@ components:
           description: 'A language house for this registration.'
           type: string
         student:
-          description: 'A contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person-write'
         registrar:
-          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
+          description: 'A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**'
           nullable: true
           anyOf:
             -
@@ -23313,13 +23385,13 @@ components:
           description: 'A language house for this registration.'
           type: string
         student:
-          description: 'A contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
         registrar:
-          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
+          description: 'A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**'
           nullable: true
           anyOf:
             -
@@ -23367,13 +23439,13 @@ components:
           description: 'A language house for this registration.'
           type: string
         student:
-          description: 'A contact catalogue person for the student.'
+          description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
         registrar:
-          description: 'A contact catalogue person for the registrar, this person should have a Organization with at least the name set.'
+          description: 'A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**'
           nullable: true
           anyOf:
             -
@@ -23641,10 +23713,10 @@ components:
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
-          nullable: true
       required:
         - person
         - permissionDetails
+        - languageHouseId
     Student-write:
       type: object
       description: 'All properties that the DTO entity Student holds.'
@@ -23763,10 +23835,10 @@ components:
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
-          nullable: true
       required:
         - person
         - permissionDetails
+        - languageHouseId
     Student.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Student holds.'
@@ -23913,10 +23985,10 @@ components:
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
-          nullable: true
       required:
         - person
         - permissionDetails
+        - languageHouseId
     Student.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Student holds.'
@@ -24058,10 +24130,10 @@ components:
         languageHouseId:
           description: 'The id of the cc/organization of a languageHouse'
           type: string
-          nullable: true
       required:
         - person
         - permissionDetails
+        - languageHouseId
     StudentAvailability-read:
       type: object
       description: 'All properties that the DTO entity StudentAvailability holds.'
@@ -26396,6 +26468,7 @@ components:
           nullable: true
       required:
         - participationId
+        - learningNeedOutCome
         - usedExam
         - examDate
     TestResult-write:
@@ -26403,6 +26476,7 @@ components:
       description: 'All properties that the DTO entity TestResult holds.'
       required:
         - participationId
+        - learningNeedOutCome
         - usedExam
         - examDate
       properties:
@@ -26478,6 +26552,7 @@ components:
           nullable: true
       required:
         - participationId
+        - learningNeedOutCome
         - usedExam
         - examDate
     TestResult.jsonld-write:
@@ -26485,6 +26560,7 @@ components:
       description: 'All properties that the DTO entity TestResult holds.'
       required:
         - participationId
+        - learningNeedOutCome
         - usedExam
         - examDate
       properties:

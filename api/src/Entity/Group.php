@@ -97,6 +97,33 @@ class Group
     private LearningNeedOutCome $learningNeedOutCome;
 
     /**
+     * @var bool The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     */
+    private bool $isFormal;
+
+    /**
+     * @var float The total class hours of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="float")
+     */
+    private float $totalClassHours;
+
+    /**
+     * @var bool The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     */
+    private bool $certificateWillBeAwarded;
+
+    /**
      * @var ?DateTime Start date of this group.
      *
      * @Assert\Length(
@@ -185,11 +212,12 @@ class Group
     private ?string $evaluation;
 
     /**
-     * @var array Employee ids of this group.
+     * @var array Provider employee id's of this group. (mentors)
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="array")
      */
     private array $employeeIds = [];
@@ -302,18 +330,6 @@ class Group
         return $this;
     }
 
-    public function getOrganization(): Organization
-    {
-        return $this->organization;
-    }
-
-    public function setOrganization(Organization $organization): self
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
     public function getLearningNeedOutCome(): LearningNeedOutCome
     {
         return $this->learningNeedOutCome;
@@ -322,6 +338,42 @@ class Group
     public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
+
+        return $this;
+    }
+
+    public function getIsFormal(): bool
+    {
+        return $this->isFormal;
+    }
+
+    public function setIsFormal(bool $isFormal): self
+    {
+        $this->isFormal = $isFormal;
+
+        return $this;
+    }
+
+    public function getTotalClassHours(): float
+    {
+        return $this->totalClassHours;
+    }
+
+    public function setTotalClassHours(float $totalClassHours): self
+    {
+        $this->totalClassHours = $totalClassHours;
+
+        return $this;
+    }
+
+    public function getCertificateWillBeAwarded(): bool
+    {
+        return $this->certificateWillBeAwarded;
+    }
+
+    public function setCertificateWillBeAwarded(bool $certificateWillBeAwarded): self
+    {
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
 
         return $this;
     }

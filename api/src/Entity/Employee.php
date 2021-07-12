@@ -42,7 +42,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 class Employee
 {
     /**
-     * @var UuidInterface The UUID identifier of this resource
+     * @var UuidInterface The UUID identifier of this resource.
      *
      * @Groups({"read"})
      * @ORM\Id
@@ -53,7 +53,7 @@ class Employee
     private UuidInterface $id;
 
     /**
-     * @var Person Person of this employee
+     * @var Person Person of this employee. <br /> **This person must contain an email!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -206,12 +206,23 @@ class Employee
     private ?bool $isVOGChecked = false;
 
     /**
-     * @var String|null A contact component organization id of this Employee.
+     * @var String|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $organizationId;
+
+    /**
+     * @var array User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="array")
+     */
+    private array $userGroupIds = [];
 
     /**
      * @var ?string User id of this Employee.
@@ -225,16 +236,6 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $userId;
-
-    /**
-     * @var ?array User Group ids of this Employee.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private ?array $userGroupIds = [];
 
     public function getId(): UuidInterface
     {
@@ -296,12 +297,12 @@ class Employee
         return $this;
     }
 
-    public function getUserGroupIds(): ?array
+    public function getUserGroupIds(): array
     {
         return $this->userGroupIds;
     }
 
-    public function setUserGroupIds(?array $userGroupIds): self
+    public function setUserGroupIds(array $userGroupIds): self
     {
         $this->userGroupIds = $userGroupIds;
 
@@ -416,18 +417,6 @@ class Employee
         return $this;
     }
 
-    public function getUserId(): ?string
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?string $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
     public function getEducation(): ?Education
     {
         return $this->education;
@@ -440,4 +429,15 @@ class Employee
         return $this;
     }
 
+    public function getUserId(): ?string
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(?string $userId): self
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
 }

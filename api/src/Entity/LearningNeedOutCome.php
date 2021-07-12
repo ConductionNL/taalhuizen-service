@@ -136,48 +136,6 @@ class LearningNeedOutCome
      */
     private ?string $levelOther;
 
-    /**
-     * @var bool|null The isFormal boolean of this LearningNeedOutcome.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $isFormal;
-
-    /**
-     * @var String|null The group formation of this LearningNeedOutcome.
-     *
-     * @Groups({"read","write"})
-     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
-     *             "example"="INDIVIDUALLY"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $groupFormation;
-
-    /**
-     * @var float|null The total class hours of this LearningNeedOutcome.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private ?float $totalClassHours;
-
-    /**
-     * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $certificateWillBeAwarded;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -270,54 +228,6 @@ class LearningNeedOutCome
     public function setLevelOther(?string $levelOther): self
     {
         $this->levelOther = $levelOther;
-
-        return $this;
-    }
-
-    public function getIsFormal(): ?bool
-    {
-        return $this->isFormal;
-    }
-
-    public function setIsFormal(?bool $isFormal): self
-    {
-        $this->isFormal = $isFormal;
-
-        return $this;
-    }
-
-    public function getGroupFormation(): ?string
-    {
-        return $this->groupFormation;
-    }
-
-    public function setGroupFormation(?string $groupFormation): self
-    {
-        $this->groupFormation = $groupFormation;
-
-        return $this;
-    }
-
-    public function getTotalClassHours(): ?float
-    {
-        return $this->totalClassHours;
-    }
-
-    public function setTotalClassHours(?float $totalClassHours): self
-    {
-        $this->totalClassHours = $totalClassHours;
-
-        return $this;
-    }
-
-    public function getCertificateWillBeAwarded(): ?bool
-    {
-        return $this->certificateWillBeAwarded;
-    }
-
-    public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
-    {
-        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
 
         return $this;
     }
