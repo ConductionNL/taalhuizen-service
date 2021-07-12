@@ -235,12 +235,13 @@ class Student
     private StudentPermission $permissionDetails;
 
     /**
-     * @var string|null The id of the cc/organization of a languageHouse
+     * @var string The id of the cc/organization of a languageHouse
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $languageHouseId;
+    private string $languageHouseId;
 
     public function getId(): UuidInterface
     {
@@ -446,12 +447,12 @@ class Student
         return $this;
     }
 
-    public function getLanguageHouseId(): ?string
+    public function getLanguageHouseId(): string
     {
         return $this->languageHouseId;
     }
 
-    public function setLanguageHouseId(?string $languageHouseId): self
+    public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
 

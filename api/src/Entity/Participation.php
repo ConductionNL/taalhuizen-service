@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
  * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
  * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details'.
+ * The other notable change here, is that there are no groupId or providerEmployeeId properties present in this Entity (for connecting a group or mentor to this Participation). This is because custom endpoint can be used for this purpose.
  *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
@@ -58,7 +59,7 @@ class Participation
     private UuidInterface $id;
 
     /**
-     * @var String|null A contact component provider id of this Participation.
+     * @var String|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -66,7 +67,7 @@ class Participation
     private ?string $providerId;
 
     /**
-     * @var String|null The provider name of this Participation.
+     * @var String|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -74,7 +75,7 @@ class Participation
     private ?string $providerName;
 
     /**
-     * @var ?string Organization note of this participation
+     * @var ?string Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Assert\Length(
      *     max = 255
@@ -123,6 +124,48 @@ class Participation
      * @MaxDepth(1)
      */
     private ?LearningNeedOutCome $learningNeedOutCome;
+
+    /**
+     * @var bool|null The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isFormal;
+
+    /**
+     * @var String|null The group formation of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $groupFormation;
+
+    /**
+     * @var float|null The total class hours of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private ?float $totalClassHours;
+
+    /**
+     * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $certificateWillBeAwarded;
 
     /**
      * @var DateTimeInterface|null The start date of this participation.
@@ -285,6 +328,54 @@ class Participation
     public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
+
+        return $this;
+    }
+
+    public function getIsFormal(): ?bool
+    {
+        return $this->isFormal;
+    }
+
+    public function setIsFormal(?bool $isFormal): self
+    {
+        $this->isFormal = $isFormal;
+
+        return $this;
+    }
+
+    public function getGroupFormation(): ?string
+    {
+        return $this->groupFormation;
+    }
+
+    public function setGroupFormation(?string $groupFormation): self
+    {
+        $this->groupFormation = $groupFormation;
+
+        return $this;
+    }
+
+    public function getTotalClassHours(): ?float
+    {
+        return $this->totalClassHours;
+    }
+
+    public function setTotalClassHours(?float $totalClassHours): self
+    {
+        $this->totalClassHours = $totalClassHours;
+
+        return $this;
+    }
+
+    public function getCertificateWillBeAwarded(): ?bool
+    {
+        return $this->certificateWillBeAwarded;
+    }
+
+    public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
+    {
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
 
         return $this;
     }

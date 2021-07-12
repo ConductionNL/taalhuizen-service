@@ -59,7 +59,7 @@ class Registration
     private string $languageHouseId;
 
     /**
-     * @var Person A contact catalogue person for the student.
+     * @var Person A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -69,7 +69,7 @@ class Registration
     private Person $student;
 
     /**
-     * @var Person A contact catalogue person for the registrar, this person should have a Organization with at least the name set.
+     * @var Person A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
