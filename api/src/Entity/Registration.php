@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RegistrationRepository;
@@ -28,6 +29,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -86,6 +92,24 @@ class Registration
      */
     private ?string $memo;
 
+    /**
+     * @var string|null The Status of this registration.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"Pending", "Accepted"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"Pending", "Accepted"},
+     *             "example"="Pending"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $status = "Pending";
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -110,18 +134,6 @@ class Registration
         return $this;
     }
 
-    public function getMemo(): ?string
-    {
-        return $this->memo;
-    }
-
-    public function setMemo(?string $memo): self
-    {
-        $this->memo = $memo;
-
-        return $this;
-    }
-
     public function getStudent(): Person
     {
         return $this->student;
@@ -142,6 +154,30 @@ class Registration
     public function setRegistrar(Person $registrar): self
     {
         $this->registrar = $registrar;
+
+        return $this;
+    }
+
+    public function getMemo(): ?string
+    {
+        return $this->memo;
+    }
+
+    public function setMemo(?string $memo): self
+    {
+        $this->memo = $memo;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

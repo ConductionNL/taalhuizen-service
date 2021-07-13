@@ -31,11 +31,35 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
+ *          "get_group_students"={
+ *              "method"="GET",
+ *              "path"="/students/group/{uuid}",
+ *              "swagger_context" = {
+ *                  "summary"="Get the students of a group",
+ *                  "description"="Get the students of a group"
+ *              }
+ *          },
+ *          "get_mentor_students"={
+ *              "method"="GET",
+ *              "path"="/students/mentor/{uuid}",
+ *              "swagger_context" = {
+ *                  "summary"="Get the students of a mentor",
+ *                  "description"="Get the students of a mentor"
+ *              }
+ *          },
  *          "post",
  *     })
  * @ORM\Entity(repositoryClass=StudentRepository::class)
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "status": "exact"
+ * })
  */
 class Student
 {
@@ -242,6 +266,24 @@ class Student
      * @ORM\Column(type="string", length=255)
      */
     private string $languageHouseId;
+
+    /**
+     * @var string|null The Status of this group.
+     *
+     * @Groups({"read"})
+     * @Assert\Choice({"REFERRED", "ACTIVE", "COMPLETED"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"REFERRRED", "ACTIVE", "COMPLETED"},
+     *             "example"="REFERRED"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $status;
 
     public function getId(): UuidInterface
     {
@@ -455,6 +497,18 @@ class Student
     public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
