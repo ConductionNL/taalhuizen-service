@@ -28,9 +28,54 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "get_current_user"={
+ *              "method"="GET",
+ *              "path"="/users/current_user",
+ *              "swagger_context" = {
+ *                  "summary"="Get the current user.",
+ *                  "description"="Get the current user."
+ *              }
+ *          },
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
+ *          "login"={
+ *              "method"="POST",
+ *              "path"="/users/login",
+ *              "swagger_context" = {
+ *                  "summary"="Login a user with a username and password.",
+ *                  "description"="Login a user with a username and password."
+ *              }
+ *          },
+ *          "logout"={
+ *              "method"="POST",
+ *              "path"="/users/logout",
+ *              "swagger_context" = {
+ *                  "summary"="Logout the currently logged in user.",
+ *                  "description"="Logout the currently logged in user."
+ *              }
+ *          },
+ *          "request_password_reset"={
+ *              "method"="POST",
+ *              "path"="/users/request_password_reset",
+ *              "swagger_context" = {
+ *                  "summary"="Request a password reset token for a User.",
+ *                  "description"="Request a password reset token for a User."
+ *              }
+ *          },
+ *          "reset_password"={
+ *              "method"="POST",
+ *              "path"="/users/reset_password",
+ *              "swagger_context" = {
+ *                  "summary"="Reset the password of a User with a token.",
+ *                  "description"="Reset the password of a User with a token."
+ *              }
+ *          },
  *     })
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */

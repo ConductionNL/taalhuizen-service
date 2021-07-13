@@ -22,9 +22,38 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
+ *          "participants_report"={
+ *              "method"="POST",
+ *              "path"="/reports/participants",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a participants report of a provider.",
+ *                  "description"="Creates a participants report of a provider."
+ *              }
+ *          },
+ *          "volunteers_report"={
+ *              "method"="POST",
+ *              "path"="/reports/volunteers",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a volunteers report of a provider.",
+ *                  "description"="Creates a volunteers report of a provider."
+ *              }
+ *          },
+ *          "desired_learning_outcomes_report"={
+ *              "method"="POST",
+ *              "path"="/reports/desired_learning_outcomes",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a learning outcomes report.",
+ *                  "description"="Creates a learning outcomes report."
+ *              }
+ *          }
  *     })
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */

@@ -28,6 +28,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -49,7 +54,7 @@ class AvailabilityDay
     private UuidInterface $id;
 
     /**
-     * @var bool Morning of this availability day.
+     * @var bool Morning of this availability day (6:00 -> 12:00).
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -58,7 +63,7 @@ class AvailabilityDay
     private bool $morning;
 
     /**
-     * @var bool Afternoon of this availability day.
+     * @var bool Afternoon of this availability day (12:00 -> 18:00).
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -67,7 +72,7 @@ class AvailabilityDay
     private bool $afternoon;
 
     /**
-     * @var bool Evening of this availability day.
+     * @var bool Evening of this availability day (18:00 -> 00:00).
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})

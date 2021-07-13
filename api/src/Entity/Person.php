@@ -33,6 +33,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -98,12 +103,12 @@ class Person
     private ?string $gender;
 
     /**
-     * @var string|null Birthday of this person
+     * @var DateTime|null Birthday of this person
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="datetime", length=255, nullable=true)
      */
-    private ?string $birthday;
+    private ?DateTime $birthday;
 
     /**
      * @var Address|null Address of this person
@@ -237,12 +242,12 @@ class Person
         return $this;
     }
 
-    public function getBirthday(): ?string
+    public function getBirthday(): ?DateTime
     {
         return $this->birthday;
     }
 
-    public function setBirthday(?string $birthday): self
+    public function setBirthday(?DateTime $birthday): self
     {
         $this->birthday = $birthday;
 

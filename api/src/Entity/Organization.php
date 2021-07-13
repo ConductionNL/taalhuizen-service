@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\OrganizationRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
@@ -31,6 +32,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "get_user_roles"={
+ *              "method"="GET",
+ *              "path"="/organization/{uuid}/user_roles",
+ *              "swagger_context" = {
+ *                  "summary"="Get the user roles of this organization",
+ *                  "description"="Get the user roles of this organization"
+ *              }
+ *          },
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -64,13 +78,21 @@ class Organization
     private string $name;
 
     /**
-     * @var string|null Type of this organization
+     * @var string|null Type of this organization.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Choice({"Provider", "LanguageHouse"})
+     *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"Provider", "LanguageHouse"},
+     *             "example"="LanguageHouse"
+     *         }
+     *     }
+     * )
      */
     private ?string $type;
 

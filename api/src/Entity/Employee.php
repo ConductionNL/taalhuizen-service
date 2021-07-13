@@ -33,6 +33,11 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -140,12 +145,12 @@ class Employee
     private ?string $hasExperienceWithTargetGroup;
 
     /**
-     * @var ?bool Shouldn't this be a string to provide the reason for the experience with the target group?
+     * @var ?string The reason for the experience with the target group?
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
-    private ?bool $experienceWithTargetGroupYesReason;
+    private ?string $experienceWithTargetGroupYesReason;
 
     /**
      * @var ?string Current education of this Employee.
@@ -333,12 +338,12 @@ class Employee
         return $this;
     }
 
-    public function getExperienceWithTargetGroupYesReason(): ?bool
+    public function getExperienceWithTargetGroupYesReason(): ?string
     {
         return $this->experienceWithTargetGroupYesReason;
     }
 
-    public function setExperienceWithTargetGroupYesReason(?bool $experienceWithTargetGroupYesReason): self
+    public function setExperienceWithTargetGroupYesReason(?string $experienceWithTargetGroupYesReason): self
     {
         $this->experienceWithTargetGroupYesReason = $experienceWithTargetGroupYesReason;
 

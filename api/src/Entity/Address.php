@@ -28,6 +28,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -55,6 +60,7 @@ class Address
      *     max = 255
      * )
      * @Assert\NotNull
+     * @Assert\Length(max=255)
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
@@ -63,9 +69,7 @@ class Address
     /**
      * @var ?string House number of this address.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=1, max=4)
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
@@ -75,9 +79,7 @@ class Address
     /**
      * @var ?string House number suffix of this address.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=1, max=255)
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -86,9 +88,7 @@ class Address
     /**
      * @var ?string Postal code of this address.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=5, max=10)
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
@@ -98,9 +98,7 @@ class Address
     /**
      * @var ?string Locality of this address.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=2, max=255)
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
