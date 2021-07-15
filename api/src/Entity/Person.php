@@ -70,6 +70,7 @@ class Person
      *             "example"="John"
      *         }
      *     }
+     *   )
      */
     private string $givenName;
 
@@ -81,9 +82,10 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "example"="From"
+     *             "example"="von"
      *         }
      *     }
+     *   )
      */
     private ?string $additionalName;
 
@@ -99,6 +101,7 @@ class Person
      *             "example"="Doe"
      *         }
      *     }
+     *   )
      */
     private ?string $familyName;
 

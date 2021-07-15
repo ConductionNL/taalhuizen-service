@@ -35,8 +35,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "delete"
  *     },
  *     collectionOperations={
- *          "get",
- *          "post",
+ *          "get"={"openapi_context"={"description":"test"}},
+ *          "post"={"openapi_context"={"description":"test"}},
  *     }
  * )
  * @ORM\Entity(repositoryClass=AddressRepository::class)
