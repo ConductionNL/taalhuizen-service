@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &
+    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
   version: V1.0
 servers:
   -
@@ -17702,27 +17702,32 @@ components:
           format: uuid
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
       required:
@@ -17741,27 +17746,32 @@ components:
       properties:
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
     Address.jsonld-read:
@@ -17798,27 +17808,32 @@ components:
           format: uuid
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
       required:
@@ -17860,27 +17875,32 @@ components:
           type: string
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
     AuditTrail-read:
