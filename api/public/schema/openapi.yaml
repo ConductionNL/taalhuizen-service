@@ -108,7 +108,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Address-read'
       summary: 'Retrieves the collection of Address resources.'
-      description: 'Retrieves the collection of Address resources.'
+      description: test
       parameters:
         -
           name: page
@@ -199,7 +199,7 @@ paths:
         422:
           description: 'Unprocessable entity'
       summary: 'Creates a Address resource.'
-      description: 'Creates a Address resource.'
+      description: test
       parameters: []
       requestBody:
         description: 'The new Address resource'
@@ -21375,7 +21375,7 @@ components:
           description: 'Given name of this person'
           type: string
         additionalName:
-          example: From
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
@@ -21448,7 +21448,7 @@ components:
           description: 'Given name of this person'
           type: string
         additionalName:
-          example: From
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
@@ -21543,7 +21543,7 @@ components:
           description: 'Given name of this person'
           type: string
         additionalName:
-          example: From
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
@@ -21639,7 +21639,7 @@ components:
           description: 'Given name of this person'
           type: string
         additionalName:
-          example: From
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true

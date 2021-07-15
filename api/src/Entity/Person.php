@@ -82,7 +82,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "example"="From"
+     *             "example"="von"
      *         }
      *     }
      * )

@@ -70,7 +70,7 @@ class Email
      *             "example"="Primary email address"
      *         }
      *     }
-     * )
+     *   )
      */
     private ?string $name;
 
