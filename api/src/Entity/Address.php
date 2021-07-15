@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AddressRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -63,6 +64,13 @@ class Address
      * @Assert\Length(max=255)
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Dam"
+     *         }
+     *     }
+     * )
      */
     private ?string $street;
 
@@ -73,6 +81,13 @@ class Address
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="1"
+     *         }
+     *     }
+     * )
      */
     private ?string $houseNumber;
 
@@ -82,6 +97,13 @@ class Address
      * @Assert\Length(min=1, max=255)
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="A"
+     *         }
+     *     }
+     * )
      */
     private ?string $houseNumberSuffix;
 
@@ -92,6 +114,13 @@ class Address
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="1000 AA"
+     *         }
+     *     }
+     * )
      */
     private ?string $postalCode;
 
@@ -102,6 +131,13 @@ class Address
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Amsterdam"
+     *         }
+     *     }
+     * )
      */
     private ?string $locality;
 
