@@ -74,6 +74,12 @@ class Organization
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="My company"
+     *         }
+     *     }
      */
     private string $name;
 

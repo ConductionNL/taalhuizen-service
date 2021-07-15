@@ -64,6 +64,12 @@ class Person
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="John"
+     *         }
+     *     }
      */
     private string $givenName;
 
@@ -72,6 +78,12 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="From"
+     *         }
+     *     }
      */
     private ?string $additionalName;
 
@@ -81,6 +93,12 @@ class Person
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Doe"
+     *         }
+     *     }
      */
     private ?string $familyName;
 
