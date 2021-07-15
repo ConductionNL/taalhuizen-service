@@ -80,6 +80,7 @@ class Organization
      *             "example"="My company"
      *         }
      *     }
+     * )
      */
     private string $name;
 

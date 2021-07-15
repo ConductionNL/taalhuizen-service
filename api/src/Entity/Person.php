@@ -70,6 +70,7 @@ class Person
      *             "example"="John"
      *         }
      *     }
+     * )
      */
     private string $givenName;
 
@@ -84,6 +85,7 @@ class Person
      *             "example"="From"
      *         }
      *     }
+     * )
      */
     private ?string $additionalName;
 
@@ -99,6 +101,7 @@ class Person
      *             "example"="Doe"
      *         }
      *     }
+     * )
      */
     private ?string $familyName;
 
