@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TelephoneRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
@@ -68,6 +69,7 @@ class Telephone
      *             "example"="Primary phone number"
      *         }
      *     }
+     *   )
      */
     private ?string $name;
 
@@ -86,6 +88,7 @@ class Telephone
      *             "example"="+31 (0)20 1234567"
      *         }
      *     }
+     *   )
      */
     private string $telephone;
 
