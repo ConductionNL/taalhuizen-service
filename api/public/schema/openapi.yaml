@@ -108,7 +108,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Address-read'
       summary: 'Retrieves the collection of Address resources.'
-      description: 'Retrieves the collection of Address resources.'
+      description: test
       parameters:
         -
           name: page
@@ -199,7 +199,7 @@ paths:
         422:
           description: 'Unprocessable entity'
       summary: 'Creates a Address resource.'
-      description: 'Creates a Address resource.'
+      description: test
       parameters: []
       requestBody:
         description: 'The new Address resource'
@@ -19228,11 +19228,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19243,11 +19245,13 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19286,11 +19290,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19324,11 +19330,13 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -20784,6 +20792,7 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20822,6 +20831,7 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20884,6 +20894,7 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20945,6 +20956,7 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -21351,13 +21363,16 @@ components:
           type: string
           format: uuid
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21421,13 +21436,16 @@ components:
         - familyName
       properties:
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21513,13 +21531,16 @@ components:
           type: string
           format: uuid
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21606,13 +21627,16 @@ components:
           readOnly: true
           type: string
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -24762,11 +24786,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24777,11 +24803,13 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24820,11 +24848,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24858,11 +24888,13 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
