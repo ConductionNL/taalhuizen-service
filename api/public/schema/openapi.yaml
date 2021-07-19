@@ -20202,16 +20202,19 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          example: 'An agreement'
           description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
+          example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
       required:
@@ -20274,16 +20277,19 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          example: 'An agreement'
           description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
+          example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
     LearningNeed.jsonld-read:
@@ -20358,16 +20364,19 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          example: 'An agreement'
           description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
+          example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
       required:
@@ -20453,16 +20462,19 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          example: 'An agreement'
           description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
+          example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
     LearningNeedOutCome-read:
@@ -20475,6 +20487,7 @@ components:
           type: string
           format: uuid
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20498,6 +20511,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20514,6 +20528,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20529,6 +20544,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20547,6 +20563,7 @@ components:
         - level
       properties:
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20570,6 +20587,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20586,6 +20604,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20601,6 +20620,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20637,6 +20657,7 @@ components:
           type: string
           format: uuid
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20660,6 +20681,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20676,6 +20698,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20691,6 +20714,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20732,6 +20756,7 @@ components:
           readOnly: true
           type: string
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20755,6 +20780,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20771,6 +20797,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20786,6 +20813,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
