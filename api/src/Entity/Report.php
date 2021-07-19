@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\ReportRepository;
 use App\Resolver\ReportMutationResolver;
 use App\Resolver\ReportQueryCollectionResolver;

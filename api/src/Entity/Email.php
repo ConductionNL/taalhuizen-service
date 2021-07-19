@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EmailRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
@@ -63,6 +64,13 @@ class Email
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Primary email address"
+     *         }
+     *     }
+     *   )
      */
     private ?string $name;
 
@@ -75,6 +83,13 @@ class Email
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="john@doe.com"
+     *         }
+     *     }
+     * )
      */
     private string $email;
 

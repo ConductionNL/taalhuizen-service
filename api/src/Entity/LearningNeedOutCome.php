@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TestResultRepository;
 use App\Resolver\TestResultMutationResolver;
@@ -57,6 +57,13 @@ class LearningNeedOutCome
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Learn how to work with computers"
+     *         }
+     *     }
+     * )
      */
     private string $goal;
 
@@ -84,6 +91,13 @@ class LearningNeedOutCome
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other topic"
+     *         }
+     *     }
+     * )
      */
     private ?string $topicOther;
 
@@ -111,6 +125,13 @@ class LearningNeedOutCome
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other application"
+     *         }
+     *     }
+     * )
      */
     private ?string $applicationOther;
 
@@ -138,6 +159,13 @@ class LearningNeedOutCome
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other level"
+     *         }
+     *     }
+     * )
      */
     private ?string $levelOther;
 

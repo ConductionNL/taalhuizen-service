@@ -108,7 +108,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Address-read'
       summary: 'Retrieves the collection of Address resources.'
-      description: 'Retrieves the collection of Address resources.'
+      description: test
       parameters:
         -
           name: page
@@ -199,7 +199,7 @@ paths:
         422:
           description: 'Unprocessable entity'
       summary: 'Creates a Address resource.'
-      description: 'Creates a Address resource.'
+      description: test
       parameters: []
       requestBody:
         description: 'The new Address resource'
@@ -17702,27 +17702,32 @@ components:
           format: uuid
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
       required:
@@ -17741,27 +17746,32 @@ components:
       properties:
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
     Address.jsonld-read:
@@ -17798,27 +17808,32 @@ components:
           format: uuid
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
       required:
@@ -17860,27 +17875,32 @@ components:
           type: string
         street:
           maxLength: 255
+          example: Dam
           description: 'Street of this address.'
           type: string
         houseNumber:
           minLength: 1
           maxLength: 4
+          example: '1'
           description: 'House number of this address.'
           type: string
         houseNumberSuffix:
           minLength: 1
           maxLength: 255
+          example: A
           description: 'House number suffix of this address.'
           type: string
           nullable: true
         postalCode:
           minLength: 5
           maxLength: 10
+          example: '1000 AA'
           description: 'Postal code of this address.'
           type: string
         locality:
           minLength: 2
           maxLength: 255
+          example: Amsterdam
           description: 'Locality of this address.'
           type: string
     AuditTrail-read:
@@ -19208,11 +19228,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19223,11 +19245,13 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19266,11 +19290,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -19304,11 +19330,13 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'Primary email address'
           description: 'Name of this email'
           type: string
           nullable: true
         email:
           maxLength: 255
+          example: john@doe.com
           description: 'The actual mail address'
           type: string
       required:
@@ -20136,11 +20164,13 @@ components:
           format: uuid
         description:
           maxLength: 255
-          description: 'Description of this learning need.'
+          example: description
+          description: 'A short description of this learning need.'
           type: string
         motivation:
           maxLength: 255
-          description: 'Motivation of this learning need.'
+          example: 'I would like to get more experience on this topic'
+          description: 'The motivation of a student, for this learning need.'
           type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
@@ -20150,39 +20180,42 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         desiredOffer:
           maxLength: 255
-          description: 'Desired offer of this learning need.'
+          example: 'Taalhuis x in Amsterdam'
+          description: 'The desired offer for a student learning need.'
           type: string
           nullable: true
         advisedOffer:
           maxLength: 255
-          description: 'Advised offer of this learning need.'
+          example: 'Taalhuis y in Amsterdam'
+          description: 'The advised offer of a student learning need.'
           type: string
           nullable: true
         offerDifference:
           type: string
           enum:
-            - INFLOW
-            - NLQF1
-            - NLQF2
-            - NLQF3
-            - NLQF4
-            - OTHER
-          example: INFLOW
-          description: 'Offer difference of this learning need.'
+            - 'NO'
+            - YES_DISTANCE
+            - YES_WAITINGLIST
+            - YES_OTHER
+          example: YES_WAITINGLIST
+          description: 'The difference between the desired and advised offer of this learning need.'
           nullable: true
         offerDifferenceOther:
           maxLength: 255
-          description: 'Offer difference other of this learning need.'
+          example: 'An other reason why there is a difference.'
+          description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
-          description: 'Offer engagements of this learning need.'
+          example: 'An agreement'
+          description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
-          description: 'Student id of this learning need.'
+          example: e2984465-190a-4562-829e-a8cca81aa35d
+          description: 'The id of a student that this learning need is for.'
           type: string
       required:
         - description
@@ -20206,11 +20239,13 @@ components:
       properties:
         description:
           maxLength: 255
-          description: 'Description of this learning need.'
+          example: description
+          description: 'A short description of this learning need.'
           type: string
         motivation:
           maxLength: 255
-          description: 'Motivation of this learning need.'
+          example: 'I would like to get more experience on this topic'
+          description: 'The motivation of a student, for this learning need.'
           type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
@@ -20220,39 +20255,42 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         desiredOffer:
           maxLength: 255
-          description: 'Desired offer of this learning need.'
+          example: 'Taalhuis x in Amsterdam'
+          description: 'The desired offer for a student learning need.'
           type: string
           nullable: true
         advisedOffer:
           maxLength: 255
-          description: 'Advised offer of this learning need.'
+          example: 'Taalhuis y in Amsterdam'
+          description: 'The advised offer of a student learning need.'
           type: string
           nullable: true
         offerDifference:
           type: string
           enum:
-            - INFLOW
-            - NLQF1
-            - NLQF2
-            - NLQF3
-            - NLQF4
-            - OTHER
-          example: INFLOW
-          description: 'Offer difference of this learning need.'
+            - 'NO'
+            - YES_DISTANCE
+            - YES_WAITINGLIST
+            - YES_OTHER
+          example: YES_WAITINGLIST
+          description: 'The difference between the desired and advised offer of this learning need.'
           nullable: true
         offerDifferenceOther:
           maxLength: 255
-          description: 'Offer difference other of this learning need.'
+          example: 'An other reason why there is a difference.'
+          description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
-          description: 'Offer engagements of this learning need.'
+          example: 'An agreement'
+          description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
-          description: 'Student id of this learning need.'
+          example: e2984465-190a-4562-829e-a8cca81aa35d
+          description: 'The id of a student that this learning need is for.'
           type: string
     LearningNeed.jsonld-read:
       type: object
@@ -20288,11 +20326,13 @@ components:
           format: uuid
         description:
           maxLength: 255
-          description: 'Description of this learning need.'
+          example: description
+          description: 'A short description of this learning need.'
           type: string
         motivation:
           maxLength: 255
-          description: 'Motivation of this learning need.'
+          example: 'I would like to get more experience on this topic'
+          description: 'The motivation of a student, for this learning need.'
           type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
@@ -20302,39 +20342,42 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         desiredOffer:
           maxLength: 255
-          description: 'Desired offer of this learning need.'
+          example: 'Taalhuis x in Amsterdam'
+          description: 'The desired offer for a student learning need.'
           type: string
           nullable: true
         advisedOffer:
           maxLength: 255
-          description: 'Advised offer of this learning need.'
+          example: 'Taalhuis y in Amsterdam'
+          description: 'The advised offer of a student learning need.'
           type: string
           nullable: true
         offerDifference:
           type: string
           enum:
-            - INFLOW
-            - NLQF1
-            - NLQF2
-            - NLQF3
-            - NLQF4
-            - OTHER
-          example: INFLOW
-          description: 'Offer difference of this learning need.'
+            - 'NO'
+            - YES_DISTANCE
+            - YES_WAITINGLIST
+            - YES_OTHER
+          example: YES_WAITINGLIST
+          description: 'The difference between the desired and advised offer of this learning need.'
           nullable: true
         offerDifferenceOther:
           maxLength: 255
-          description: 'Offer difference other of this learning need.'
+          example: 'An other reason why there is a difference.'
+          description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
-          description: 'Offer engagements of this learning need.'
+          example: 'An agreement'
+          description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
-          description: 'Student id of this learning need.'
+          example: e2984465-190a-4562-829e-a8cca81aa35d
+          description: 'The id of a student that this learning need is for.'
           type: string
       required:
         - description
@@ -20381,11 +20424,13 @@ components:
           type: string
         description:
           maxLength: 255
-          description: 'Description of this learning need.'
+          example: description
+          description: 'A short description of this learning need.'
           type: string
         motivation:
           maxLength: 255
-          description: 'Motivation of this learning need.'
+          example: 'I would like to get more experience on this topic'
+          description: 'The motivation of a student, for this learning need.'
           type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
@@ -20395,39 +20440,42 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         desiredOffer:
           maxLength: 255
-          description: 'Desired offer of this learning need.'
+          example: 'Taalhuis x in Amsterdam'
+          description: 'The desired offer for a student learning need.'
           type: string
           nullable: true
         advisedOffer:
           maxLength: 255
-          description: 'Advised offer of this learning need.'
+          example: 'Taalhuis y in Amsterdam'
+          description: 'The advised offer of a student learning need.'
           type: string
           nullable: true
         offerDifference:
           type: string
           enum:
-            - INFLOW
-            - NLQF1
-            - NLQF2
-            - NLQF3
-            - NLQF4
-            - OTHER
-          example: INFLOW
-          description: 'Offer difference of this learning need.'
+            - 'NO'
+            - YES_DISTANCE
+            - YES_WAITINGLIST
+            - YES_OTHER
+          example: YES_WAITINGLIST
+          description: 'The difference between the desired and advised offer of this learning need.'
           nullable: true
         offerDifferenceOther:
           maxLength: 255
-          description: 'Offer difference other of this learning need.'
+          example: 'An other reason why there is a difference.'
+          description: 'Offer difference of this learning need, for when the OTHER option is selected.'
           type: string
           nullable: true
         offerEngagements:
           maxLength: 255
-          description: 'Offer engagements of this learning need.'
+          example: 'An agreement'
+          description: 'The offer engagements for this learning need.'
           type: string
           nullable: true
         studentId:
           maxLength: 255
-          description: 'Student id of this learning need.'
+          example: e2984465-190a-4562-829e-a8cca81aa35d
+          description: 'The id of a student that this learning need is for.'
           type: string
     LearningNeedOutCome-read:
       type: object
@@ -20439,6 +20487,7 @@ components:
           type: string
           format: uuid
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20462,6 +20511,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20478,6 +20528,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20493,6 +20544,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20511,6 +20563,7 @@ components:
         - level
       properties:
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20534,6 +20587,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20550,6 +20604,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20565,6 +20620,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20601,6 +20657,7 @@ components:
           type: string
           format: uuid
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20624,6 +20681,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20640,6 +20698,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20655,6 +20714,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20696,6 +20756,7 @@ components:
           readOnly: true
           type: string
         goal:
+          example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
           type: string
         topic:
@@ -20719,6 +20780,7 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20735,6 +20797,7 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20750,6 +20813,7 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
           type: string
           nullable: true
@@ -20764,6 +20828,7 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20802,6 +20867,7 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20864,6 +20930,7 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -20925,6 +20992,7 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'My company'
           description: 'Name of this organization'
           type: string
         type:
@@ -21331,13 +21399,16 @@ components:
           type: string
           format: uuid
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21401,13 +21472,16 @@ components:
         - familyName
       properties:
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21493,13 +21567,16 @@ components:
           type: string
           format: uuid
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -21586,13 +21663,16 @@ components:
           readOnly: true
           type: string
         givenName:
+          example: John
           description: 'Given name of this person'
           type: string
         additionalName:
+          example: von
           description: 'Additional name of this person'
           type: string
           nullable: true
         familyName:
+          example: Doe
           description: 'Family name of this person'
           type: string
         gender:
@@ -24742,11 +24822,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24757,11 +24839,13 @@ components:
       properties:
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24800,11 +24884,13 @@ components:
           format: uuid
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
@@ -24838,11 +24924,13 @@ components:
           type: string
         name:
           maxLength: 255
+          example: 'Primary phone number'
           description: 'Name of this telephone.'
           type: string
           nullable: true
         telephone:
           maxLength: 255
+          example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
       required:
