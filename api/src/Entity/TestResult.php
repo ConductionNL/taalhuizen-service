@@ -16,9 +16,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity TestResult holds.
+ *
+ * The main entity associated with this DTO is the edu/Result: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Result.
+ * DTO TestResult exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-64 and https://lifely.atlassian.net/browse/BISC-115.
+ * And mainly the following issues: https://lifely.atlassian.net/browse/BISC-93 & https://lifely.atlassian.net/browse/BISC-140.
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -44,26 +56,26 @@ class TestResult
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $participationId;
 
     /**
-     * @var LearningNeedOutCome|null The learningNeedOutCome of this TestResult.
+     * @var LearningNeedOutCome The learningNeedOutCome of this TestResult.
      *
-     * @Groups({"write"})
+     * @Assert\NotNull
+     * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private LearningNeedOutCome $learningNeedOutCome;
 
     /**
      * @var String The used exam for this TestResult.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $usedExam;
@@ -72,7 +84,7 @@ class TestResult
      * @var String The date of the exam that this TestResult is a result of.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
      */
     private string $examDate;
@@ -80,7 +92,7 @@ class TestResult
     /**
      * @var String|null A memo/note for this TestResult.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $examMemo;
@@ -114,7 +126,7 @@ class TestResult
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 

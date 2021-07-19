@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\EmployeeRepository;
 use App\Resolver\EmployeeMutationResolver;
@@ -18,27 +19,35 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
+ * All properties that the DTO entity Employee holds.
+ *
+ * The main entity associated with this DTO is the mrc/Employee: https://taalhuizen-bisc.commonground.nu/api/v1/mrc#tag/Employee.
+ * DTO Employee exists of a few properties based on this medewerker catalogue entity, that is based on the following schema.org schema: https://schema.org/employee and a https://www.hropenstandards.org/ schema.
+ * But the other main source that properties of this Employee entity are based on, are the following jira epics: https://lifely.atlassian.net/browse/BISC-67, https://lifely.atlassian.net/browse/BISC-119 and https://lifely.atlassian.net/browse/BISC-167.
+ * And mainly the following issues: https://lifely.atlassian.net/browse/BISC-106, https://lifely.atlassian.net/browse/BISC-156 and https://lifely.atlassian.net/browse/BISC-169.
+ * The person input fields match the Person Entity, that is why there is a Person object used here instead of matching the exact properties in the graphql schema.
+ * Similarly, education and followingCourse input fields match the Education Entity, that is why there are two Education objects used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
  *     })
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
- * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
- * @ApiFilter(SearchFilter::class, properties={
- *     "languageHouseId": "exact",
- *     "providerId": "exact"
- * })
  */
 class Employee
 {
     /**
-     * @var UuidInterface The UUID identifier of this resource
+     * @var UuidInterface The UUID identifier of this resource.
      *
      * @Groups({"read"})
      * @ORM\Id
@@ -49,57 +58,14 @@ class Employee
     private UuidInterface $id;
 
     /**
-     * @var Person Person of this employee
+     * @var Person Person of this employee. <br /> **This person must contain an email!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $person;
-
-    /**
-     * @var ?string Contact telephone of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $contactTelephone;
-
-    /**
-     * @var ?string Contact Preference of this Employee.
-     *
-     * @Assert\Choice(
-     *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PHONECALL", "WHATSAPP", "EMAIL", "OTHER"},
-     *             "example"="PHONECALL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $contactPreference;
-
-    /**
-     * @var ?string The Contact preference other of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $contactPreferenceOther;
 
     /**
      * @var ?Availability The Availability of this Employee.
@@ -179,12 +145,12 @@ class Employee
     private ?string $hasExperienceWithTargetGroup;
 
     /**
-     * @var ?bool Shouldn't this be a string to provide the reason for the experience with the target group?
+     * @var ?string The reason for the experience with the target group?
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
-    private ?bool $experienceWithTargetGroupYesReason;
+    private ?string $experienceWithTargetGroupYesReason;
 
     /**
      * @var ?string Current education of this Employee.
@@ -197,7 +163,6 @@ class Employee
      */
     private ?string $currentEducation;
 
-//   Education of the employee, was called in the graphql-schema 'currentEducationYes' and 'currentEducationNoButDidFollow', changed to 'education'(Education entity) related to schema.org
     /**
      * @var ?Education Education of this employee
      *
@@ -217,74 +182,14 @@ class Employee
     private ?bool $doesCurrentlyFollowCourse;
 
     /**
-     * @var ?string Currently following course name of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $currentlyFollowingCourseName;
-
-    /**
-     * @var ?string Currently following course institute of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $currentlyFollowingCourseInstitute;
-
-    /***
-     * @var ?string Currently following course teacher professionalism of this Employee.
-     *
-     * @Assert\Choice(
-     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
-     *             "example"="PROFESSIONAL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $currentlyFollowingCourseTeacherProfessionalism;
-
-    /**
-     * @var ?string Currently following course professionalism of this Employee.
-     *
-     * @Assert\Choice(
-     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
-     *             "example"="PROFESSIONAL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $currentlyFollowingCourseCourseProfessionalism;
-
-    /**
-     * @var ?bool Does currently follow course provide certificate of this Employee.
+     * @var ?Education Currently following course (Education) of this Employee.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private ?bool $doesCurrentlyFollowingCourseProvideCertificate;
+    private ?Education $followingCourse;
 
     /**
      * @var ?string Other relevant certificates of this Employee.
@@ -306,14 +211,23 @@ class Employee
     private ?bool $isVOGChecked = false;
 
     /**
-     * @var ?Organization Organization of this person
+     * @var String|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?Organization $organization;
+    private ?string $organizationId;
+
+    /**
+     * @var array User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="array")
+     */
+    private array $userGroupIds = [];
 
     /**
      * @var ?string User id of this Employee.
@@ -327,16 +241,6 @@ class Employee
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $userId;
-
-    /**
-     * @var ?array User Group ids of this Employee.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private ?array $userGroupIds = [];
 
     public function getId(): UuidInterface
     {
@@ -386,42 +290,6 @@ class Employee
         return $this;
     }
 
-    public function getContactTelephone(): ?string
-    {
-        return $this->contactTelephone;
-    }
-
-    public function setContactTelephone(?string $contactTelephone): self
-    {
-        $this->contactTelephone = $contactTelephone;
-
-        return $this;
-    }
-
-    public function getContactPreference(): ?string
-    {
-        return $this->contactPreference;
-    }
-
-    public function setContactPreference(?string $contactPreference): self
-    {
-        $this->contactPreference = $contactPreference;
-
-        return $this;
-    }
-
-    public function getTargetGroupPreferences(): ?array
-    {
-        return $this->targetGroupPreferences;
-    }
-
-    public function setTargetGroupPreferences(?array $targetGroupPreferences): self
-    {
-        $this->targetGroupPreferences = $targetGroupPreferences;
-
-        return $this;
-    }
-
     public function getVolunteeringPreference(): ?string
     {
         return $this->volunteeringPreference;
@@ -434,26 +302,14 @@ class Employee
         return $this;
     }
 
-    public function getUserGroupIds(): ?array
+    public function getUserGroupIds(): array
     {
         return $this->userGroupIds;
     }
 
-    public function setUserGroupIds(?array $userGroupIds): self
+    public function setUserGroupIds(array $userGroupIds): self
     {
         $this->userGroupIds = $userGroupIds;
-
-        return $this;
-    }
-
-    public function getContactPreferenceOther(): ?string
-    {
-        return $this->contactPreferenceOther;
-    }
-
-    public function setContactPreferenceOther(?string $contactPreferenceOther): self
-    {
-        $this->contactPreferenceOther = $contactPreferenceOther;
 
         return $this;
     }
@@ -482,12 +338,12 @@ class Employee
         return $this;
     }
 
-    public function getExperienceWithTargetGroupYesReason(): ?bool
+    public function getExperienceWithTargetGroupYesReason(): ?string
     {
         return $this->experienceWithTargetGroupYesReason;
     }
 
-    public function setExperienceWithTargetGroupYesReason(?bool $experienceWithTargetGroupYesReason): self
+    public function setExperienceWithTargetGroupYesReason(?string $experienceWithTargetGroupYesReason): self
     {
         $this->experienceWithTargetGroupYesReason = $experienceWithTargetGroupYesReason;
 
@@ -518,62 +374,14 @@ class Employee
         return $this;
     }
 
-    public function getCurrentlyFollowingCourseName(): ?string
+    public function getFollowingCourse(): ?Education
     {
-        return $this->currentlyFollowingCourseName;
+        return $this->followingCourse;
     }
 
-    public function setCurrentlyFollowingCourseName(?string $currentlyFollowingCourseName): self
+    public function setFollowingCourse(?Education $followingCourse): self
     {
-        $this->currentlyFollowingCourseName = $currentlyFollowingCourseName;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseInstitute(): ?string
-    {
-        return $this->currentlyFollowingCourseInstitute;
-    }
-
-    public function setCurrentlyFollowingCourseInstitute(?string $currentlyFollowingCourseInstitute): self
-    {
-        $this->currentlyFollowingCourseInstitute = $currentlyFollowingCourseInstitute;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseTeacherProfessionalism(): ?array
-    {
-        return $this->currentlyFollowingCourseTeacherProfessionalism;
-    }
-
-    public function setCurrentlyFollowingCourseTeacherProfessionalism(?array $currentlyFollowingCourseTeacherProfessionalism): self
-    {
-        $this->currentlyFollowingCourseTeacherProfessionalism = $currentlyFollowingCourseTeacherProfessionalism;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseCourseProfessionalism(): ?array
-    {
-        return $this->currentlyFollowingCourseCourseProfessionalism;
-    }
-
-    public function setCurrentlyFollowingCourseCourseProfessionalism(?array $currentlyFollowingCourseCourseProfessionalism): self
-    {
-        $this->currentlyFollowingCourseCourseProfessionalism = $currentlyFollowingCourseCourseProfessionalism;
-
-        return $this;
-    }
-
-    public function getDoesCurrentlyFollowingCourseProvideCertificate(): ?bool
-    {
-        return $this->doesCurrentlyFollowingCourseProvideCertificate;
-    }
-
-    public function setDoesCurrentlyFollowingCourseProvideCertificate(?bool $doesCurrentlyFollowingCourseProvideCertificate): self
-    {
-        $this->doesCurrentlyFollowingCourseProvideCertificate = $doesCurrentlyFollowingCourseProvideCertificate;
+        $this->followingCourse = $followingCourse;
 
         return $this;
     }
@@ -602,26 +410,14 @@ class Employee
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getOrganizationId(): ?string
     {
-        return $this->organization;
+        return $this->organizationId;
     }
 
-    public function setOrganization(?Organization $organization): self
+    public function setOrganizationId(?string $organizationId): self
     {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    public function getUserId(): ?string
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?string $userId): self
-    {
-        $this->userId = $userId;
+        $this->organizationId = $organizationId;
 
         return $this;
     }
@@ -638,4 +434,15 @@ class Employee
         return $this;
     }
 
+    public function getUserId(): ?string
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(?string $userId): self
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
 }

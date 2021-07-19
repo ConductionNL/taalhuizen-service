@@ -4,37 +4,49 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\GroupRepository;
-use App\Resolver\GroupMutationResolver;
-use App\Resolver\GroupQueryCollectionResolver;
-use App\Resolver\GroupQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
-use phpDocumentor\Reflection\Types\Integer;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Group holds.
+ *
+ * The main entity associated with this DTO is the edu/Group: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Group.
+ * DTO Group exists of a properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Group.
+ * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-117.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-146.
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details' or 'general'.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
  *     })
  * @ORM\Entity(repositoryClass=GroupRepository::class)
- * @ApiFilter(SearchFilter::class, properties={"aanbiederId" = "exact"})
- * @ORM\Table(name="`group`")
+ * @ApiFilter(DateFilter::class, strategy=DateFilter::EXCLUDE_NULL)
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "status": "exact"
+ * })
  */
 class Group
 {
-//   Id of the group, was called in the graphql-schema 'groupId', changed to 'id'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -49,7 +61,7 @@ class Group
     /**
      * @var string|null The id of the cc/organization of a provider
      *
-     * @Groups("write")
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $providerId;
@@ -79,16 +91,42 @@ class Group
     private string $typeCourse;
 
     /**
-     * @var ?LearningNeedOutCome The learning need out come of this Group.
+     * @var LearningNeedOutCome The learning need out come of this Group.
      *
+     * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private LearningNeedOutCome $learningNeedOutCome;
 
-//   start and end date of the group, was called in the graphql-schema 'detailsStartDate' and 'detailsEndDate', changed to 'startDate' and 'endDate' related to schema.org
+    /**
+     * @var bool The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     */
+    private bool $isFormal;
+
+    /**
+     * @var float The total class hours of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="float")
+     */
+    private float $totalClassHours;
+
+    /**
+     * @var bool The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     */
+    private bool $certificateWillBeAwarded;
+
     /**
      * @var ?DateTime Start date of this group.
      *
@@ -133,7 +171,7 @@ class Group
     private ?string $availabilityNotes;
 
     /**
-     * @var string General location of this group.
+     * @var string Location of this group.
      *
      * @Assert\Length(
      *     max = 255
@@ -142,9 +180,8 @@ class Group
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private string $generalLocation;
+    private string $location;
 
-//   min and max participations of the group, was called in the graphql-schema 'generalParticipantsMin' and 'generalParticipantsMax', changed to 'minParticipations' and 'maxParticipations' related to schema.org
     /**
      * @var ?int Min participation's of this group.
      *
@@ -168,7 +205,7 @@ class Group
     private ?int $maxParticipations;
 
     /**
-     * @var ?string General evaluation of this group.
+     * @var ?string Evaluation of this group.
      *
      * @Assert\Length(
      *     max = 255
@@ -176,17 +213,36 @@ class Group
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $generalEvaluation;
+    private ?string $evaluation;
 
     /**
-     * @var array Employee ids of this group.
+     * @var array Provider employee id's of this group. (mentors)
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="array")
      */
     private array $employeeIds = [];
+
+    /**
+     * @var string|null The Status of this group.
+     *
+     * @Groups({"read"})
+     * @Assert\Choice({"ACTIVE", "COMPLETED"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"ACTIVE", "COMPLETED"},
+     *             "example"="ACTIVE"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $status;
 
     public function getId(): UuidInterface
     {
@@ -248,26 +304,26 @@ class Group
         return $this;
     }
 
-    public function getGeneralLocation(): string
+    public function getLocation(): string
     {
-        return $this->generalLocation;
+        return $this->location;
     }
 
-    public function setGeneralLocation(string $generalLocation): self
+    public function setLocation(string $location): self
     {
-        $this->generalLocation = $generalLocation;
+        $this->location = $location;
 
         return $this;
     }
 
-    public function getGeneralEvaluation(): ?string
+    public function getEvaluation(): ?string
     {
-        return $this->generalEvaluation;
+        return $this->evaluation;
     }
 
-    public function setGeneralEvaluation(?string $generalEvaluation): self
+    public function setEvaluation(?string $evaluation): self
     {
-        $this->generalEvaluation = $generalEvaluation;
+        $this->evaluation = $evaluation;
 
         return $this;
     }
@@ -296,48 +352,72 @@ class Group
         return $this;
     }
 
-    public function getOrganization(): Organization
-    {
-        return $this->organization;
-    }
-
-    public function setOrganization(Organization $organization): self
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
     public function getLearningNeedOutCome(): LearningNeedOutCome
     {
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getIsFormal(): bool
+    {
+        return $this->isFormal;
+    }
+
+    public function setIsFormal(bool $isFormal): self
+    {
+        $this->isFormal = $isFormal;
+
+        return $this;
+    }
+
+    public function getTotalClassHours(): float
+    {
+        return $this->totalClassHours;
+    }
+
+    public function setTotalClassHours(float $totalClassHours): self
+    {
+        $this->totalClassHours = $totalClassHours;
+
+        return $this;
+    }
+
+    public function getCertificateWillBeAwarded(): bool
+    {
+        return $this->certificateWillBeAwarded;
+    }
+
+    public function setCertificateWillBeAwarded(bool $certificateWillBeAwarded): self
+    {
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(?\DateTimeInterface $startDate): self
+    public function setStartDate(?DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
 
@@ -368,4 +448,15 @@ class Group
         return $this;
     }
 
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
 }

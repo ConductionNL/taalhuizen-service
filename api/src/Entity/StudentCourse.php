@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -12,9 +12,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity StudentCourse holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the course details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ * The course input fields match the Education Entity, that is why there is an Education object used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -43,64 +54,12 @@ class StudentCourse
     private ?bool $isFollowingCourseRightNow;
 
     /**
-     * @var String|null The name of the course this student is following.
+     * @var ?Education The course Education of this studentCourse.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      */
-    private ?string $courseName;
-
-    /**
-     * @var String|null The type of teacher this student has for his course.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
-     *             "example"="PROFESSIONAL"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $courseTeacher;
-
-    /**
-     * @var String|null The group type, Individually or Group, of the course this student is following.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INDIVIDUALLY", "GROUP"},
-     *             "example"="INDIVIDUALLY"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $courseGroup;
-
-    /**
-     * @var int|null The amount of hours the course takes, that this student is following.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private ?int $amountOfHours;
-
-    /**
-     * @var bool|null A boolean that is true if the course this student is following provides a certificate when completed.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $doesCourseProvideCertificate;
+    private ?Education $course;
 
     public function getId(): UuidInterface
     {
@@ -126,62 +85,14 @@ class StudentCourse
         return $this;
     }
 
-    public function getCourseName(): ?string
+    public function getCourse(): ?Education
     {
-        return $this->courseName;
+        return $this->course;
     }
 
-    public function setCourseName(?string $courseName): self
+    public function setCourse(?Education $course): self
     {
-        $this->courseName = $courseName;
-
-        return $this;
-    }
-
-    public function getCourseTeacher(): ?string
-    {
-        return $this->courseTeacher;
-    }
-
-    public function setCourseTeacher(?string $courseTeacher): self
-    {
-        $this->courseTeacher = $courseTeacher;
-
-        return $this;
-    }
-
-    public function getCourseGroup(): ?string
-    {
-        return $this->courseGroup;
-    }
-
-    public function setCourseGroup(?string $courseGroup): self
-    {
-        $this->courseGroup = $courseGroup;
-
-        return $this;
-    }
-
-    public function getAmountOfHours(): ?int
-    {
-        return $this->amountOfHours;
-    }
-
-    public function setAmountOfHours(?int $amountOfHours): self
-    {
-        $this->amountOfHours = $amountOfHours;
-
-        return $this;
-    }
-
-    public function getDoesCourseProvideCertificate(): ?bool
-    {
-        return $this->doesCourseProvideCertificate;
-    }
-
-    public function setDoesCourseProvideCertificate(?bool $doesCourseProvideCertificate): self
-    {
-        $this->doesCourseProvideCertificate = $doesCourseProvideCertificate;
+        $this->course = $course;
 
         return $this;
     }

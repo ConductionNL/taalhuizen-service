@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RegistrationRepository;
 use App\Resolver\RegistrationMutationResolver;
@@ -18,14 +19,25 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Registration holds.
+ *
+ * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
+ * DTO Registration exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-59 and https://lifely.atlassian.net/browse/BISC-121.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-166.
+ * The student and registrar input fields match the Person Entity, that is why there are two Person objects used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
  *     })
- * @ApiFilter(SearchFilter::class, properties={"languageHouseId": "exact"})
  * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
 class Registration
@@ -53,23 +65,21 @@ class Registration
     private string $languageHouseId;
 
     /**
-     * @var Person A contact catalogue person for the student.
+     * @var Person A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $student;
 
     /**
-     * @var Person A contact catalogue person for the registrar, this person should have a Organization with at least the name set.
+     * @var Person A contact catalogue person for the registrar. <br /> **This person must contain an Organization!**
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $registrar;
@@ -81,6 +91,24 @@ class Registration
      * @ORM\Column(type="string", length=2550, nullable=true)
      */
     private ?string $memo;
+
+    /**
+     * @var string|null The Status of this registration.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"Pending", "Accepted"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"Pending", "Accepted"},
+     *             "example"="Pending"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $status = "Pending";
 
     public function getId(): UuidInterface
     {
@@ -106,18 +134,6 @@ class Registration
         return $this;
     }
 
-    public function getMemo(): ?string
-    {
-        return $this->memo;
-    }
-
-    public function setMemo(?string $memo): self
-    {
-        $this->memo = $memo;
-
-        return $this;
-    }
-
     public function getStudent(): Person
     {
         return $this->student;
@@ -138,6 +154,30 @@ class Registration
     public function setRegistrar(Person $registrar): self
     {
         $this->registrar = $registrar;
+
+        return $this;
+    }
+
+    public function getMemo(): ?string
+    {
+        return $this->memo;
+    }
+
+    public function setMemo(?string $memo): self
+    {
+        $this->memo = $memo;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

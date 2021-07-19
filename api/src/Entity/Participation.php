@@ -7,6 +7,7 @@ use App\Resolver\ParticipationMutationResolver;
 use App\Resolver\ParticipationQueryCollectionResolver;
 use App\Resolver\ParticipationQueryItemResolver;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
@@ -23,23 +24,66 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiProperty;
 
 
 /**
+ * All properties that the DTO entity Participation holds.
+ *
+ * DTO Participation exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-63 and https://lifely.atlassian.net/browse/BISC-113.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-91
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details'.
+ * The other notable change here, is that there are no groupId or providerEmployeeId properties present in this Entity (for connecting a group or mentor to this Participation). This is because custom endpoint can be used for this purpose.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
+ *          "add_or_remove_mentor"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/mentor/{mentorId}",
+ *              "swagger_context" = {
+ *                  "summary"="Add a mentor to this Participation, or remove the one connected to it.",
+ *                  "description"="Add a mentor to this Participation, or remove the one connected to it."
+ *              }
+ *          },
+ *          "update_mentor"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/mentor",
+ *              "swagger_context" = {
+ *                  "summary"="Update the Participation presence properties for the mentor connected to this participation.",
+ *                  "description"="Update the Participation presence properties for the mentor connected to this participation."
+ *              }
+ *          },
+ *          "add_or_remove_group"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/group/{groupId}",
+ *              "swagger_context" = {
+ *                  "summary"="Add a group to this Participation, or remove the one connected to it.",
+ *                  "description"="Add a group to this Participation, or remove the one connected to it."
+ *              }
+ *          },
+ *          "update_group"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/group",
+ *              "swagger_context" = {
+ *                  "summary"="Update the Participation presence properties for the group connected to this participation.",
+ *                  "description"="Update the Participation presence properties for the group connected to this participation."
+ *              }
+ *          }
  *     })
- * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation
 {
-//   Id of the participation, was called in the graphql-schema 'participationId', changed to 'id'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -52,38 +96,23 @@ class Participation
     private UuidInterface $id;
 
     /**
-     * @var ?string Status of this participation.
-     *
-     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
+     * @var String|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"ACTIVE", "COMPLETED", "REFERRED"},
-     *             "example"="ACTIVE"
-     *         }
-     *     }
-     * )
      */
-    private ?string $status;
+    private ?string $providerId;
 
-//   Organization of the participation, was called in the graphql-schema 'aanbiederId' and 'aanbiederName', changed to 'organization'(Organization entity) related to schema.org
     /**
-     * @var ?Organization Organization of this participation
+     * @var String|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?Organization $organization;
+    private ?string $providerName;
 
-//   Organization note of the participation, was called in the graphql-schema 'aanbiederNote', changed to 'organizationNote'
     /**
-     * @var ?string Organization note of this participation
+     * @var ?string Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Assert\Length(
      *     max = 255
@@ -91,33 +120,7 @@ class Participation
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $organizationNote;
-
-    /**
-     * @var ?LearningNeedOutCome The learning need out come of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?LearningNeedOutCome $learningNeedOutCome;
-
-    /**
-     * @var DateTimeInterface|null The start date of this participation.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $startDate;
-
-    /**
-     * @var DateTimeInterface|null The end date of this participation.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $endDate;
+    private ?string $providerNote;
 
     /**
      * @var ?string Offer name of this participation
@@ -150,6 +153,74 @@ class Participation
     private ?string $offerCourse;
 
     /**
+     * @var ?LearningNeedOutCome The learning need out come of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?LearningNeedOutCome $learningNeedOutCome;
+
+    /**
+     * @var bool|null The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isFormal;
+
+    /**
+     * @var String|null The group formation of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $groupFormation;
+
+    /**
+     * @var float|null The total class hours of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private ?float $totalClassHours;
+
+    /**
+     * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $certificateWillBeAwarded;
+
+    /**
+     * @var DateTimeInterface|null The start date of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $startDate;
+
+    /**
+     * @var DateTimeInterface|null The end date of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $endDate;
+
+    /**
      * @var ?string Details engagements of this participation
      *
      * @Assert\Length(
@@ -158,90 +229,62 @@ class Participation
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $detailsEngagements;
+    private ?string $engagements;
 
-//   Learning need of the participation, was called in the graphql-schema 'learningNeedId' and 'learningNeedUrl', changed to 'LearningNeed'
     /**
-     * @var LearningNeed LearningNeed of this participation
+     * @var string The id of the LearningNeed connected to this Participation.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=LearningNeed::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255)
      */
-    private LearningNeed $learningNeed;
+    private string $learningNeedId;
 
-    /**
-     * @var ?string Presence engagements of this participation.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $presenceEngagements;
-
-    /**
-     * @var ?DateTime Presence start date of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTime $presenceStartDate;
-
-    /**
-     * @var ?DateTime Presence end date of this participation.
-     *
-     * @Groups({"read","write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private ?DateTime $presenceEndDate;
-
-    /**
-     * @var ?string Currently following course professionalism of this Employee. **MOVED**, **JOB**, **ILLNESS**, **DEATH**, **COMPLETED_SUCCESSFULLY**, **FAMILY_CIRCUMSTANCES**, **DOES_NOT_MEET_EXPECTATIONS**, **OTHER**
-     *
-     * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"},
-     *             "example"="MOVED"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $presenceEndParticipationReason;
-
-    /**
-     * @var ?string Employee id of this participation
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $employeeId;
-
-    /**
-     * @var ?string Group id of this participation
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $groupId;
+    // Moved to custom endpoints, only used when updating a participation group or a participation mentor.
+//    /**
+//     * @var ?string Presence engagements of this participation.
+//     *
+//     * @Assert\Length(
+//     *     max = 255
+//     * )
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="string", length=255, nullable=true)
+//     */
+//    private ?string $presenceEngagements;
+//
+//    /**
+//     * @var ?DateTime Presence start date of this participation.
+//     *
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="datetime", nullable=true)
+//     */
+//    private ?DateTime $presenceStartDate;
+//
+//    /**
+//     * @var ?DateTime Presence end date of this participation.
+//     *
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="datetime", nullable=true)
+//     */
+//    private ?DateTime $presenceEndDate;
+//
+//    /**
+//     * @var ?string Currently following course professionalism of this Employee.
+//     *
+//     * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
+//     * @Groups({"read", "write"})
+//     * @ORM\Column(type="string", length=255, nullable=true)
+//     * @ApiProperty(
+//     *     attributes={
+//     *         "openapi_context"={
+//     *             "type"="string",
+//     *             "enum"={"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"},
+//     *             "example"="MOVED"
+//     *         }
+//     *     }
+//     * )
+//     */
+//    private ?string $presenceEndParticipationReason;
 
     public function getId(): UuidInterface
     {
@@ -255,38 +298,38 @@ class Participation
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->status;
+        return $this->providerId;
     }
 
-    public function setStatus(?string $status): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->status = $status;
+        $this->providerId = $providerId;
 
         return $this;
     }
 
-    public function getOrganization(): ?Organization
+    public function getProviderName(): ?string
     {
-        return $this->organization;
+        return $this->providerName;
     }
 
-    public function setOrganization(?Organization $organization): self
+    public function setProviderName(?string $providerName): self
     {
-        $this->organization = $organization;
+        $this->providerName = $providerName;
 
         return $this;
     }
 
-    public function getOrganizationNote(): ?string
+    public function getProviderNote(): ?string
     {
-        return $this->organizationNote;
+        return $this->providerNote;
     }
 
-    public function setOrganizationNote(?string $organizationNote): self
+    public function setProviderNote(?string $providerNote): self
     {
-        $this->organizationNote = $organizationNote;
+        $this->providerNote = $providerNote;
 
         return $this;
     }
@@ -327,6 +370,54 @@ class Participation
         return $this;
     }
 
+    public function getIsFormal(): ?bool
+    {
+        return $this->isFormal;
+    }
+
+    public function setIsFormal(?bool $isFormal): self
+    {
+        $this->isFormal = $isFormal;
+
+        return $this;
+    }
+
+    public function getGroupFormation(): ?string
+    {
+        return $this->groupFormation;
+    }
+
+    public function setGroupFormation(?string $groupFormation): self
+    {
+        $this->groupFormation = $groupFormation;
+
+        return $this;
+    }
+
+    public function getTotalClassHours(): ?float
+    {
+        return $this->totalClassHours;
+    }
+
+    public function setTotalClassHours(?float $totalClassHours): self
+    {
+        $this->totalClassHours = $totalClassHours;
+
+        return $this;
+    }
+
+    public function getCertificateWillBeAwarded(): ?bool
+    {
+        return $this->certificateWillBeAwarded;
+    }
+
+    public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
+    {
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
+
+        return $this;
+    }
+
     public function getStartDate(): ?DateTimeInterface
     {
         return $this->startDate;
@@ -351,99 +442,76 @@ class Participation
         return $this;
     }
 
-    public function getDetailsEngagements(): ?string
+    public function getEngagements(): ?string
     {
-        return $this->detailsEngagements;
+        return $this->engagements;
     }
 
-    public function setDetailsEngagements(?string $detailsEngagements): self
+    public function setEngagements(?string $engagements): self
     {
-        $this->detailsEngagements = $detailsEngagements;
+        $this->engagements = $engagements;
 
         return $this;
     }
 
-    public function getPresenceEngagements(): ?string
+    public function getLearningNeedId(): string
     {
-        return $this->presenceEngagements;
+        return $this->learningNeedId;
     }
 
-    public function setPresenceEngagements(?string $presenceEngagements): self
+    public function setLearningNeedId(string $learningNeedId): self
     {
-        $this->presenceEngagements = $presenceEngagements;
+        $this->learningNeedId = $learningNeedId;
 
         return $this;
     }
 
-    public function getPresenceStartDate(): ?\DateTimeInterface
-    {
-        return $this->presenceStartDate;
-    }
-
-    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
-    {
-        $this->presenceStartDate = $presenceStartDate;
-
-        return $this;
-    }
-
-    public function getPresenceEndDate(): ?\DateTimeInterface
-    {
-        return $this->presenceEndDate;
-    }
-
-    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
-    {
-        $this->presenceEndDate = $presenceEndDate;
-
-        return $this;
-    }
-
-    public function getPresenceEndParticipationReason(): ?string
-    {
-        return $this->presenceEndParticipationReason;
-    }
-
-    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
-    {
-        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
-
-        return $this;
-    }
-
-    public function getEmployeeId(): ?string
-    {
-        return $this->employeeId;
-    }
-
-    public function setEmployeeId(?string $employeeId): self
-    {
-        $this->employeeId = $employeeId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
-
-        return $this;
-    }
-
-    public function getLearningNeed(): LearningNeed
-    {
-        return $this->learningNeed;
-    }
-
-    public function setLearningNeed(LearningNeed $learningNeed): self
-    {
-        $this->learningNeed = $learningNeed;
-
-        return $this;
-    }
+    // Moved to custom endpoints, only used when updating a participation group or a participation mentor.
+//    public function getPresenceEngagements(): ?string
+//    {
+//        return $this->presenceEngagements;
+//    }
+//
+//    public function setPresenceEngagements(?string $presenceEngagements): self
+//    {
+//        $this->presenceEngagements = $presenceEngagements;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceStartDate(): ?\DateTimeInterface
+//    {
+//        return $this->presenceStartDate;
+//    }
+//
+//    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
+//    {
+//        $this->presenceStartDate = $presenceStartDate;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceEndDate(): ?\DateTimeInterface
+//    {
+//        return $this->presenceEndDate;
+//    }
+//
+//    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
+//    {
+//        $this->presenceEndDate = $presenceEndDate;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceEndParticipationReason(): ?string
+//    {
+//        return $this->presenceEndParticipationReason;
+//    }
+//
+//    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
+//    {
+//        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
+//
+//        return $this;
+//    }
 }

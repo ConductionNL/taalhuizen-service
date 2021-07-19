@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TestResultRepository;
 use App\Resolver\TestResultMutationResolver;
@@ -17,9 +17,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity LearningNeedOutCome holds.
+ *
+ * The LearningNeedOutCome input fields are a recurring thing throughout multiple DTO entities like: TestResult, Participation and Group.
+ * That is why this LearningNeedOutCome Entity was created. To remove duplicate use of the same properties.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Mostly shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'outComes'.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -43,8 +55,15 @@ class LearningNeedOutCome
      * @var String The goal of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Learn how to work with computers"
+     *         }
+     *     }
+     * )
      */
     private string $goal;
 
@@ -52,7 +71,7 @@ class LearningNeedOutCome
      * @var String The topic of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -70,8 +89,15 @@ class LearningNeedOutCome
     /**
      * @var String|null The topic of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other topic"
+     *         }
+     *     }
+     * )
      */
     private ?string $topicOther;
 
@@ -79,7 +105,7 @@ class LearningNeedOutCome
      * @var String The application of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -97,8 +123,15 @@ class LearningNeedOutCome
     /**
      * @var String|null The application of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other application"
+     *         }
+     *     }
+     * )
      */
     private ?string $applicationOther;
 
@@ -106,7 +139,7 @@ class LearningNeedOutCome
      * @var String The level of this LearningNeedOutcome.
      *
      * @Assert\NotNull
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
      * @ORM\Column(type="string", length=255)
      * @ApiProperty(
@@ -124,52 +157,17 @@ class LearningNeedOutCome
     /**
      * @var String|null The level of this LearningNeedOutcome when the OTHER option is selected.
      *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $levelOther;
-
-    /**
-     * @var bool|null The isFormal boolean of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $isFormal;
-
-    /**
-     * @var String|null The group formation of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "type"="string",
-     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
-     *             "example"="INDIVIDUALLY"
+     *             "example"="An other level"
      *         }
      *     }
      * )
      */
-    private ?string $groupFormation;
-
-    /**
-     * @var float|null The total class hours of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="float", nullable=true)
-     */
-    private ?float $totalClassHours;
-
-    /**
-     * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
-     *
-     * @Groups({"write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private ?bool $certificateWillBeAwarded;
+    private ?string $levelOther;
 
     public function getId(): UuidInterface
     {
@@ -263,54 +261,6 @@ class LearningNeedOutCome
     public function setLevelOther(?string $levelOther): self
     {
         $this->levelOther = $levelOther;
-
-        return $this;
-    }
-
-    public function getIsFormal(): ?bool
-    {
-        return $this->isFormal;
-    }
-
-    public function setIsFormal(?bool $isFormal): self
-    {
-        $this->isFormal = $isFormal;
-
-        return $this;
-    }
-
-    public function getGroupFormation(): ?string
-    {
-        return $this->groupFormation;
-    }
-
-    public function setGroupFormation(?string $groupFormation): self
-    {
-        $this->groupFormation = $groupFormation;
-
-        return $this;
-    }
-
-    public function getTotalClassHours(): ?float
-    {
-        return $this->totalClassHours;
-    }
-
-    public function setTotalClassHours(?float $totalClassHours): self
-    {
-        $this->totalClassHours = $totalClassHours;
-
-        return $this;
-    }
-
-    public function getCertificateWillBeAwarded(): ?bool
-    {
-        return $this->certificateWillBeAwarded;
-    }
-
-    public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
-    {
-        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
 
         return $this;
     }

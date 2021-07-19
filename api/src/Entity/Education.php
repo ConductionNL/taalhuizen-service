@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EducationRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -21,9 +22,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Education holds.
+ *
+ * The main entity associated with this DTO is the mrc/Education: https://taalhuizen-bisc.commonground.nu/api/v1/mrc#tag/Education.
+ * DTO Education exists of properties based on this medewerker catalogue entity, that is based on a https://www.hropenstandards.org/ schema.
+ * The Education input is a recurring thing throughout multiple DTO entities like: StudentEducation, StudentCourse and Employee.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was done for consistency and cleaner names, but mostly to match the mrc/Education Entity.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -44,7 +57,14 @@ class Education
      */
     private UuidInterface $id;
 
-//   startDate of the education, was called in the graphql-schema 'dateSince', changed to 'startDate' related to schema.org
+    /**
+     * @var String|null The name of the course this student is following.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $name;
+
     /**
      * @var ?DateTime Start date of this education.
      *
@@ -56,7 +76,6 @@ class Education
      */
     private ?DateTime $startDate;
 
-//   endDate of the education, was called in the graphql-schema 'dateUntil', changed to 'endDate' related to schema.org
     /**
      * @var ?DateTime End date of this education.
      *
@@ -68,7 +87,6 @@ class Education
      */
     private ?DateTime $endDate;
 
-//   institution of the education, was called in the graphql-schema 'name', changed to 'institution' related to schema.org
     /**
      * @var ?string Institution of this education.
      *
@@ -80,7 +98,6 @@ class Education
      */
     private ?string $institution;
 
-//   isced education level code of the education, was called in the graphql-schema 'level', changed to 'iscedEducationLevelCode' related to schema.org
     /**
      * @var ?string Isced education level code of this education.
      *
@@ -92,7 +109,6 @@ class Education
      */
     private ?string $iscedEducationLevelCode;
 
-//   degree granted status of the education, was called in the graphql-schema 'doesProvideCertificate', changed to 'degreeGrantedStatus' related to schema.org
     /**
      * @var ?string Degree granted status of this education.
      *
@@ -104,6 +120,76 @@ class Education
      */
     private ?string $degreeGrantedStatus;
 
+    /**
+     * @var String|null The group formation type of this (course) Education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $groupFormation;
+
+    /**
+     * @var String|null The professionalism of the teacher for this Education.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $teacherProfessionalism;
+
+    /**
+     * @var String|null The professionalism of this Education if this education is a course.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"PROFESSIONAL", "VOLUNTEER", "BOTH"},
+     *             "example"="PROFESSIONAL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $courseProfessionalism;
+
+    /**
+     * @var bool|null A boolean that is true if the Education provides a certificate when completed.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $providesCertificate;
+
+    /**
+     * @var int|null The amount of hours the course takes, that this student is following.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $amountOfHours;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -112,6 +198,18 @@ class Education
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
         return $this;
     }
 
@@ -171,6 +269,66 @@ class Education
     public function setIscedEducationLevelCode(?string $iscedEducationLevelCode): self
     {
         $this->iscedEducationLevelCode = $iscedEducationLevelCode;
+
+        return $this;
+    }
+
+    public function getGroupFormation(): ?string
+    {
+        return $this->groupFormation;
+    }
+
+    public function setGroupFormation(?string $groupFormation): self
+    {
+        $this->groupFormation = $groupFormation;
+
+        return $this;
+    }
+
+    public function getTeacherProfessionalism(): ?string
+    {
+        return $this->teacherProfessionalism;
+    }
+
+    public function setTeacherProfessionalism(?string $teacherProfessionalism): self
+    {
+        $this->teacherProfessionalism = $teacherProfessionalism;
+
+        return $this;
+    }
+
+    public function getCourseProfessionalism(): ?string
+    {
+        return $this->courseProfessionalism;
+    }
+
+    public function setCourseProfessionalism(?string $courseProfessionalism): self
+    {
+        $this->courseProfessionalism = $courseProfessionalism;
+
+        return $this;
+    }
+
+    public function getProvidesCertificate(): ?bool
+    {
+        return $this->providesCertificate;
+    }
+
+    public function setProvidesCertificate(?bool $providesCertificate): self
+    {
+        $this->providesCertificate = $providesCertificate;
+
+        return $this;
+    }
+
+    public function getAmountOfHours(): ?int
+    {
+        return $this->amountOfHours;
+    }
+
+    public function setAmountOfHours(?int $amountOfHours): self
+    {
+        $this->amountOfHours = $amountOfHours;
 
         return $this;
     }

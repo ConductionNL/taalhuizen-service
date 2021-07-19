@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\LearningNeedRepository;
 use App\Resolver\LearningNeedMutationResolver;
@@ -13,23 +14,33 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
+ * All properties that the DTO entity LearningNeed holds.
+ *
+ * DTO LearningNeed exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-62 and https://lifely.atlassian.net/browse/BISC-112.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-86
+ * The desiredLearningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Mostly shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'offer'. (while the rest of the name after that also had the word offer in it)
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
  *     })
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
 class LearningNeed
 {
-//   Id of the learning need, was called in the graphql-schema 'learningNeedId'
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
@@ -42,7 +53,7 @@ class LearningNeed
     private UuidInterface $id;
 
     /**
-     * @var string Description of this learning need.
+     * @var string A short description of this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -50,11 +61,18 @@ class LearningNeed
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="description"
+     *         }
+     *     }
+     * )
      */
     private string $description;
 
     /**
-     * @var string Motivation of this learning need.
+     * @var string The motivation of a student, for this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -62,21 +80,28 @@ class LearningNeed
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="I would like to get more experience on this topic"
+     *         }
+     *     }
+     * )
      */
     private string $motivation;
 
     /**
-     * @var ?LearningNeedOutCome The learning need out come of this learning need.
+     * @var LearningNeedOutCome The desired learning need out come of this learning need.
      *
+     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private LearningNeedOutCome $desiredLearningNeedOutCome;
 
     /**
-     * @var string Offer desired offer of this learning need.
+     * @var string The desired offer for a student learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -84,11 +109,18 @@ class LearningNeed
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Taalhuis x in Amsterdam"
+     *         }
+     *     }
+     * )
      */
-    private string $offerDesiredOffer;
+    private string $desiredOffer;
 
     /**
-     * @var string Offer advised offer of this learning need.
+     * @var string The advised offer of a student learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -96,13 +128,20 @@ class LearningNeed
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Taalhuis y in Amsterdam"
+     *         }
+     *     }
+     * )
      */
-    private string $offerAdvisedOffer;
+    private string $advisedOffer;
 
     /**
-     * @var string Offer difference of this learning need.
+     * @var string The difference between the desired and advised offer of this learning need.
      *
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
+     * @Assert\Choice({"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"})
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -111,8 +150,8 @@ class LearningNeed
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "enum"={"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"},
-     *             "example"="INFLOW"
+     *             "enum"={"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"},
+     *             "example"="YES_WAITINGLIST"
      *         }
      *     }
      * )
@@ -120,41 +159,43 @@ class LearningNeed
     private string $offerDifference;
 
     /**
-     * @var ?string Offer difference other of this learning need.
+     * @var ?string Offer difference of this learning need, for when the OTHER option is selected.
      *
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other reason why there is a difference."
+     *         }
+     *     }
+     * )
      */
     private ?string $offerDifferenceOther;
 
     /**
-     * @var ?string Offer engagements of this learning need.
+     * @var ?string The offer engagements for this learning need.
      *
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An agreement"
+     *         }
+     *     }
+     * )
      */
     private ?string $offerEngagements;
 
     /**
-     * @var ?Participation Participation's of this learning need.
-     *
-     * @Groups({"read","write"})
-     * @ORM\OneToOne(targetEntity=Participation::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
-     * @MaxDepth(1)
-     */
-    private ?Participation $participations;
-
-    /**
-     * @var string Student id of this learning need.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     * @var string The id of a student that this learning need is for.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -162,6 +203,13 @@ class LearningNeed
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private string $studentId;
 
@@ -201,38 +249,38 @@ class LearningNeed
         return $this;
     }
 
-    public function getLearningNeedOutCome(): LearningNeedOutCome
+    public function getDesiredLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->learningNeedOutCome;
+        return $this->desiredLearningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
+    public function setDesiredLearningNeedOutCome(LearningNeedOutCome $desiredLearningNeedOutCome): self
     {
-        $this->learningNeedOutCome = $learningNeedOutCome;
+        $this->desiredLearningNeedOutCome = $desiredLearningNeedOutCome;
 
         return $this;
     }
 
-    public function getOfferDesiredOffer(): string
+    public function getDesiredOffer(): string
     {
-        return $this->offerDesiredOffer;
+        return $this->desiredOffer;
     }
 
-    public function setOfferDesiredOffer(string $offerDesiredOffer): self
+    public function setDesiredOffer(string $desiredOffer): self
     {
-        $this->offerDesiredOffer = $offerDesiredOffer;
+        $this->desiredOffer = $desiredOffer;
 
         return $this;
     }
 
-    public function getOfferAdvisedOffer(): string
+    public function getAdvisedOffer(): string
     {
-        return $this->offerAdvisedOffer;
+        return $this->advisedOffer;
     }
 
-    public function setOfferAdvisedOffer(string $offerAdvisedOffer): self
+    public function setAdvisedOffer(string $advisedOffer): self
     {
-        $this->offerAdvisedOffer = $offerAdvisedOffer;
+        $this->advisedOffer = $advisedOffer;
 
         return $this;
     }
@@ -269,18 +317,6 @@ class LearningNeed
     public function setOfferEngagements(?string $offerEngagements): self
     {
         $this->offerEngagements = $offerEngagements;
-
-        return $this;
-    }
-
-    public function getParticipations(): ?Participation
-    {
-        return $this->participations;
-    }
-
-    public function setParticipations(?Participation $participations): self
-    {
-        $this->participations = $participations;
 
         return $this;
     }

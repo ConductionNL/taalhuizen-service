@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\StudentRepository;
 use App\Resolver\StudentMutationResolver;
@@ -20,14 +20,46 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Student holds.
+ *
+ * The main entity associated with this DTO is the edu/Participant: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Participant.
+ * DTO Student exists of a few properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Participant.
+ * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-60.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-76.
+ * The registrar and person (PersonDetails + ContactDetails) input fields match the Person Entity, that is why there are two Person objects used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
+ *          "get_group_students"={
+ *              "method"="GET",
+ *              "path"="/students/group/{uuid}",
+ *              "swagger_context" = {
+ *                  "summary"="Get the students of a group",
+ *                  "description"="Get the students of a group"
+ *              }
+ *          },
+ *          "get_mentor_students"={
+ *              "method"="GET",
+ *              "path"="/students/mentor/{uuid}",
+ *              "swagger_context" = {
+ *                  "summary"="Get the students of a mentor",
+ *                  "description"="Get the students of a mentor"
+ *              }
+ *          },
  *          "post",
  *     })
  * @ORM\Entity(repositoryClass=StudentRepository::class)
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "status": "exact"
+ * })
  */
 class Student
 {
@@ -68,7 +100,6 @@ class Student
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private Person $person;
@@ -223,18 +254,36 @@ class Student
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;
 
     /**
-     * @var string|null The id of the cc/organization of a languageHouse
+     * @var string The id of the cc/organization of a languageHouse
      *
-     * @Groups("write")
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
      */
-    private ?string $languageHouseId;
+    private string $languageHouseId;
+
+    /**
+     * @var string|null The Status of this group.
+     *
+     * @Groups({"read"})
+     * @Assert\Choice({"REFERRED", "ACTIVE", "COMPLETED"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"REFERRRED", "ACTIVE", "COMPLETED"},
+     *             "example"="REFERRED"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $status;
 
     public function getId(): UuidInterface
     {
@@ -440,14 +489,26 @@ class Student
         return $this;
     }
 
-    public function getLanguageHouseId(): ?string
+    public function getLanguageHouseId(): string
     {
         return $this->languageHouseId;
     }
 
-    public function setLanguageHouseId(?string $languageHouseId): self
+    public function setLanguageHouseId(string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

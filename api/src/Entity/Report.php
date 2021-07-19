@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\ReportRepository;
 use App\Resolver\ReportMutationResolver;
 use App\Resolver\ReportQueryCollectionResolver;
@@ -13,12 +14,47 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * All properties that the DTO entity Report holds.
+ *
+ * DTO Report exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-173 and https://lifely.atlassian.net/browse/BISC-179.
+ * Notable is that there are no providerId or LanguageHouseId properties present in this Entity. This is because custom endpoint can be used for this purpose.
+ * Besides that, the property base64 was renamed from base64data to base64. This was mostly done for consistency and cleaner names.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
+ *          "participants_report"={
+ *              "method"="POST",
+ *              "path"="/reports/participants",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a participants report of a provider.",
+ *                  "description"="Creates a participants report of a provider."
+ *              }
+ *          },
+ *          "volunteers_report"={
+ *              "method"="POST",
+ *              "path"="/reports/volunteers",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a volunteers report of a provider.",
+ *                  "description"="Creates a volunteers report of a provider."
+ *              }
+ *          },
+ *          "desired_learning_outcomes_report"={
+ *              "method"="POST",
+ *              "path"="/reports/desired_learning_outcomes",
+ *              "swagger_context" = {
+ *                  "summary"="Creates a learning outcomes report.",
+ *                  "description"="Creates a learning outcomes report."
+ *              }
+ *          }
  *     })
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */
@@ -34,26 +70,6 @@ class Report
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
-
-    /**
-     * @var string|null The language house the report applies to.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
-
-    /**
-     * @var string|null The provider this report applies to.
-     *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $providerId;
 
     /**
      * @var string|null A date from which you want data in the report.
@@ -79,7 +95,6 @@ class Report
      */
     private ?string $filename;
 
-    // Renamed from base64data to base64.
     /**
      * @var string|null A base64 encoded string containing the file's contents.
      *
@@ -96,30 +111,6 @@ class Report
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
-
-        return $this;
-    }
-
-    public function getLanguageHouseId(): ?string
-    {
-        return $this->languageHouseId;
-    }
-
-    public function setLanguageHouseId(?string $languageHouseId): self
-    {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
-    public function getProviderId(): ?string
-    {
-        return $this->providerId;
-    }
-
-    public function setProviderId(?string $providerId): self
-    {
-        $this->providerId = $providerId;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AvailabilityRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -21,9 +22,20 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Availability holds.
+ *
+ * The main entity associated with this DTO is the arc/Calendar: https://taalhuizen-bisc.commonground.nu/api/v1/arc#tag/Calendar. Containing arc/FreeBusy objects (https://taalhuizen-bisc.commonground.nu/api/v1/arc#tag/Freebusy).
+ * (Note that this entity was not yet used in the old graphql version of the taalhuizen-service, back then this was just stored as an array with the cc/Person object).
+ * The Availability input is a recurring thing throughout multiple DTO entities like: StudentAvailability, Employee and Group.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -50,7 +62,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $monday;
@@ -61,7 +72,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private AvailabilityDay $tuesday;
@@ -72,7 +82,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $wednesday;
@@ -83,7 +92,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $thursday;
@@ -94,7 +102,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $friday;
@@ -105,7 +112,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $saturday;
@@ -116,7 +122,6 @@ class Availability
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
      */
     private AvailabilityDay $sunday;

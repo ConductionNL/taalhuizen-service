@@ -14,9 +14,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity StudentEducation holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the education details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ * The education input fields match the Education Entity, that is why there is an Education object used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
  *     collectionOperations={
  *          "get",
  *          "post",
@@ -35,19 +46,6 @@ class StudentEducation
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
-
-//   Education of the employee, was called in the graphql-schema;
-// 'lastFollowedEducation', 'didGraduate', 'followingEducationRightNowYesStartDate',
-// 'followingEducationRightNowYesLevel', 'followingEducationRightNowYesInstitute', 'followingEducationRightNowYesProvidesCertificate',
-// 'followingEducationRightNowNoEndDate', 'followingEducationRightNowNoLevel', 'followingEducationRightNowNoGotCertificate',
-// changed to 'education'(Education entity) related to schema.org
-    /**
-     * @var ?Education Education of this studentEducation.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
-     */
-    private ?Education $education;
 
     /**
      * @var ?string Following education right now of this studentEducation.
@@ -68,6 +66,14 @@ class StudentEducation
      * )
      */
     private ?string $followingEducationRightNow;
+
+    /**
+     * @var ?Education Education of this studentEducation.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     */
+    private ?Education $education;
 
     public function getId(): UuidInterface
     {
