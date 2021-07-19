@@ -88,6 +88,30 @@ class Document
      */
     private string $base64;
 
+    /**
+     * @var string Student id of this document.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $studentId;
+
+    /**
+     * @var string Provider employee id of this document.
+     *
+     * @Assert\Length(
+     *     max = 255
+     *)
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $providerEmployeeId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -122,4 +146,29 @@ class Document
 
         return $this;
     }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(string $studentId): self
+    {
+        $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getProviderEmployeeId(): ?string
+    {
+        return $this->providerEmployeeId;
+    }
+
+    public function setProviderEmployeeId(string $providerEmployeeId): self
+    {
+        $this->providerEmployeeId = $providerEmployeeId;
+
+        return $this;
+    }
+
 }

@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &
+    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
   version: V1.0
 servers:
   -
@@ -21934,6 +21934,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -21954,6 +21958,10 @@ components:
       type: object
       description: 'All properties that the DTO entity Report holds.'
       properties:
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -22002,6 +22010,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -22045,6 +22057,10 @@ components:
         '@type':
           readOnly: true
           type: string
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
