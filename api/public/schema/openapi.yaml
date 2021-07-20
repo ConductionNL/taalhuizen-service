@@ -15833,7 +15833,7 @@ components:
             -
               $ref: '#/components/schemas/Availability-read'
         availabilityNotes:
-          example: 'An note by this availability'
+          example: 'An note with this availability'
           description: 'The note for/with this Availability.'
           type: string
           nullable: true
@@ -15848,7 +15848,7 @@ components:
             -
               $ref: '#/components/schemas/Availability-write'
         availabilityNotes:
-          example: 'An note by this availability'
+          example: 'An note with this availability'
           description: 'The note for/with this Availability.'
           type: string
           nullable: true
@@ -15891,7 +15891,7 @@ components:
             -
               $ref: '#/components/schemas/Availability.jsonld-read'
         availabilityNotes:
-          example: 'An note by this availability'
+          example: 'An note with this availability'
           description: 'The note for/with this Availability.'
           type: string
           nullable: true
@@ -15929,7 +15929,7 @@ components:
             -
               $ref: '#/components/schemas/Availability.jsonld-write'
         availabilityNotes:
-          example: 'An note by this availability'
+          example: 'An note with this availability'
           description: 'The note for/with this Availability.'
           type: string
           nullable: true
