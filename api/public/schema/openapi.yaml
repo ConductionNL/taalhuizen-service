@@ -16304,6 +16304,765 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/students/{id}/availability_details':
+    get:
+      operationId: api_students_availability_details_get_subresourceStudentSubresource
+      tags:
+        - StudentAvailability
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/background_details':
+    get:
+      operationId: api_students_background_details_get_subresourceStudentSubresource
+      tags:
+        - StudentBackground
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentBackground.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/civic_integration_details':
+    get:
+      operationId: api_students_civic_integration_details_get_subresourceStudentSubresource
+      tags:
+        - StudentCivicIntegration
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/course_details':
+    get:
+      operationId: api_students_course_details_get_subresourceStudentSubresource
+      tags:
+        - StudentCourse
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentCourse.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/dutch_n_t_details':
+    get:
+      operationId: api_students_dutch_n_t_details_get_subresourceStudentSubresource
+      tags:
+        - StudentDutchNT
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/education_details':
+    get:
+      operationId: api_students_education_details_get_subresourceStudentSubresource
+      tags:
+        - StudentEducation
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentEducation.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/general_details':
+    get:
+      operationId: api_students_general_details_get_subresourceStudentSubresource
+      tags:
+        - StudentGeneral
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/job_details':
+    get:
+      operationId: api_students_job_details_get_subresourceStudentSubresource
+      tags:
+        - StudentJob
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentJob.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/motivation_details':
+    get:
+      operationId: api_students_motivation_details_get_subresourceStudentSubresource
+      tags:
+        - StudentMotivation
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/permission_details':
+    get:
+      operationId: api_students_permission_details_get_subresourceStudentSubresource
+      tags:
+        - StudentPermission
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/students/{id}/referrer_details':
+    get:
+      operationId: api_students_referrer_details_get_subresourceStudentSubresource
+      tags:
+        - StudentReferrer
+        - Student
+      responses:
+        200:
+          description: 'Student resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+      summary: 'Retrieves a Student resource.'
+      description: 'Retrieves a Student resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Student identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /telephones:
     get:
       operationId: getTelephoneCollection

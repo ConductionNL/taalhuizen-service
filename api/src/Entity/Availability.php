@@ -62,7 +62,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -73,7 +73,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -84,7 +84,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -95,7 +95,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -106,7 +106,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -117,7 +117,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -128,7 +128,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, inversedBy="availability")
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */

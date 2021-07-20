@@ -89,11 +89,6 @@ class StudentJob
      */
     private ?string $dayTimeActivitiesOther;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Student", mappedBy="jobDetails")
-     */
-    public ?Student $student;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -154,15 +149,4 @@ class StudentJob
         return $this;
     }
 
-    public function getStudent(): ?Student
-    {
-        return $this->student;
-    }
-
-    public function setStudent(?Student $student): self
-    {
-        $this->student = $student;
-
-        return $this;
-    }
 }

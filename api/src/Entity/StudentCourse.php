@@ -61,11 +61,6 @@ class StudentCourse
      */
     private ?Education $course;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Student", mappedBy="courseDetails")
-     */
-    public ?Student $student;
-
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -102,15 +97,4 @@ class StudentCourse
         return $this;
     }
 
-    public function getStudent(): ?Student
-    {
-        return $this->student;
-    }
-
-    public function setStudent(?Student $student): self
-    {
-        $this->student = $student;
-
-        return $this;
-    }
 }

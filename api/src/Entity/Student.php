@@ -89,7 +89,7 @@ class Student
      * @var StudentCivicIntegration|null The StudentCivicIntegration of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -110,7 +110,7 @@ class Student
      * @var StudentGeneral|null The StudentGeneral of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentGeneral::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentGeneral::class)
      * @ApiSubresource()
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
@@ -122,7 +122,7 @@ class Student
      * @var StudentReferrer|null The StudentReferrer of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentReferrer::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentReferrer::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -133,7 +133,7 @@ class Student
      * @var StudentBackground|null The StudentBackground of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentBackground::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentBackground::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -144,7 +144,7 @@ class Student
      * @var StudentDutchNT|null The StudentDutchNT of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentDutchNT::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentDutchNT::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -173,7 +173,7 @@ class Student
      * @var StudentEducation|null The StudentEducation of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentEducation::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentEducation::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -184,7 +184,7 @@ class Student
      * @var StudentCourse|null The StudentCourse of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCourse::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentCourse::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -195,7 +195,7 @@ class Student
      * @var StudentJob|null The StudentJob of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentJob::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentJob::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -206,7 +206,7 @@ class Student
      * @var StudentMotivation|null The StudentMotivation of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentMotivation::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentMotivation::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -217,7 +217,7 @@ class Student
      * @var StudentAvailability|null The StudentAvailability of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentAvailability::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentAvailability::class)
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
@@ -265,7 +265,7 @@ class Student
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentPermission::class, inversedBy="student")
+     * @ORM\OneToOne(targetEntity=StudentPermission::class)
      * @ApiSubresource()
      * @MaxDepth(1)
      */
