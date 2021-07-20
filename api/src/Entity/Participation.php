@@ -2,30 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\ParticipationRepository;
-use App\Resolver\ParticipationMutationResolver;
-use App\Resolver\ParticipationQueryCollectionResolver;
-use App\Resolver\ParticipationQueryItemResolver;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Repository\ParticipationRepository;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /**
  * All properties that the DTO entity Participation holds.
@@ -97,7 +85,7 @@ class Participation
     private UuidInterface $id;
 
     /**
-     * @var String|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
+     * @var string|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -113,7 +101,7 @@ class Participation
     private ?string $providerId;
 
     /**
-     * @var String|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
+     * @var string|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -213,7 +201,7 @@ class Participation
     private ?bool $isFormal;
 
     /**
-     * @var String|null The group formation of this LearningNeedOutcome.
+     * @var string|null The group formation of this LearningNeedOutcome.
      *
      * @Groups({"read","write"})
      * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
