@@ -113,13 +113,13 @@ class Person
      * @var string|null Gender of this person
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"Male", "Female"})
+     * @Assert\Choice({"Male", "Female", "X"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "enum"={"Male", "Female"},
+     *             "enum"={"Male", "Female", "X"},
      *             "example"="Male"
      *         }
      *     }
