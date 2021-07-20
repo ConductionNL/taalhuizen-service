@@ -3,11 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\ReportRepository;
-use App\Resolver\ReportMutationResolver;
-use App\Resolver\ReportQueryCollectionResolver;
-use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;

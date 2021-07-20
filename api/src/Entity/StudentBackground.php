@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentBackgroundRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -40,7 +40,7 @@ class StudentBackground
     private UuidInterface $id;
 
     /**
-     * @var String|null The way this student found the languageHouse.
+     * @var string|null The way this student found the languageHouse.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"VOLUNTEER_CENTER", "LIBRARY_WEBSITE", "SOCIAL_MEDIA", "NEWSPAPER", "VIA_VIA", "OTHER"})
@@ -58,7 +58,7 @@ class StudentBackground
     private ?string $foundVia;
 
     /**
-     * @var String|null The way this student found the languageHouse for if the OTHER option is selected.
+     * @var string|null The way this student found the languageHouse for if the OTHER option is selected.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -81,7 +81,7 @@ class StudentBackground
     private ?bool $wentToLanguageHouseBefore;
 
     /**
-     * @var String|null The reason why this student went to this languageHouse before.
+     * @var string|null The reason why this student went to this languageHouse before.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

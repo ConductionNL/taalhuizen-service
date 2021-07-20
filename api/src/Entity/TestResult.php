@@ -2,14 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TestResultRepository;
-use App\Resolver\TestResultMutationResolver;
-use App\Resolver\TestResultQueryCollectionResolver;
-use App\Resolver\TestResultQueryItemResolver;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
@@ -53,7 +48,7 @@ class TestResult
     private UuidInterface $id;
 
     /**
-     * @var String The id of a participation this TestResult is connected to.
+     * @var string The id of a participation this TestResult is connected to.
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
@@ -82,7 +77,7 @@ class TestResult
     private LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @var String The used exam for this TestResult.
+     * @var string The used exam for this TestResult.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -107,7 +102,7 @@ class TestResult
     private DateTime $examDate;
 
     /**
-     * @var String|null A memo/note for this TestResult.
+     * @var string|null A memo/note for this TestResult.
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)

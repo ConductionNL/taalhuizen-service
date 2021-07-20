@@ -2,23 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\EducationRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\EducationRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -51,7 +42,7 @@ class Education
     private UuidInterface $id;
 
     /**
-     * @var String|null The name of the course this student is following.
+     * @var string|null The name of the course this student is following.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -114,7 +105,7 @@ class Education
     private ?string $degreeGrantedStatus;
 
     /**
-     * @var String|null The group formation type of this (course) Education.
+     * @var string|null The group formation type of this (course) Education.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
@@ -132,7 +123,7 @@ class Education
     private ?string $groupFormation;
 
     /**
-     * @var String|null The professionalism of the teacher for this Education.
+     * @var string|null The professionalism of the teacher for this Education.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
@@ -150,7 +141,7 @@ class Education
     private ?string $teacherProfessionalism;
 
     /**
-     * @var String|null The professionalism of this Education if this education is a course.
+     * @var string|null The professionalism of this Education if this education is a course.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
@@ -191,6 +182,7 @@ class Education
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

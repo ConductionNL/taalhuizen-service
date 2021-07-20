@@ -2,17 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\StudentRepository;
-use App\Resolver\StudentMutationResolver;
-use App\Resolver\StudentQueryCollectionResolver;
-use App\Resolver\StudentQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -158,7 +153,7 @@ class Student
     private ?StudentDutchNT $dutchNTDetails;
 
     /**
-     * @var String|null The speakingLevel of this Student.
+     * @var string|null The speakingLevel of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"BEGINNER", "REASONABLE", "ADVANCED"})
@@ -231,7 +226,7 @@ class Student
     private ?StudentAvailability $availabilityDetails;
 
     /**
-     * @var String|null The reading test result of this Student.
+     * @var string|null The reading test result of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_READ", "A0", "A1", "A2", "B1", "B2", "C1", "C2"})
@@ -249,7 +244,7 @@ class Student
     private ?string $readingTestResult;
 
     /**
-     * @var String|null The writing test result of this Student.
+     * @var string|null The writing test result of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_WRITE", "WRITE_NAW_DETAILS", "WRITE_SIMPLE_TEXTS", "WRITE_SIMPLE_LETTERS"})

@@ -39,7 +39,7 @@ class StudentReferrer
     private UuidInterface $id;
 
     /**
-     * @var String|null The StudentReferrer organization name.
+     * @var string|null The StudentReferrer organization name.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"UWV", "SOCIAL_SERVICE", "LIBRARY", "WELFARE_WORK", "NEIGHBORHOOD_TEAM", "VOLUNTEER_ORGANIZATION", "LANGUAGE_PROVIDER", "OTHER"})
@@ -57,7 +57,7 @@ class StudentReferrer
     private ?string $referringOrganization;
 
     /**
-     * @var String|null The StudentReferrer organization name when the OTHER option is selected.
+     * @var string|null The StudentReferrer organization name when the OTHER option is selected.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -72,7 +72,7 @@ class StudentReferrer
     private ?string $referringOrganizationOther;
 
     /**
-     * @var String|null The email of this StudentReferrer.
+     * @var string|null The email of this StudentReferrer.
      *
      * @Groups({"read", "write"})
      * @Assert\Length(min=3,max = 320)

@@ -38,7 +38,7 @@ class StudentPermission
     private UuidInterface $id;
 
     /**
-     * @var Bool A boolean that is true when the permission form was signed.
+     * @var bool A boolean that is true when the permission form was signed.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -47,7 +47,7 @@ class StudentPermission
     private bool $didSignPermissionForm;
 
     /**
-     * @var Bool A boolean that is true when the student gives permission to share his/her data with providers.
+     * @var bool A boolean that is true when the student gives permission to share his/her data with providers.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -56,7 +56,7 @@ class StudentPermission
     private bool $hasPermissionToShareDataWithProviders;
 
     /**
-     * @var Bool A boolean that is true when the student gives permission to share his/her data with libraries.
+     * @var bool A boolean that is true when the student gives permission to share his/her data with libraries.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -65,7 +65,7 @@ class StudentPermission
     private bool $hasPermissionToShareDataWithLibraries;
 
     /**
-     * @var Bool A boolean that is true when the student gives permission to send information about libraries.
+     * @var bool A boolean that is true when the student gives permission to send information about libraries.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})

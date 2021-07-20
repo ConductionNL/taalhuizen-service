@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -49,7 +49,7 @@ class StudentAvailability
     private ?Availability $availability;
 
     /**
-     * @var String|null The note for/with this Availability.
+     * @var string|null The note for/with this Availability.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
