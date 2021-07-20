@@ -2,19 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeMutationResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -288,7 +280,7 @@ class Employee
     private ?bool $isVOGChecked = false;
 
     /**
-     * @var String|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
+     * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

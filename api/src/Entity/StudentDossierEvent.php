@@ -2,17 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\DossierRepository;
-use App\Resolver\StudentDossierEventMutationResolver;
-use App\Resolver\StudentDossierEventQueryCollectionResolver;
-use App\Resolver\StudentDossierEventQueryItemResolver;
 use DateTime;
 use DateTimeInterface;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -185,5 +179,4 @@ class StudentDossierEvent
 
         return $this;
     }
-
 }
