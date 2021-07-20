@@ -57,7 +57,8 @@ class StudentGeneral
      * @var String|null The native language of this student.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=2, max=3)
+     * @ORM\Column(type="string", length=3, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
