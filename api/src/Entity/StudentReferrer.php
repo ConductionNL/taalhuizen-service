@@ -75,7 +75,8 @@ class StudentReferrer
      * @var String|null The email of this StudentReferrer.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=3,max = 320)
+     * @ORM\Column(type="string", length=320, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
