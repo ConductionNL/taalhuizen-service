@@ -282,7 +282,8 @@ class Student
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

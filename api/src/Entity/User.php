@@ -145,7 +145,8 @@ class User
      * @var String|null A contact component organization id of this User.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

@@ -62,7 +62,8 @@ class Group
      * @var string|null The id of the cc/organization of a provider
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
      */
     private ?string $providerId;
 

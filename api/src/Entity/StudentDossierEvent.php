@@ -105,7 +105,8 @@ class StudentDossierEvent
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
@@ -120,7 +121,8 @@ class StudentDossierEvent
      * @var string|null EmployeeId of this student Dossier.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

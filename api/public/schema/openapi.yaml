@@ -11940,11 +11940,13 @@ components:
           description: 'Base64 of this document.'
           type: string
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Student id of this document.'
           type: string
         providerEmployeeId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Provider employee id of this document.'
           type: string
       required:
@@ -11965,11 +11967,13 @@ components:
           description: 'Base64 of this document.'
           type: string
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Student id of this document.'
           type: string
         providerEmployeeId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Provider employee id of this document.'
           type: string
     Document.jsonld-read:
@@ -12012,11 +12016,13 @@ components:
           description: 'Base64 of this document.'
           type: string
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Student id of this document.'
           type: string
         providerEmployeeId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Provider employee id of this document.'
           type: string
       required:
@@ -12060,11 +12066,13 @@ components:
           description: 'Base64 of this document.'
           type: string
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Student id of this document.'
           type: string
         providerEmployeeId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'Provider employee id of this document.'
           type: string
     Education-read:
@@ -12595,6 +12603,8 @@ components:
           type: boolean
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
@@ -12604,7 +12614,8 @@ components:
           items:
             type: string
         userId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'User id of this Employee.'
           type: string
           nullable: true
@@ -12685,6 +12696,8 @@ components:
           type: boolean
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
@@ -12694,7 +12707,8 @@ components:
           items:
             type: string
         userId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'User id of this Employee.'
           type: string
           nullable: true
@@ -12797,6 +12811,8 @@ components:
           type: boolean
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
@@ -12806,7 +12822,8 @@ components:
           items:
             type: string
         userId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'User id of this Employee.'
           type: string
           nullable: true
@@ -12910,6 +12927,8 @@ components:
           type: boolean
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
           nullable: true
@@ -12919,7 +12938,8 @@ components:
           items:
             type: string
         userId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           description: 'User id of this Employee.'
           type: string
           nullable: true
@@ -12933,6 +12953,8 @@ components:
           type: string
           format: uuid
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the cc/organization of a provider'
           type: string
           nullable: true
@@ -13025,6 +13047,8 @@ components:
       description: 'All properties that the DTO entity Group holds.'
       properties:
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the cc/organization of a provider'
           type: string
           nullable: true
@@ -13137,6 +13161,8 @@ components:
           type: string
           format: uuid
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the cc/organization of a provider'
           type: string
           nullable: true
@@ -13252,6 +13278,8 @@ components:
           readOnly: true
           type: string
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the cc/organization of a provider'
           type: string
           nullable: true
@@ -13391,7 +13419,8 @@ components:
           type: string
           nullable: true
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
@@ -13466,7 +13495,8 @@ components:
           type: string
           nullable: true
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
@@ -13553,7 +13583,8 @@ components:
           type: string
           nullable: true
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
@@ -13651,7 +13682,8 @@ components:
           type: string
           nullable: true
         studentId:
-          maxLength: 255
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
           type: string
@@ -14209,6 +14241,8 @@ components:
           type: string
           format: uuid
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
@@ -14278,6 +14312,8 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the LearningNeed connected to this Participation.'
           type: string
       required:
@@ -14287,6 +14323,8 @@ components:
       description: 'All properties that the DTO entity Participation holds.'
       properties:
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
@@ -14356,6 +14394,8 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the LearningNeed connected to this Participation.'
           type: string
       required:
@@ -14393,6 +14433,8 @@ components:
           type: string
           format: uuid
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
@@ -14462,6 +14504,8 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the LearningNeed connected to this Participation.'
           type: string
       required:
@@ -14494,6 +14538,8 @@ components:
           readOnly: true
           type: string
         providerId:
+          minLength: 36
+          maxLength: 36
           description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
           nullable: true
@@ -14563,6 +14609,8 @@ components:
           type: string
           nullable: true
         learningNeedId:
+          minLength: 36
+          maxLength: 36
           description: 'The id of the LearningNeed connected to this Participation.'
           type: string
       required:
@@ -15376,6 +15424,8 @@ components:
             -
               $ref: '#/components/schemas/StudentPermission-read'
         languageHouseId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -15508,6 +15558,8 @@ components:
             -
               $ref: '#/components/schemas/StudentPermission-write'
         languageHouseId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -15659,6 +15711,8 @@ components:
             -
               $ref: '#/components/schemas/StudentPermission.jsonld-read'
         languageHouseId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -15814,6 +15868,8 @@ components:
             -
               $ref: '#/components/schemas/StudentPermission.jsonld-write'
         languageHouseId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of the cc/organization of a languageHouse'
           type: string
@@ -16521,10 +16577,14 @@ components:
           description: 'Description of this student Dossier.'
           type: string
         studentId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'StudentId of this student Dossier.'
           type: string
         employeeId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -16562,10 +16622,14 @@ components:
           description: 'Description of this student Dossier.'
           type: string
         studentId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'StudentId of this student Dossier.'
           type: string
         employeeId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -16621,10 +16685,14 @@ components:
           description: 'Description of this student Dossier.'
           type: string
         studentId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'StudentId of this student Dossier.'
           type: string
         employeeId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -16685,10 +16753,14 @@ components:
           description: 'Description of this student Dossier.'
           type: string
         studentId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'StudentId of this student Dossier.'
           type: string
         employeeId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'EmployeeId of this student Dossier.'
           type: string
@@ -18259,6 +18331,8 @@ components:
           type: string
           format: uuid
         participationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a participation this TestResult is connected to.'
           type: string
@@ -18296,6 +18370,8 @@ components:
         - examDate
       properties:
         participationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a participation this TestResult is connected to.'
           type: string
@@ -18351,6 +18427,8 @@ components:
           type: string
           format: uuid
         participationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a participation this TestResult is connected to.'
           type: string
@@ -18411,6 +18489,8 @@ components:
           readOnly: true
           type: string
         participationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a participation this TestResult is connected to.'
           type: string
@@ -18463,6 +18543,8 @@ components:
           description: 'The userEnvironment of this User.'
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'A contact component organization id of this User.'
           type: string
@@ -18510,6 +18592,8 @@ components:
           description: 'The userEnvironment of this User.'
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'A contact component organization id of this User.'
           type: string
@@ -18583,6 +18667,8 @@ components:
           description: 'The userEnvironment of this User.'
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'A contact component organization id of this User.'
           type: string
@@ -18653,6 +18739,8 @@ components:
           description: 'The userEnvironment of this User.'
           nullable: true
         organizationId:
+          minLength: 36
+          maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'A contact component organization id of this User.'
           type: string
