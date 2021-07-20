@@ -89,28 +89,26 @@ class Document
     private string $base64;
 
     /**
-     * @var string Student id of this document.
+     * @var ?string Student id of this document.
      *
      * @Assert\Length(
      *     max = 255
      *)
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private string $studentId;
+    private ?string $studentId;
 
     /**
-     * @var string Provider employee id of this document.
+     * @var ?string Provider employee id of this document.
      *
      * @Assert\Length(
      *     max = 255
      *)
-     * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
-    private string $providerEmployeeId;
+    private ?string $providerEmployeeId;
 
     public function getId(): UuidInterface
     {
@@ -123,7 +121,7 @@ class Document
         return $this;
     }
 
-    public function getFilename(): ?string
+    public function getFilename(): string
     {
         return $this->filename;
     }
@@ -135,7 +133,7 @@ class Document
         return $this;
     }
 
-    public function getBase64(): ?string
+    public function getBase64(): string
     {
         return $this->base64;
     }
@@ -152,7 +150,7 @@ class Document
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
 
@@ -164,7 +162,7 @@ class Document
         return $this->providerEmployeeId;
     }
 
-    public function setProviderEmployeeId(string $providerEmployeeId): self
+    public function setProviderEmployeeId(?string $providerEmployeeId): self
     {
         $this->providerEmployeeId = $providerEmployeeId;
 
