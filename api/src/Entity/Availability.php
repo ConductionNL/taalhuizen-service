@@ -22,15 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     }
+ *     itemOperations={},
+ *     collectionOperations={}
  * )
  * @ORM\Entity(repositoryClass=AvailabilityRepository::class)
  */
@@ -52,7 +45,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -63,7 +56,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -74,7 +67,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -85,7 +78,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -96,7 +89,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -107,7 +100,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */
@@ -118,7 +111,7 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
      * @ApiSubresource()
      * @MaxDepth(1)
      */

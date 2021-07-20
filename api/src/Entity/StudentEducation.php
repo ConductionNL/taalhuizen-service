@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\StudentEducationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -21,15 +23,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={}
+ * )
  * @ORM\Entity(repositoryClass=StudentEducationRepository::class)
  */
 class StudentEducation
@@ -70,6 +66,8 @@ class StudentEducation
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @MaxDepth(1)
      */
     private ?Education $education;
 

@@ -20,15 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={}
+ * )
  * @ORM\Entity(repositoryClass=StudentDutchNTRepository::class)
  */
 class StudentDutchNT
@@ -67,6 +61,13 @@ class StudentDutchNT
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2003
+     *         }
+     *     }
+     * )
      */
     private ?float $inNetherlandsSinceYear;
 
@@ -75,6 +76,13 @@ class StudentDutchNT
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Dutch"
+     *         }
+     *     }
+     * )
      */
     private ?string $languageInDailyLife;
 

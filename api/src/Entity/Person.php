@@ -28,15 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     }
+ *     itemOperations={},
+ *     collectionOperations={}
  * )
  * @ORM\Entity(repositoryClass=PersonRepository::class)
  */

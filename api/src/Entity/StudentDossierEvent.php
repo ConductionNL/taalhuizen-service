@@ -84,27 +84,46 @@ class StudentDossierEvent
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="A dossier event"
+     *         }
+     *     }
+     * )
      */
     private string $eventDescription;
 
     /**
      * @var string|null StudentId of this student Dossier.
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private string $studentId;
 
     /**
      * @var string|null EmployeeId of this student Dossier.
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $employeeId;
 

@@ -201,11 +201,9 @@ class LearningNeed
      * @var string The id of a student that this learning need is for.
      *
      * @Assert\NotNull
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=36, max=36)
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=36)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

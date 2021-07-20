@@ -20,15 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={}
+ * )
  * @ORM\Entity(repositoryClass=StudentGeneralRepository::class)
  */
 class StudentGeneral
@@ -49,6 +43,13 @@ class StudentGeneral
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="The Netherlands"
+     *         }
+     *     }
+     * )
      */
     private ?string $countryOfOrigin;
 
@@ -56,7 +57,15 @@ class StudentGeneral
      * @var string|null The native language of this student.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=2, max=3)
+     * @ORM\Column(type="string", length=3, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="NL"
+     *         }
+     *     }
+     * )
      */
     private ?string $nativeLanguage;
 
@@ -65,6 +74,13 @@ class StudentGeneral
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="English, Spanish"
+     *         }
+     *     }
+     * )
      */
     private ?string $otherLanguages;
 
@@ -94,6 +110,13 @@ class StudentGeneral
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2
+     *         }
+     *     }
+     * )
      */
     private ?int $childrenCount;
 
@@ -102,6 +125,13 @@ class StudentGeneral
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="01-01-2006, 04-08-1999"
+     *         }
+     *     }
+     * )
      */
     private ?string $childrenDatesOfBirth;
 

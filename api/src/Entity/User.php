@@ -96,6 +96,13 @@ class User
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="JohnDoe@gmail.com"
+     *         }
+     *     }
+     * )
      */
     private string $username;
 
@@ -134,7 +141,15 @@ class User
      * @var string|null A contact component organization id of this User.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationId;
 
@@ -143,16 +158,15 @@ class User
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Taalhuis X"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationName;
-
-    /**
-     * @var array|null The userRoles of this User.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private ?array $userRoles = [];
 
     /**
      * @var string The Password of this User.
@@ -163,6 +177,13 @@ class User
      * )
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="n$5Ssqs]eCDT!$})"
+     *         }
+     *     }
+     * )
      */
     private string $password;
 
@@ -174,6 +195,13 @@ class User
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlMjk4NDQ2NS0xOTBhLTQ1NjItODI5ZS1hOGNjYTgxYWEzNWQiLCJlbWFpbCI6ImpvaG5Eb2VAZ21haWwuY29tIiwiaXNzIjoiaXNzIiwiaWFzIjoiaWFzIiwiZXhwIjoiZXhwIn0.dBLCHRmqFyTv3tiyI0mpYnlcQ0UTRqG9JpKw5zd0I2U"
+     *         }
+     *     }
+     * )
      */
     private ?string $token;
 
@@ -245,18 +273,6 @@ class User
     public function setOrganizationName(?string $organizationName): self
     {
         $this->organizationName = $organizationName;
-
-        return $this;
-    }
-
-    public function getUserRoles(): ?array
-    {
-        return $this->userRoles;
-    }
-
-    public function setUserRoles(?array $userRoles): self
-    {
-        $this->userRoles = $userRoles;
 
         return $this;
     }

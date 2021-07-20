@@ -20,15 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     }
+ *     itemOperations={},
+ *     collectionOperations={}
  * )
  * @ORM\Entity(repositoryClass=EmailRepository::class)
  */
@@ -68,11 +61,9 @@ class Email
      * @var string The actual mail address
      *
      * @Assert\NotNull
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=3,max = 320)
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=320)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

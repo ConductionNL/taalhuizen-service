@@ -283,7 +283,8 @@ class Employee
      * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
@@ -322,11 +323,9 @@ class Employee
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=36, max=36)
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=36, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

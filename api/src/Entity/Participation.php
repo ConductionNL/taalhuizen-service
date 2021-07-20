@@ -88,7 +88,8 @@ class Participation
      * @var string|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
@@ -306,7 +307,8 @@ class Participation
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
