@@ -71,10 +71,10 @@ class Telephone
      *
      * @Assert\NotNull
      * @Assert\Length(
-     *     max = 255
+     *     max = 20
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
