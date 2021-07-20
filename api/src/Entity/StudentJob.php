@@ -20,15 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={}
+ * )
  * @ORM\Entity(repositoryClass=StudentJobRepository::class)
  */
 class StudentJob
@@ -49,6 +43,13 @@ class StudentJob
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Software Developer"
+     *         }
+     *     }
+     * )
      */
     private ?string $trainedForJob;
 
@@ -57,6 +58,13 @@ class StudentJob
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Software Developer"
+     *         }
+     *     }
+     * )
      */
     private ?string $lastJob;
 
@@ -86,6 +94,13 @@ class StudentJob
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other daytime activity"
+     *         }
+     *     }
+     * )
      */
     private ?string $dayTimeActivitiesOther;
 

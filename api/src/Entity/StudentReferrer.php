@@ -20,15 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={}
+ * )
  * @ORM\Entity(repositoryClass=StudentReferrerRepository::class)
  */
 class StudentReferrer
@@ -67,6 +61,13 @@ class StudentReferrer
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other organization"
+     *         }
+     *     }
+     * )
      */
     private ?string $referringOrganizationOther;
 
@@ -75,6 +76,13 @@ class StudentReferrer
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="johnDoe@gmail.com"
+     *         }
+     *     }
+     * )
      */
     private ?string $email;
 

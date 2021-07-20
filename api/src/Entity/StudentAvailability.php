@@ -20,15 +20,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={},
+ *     collectionOperations={},
+ * )
  * @ORM\Entity(repositoryClass=StudentAvailabilityRepository::class)
  */
 class StudentAvailability
@@ -59,6 +53,13 @@ class StudentAvailability
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An note with this availability"
+     *         }
+     *     }
+     * )
      */
     private ?string $availabilityNotes;
 
