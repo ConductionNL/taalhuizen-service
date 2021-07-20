@@ -46,6 +46,14 @@ class Education
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language course"
+     *         }
+     *     }
+     * )
      */
     private ?string $name;
 
@@ -57,6 +65,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-07-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $startDate;
 
@@ -68,6 +84,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-10-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $endDate;
 
@@ -79,6 +103,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Institution X"
+     *         }
+     *     }
+     * )
      */
     private ?string $institution;
 
@@ -90,6 +122,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="HBO"
+     *         }
+     *     }
+     * )
      */
     private ?string $iscedEducationLevelCode;
 
@@ -101,6 +141,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Granted"
+     *         }
+     *     }
+     * )
      */
     private ?string $degreeGrantedStatus;
 
@@ -163,6 +211,14 @@ class Education
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $providesCertificate;
 
@@ -171,6 +227,14 @@ class Education
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="25"
+     *         }
+     *     }
+     * )
      */
     private ?int $amountOfHours;
 

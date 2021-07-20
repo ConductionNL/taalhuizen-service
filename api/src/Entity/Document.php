@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\DocumentRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -64,6 +65,14 @@ class Document
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Document X"
+     *         }
+     *     }
+     * )
      */
     private string $filename;
 
@@ -73,24 +82,46 @@ class Document
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="text")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
     private string $base64;
 
     /**
      * @var ?string Student id of this document.
      *
-     * @Assert\Length(min=36, max=36)
      * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
      * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $studentId;
 
     /**
      * @var ?string Provider employee id of this document.
      *
-     * @Assert\Length(min=36, max=36)
      * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
      * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerEmployeeId;
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\OrganizationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -68,6 +69,7 @@ class Organization
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="My company"
      *         }
      *     }
@@ -99,6 +101,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -109,6 +112,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -119,6 +123,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

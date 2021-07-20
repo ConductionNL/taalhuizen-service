@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * All properties that the DTO entity StudentCourse holds.
@@ -50,6 +52,8 @@ class StudentCourse
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @MaxDepth(1)
      */
     private ?Education $course;
 

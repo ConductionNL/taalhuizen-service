@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\TestResultRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -72,6 +73,7 @@ class TestResult
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private LearningNeedOutCome $learningNeedOutCome;

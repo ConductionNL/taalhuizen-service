@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AvailabilityDayRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,6 +43,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $morning;
 
@@ -51,6 +60,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $afternoon;
 
@@ -60,6 +77,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $evening;
 

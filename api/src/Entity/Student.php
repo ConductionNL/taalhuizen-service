@@ -81,6 +81,7 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -103,6 +104,7 @@ class Student
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private Person $person;
@@ -112,7 +114,6 @@ class Student
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
-     * @ApiSubresource()
      * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
