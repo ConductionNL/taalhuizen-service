@@ -39,7 +39,7 @@ class StudentDutchNT
     private UuidInterface $id;
 
     /**
-     * @var String|null The dutch NT level of this Student.
+     * @var string|null The dutch NT level of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"NT1", "NT2"})
@@ -72,7 +72,7 @@ class StudentDutchNT
     private ?float $inNetherlandsSinceYear;
 
     /**
-     * @var String|null The language this student speaks in his/her daily life.
+     * @var string|null The language this student speaks in his/her daily life.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -95,7 +95,7 @@ class StudentDutchNT
     private ?bool $knowsLatinAlphabet;
 
     /**
-     * @var String|null The last known language level of this student.
+     * @var string|null The last known language level of this student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"})

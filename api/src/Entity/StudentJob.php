@@ -39,7 +39,7 @@ class StudentJob
     private UuidInterface $id;
 
     /**
-     * @var String|null The job this student is trained for.
+     * @var string|null The job this student is trained for.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -54,7 +54,7 @@ class StudentJob
     private ?string $trainedForJob;
 
     /**
-     * @var String|null The last job of this student.
+     * @var string|null The last job of this student.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -90,7 +90,7 @@ class StudentJob
     private ?array $dayTimeActivities = [];
 
     /**
-     * @var String|null The daytime activities for when the OTHER option is selected.
+     * @var string|null The daytime activities for when the OTHER option is selected.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

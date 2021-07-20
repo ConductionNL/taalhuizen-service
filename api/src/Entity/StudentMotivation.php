@@ -67,7 +67,7 @@ class StudentMotivation
     private ?array $desiredSkills = [];
 
     /**
-     * @var String|null The desired skills for when the OTHER option is selected.
+     * @var string|null The desired skills for when the OTHER option is selected.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -90,7 +90,7 @@ class StudentMotivation
     private ?bool $hasTriedThisBefore;
 
     /**
-     * @var String|null The explanation why the student has or has not tried this before.
+     * @var string|null The explanation why the student has or has not tried this before.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -105,7 +105,7 @@ class StudentMotivation
     private ?string $hasTriedThisBeforeExplanation;
 
     /**
-     * @var String|null The reason why the student wants to learn these skills.
+     * @var string|null The reason why the student wants to learn these skills.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -120,7 +120,7 @@ class StudentMotivation
     private ?string $whyWantTheseSkills;
 
     /**
-     * @var String|null The reason why the student wants to learn these skills right now.
+     * @var string|null The reason why the student wants to learn these skills right now.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -156,7 +156,7 @@ class StudentMotivation
     private ?array $desiredLearningMethod = [];
 
     /**
-     * @var String|null The final remark/note for the StudentMotivation.
+     * @var string|null The final remark/note for the StudentMotivation.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
