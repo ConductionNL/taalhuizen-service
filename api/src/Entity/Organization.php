@@ -78,6 +78,7 @@ class Organization
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="My company"
      *         }
      *     }

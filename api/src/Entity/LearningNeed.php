@@ -65,6 +65,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="description"
      *         }
      *     }
@@ -84,6 +85,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="I would like to get more experience on this topic"
      *         }
      *     }
@@ -114,6 +116,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Taalhuis x in Amsterdam"
      *         }
      *     }
@@ -133,6 +136,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Taalhuis y in Amsterdam"
      *         }
      *     }
@@ -171,6 +175,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other reason why there is a difference."
      *         }
      *     }
@@ -189,6 +194,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An agreement"
      *         }
      *     }
@@ -208,6 +214,7 @@ class LearningNeed
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
      *         }
      *     }

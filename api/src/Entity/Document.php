@@ -76,6 +76,14 @@ class Document
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Document X"
+     *         }
+     *     }
+     * )
      */
     private string $filename;
 
@@ -85,6 +93,14 @@ class Document
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="text")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
     private string $base64;
 
@@ -96,6 +112,14 @@ class Document
      *)
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $studentId;
 
@@ -107,6 +131,14 @@ class Document
      *)
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerEmployeeId;
 

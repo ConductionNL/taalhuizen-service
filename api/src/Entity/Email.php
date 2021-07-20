@@ -67,6 +67,7 @@ class Email
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Primary email address"
      *         }
      *     }
@@ -86,6 +87,7 @@ class Email
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="john@doe.com"
      *         }
      *     }

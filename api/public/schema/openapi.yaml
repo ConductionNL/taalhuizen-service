@@ -25187,14 +25187,17 @@ components:
           type: string
           format: uuid
         morning:
+          type: bool
+          example: 'true'
           description: 'Morning of this availability day (6:00 -> 12:00).'
-          type: boolean
         afternoon:
+          type: bool
+          example: 'true'
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
-          type: boolean
         evening:
+          type: bool
+          example: 'true'
           description: 'Evening of this availability day (18:00 -> 00:00).'
-          type: boolean
       required:
         - morning
         - afternoon
@@ -25208,14 +25211,17 @@ components:
         - evening
       properties:
         morning:
+          type: bool
+          example: 'true'
           description: 'Morning of this availability day (6:00 -> 12:00).'
-          type: boolean
         afternoon:
+          type: bool
+          example: 'true'
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
-          type: boolean
         evening:
+          type: bool
+          example: 'true'
           description: 'Evening of this availability day (18:00 -> 00:00).'
-          type: boolean
     AvailabilityDay.jsonld-read:
       type: object
       description: 'All properties that the DTO entity AvailabilityDay holds.'
@@ -25249,14 +25255,17 @@ components:
           type: string
           format: uuid
         morning:
+          type: bool
+          example: 'true'
           description: 'Morning of this availability day (6:00 -> 12:00).'
-          type: boolean
         afternoon:
+          type: bool
+          example: 'true'
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
-          type: boolean
         evening:
+          type: bool
+          example: 'true'
           description: 'Evening of this availability day (18:00 -> 00:00).'
-          type: boolean
       required:
         - morning
         - afternoon
@@ -25293,14 +25302,17 @@ components:
           readOnly: true
           type: string
         morning:
+          type: bool
+          example: 'true'
           description: 'Morning of this availability day (6:00 -> 12:00).'
-          type: boolean
         afternoon:
+          type: bool
+          example: 'true'
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
-          type: boolean
         evening:
+          type: bool
+          example: 'true'
           description: 'Evening of this availability day (18:00 -> 00:00).'
-          type: boolean
     ChangeLog-read:
       type: object
       description: 'An resource representing a log line.'
@@ -25459,19 +25471,23 @@ components:
           format: uuid
         filename:
           maxLength: 255
+          type: string
+          example: 'Document X'
           description: 'Filename of this document.'
-          type: string
         base64:
-          description: 'Base64 of this document.'
           type: string
+          example: base64
+          description: 'Base64 of this document.'
         studentId:
           maxLength: 255
-          description: 'Student id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Student id of this document.'
         providerEmployeeId:
           maxLength: 255
-          description: 'Provider employee id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id of this document.'
       required:
         - filename
         - base64
@@ -25484,19 +25500,23 @@ components:
       properties:
         filename:
           maxLength: 255
+          type: string
+          example: 'Document X'
           description: 'Filename of this document.'
-          type: string
         base64:
-          description: 'Base64 of this document.'
           type: string
+          example: base64
+          description: 'Base64 of this document.'
         studentId:
           maxLength: 255
-          description: 'Student id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Student id of this document.'
         providerEmployeeId:
           maxLength: 255
-          description: 'Provider employee id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id of this document.'
     Document.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Document holds.'
@@ -25531,19 +25551,23 @@ components:
           format: uuid
         filename:
           maxLength: 255
+          type: string
+          example: 'Document X'
           description: 'Filename of this document.'
-          type: string
         base64:
-          description: 'Base64 of this document.'
           type: string
+          example: base64
+          description: 'Base64 of this document.'
         studentId:
           maxLength: 255
-          description: 'Student id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Student id of this document.'
         providerEmployeeId:
           maxLength: 255
-          description: 'Provider employee id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id of this document.'
       required:
         - filename
         - base64
@@ -25579,19 +25603,23 @@ components:
           type: string
         filename:
           maxLength: 255
+          type: string
+          example: 'Document X'
           description: 'Filename of this document.'
-          type: string
         base64:
-          description: 'Base64 of this document.'
           type: string
+          example: base64
+          description: 'Base64 of this document.'
         studentId:
           maxLength: 255
-          description: 'Student id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Student id of this document.'
         providerEmployeeId:
           maxLength: 255
-          description: 'Provider employee id of this document.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id of this document.'
     Education-read:
       type: object
       description: 'All properties that the DTO entity Education holds.'
@@ -25602,33 +25630,39 @@ components:
           type: string
           format: uuid
         name:
-          description: 'The name of the course this student is following.'
           type: string
+          example: 'Language course'
+          description: 'The name of the course this student is following.'
           nullable: true
         startDate:
+          type: DateTime
+          example: 12-07-2021
           description: 'Start date of this education.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 12-10-2021
           description: 'End date of this education.'
-          type: string
           format: date-time
           nullable: true
         institution:
           maxLength: 255
-          description: 'Institution of this education.'
           type: string
+          example: 'Institution X'
+          description: 'Institution of this education.'
           nullable: true
         iscedEducationLevelCode:
           maxLength: 255
-          description: 'Isced education level code of this education.'
           type: string
+          example: HBO
+          description: 'Isced education level code of this education.'
           nullable: true
         degreeGrantedStatus:
           maxLength: 255
-          description: 'Degree granted status of this education.'
           type: string
+          example: Granted
+          description: 'Degree granted status of this education.'
           nullable: true
         groupFormation:
           type: string
@@ -25657,45 +25691,53 @@ components:
           description: 'The professionalism of this Education if this education is a course.'
           nullable: true
         providesCertificate:
+          type: bool
+          example: 'true'
           description: 'A boolean that is true if the Education provides a certificate when completed.'
-          type: boolean
           nullable: true
         amountOfHours:
+          type: int
+          example: '25'
           description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
           nullable: true
     Education-write:
       type: object
       description: 'All properties that the DTO entity Education holds.'
       properties:
         name:
-          description: 'The name of the course this student is following.'
           type: string
+          example: 'Language course'
+          description: 'The name of the course this student is following.'
           nullable: true
         startDate:
+          type: DateTime
+          example: 12-07-2021
           description: 'Start date of this education.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 12-10-2021
           description: 'End date of this education.'
-          type: string
           format: date-time
           nullable: true
         institution:
           maxLength: 255
-          description: 'Institution of this education.'
           type: string
+          example: 'Institution X'
+          description: 'Institution of this education.'
           nullable: true
         iscedEducationLevelCode:
           maxLength: 255
-          description: 'Isced education level code of this education.'
           type: string
+          example: HBO
+          description: 'Isced education level code of this education.'
           nullable: true
         degreeGrantedStatus:
           maxLength: 255
-          description: 'Degree granted status of this education.'
           type: string
+          example: Granted
+          description: 'Degree granted status of this education.'
           nullable: true
         groupFormation:
           type: string
@@ -25724,12 +25766,14 @@ components:
           description: 'The professionalism of this Education if this education is a course.'
           nullable: true
         providesCertificate:
+          type: bool
+          example: 'true'
           description: 'A boolean that is true if the Education provides a certificate when completed.'
-          type: boolean
           nullable: true
         amountOfHours:
+          type: int
+          example: '25'
           description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
           nullable: true
     Education.jsonld-read:
       type: object
@@ -25764,33 +25808,39 @@ components:
           type: string
           format: uuid
         name:
-          description: 'The name of the course this student is following.'
           type: string
+          example: 'Language course'
+          description: 'The name of the course this student is following.'
           nullable: true
         startDate:
+          type: DateTime
+          example: 12-07-2021
           description: 'Start date of this education.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 12-10-2021
           description: 'End date of this education.'
-          type: string
           format: date-time
           nullable: true
         institution:
           maxLength: 255
-          description: 'Institution of this education.'
           type: string
+          example: 'Institution X'
+          description: 'Institution of this education.'
           nullable: true
         iscedEducationLevelCode:
           maxLength: 255
-          description: 'Isced education level code of this education.'
           type: string
+          example: HBO
+          description: 'Isced education level code of this education.'
           nullable: true
         degreeGrantedStatus:
           maxLength: 255
-          description: 'Degree granted status of this education.'
           type: string
+          example: Granted
+          description: 'Degree granted status of this education.'
           nullable: true
         groupFormation:
           type: string
@@ -25819,12 +25869,14 @@ components:
           description: 'The professionalism of this Education if this education is a course.'
           nullable: true
         providesCertificate:
+          type: bool
+          example: 'true'
           description: 'A boolean that is true if the Education provides a certificate when completed.'
-          type: boolean
           nullable: true
         amountOfHours:
+          type: int
+          example: '25'
           description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
           nullable: true
     Education.jsonld-write:
       type: object
@@ -25854,33 +25906,39 @@ components:
           readOnly: true
           type: string
         name:
-          description: 'The name of the course this student is following.'
           type: string
+          example: 'Language course'
+          description: 'The name of the course this student is following.'
           nullable: true
         startDate:
+          type: DateTime
+          example: 12-07-2021
           description: 'Start date of this education.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 12-10-2021
           description: 'End date of this education.'
-          type: string
           format: date-time
           nullable: true
         institution:
           maxLength: 255
-          description: 'Institution of this education.'
           type: string
+          example: 'Institution X'
+          description: 'Institution of this education.'
           nullable: true
         iscedEducationLevelCode:
           maxLength: 255
-          description: 'Isced education level code of this education.'
           type: string
+          example: HBO
+          description: 'Isced education level code of this education.'
           nullable: true
         degreeGrantedStatus:
           maxLength: 255
-          description: 'Degree granted status of this education.'
           type: string
+          example: Granted
+          description: 'Degree granted status of this education.'
           nullable: true
         groupFormation:
           type: string
@@ -25909,12 +25967,14 @@ components:
           description: 'The professionalism of this Education if this education is a course.'
           nullable: true
         providesCertificate:
+          type: bool
+          example: 'true'
           description: 'A boolean that is true if the Education provides a certificate when completed.'
-          type: boolean
           nullable: true
         amountOfHours:
+          type: int
+          example: '25'
           description: 'The amount of hours the course takes, that this student is following.'
-          type: integer
           nullable: true
     Email-read:
       type: object
@@ -25927,15 +25987,15 @@ components:
           format: uuid
         name:
           maxLength: 255
+          type: string
           example: 'Primary email address'
           description: 'Name of this email'
-          type: string
           nullable: true
         email:
           maxLength: 255
+          type: string
           example: john@doe.com
           description: 'The actual mail address'
-          type: string
       required:
         - email
     Email-write:
@@ -25944,15 +26004,15 @@ components:
       properties:
         name:
           maxLength: 255
+          type: string
           example: 'Primary email address'
           description: 'Name of this email'
-          type: string
           nullable: true
         email:
           maxLength: 255
+          type: string
           example: john@doe.com
           description: 'The actual mail address'
-          type: string
       required:
         - email
     Email.jsonld-read:
@@ -25989,15 +26049,15 @@ components:
           format: uuid
         name:
           maxLength: 255
+          type: string
           example: 'Primary email address'
           description: 'Name of this email'
-          type: string
           nullable: true
         email:
           maxLength: 255
+          type: string
           example: john@doe.com
           description: 'The actual mail address'
-          type: string
       required:
         - email
     Email.jsonld-write:
@@ -26029,15 +26089,15 @@ components:
           type: string
         name:
           maxLength: 255
+          type: string
           example: 'Primary email address'
           description: 'Name of this email'
-          type: string
           nullable: true
         email:
           maxLength: 255
+          type: string
           example: john@doe.com
           description: 'The actual mail address'
-          type: string
       required:
         - email
     Employee-read:
@@ -26063,32 +26123,38 @@ components:
               $ref: '#/components/schemas/Availability-read'
         availabilityNotes:
           maxLength: 2550
-          description: 'The Availability Note of this Employee.'
           type: string
+          example: 'Explanation availability'
+          description: 'The Availability Note of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
-          description: 'Volunteering Preference of this Employee.'
           type: string
+          example: 'Language cafe'
+          description: 'Volunteering Preference of this Employee.'
           nullable: true
         gotHereVia:
           maxLength: 255
-          description: 'Got here via of this Employee.'
           type: string
+          example: 'The Internet'
+          description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
           maxLength: 255
-          description: 'Has experience with target group of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
-          description: 'The reason for the experience with the target group?'
           type: string
+          example: 'Worked in an asylum seekers center'
+          description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
           maxLength: 255
-          description: 'Current education of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Current education of this Employee.'
           nullable: true
         education:
           description: 'Education of this employee'
@@ -26097,8 +26163,9 @@ components:
             -
               $ref: '#/components/schemas/Education-read'
         doesCurrentlyFollowCourse:
+          type: bool
+          example: 'true'
           description: 'Does currently follow course of this Employee.'
-          type: boolean
           nullable: true
         followingCourse:
           description: 'Currently following course (Education) of this Employee.'
@@ -26108,26 +26175,31 @@ components:
               $ref: '#/components/schemas/Education-read'
         otherRelevantCertificates:
           maxLength: 255
-          description: 'Other relevant certificates of this Employee.'
           type: string
+          example: 'Dutch language certificate'
+          description: 'Other relevant certificates of this Employee.'
           nullable: true
         isVOGChecked:
+          type: bool
+          example: 'true'
           description: 'Whether the employee has submitted a police certificate'
-          type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           nullable: true
         userGroupIds:
-          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
         userId:
           maxLength: 255
-          description: 'User id of this Employee.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User id of this Employee.'
           nullable: true
       required:
         - person
@@ -26153,32 +26225,38 @@ components:
               $ref: '#/components/schemas/Availability-write'
         availabilityNotes:
           maxLength: 2550
-          description: 'The Availability Note of this Employee.'
           type: string
+          example: 'Explanation availability'
+          description: 'The Availability Note of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
-          description: 'Volunteering Preference of this Employee.'
           type: string
+          example: 'Language cafe'
+          description: 'Volunteering Preference of this Employee.'
           nullable: true
         gotHereVia:
           maxLength: 255
-          description: 'Got here via of this Employee.'
           type: string
+          example: 'The Internet'
+          description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
           maxLength: 255
-          description: 'Has experience with target group of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
-          description: 'The reason for the experience with the target group?'
           type: string
+          example: 'Worked in an asylum seekers center'
+          description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
           maxLength: 255
-          description: 'Current education of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Current education of this Employee.'
           nullable: true
         education:
           description: 'Education of this employee'
@@ -26187,8 +26265,9 @@ components:
             -
               $ref: '#/components/schemas/Education-write'
         doesCurrentlyFollowCourse:
+          type: bool
+          example: 'true'
           description: 'Does currently follow course of this Employee.'
-          type: boolean
           nullable: true
         followingCourse:
           description: 'Currently following course (Education) of this Employee.'
@@ -26198,26 +26277,31 @@ components:
               $ref: '#/components/schemas/Education-write'
         otherRelevantCertificates:
           maxLength: 255
-          description: 'Other relevant certificates of this Employee.'
           type: string
+          example: 'Dutch language certificate'
+          description: 'Other relevant certificates of this Employee.'
           nullable: true
         isVOGChecked:
+          type: bool
+          example: 'true'
           description: 'Whether the employee has submitted a police certificate'
-          type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           nullable: true
         userGroupIds:
-          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
         userId:
           maxLength: 255
-          description: 'User id of this Employee.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User id of this Employee.'
           nullable: true
     Employee.jsonld-read:
       type: object
@@ -26265,32 +26349,38 @@ components:
               $ref: '#/components/schemas/Availability.jsonld-read'
         availabilityNotes:
           maxLength: 2550
-          description: 'The Availability Note of this Employee.'
           type: string
+          example: 'Explanation availability'
+          description: 'The Availability Note of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
-          description: 'Volunteering Preference of this Employee.'
           type: string
+          example: 'Language cafe'
+          description: 'Volunteering Preference of this Employee.'
           nullable: true
         gotHereVia:
           maxLength: 255
-          description: 'Got here via of this Employee.'
           type: string
+          example: 'The Internet'
+          description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
           maxLength: 255
-          description: 'Has experience with target group of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
-          description: 'The reason for the experience with the target group?'
           type: string
+          example: 'Worked in an asylum seekers center'
+          description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
           maxLength: 255
-          description: 'Current education of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Current education of this Employee.'
           nullable: true
         education:
           description: 'Education of this employee'
@@ -26299,8 +26389,9 @@ components:
             -
               $ref: '#/components/schemas/Education.jsonld-read'
         doesCurrentlyFollowCourse:
+          type: bool
+          example: 'true'
           description: 'Does currently follow course of this Employee.'
-          type: boolean
           nullable: true
         followingCourse:
           description: 'Currently following course (Education) of this Employee.'
@@ -26310,26 +26401,31 @@ components:
               $ref: '#/components/schemas/Education.jsonld-read'
         otherRelevantCertificates:
           maxLength: 255
-          description: 'Other relevant certificates of this Employee.'
           type: string
+          example: 'Dutch language certificate'
+          description: 'Other relevant certificates of this Employee.'
           nullable: true
         isVOGChecked:
+          type: bool
+          example: 'true'
           description: 'Whether the employee has submitted a police certificate'
-          type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           nullable: true
         userGroupIds:
-          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
         userId:
           maxLength: 255
-          description: 'User id of this Employee.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User id of this Employee.'
           nullable: true
       required:
         - person
@@ -26378,32 +26474,38 @@ components:
               $ref: '#/components/schemas/Availability.jsonld-write'
         availabilityNotes:
           maxLength: 2550
-          description: 'The Availability Note of this Employee.'
           type: string
+          example: 'Explanation availability'
+          description: 'The Availability Note of this Employee.'
           nullable: true
         volunteeringPreference:
           maxLength: 255
-          description: 'Volunteering Preference of this Employee.'
           type: string
+          example: 'Language cafe'
+          description: 'Volunteering Preference of this Employee.'
           nullable: true
         gotHereVia:
           maxLength: 255
-          description: 'Got here via of this Employee.'
           type: string
+          example: 'The Internet'
+          description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
           maxLength: 255
-          description: 'Has experience with target group of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
-          description: 'The reason for the experience with the target group?'
           type: string
+          example: 'Worked in an asylum seekers center'
+          description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
           maxLength: 255
-          description: 'Current education of this Employee.'
           type: string
+          example: 'yes'
+          description: 'Current education of this Employee.'
           nullable: true
         education:
           description: 'Education of this employee'
@@ -26412,8 +26514,9 @@ components:
             -
               $ref: '#/components/schemas/Education.jsonld-write'
         doesCurrentlyFollowCourse:
+          type: bool
+          example: 'true'
           description: 'Does currently follow course of this Employee.'
-          type: boolean
           nullable: true
         followingCourse:
           description: 'Currently following course (Education) of this Employee.'
@@ -26423,26 +26526,31 @@ components:
               $ref: '#/components/schemas/Education.jsonld-write'
         otherRelevantCertificates:
           maxLength: 255
-          description: 'Other relevant certificates of this Employee.'
           type: string
+          example: 'Dutch language certificate'
+          description: 'Other relevant certificates of this Employee.'
           nullable: true
         isVOGChecked:
+          type: bool
+          example: 'true'
           description: 'Whether the employee has submitted a police certificate'
-          type: boolean
           nullable: true
         organizationId:
-          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**'
           nullable: true
         userGroupIds:
-          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**'
         userId:
           maxLength: 255
-          description: 'User id of this Employee.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'User id of this Employee.'
           nullable: true
     Group-read:
       type: object
@@ -26454,17 +26562,20 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'The id of the cc/organization of a provider'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the cc/organization of a provider'
           nullable: true
         name:
           maxLength: 255
-          description: 'Name of this group.'
           type: string
+          example: 'Group X'
+          description: 'Name of this group.'
         typeCourse:
           maxLength: 255
-          description: 'Type course of this group.'
           type: string
+          example: 'Language course'
+          description: 'Type course of this group.'
         learningNeedOutCome:
           description: 'The learning need out come of this Group.'
           nullable: true
@@ -26472,22 +26583,27 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         isFormal:
+          type: bool
+          example: 'true'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
         startDate:
+          type: DateTime
+          example: 20-07-2021
           description: 'Start date of this group.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 20-10-2021
           description: 'End date of this group.'
-          type: string
           format: date-time
           nullable: true
         availability:
@@ -26498,32 +26614,38 @@ components:
               $ref: '#/components/schemas/Availability-read'
         availabilityNotes:
           maxLength: 2550
-          description: 'Availability note of this group.'
           type: string
+          example: 'Explanation availability'
+          description: 'Availability note of this group.'
           nullable: true
         location:
           maxLength: 255
-          description: 'Location of this group.'
           type: string
+          example: Online
+          description: 'Location of this group.'
           nullable: true
         minParticipations:
+          type: int
+          example: '15'
           description: 'Min participation''s of this group.'
-          type: integer
           nullable: true
         maxParticipations:
+          type: int
+          example: '25'
           description: 'Max participation''s of this group.'
-          type: integer
           nullable: true
         evaluation:
           maxLength: 255
-          description: 'Evaluation of this group.'
           type: string
+          example: 'Group evalution'
+          description: 'Evaluation of this group.'
           nullable: true
         employeeIds:
-          description: 'Provider employee id''s of this group. (mentors)'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id''s of this group. (mentors)'
         status:
           type: string
           enum:
@@ -26546,17 +26668,20 @@ components:
       description: 'All properties that the DTO entity Group holds.'
       properties:
         providerId:
-          description: 'The id of the cc/organization of a provider'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the cc/organization of a provider'
           nullable: true
         name:
           maxLength: 255
-          description: 'Name of this group.'
           type: string
+          example: 'Group X'
+          description: 'Name of this group.'
         typeCourse:
           maxLength: 255
-          description: 'Type course of this group.'
           type: string
+          example: 'Language course'
+          description: 'Type course of this group.'
         learningNeedOutCome:
           description: 'The learning need out come of this Group.'
           nullable: true
@@ -26564,22 +26689,27 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         isFormal:
+          type: bool
+          example: 'true'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
         startDate:
+          type: DateTime
+          example: 20-07-2021
           description: 'Start date of this group.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 20-10-2021
           description: 'End date of this group.'
-          type: string
           format: date-time
           nullable: true
         availability:
@@ -26590,32 +26720,38 @@ components:
               $ref: '#/components/schemas/Availability-write'
         availabilityNotes:
           maxLength: 2550
-          description: 'Availability note of this group.'
           type: string
+          example: 'Explanation availability'
+          description: 'Availability note of this group.'
           nullable: true
         location:
           maxLength: 255
-          description: 'Location of this group.'
           type: string
+          example: Online
+          description: 'Location of this group.'
           nullable: true
         minParticipations:
+          type: int
+          example: '15'
           description: 'Min participation''s of this group.'
-          type: integer
           nullable: true
         maxParticipations:
+          type: int
+          example: '25'
           description: 'Max participation''s of this group.'
-          type: integer
           nullable: true
         evaluation:
           maxLength: 255
-          description: 'Evaluation of this group.'
           type: string
+          example: 'Group evalution'
+          description: 'Evaluation of this group.'
           nullable: true
         employeeIds:
-          description: 'Provider employee id''s of this group. (mentors)'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id''s of this group. (mentors)'
       required:
         - name
         - typeCourse
@@ -26658,17 +26794,20 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'The id of the cc/organization of a provider'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the cc/organization of a provider'
           nullable: true
         name:
           maxLength: 255
-          description: 'Name of this group.'
           type: string
+          example: 'Group X'
+          description: 'Name of this group.'
         typeCourse:
           maxLength: 255
-          description: 'Type course of this group.'
           type: string
+          example: 'Language course'
+          description: 'Type course of this group.'
         learningNeedOutCome:
           description: 'The learning need out come of this Group.'
           nullable: true
@@ -26676,22 +26815,27 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         isFormal:
+          type: bool
+          example: 'true'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
         startDate:
+          type: DateTime
+          example: 20-07-2021
           description: 'Start date of this group.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 20-10-2021
           description: 'End date of this group.'
-          type: string
           format: date-time
           nullable: true
         availability:
@@ -26702,32 +26846,38 @@ components:
               $ref: '#/components/schemas/Availability.jsonld-read'
         availabilityNotes:
           maxLength: 2550
-          description: 'Availability note of this group.'
           type: string
+          example: 'Explanation availability'
+          description: 'Availability note of this group.'
           nullable: true
         location:
           maxLength: 255
-          description: 'Location of this group.'
           type: string
+          example: Online
+          description: 'Location of this group.'
           nullable: true
         minParticipations:
+          type: int
+          example: '15'
           description: 'Min participation''s of this group.'
-          type: integer
           nullable: true
         maxParticipations:
+          type: int
+          example: '25'
           description: 'Max participation''s of this group.'
-          type: integer
           nullable: true
         evaluation:
           maxLength: 255
-          description: 'Evaluation of this group.'
           type: string
+          example: 'Group evalution'
+          description: 'Evaluation of this group.'
           nullable: true
         employeeIds:
-          description: 'Provider employee id''s of this group. (mentors)'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id''s of this group. (mentors)'
         status:
           type: string
           enum:
@@ -26773,17 +26923,20 @@ components:
           readOnly: true
           type: string
         providerId:
-          description: 'The id of the cc/organization of a provider'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the cc/organization of a provider'
           nullable: true
         name:
           maxLength: 255
-          description: 'Name of this group.'
           type: string
+          example: 'Group X'
+          description: 'Name of this group.'
         typeCourse:
           maxLength: 255
-          description: 'Type course of this group.'
           type: string
+          example: 'Language course'
+          description: 'Type course of this group.'
         learningNeedOutCome:
           description: 'The learning need out come of this Group.'
           nullable: true
@@ -26791,22 +26944,27 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         isFormal:
+          type: bool
+          example: 'true'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
         startDate:
+          type: DateTime
+          example: 20-07-2021
           description: 'Start date of this group.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 20-10-2021
           description: 'End date of this group.'
-          type: string
           format: date-time
           nullable: true
         availability:
@@ -26817,32 +26975,38 @@ components:
               $ref: '#/components/schemas/Availability.jsonld-write'
         availabilityNotes:
           maxLength: 2550
-          description: 'Availability note of this group.'
           type: string
+          example: 'Explanation availability'
+          description: 'Availability note of this group.'
           nullable: true
         location:
           maxLength: 255
-          description: 'Location of this group.'
           type: string
+          example: Online
+          description: 'Location of this group.'
           nullable: true
         minParticipations:
+          type: int
+          example: '15'
           description: 'Min participation''s of this group.'
-          type: integer
           nullable: true
         maxParticipations:
+          type: int
+          example: '25'
           description: 'Max participation''s of this group.'
-          type: integer
           nullable: true
         evaluation:
           maxLength: 255
-          description: 'Evaluation of this group.'
           type: string
+          example: 'Group evalution'
+          description: 'Evaluation of this group.'
           nullable: true
         employeeIds:
-          description: 'Provider employee id''s of this group. (mentors)'
           type: array
           items:
             type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'Provider employee id''s of this group. (mentors)'
       required:
         - name
         - typeCourse
@@ -26863,14 +27027,14 @@ components:
           format: uuid
         description:
           maxLength: 255
+          type: string
           example: description
           description: 'A short description of this learning need.'
-          type: string
         motivation:
           maxLength: 255
+          type: string
           example: 'I would like to get more experience on this topic'
           description: 'The motivation of a student, for this learning need.'
-          type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
           nullable: true
@@ -26879,15 +27043,15 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         desiredOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis x in Amsterdam'
           description: 'The desired offer for a student learning need.'
-          type: string
           nullable: true
         advisedOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis y in Amsterdam'
           description: 'The advised offer of a student learning need.'
-          type: string
           nullable: true
         offerDifference:
           type: string
@@ -26901,21 +27065,21 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          type: string
           example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
-          type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          type: string
           example: 'An agreement'
           description: 'The offer engagements for this learning need.'
-          type: string
           nullable: true
         studentId:
           maxLength: 255
+          type: string
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
-          type: string
       required:
         - description
         - motivation
@@ -26938,14 +27102,14 @@ components:
       properties:
         description:
           maxLength: 255
+          type: string
           example: description
           description: 'A short description of this learning need.'
-          type: string
         motivation:
           maxLength: 255
+          type: string
           example: 'I would like to get more experience on this topic'
           description: 'The motivation of a student, for this learning need.'
-          type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
           nullable: true
@@ -26954,15 +27118,15 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         desiredOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis x in Amsterdam'
           description: 'The desired offer for a student learning need.'
-          type: string
           nullable: true
         advisedOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis y in Amsterdam'
           description: 'The advised offer of a student learning need.'
-          type: string
           nullable: true
         offerDifference:
           type: string
@@ -26976,21 +27140,21 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          type: string
           example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
-          type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          type: string
           example: 'An agreement'
           description: 'The offer engagements for this learning need.'
-          type: string
           nullable: true
         studentId:
           maxLength: 255
+          type: string
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
-          type: string
     LearningNeed.jsonld-read:
       type: object
       description: 'All properties that the DTO entity LearningNeed holds.'
@@ -27025,14 +27189,14 @@ components:
           format: uuid
         description:
           maxLength: 255
+          type: string
           example: description
           description: 'A short description of this learning need.'
-          type: string
         motivation:
           maxLength: 255
+          type: string
           example: 'I would like to get more experience on this topic'
           description: 'The motivation of a student, for this learning need.'
-          type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
           nullable: true
@@ -27041,15 +27205,15 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         desiredOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis x in Amsterdam'
           description: 'The desired offer for a student learning need.'
-          type: string
           nullable: true
         advisedOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis y in Amsterdam'
           description: 'The advised offer of a student learning need.'
-          type: string
           nullable: true
         offerDifference:
           type: string
@@ -27063,21 +27227,21 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          type: string
           example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
-          type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          type: string
           example: 'An agreement'
           description: 'The offer engagements for this learning need.'
-          type: string
           nullable: true
         studentId:
           maxLength: 255
+          type: string
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
-          type: string
       required:
         - description
         - motivation
@@ -27123,14 +27287,14 @@ components:
           type: string
         description:
           maxLength: 255
+          type: string
           example: description
           description: 'A short description of this learning need.'
-          type: string
         motivation:
           maxLength: 255
+          type: string
           example: 'I would like to get more experience on this topic'
           description: 'The motivation of a student, for this learning need.'
-          type: string
         desiredLearningNeedOutCome:
           description: 'The desired learning need out come of this learning need.'
           nullable: true
@@ -27139,15 +27303,15 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         desiredOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis x in Amsterdam'
           description: 'The desired offer for a student learning need.'
-          type: string
           nullable: true
         advisedOffer:
           maxLength: 255
+          type: string
           example: 'Taalhuis y in Amsterdam'
           description: 'The advised offer of a student learning need.'
-          type: string
           nullable: true
         offerDifference:
           type: string
@@ -27161,21 +27325,21 @@ components:
           nullable: true
         offerDifferenceOther:
           maxLength: 255
+          type: string
           example: 'An other reason why there is a difference.'
           description: 'Offer difference of this learning need, for when the OTHER option is selected.'
-          type: string
           nullable: true
         offerEngagements:
           maxLength: 255
+          type: string
           example: 'An agreement'
           description: 'The offer engagements for this learning need.'
-          type: string
           nullable: true
         studentId:
           maxLength: 255
+          type: string
           example: e2984465-190a-4562-829e-a8cca81aa35d
           description: 'The id of a student that this learning need is for.'
-          type: string
     LearningNeedOutCome-read:
       type: object
       description: 'All properties that the DTO entity LearningNeedOutCome holds.'
@@ -27186,9 +27350,9 @@ components:
           type: string
           format: uuid
         goal:
+          type: string
           example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
-          type: string
         topic:
           type: string
           enum:
@@ -27210,9 +27374,9 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          type: string
           example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         application:
           type: string
@@ -27227,9 +27391,9 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          type: string
           example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         level:
           type: string
@@ -27243,9 +27407,9 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          type: string
           example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
       required:
         - goal
@@ -27262,9 +27426,9 @@ components:
         - level
       properties:
         goal:
+          type: string
           example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
-          type: string
         topic:
           type: string
           enum:
@@ -27286,9 +27450,9 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          type: string
           example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         application:
           type: string
@@ -27303,9 +27467,9 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          type: string
           example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         level:
           type: string
@@ -27319,9 +27483,9 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          type: string
           example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
     LearningNeedOutCome.jsonld-read:
       type: object
@@ -27356,9 +27520,9 @@ components:
           type: string
           format: uuid
         goal:
+          type: string
           example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
-          type: string
         topic:
           type: string
           enum:
@@ -27380,9 +27544,9 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          type: string
           example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         application:
           type: string
@@ -27397,9 +27561,9 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          type: string
           example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         level:
           type: string
@@ -27413,9 +27577,9 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          type: string
           example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
       required:
         - goal
@@ -27455,9 +27619,9 @@ components:
           readOnly: true
           type: string
         goal:
+          type: string
           example: 'Learn how to work with computers'
           description: 'The goal of this LearningNeedOutcome.'
-          type: string
         topic:
           type: string
           enum:
@@ -27479,9 +27643,9 @@ components:
           example: DUTCH_READING
           description: 'The topic of this LearningNeedOutcome.'
         topicOther:
+          type: string
           example: 'An other topic'
           description: 'The topic of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         application:
           type: string
@@ -27496,9 +27660,9 @@ components:
           example: FAMILY_AND_PARENTING
           description: 'The application of this LearningNeedOutcome.'
         applicationOther:
+          type: string
           example: 'An other application'
           description: 'The application of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
         level:
           type: string
@@ -27512,9 +27676,9 @@ components:
           example: INFLOW
           description: 'The level of this LearningNeedOutcome.'
         levelOther:
+          type: string
           example: 'An other level'
           description: 'The level of this LearningNeedOutcome when the OTHER option is selected.'
-          type: string
           nullable: true
     Organization-read:
       type: object
@@ -27527,9 +27691,9 @@ components:
           format: uuid
         name:
           maxLength: 255
+          type: string
           example: 'My company'
           description: 'Name of this organization'
-          type: string
         type:
           type: string
           enum:
@@ -27566,9 +27730,9 @@ components:
       properties:
         name:
           maxLength: 255
+          type: string
           example: 'My company'
           description: 'Name of this organization'
-          type: string
         type:
           type: string
           enum:
@@ -27629,9 +27793,9 @@ components:
           format: uuid
         name:
           maxLength: 255
+          type: string
           example: 'My company'
           description: 'Name of this organization'
-          type: string
         type:
           type: string
           enum:
@@ -27691,9 +27855,9 @@ components:
           type: string
         name:
           maxLength: 255
+          type: string
           example: 'My company'
           description: 'Name of this organization'
-          type: string
         type:
           type: string
           enum:
@@ -27730,22 +27894,26 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerName:
-          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Provider X'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Explanation of Provider X'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         offerName:
           maxLength: 255
-          description: 'Offer name of this participation'
           type: string
+          example: 'Offer X'
+          description: 'Offer name of this participation'
           nullable: true
         offerCourse:
           type: string
@@ -27764,8 +27932,9 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         isFormal:
+          type: bool
+          example: 'false'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         groupFormation:
           type: string
@@ -27776,31 +27945,37 @@ components:
           description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
           nullable: true
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         startDate:
+          type: DateTime
+          example: 11-04-2021
           description: 'The start date of this participation.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 11-11-2021
           description: 'The end date of this participation.'
-          type: string
           format: date-time
           nullable: true
         engagements:
           maxLength: 255
-          description: 'Details engagements of this participation'
           type: string
+          example: 'Engagements details'
+          description: 'Details engagements of this participation'
           nullable: true
         learningNeedId:
-          description: 'The id of the LearningNeed connected to this Participation.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the LearningNeed connected to this Participation.'
       required:
         - learningNeedId
     Participation-write:
@@ -27808,22 +27983,26 @@ components:
       description: 'All properties that the DTO entity Participation holds.'
       properties:
         providerId:
-          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerName:
-          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Provider X'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Explanation of Provider X'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         offerName:
           maxLength: 255
-          description: 'Offer name of this participation'
           type: string
+          example: 'Offer X'
+          description: 'Offer name of this participation'
           nullable: true
         offerCourse:
           type: string
@@ -27842,8 +28021,9 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         isFormal:
+          type: bool
+          example: 'false'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         groupFormation:
           type: string
@@ -27854,31 +28034,37 @@ components:
           description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
           nullable: true
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         startDate:
+          type: DateTime
+          example: 11-04-2021
           description: 'The start date of this participation.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 11-11-2021
           description: 'The end date of this participation.'
-          type: string
           format: date-time
           nullable: true
         engagements:
           maxLength: 255
-          description: 'Details engagements of this participation'
           type: string
+          example: 'Engagements details'
+          description: 'Details engagements of this participation'
           nullable: true
         learningNeedId:
-          description: 'The id of the LearningNeed connected to this Participation.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the LearningNeed connected to this Participation.'
       required:
         - learningNeedId
     Participation.jsonld-read:
@@ -27914,22 +28100,26 @@ components:
           type: string
           format: uuid
         providerId:
-          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerName:
-          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Provider X'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Explanation of Provider X'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         offerName:
           maxLength: 255
-          description: 'Offer name of this participation'
           type: string
+          example: 'Offer X'
+          description: 'Offer name of this participation'
           nullable: true
         offerCourse:
           type: string
@@ -27948,8 +28138,9 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         isFormal:
+          type: bool
+          example: 'false'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         groupFormation:
           type: string
@@ -27960,31 +28151,37 @@ components:
           description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
           nullable: true
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         startDate:
+          type: DateTime
+          example: 11-04-2021
           description: 'The start date of this participation.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 11-11-2021
           description: 'The end date of this participation.'
-          type: string
           format: date-time
           nullable: true
         engagements:
           maxLength: 255
-          description: 'Details engagements of this participation'
           type: string
+          example: 'Engagements details'
+          description: 'Details engagements of this participation'
           nullable: true
         learningNeedId:
-          description: 'The id of the LearningNeed connected to this Participation.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the LearningNeed connected to this Participation.'
       required:
         - learningNeedId
     Participation.jsonld-write:
@@ -28015,22 +28212,26 @@ components:
           readOnly: true
           type: string
         providerId:
-          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerName:
-          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Provider X'
+          description: 'The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         providerNote:
           maxLength: 255
-          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           type: string
+          example: 'Explanation of Provider X'
+          description: 'Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**'
           nullable: true
         offerName:
           maxLength: 255
-          description: 'Offer name of this participation'
           type: string
+          example: 'Offer X'
+          description: 'Offer name of this participation'
           nullable: true
         offerCourse:
           type: string
@@ -28049,8 +28250,9 @@ components:
             -
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         isFormal:
+          type: bool
+          example: 'false'
           description: 'The isFormal boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         groupFormation:
           type: string
@@ -28061,31 +28263,37 @@ components:
           description: 'The group formation of this LearningNeedOutcome.'
           nullable: true
         totalClassHours:
+          type: float
+          example: '30'
           description: 'The total class hours of this LearningNeedOutcome.'
-          type: number
           nullable: true
         certificateWillBeAwarded:
+          type: bool
+          example: 'true'
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
-          type: boolean
           nullable: true
         startDate:
+          type: DateTime
+          example: 11-04-2021
           description: 'The start date of this participation.'
-          type: string
           format: date-time
           nullable: true
         endDate:
+          type: DateTime
+          example: 11-11-2021
           description: 'The end date of this participation.'
-          type: string
           format: date-time
           nullable: true
         engagements:
           maxLength: 255
-          description: 'Details engagements of this participation'
           type: string
+          example: 'Engagements details'
+          description: 'Details engagements of this participation'
           nullable: true
         learningNeedId:
-          description: 'The id of the LearningNeed connected to this Participation.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The id of the LearningNeed connected to this Participation.'
       required:
         - learningNeedId
     Person-read:
@@ -28098,18 +28306,18 @@ components:
           type: string
           format: uuid
         givenName:
+          type: string
           example: John
           description: 'Given name of this person'
-          type: string
         additionalName:
+          type: string
           example: von
           description: 'Additional name of this person'
-          type: string
           nullable: true
         familyName:
+          type: string
           example: Doe
           description: 'Family name of this person'
-          type: string
         gender:
           type: string
           enum:
@@ -28119,8 +28327,9 @@ components:
           description: 'Gender of this person'
           nullable: true
         birthday:
+          type: DateTime
+          example: 12-02-1999
           description: 'Birthday of this person'
-          type: string
           format: date-time
           nullable: true
         addresses:
@@ -28157,8 +28366,9 @@ components:
           description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
-          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
+          example: 'Send contact person a message'
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
       required:
         - givenName
@@ -28171,18 +28381,18 @@ components:
         - familyName
       properties:
         givenName:
+          type: string
           example: John
           description: 'Given name of this person'
-          type: string
         additionalName:
+          type: string
           example: von
           description: 'Additional name of this person'
-          type: string
           nullable: true
         familyName:
+          type: string
           example: Doe
           description: 'Family name of this person'
-          type: string
         gender:
           type: string
           enum:
@@ -28192,8 +28402,9 @@ components:
           description: 'Gender of this person'
           nullable: true
         birthday:
+          type: DateTime
+          example: 12-02-1999
           description: 'Birthday of this person'
-          type: string
           format: date-time
           nullable: true
         addresses:
@@ -28230,8 +28441,9 @@ components:
           description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
-          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
+          example: 'Send contact person a message'
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
     Person.jsonld-read:
       type: object
@@ -28266,18 +28478,18 @@ components:
           type: string
           format: uuid
         givenName:
+          type: string
           example: John
           description: 'Given name of this person'
-          type: string
         additionalName:
+          type: string
           example: von
           description: 'Additional name of this person'
-          type: string
           nullable: true
         familyName:
+          type: string
           example: Doe
           description: 'Family name of this person'
-          type: string
         gender:
           type: string
           enum:
@@ -28287,8 +28499,9 @@ components:
           description: 'Gender of this person'
           nullable: true
         birthday:
+          type: DateTime
+          example: 12-02-1999
           description: 'Birthday of this person'
-          type: string
           format: date-time
           nullable: true
         addresses:
@@ -28325,8 +28538,9 @@ components:
           description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
-          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
+          example: 'Send contact person a message'
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
       required:
         - givenName
@@ -28362,18 +28576,18 @@ components:
           readOnly: true
           type: string
         givenName:
+          type: string
           example: John
           description: 'Given name of this person'
-          type: string
         additionalName:
+          type: string
           example: von
           description: 'Additional name of this person'
-          type: string
           nullable: true
         familyName:
+          type: string
           example: Doe
           description: 'Family name of this person'
-          type: string
         gender:
           type: string
           enum:
@@ -28383,8 +28597,9 @@ components:
           description: 'Gender of this person'
           nullable: true
         birthday:
+          type: DateTime
+          example: 12-02-1999
           description: 'Birthday of this person'
-          type: string
           format: date-time
           nullable: true
         addresses:
@@ -28421,8 +28636,9 @@ components:
           description: 'The contact preference of the person.'
           nullable: true
         contactPreferenceOther:
-          description: 'The contact preference of the person for when the OTHER option is selected.'
           type: string
+          example: 'Send contact person a message'
+          description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
     Registration-read:
       type: object
@@ -28434,8 +28650,9 @@ components:
           type: string
           format: uuid
         languageHouseId:
-          description: 'A language house for this registration.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A language house for this registration.'
         student:
           description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
@@ -28449,8 +28666,9 @@ components:
             -
               $ref: '#/components/schemas/Person-read'
         memo:
-          description: 'A note for/with this registration.'
           type: string
+          example: 'Explanation of the registration'
+          description: 'A note for/with this registration.'
           nullable: true
         status:
           type: string
@@ -28474,8 +28692,9 @@ components:
         - registrar
       properties:
         languageHouseId:
-          description: 'A language house for this registration.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A language house for this registration.'
         student:
           description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
@@ -28489,8 +28708,9 @@ components:
             -
               $ref: '#/components/schemas/Person-write'
         memo:
-          description: 'A note for/with this registration.'
           type: string
+          example: 'Explanation of the registration'
+          description: 'A note for/with this registration.'
           nullable: true
         status:
           type: string
@@ -28534,8 +28754,9 @@ components:
           type: string
           format: uuid
         languageHouseId:
-          description: 'A language house for this registration.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A language house for this registration.'
         student:
           description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
@@ -28549,8 +28770,9 @@ components:
             -
               $ref: '#/components/schemas/Person.jsonld-read'
         memo:
-          description: 'A note for/with this registration.'
           type: string
+          example: 'Explanation of the registration'
+          description: 'A note for/with this registration.'
           nullable: true
         status:
           type: string
@@ -28597,8 +28819,9 @@ components:
           readOnly: true
           type: string
         languageHouseId:
-          description: 'A language house for this registration.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'A language house for this registration.'
         student:
           description: 'A contact catalogue person for the student. <br /> **This person must contain an Email and Telephone!**'
           nullable: true
@@ -28612,8 +28835,9 @@ components:
             -
               $ref: '#/components/schemas/Person.jsonld-write'
         memo:
-          description: 'A note for/with this registration.'
           type: string
+          example: 'Explanation of the registration'
+          description: 'A note for/with this registration.'
           nullable: true
         status:
           type: string
@@ -28634,48 +28858,58 @@ components:
           type: string
           format: uuid
         organizationId:
-          description: 'The organization the report applies to.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The organization the report applies to.'
           nullable: true
         dateFrom:
-          description: 'A date from which you want data in the report.'
           type: string
+          example: 12-06-2021
+          description: 'A date from which you want data in the report.'
           nullable: true
         dateUntil:
-          description: 'A date until which you want data in the report.'
           type: string
+          example: 12-06-2022
+          description: 'A date until which you want data in the report.'
           nullable: true
         filename:
-          description: 'The filename of the report.'
           type: string
+          example: 'Report X'
+          description: 'The filename of the report.'
           nullable: true
         base64:
-          description: 'A base64 encoded string containing the file''s contents.'
           type: string
+          example: base64
+          description: 'A base64 encoded string containing the file''s contents.'
           nullable: true
     Report-write:
       type: object
       description: 'All properties that the DTO entity Report holds.'
       properties:
         organizationId:
-          description: 'The organization the report applies to.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The organization the report applies to.'
           nullable: true
         dateFrom:
-          description: 'A date from which you want data in the report.'
           type: string
+          example: 12-06-2021
+          description: 'A date from which you want data in the report.'
           nullable: true
         dateUntil:
-          description: 'A date until which you want data in the report.'
           type: string
+          example: 12-06-2022
+          description: 'A date until which you want data in the report.'
           nullable: true
         filename:
-          description: 'The filename of the report.'
           type: string
+          example: 'Report X'
+          description: 'The filename of the report.'
           nullable: true
         base64:
-          description: 'A base64 encoded string containing the file''s contents.'
           type: string
+          example: base64
+          description: 'A base64 encoded string containing the file''s contents.'
           nullable: true
     Report.jsonld-read:
       type: object
@@ -28710,24 +28944,29 @@ components:
           type: string
           format: uuid
         organizationId:
-          description: 'The organization the report applies to.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The organization the report applies to.'
           nullable: true
         dateFrom:
-          description: 'A date from which you want data in the report.'
           type: string
+          example: 12-06-2021
+          description: 'A date from which you want data in the report.'
           nullable: true
         dateUntil:
-          description: 'A date until which you want data in the report.'
           type: string
+          example: 12-06-2022
+          description: 'A date until which you want data in the report.'
           nullable: true
         filename:
-          description: 'The filename of the report.'
           type: string
+          example: 'Report X'
+          description: 'The filename of the report.'
           nullable: true
         base64:
-          description: 'A base64 encoded string containing the file''s contents.'
           type: string
+          example: base64
+          description: 'A base64 encoded string containing the file''s contents.'
           nullable: true
     Report.jsonld-write:
       type: object
@@ -28757,24 +28996,29 @@ components:
           readOnly: true
           type: string
         organizationId:
-          description: 'The organization the report applies to.'
           type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          description: 'The organization the report applies to.'
           nullable: true
         dateFrom:
-          description: 'A date from which you want data in the report.'
           type: string
+          example: 12-06-2021
+          description: 'A date from which you want data in the report.'
           nullable: true
         dateUntil:
-          description: 'A date until which you want data in the report.'
           type: string
+          example: 12-06-2022
+          description: 'A date until which you want data in the report.'
           nullable: true
         filename:
-          description: 'The filename of the report.'
           type: string
+          example: 'Report X'
+          description: 'The filename of the report.'
           nullable: true
         base64:
-          description: 'A base64 encoded string containing the file''s contents.'
           type: string
+          example: base64
+          description: 'A base64 encoded string containing the file''s contents.'
           nullable: true
     Student-read:
       type: object

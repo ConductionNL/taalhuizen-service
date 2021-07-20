@@ -101,6 +101,14 @@ class Participation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerId;
 
@@ -109,6 +117,14 @@ class Participation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Provider X"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerName;
 
@@ -120,6 +136,14 @@ class Participation
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation of Provider X"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerNote;
 
@@ -131,6 +155,14 @@ class Participation
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Offer X"
+     *         }
+     *     }
+     * )
      */
     private ?string $offerName;
 
@@ -169,6 +201,14 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="false"
+     *         }
+     *     }
+     * )
      */
     private ?bool $isFormal;
 
@@ -195,6 +235,14 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="float",
+     *             "example"="30"
+     *         }
+     *     }
+     * )
      */
     private ?float $totalClassHours;
 
@@ -203,6 +251,14 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $certificateWillBeAwarded;
 
@@ -211,6 +267,14 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="11-04-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTimeInterface $startDate;
 
@@ -219,6 +283,14 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="11-11-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTimeInterface $endDate;
 
@@ -230,6 +302,14 @@ class Participation
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Engagements details"
+     *         }
+     *     }
+     * )
      */
     private ?string $engagements;
 
@@ -239,6 +319,14 @@ class Participation
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private string $learningNeedId;
 

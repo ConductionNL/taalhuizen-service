@@ -78,6 +78,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationId;
 
@@ -86,6 +94,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2021"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateFrom;
 
@@ -94,6 +110,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2022"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateUntil;
 
@@ -102,6 +126,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Report X"
+     *         }
+     *     }
+     * )
      */
     private ?string $filename;
 
@@ -110,6 +142,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
     private ?string $base64;
 

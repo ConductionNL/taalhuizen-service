@@ -88,6 +88,14 @@ class Employee
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation availability"
+     *         }
+     *     }
+     * )
      */
     private ?string $availabilityNotes;
 
@@ -122,8 +130,16 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language cafe"
+     *         }
+     *     }
+     * )
      */
-    private ?string $volunteeringPreference = null;
+    private ?string $volunteeringPreference;
 
     /**
      * @var ?string Got here via of this Employee.
@@ -133,6 +149,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="The Internet"
+     *         }
+     *     }
+     * )
      */
     private ?string $gotHereVia;
 
@@ -144,6 +168,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="yes"
+     *         }
+     *     }
+     * )
      */
     private ?string $hasExperienceWithTargetGroup;
 
@@ -152,6 +184,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Worked in an asylum seekers center"
+     *         }
+     *     }
+     * )
      */
     private ?string $experienceWithTargetGroupYesReason;
 
@@ -163,6 +203,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="yes"
+     *         }
+     *     }
+     * )
      */
     private ?string $currentEducation;
 
@@ -182,6 +230,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $doesCurrentlyFollowCourse;
 
@@ -204,6 +260,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Dutch language certificate"
+     *         }
+     *     }
+     * )
      */
     private ?string $otherRelevantCertificates;
 
@@ -212,6 +276,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $isVOGChecked = false;
 
@@ -220,6 +292,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationId;
 
@@ -231,6 +311,17 @@ class Employee
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="array")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private array $userGroupIds = [];
 
@@ -244,6 +335,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $userId;
 

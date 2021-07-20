@@ -62,6 +62,14 @@ class Registration
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private string $languageHouseId;
 
@@ -92,6 +100,14 @@ class Registration
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation of the registration"
+     *         }
+     *     }
+     * )
      */
     private ?string $memo;
 

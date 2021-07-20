@@ -68,6 +68,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="John"
      *         }
      *     }
@@ -83,6 +84,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="von"
      *         }
      *     }
@@ -99,6 +101,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Doe"
      *         }
      *     }
@@ -129,6 +132,14 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-02-1999"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $birthday;
 
@@ -201,6 +212,14 @@ class Person
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Send contact person a message"
+     *         }
+     *     }
+     * )
      */
     private ?string $contactPreferenceOther;
 

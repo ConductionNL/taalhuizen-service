@@ -60,6 +60,7 @@ class LearningNeedOutCome
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Learn how to work with computers"
      *         }
      *     }
@@ -94,6 +95,7 @@ class LearningNeedOutCome
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other topic"
      *         }
      *     }
@@ -128,6 +130,7 @@ class LearningNeedOutCome
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other application"
      *         }
      *     }
@@ -162,6 +165,7 @@ class LearningNeedOutCome
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other level"
      *         }
      *     }

@@ -64,6 +64,14 @@ class Group
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $providerId;
 
@@ -76,6 +84,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Group X"
+     *         }
+     *     }
+     * )
      */
     private string $name;
 
@@ -88,6 +104,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language course"
+     *         }
+     *     }
+     * )
      */
     private string $typeCourse;
 
@@ -108,6 +132,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $isFormal;
 
@@ -117,6 +149,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="float")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="float",
+     *             "example"="30"
+     *         }
+     *     }
+     * )
      */
     private float $totalClassHours;
 
@@ -126,6 +166,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $certificateWillBeAwarded;
 
@@ -137,6 +185,14 @@ class Group
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="20-07-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $startDate;
 
@@ -148,6 +204,14 @@ class Group
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="20-10-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $endDate;
 
@@ -170,6 +234,14 @@ class Group
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation availability"
+     *         }
+     *     }
+     * )
      */
     private ?string $availabilityNotes;
 
@@ -182,6 +254,14 @@ class Group
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Online"
+     *         }
+     *     }
+     * )
      */
     private string $location;
 
@@ -193,6 +273,14 @@ class Group
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="15"
+     *         }
+     *     }
+     * )
      */
     private ?int $minParticipations;
 
@@ -204,6 +292,14 @@ class Group
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="25"
+     *         }
+     *     }
+     * )
      */
     private ?int $maxParticipations;
 
@@ -215,6 +311,14 @@ class Group
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Group evalution"
+     *         }
+     *     }
+     * )
      */
     private ?string $evaluation;
 
@@ -226,6 +330,17 @@ class Group
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="array")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private array $employeeIds = [];
 
