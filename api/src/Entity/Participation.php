@@ -6,6 +6,7 @@ use App\Repository\ParticipationRepository;
 use App\Resolver\ParticipationMutationResolver;
 use App\Resolver\ParticipationQueryCollectionResolver;
 use App\Resolver\ParticipationQueryItemResolver;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
@@ -157,6 +158,7 @@ class Participation
      *
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

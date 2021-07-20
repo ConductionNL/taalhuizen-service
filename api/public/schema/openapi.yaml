@@ -5558,6 +5558,1517 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/employees/{id}/availability':
+    get:
+      operationId: api_employees_availability_get_subresourceEmployeeSubresource
+      tags:
+        - Availability
+        - Employee
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/friday':
+    get:
+      operationId: api_employees_availability_friday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/monday':
+    get:
+      operationId: api_employees_availability_monday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/saturday':
+    get:
+      operationId: api_employees_availability_saturday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/sunday':
+    get:
+      operationId: api_employees_availability_sunday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/thursday':
+    get:
+      operationId: api_employees_availability_thursday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/tuesday':
+    get:
+      operationId: api_employees_availability_tuesday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/availability/wednesday':
+    get:
+      operationId: api_employees_availability_wednesday_get_subresourceEmployeeSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/education':
+    get:
+      operationId: api_employees_education_get_subresourceEmployeeSubresource
+      tags:
+        - Education
+        - Employee
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/following_course':
+    get:
+      operationId: api_employees_following_course_get_subresourceEmployeeSubresource
+      tags:
+        - Education
+        - Employee
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person':
+    get:
+      operationId: api_employees_person_get_subresourceEmployeeSubresource
+      tags:
+        - Person
+        - Employee
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/addresses':
+    get:
+      operationId: api_employees_person_addresses_get_subresourceEmployeeSubresource
+      tags:
+        - Address
+        - Person
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/emails':
+    get:
+      operationId: api_employees_person_emails_get_subresourceEmployeeSubresource
+      tags:
+        - Email
+        - Person
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/organization':
+    get:
+      operationId: api_employees_person_organization_get_subresourceEmployeeSubresource
+      tags:
+        - Organization
+        - Person
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/organization/addresses':
+    get:
+      operationId: api_employees_person_organization_addresses_get_subresourceEmployeeSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/organization/emails':
+    get:
+      operationId: api_employees_person_organization_emails_get_subresourceEmployeeSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/organization/telephones':
+    get:
+      operationId: api_employees_person_organization_telephones_get_subresourceEmployeeSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/employees/{id}/person/telephones':
+    get:
+      operationId: api_employees_person_telephones_get_subresourceEmployeeSubresource
+      tags:
+        - Telephone
+        - Person
+      responses:
+        200:
+          description: 'Employee resource'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Employee resource.'
+      description: 'Retrieves a Employee resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Employee identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /groups:
     get:
       operationId: getGroupCollection
@@ -6120,6 +7631,711 @@ paths:
           name: id
           in: path
           description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability':
+    get:
+      operationId: api_groups_availability_get_subresourceGroupSubresource
+      tags:
+        - Availability
+        - Group
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/friday':
+    get:
+      operationId: api_groups_availability_friday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/monday':
+    get:
+      operationId: api_groups_availability_monday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/saturday':
+    get:
+      operationId: api_groups_availability_saturday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/sunday':
+    get:
+      operationId: api_groups_availability_sunday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/thursday':
+    get:
+      operationId: api_groups_availability_thursday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/tuesday':
+    get:
+      operationId: api_groups_availability_tuesday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/availability/wednesday':
+    get:
+      operationId: api_groups_availability_wednesday_get_subresourceGroupSubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: availability
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/groups/{id}/learning_need_out_come':
+    get:
+      operationId: api_groups_learning_need_out_come_get_subresourceGroupSubresource
+      tags:
+        - LearningNeedOutCome
+        - Group
+      responses:
+        200:
+          description: 'Group resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+      summary: 'Retrieves a Group resource.'
+      description: 'Retrieves a Group resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Group identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -7030,6 +9246,75 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/learning_needs/{id}/desired_learning_need_out_come':
+    get:
+      operationId: api_learning_needs_desired_learning_need_out_come_get_subresourceLearningNeedSubresource
+      tags:
+        - LearningNeedOutCome
+        - LearningNeed
+      responses:
+        200:
+          description: 'LearningNeed resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+      summary: 'Retrieves a LearningNeed resource.'
+      description: 'Retrieves a LearningNeed resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'LearningNeed identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/organization/{uuid}/user_roles':
     get:
       operationId: get_user_rolesOrganizationItem
@@ -7550,6 +9835,213 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/organizations/{id}/addresses':
+    get:
+      operationId: api_organizations_addresses_get_subresourceOrganizationSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'Organization resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Organization resource.'
+      description: 'Retrieves a Organization resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/organizations/{id}/emails':
+    get:
+      operationId: api_organizations_emails_get_subresourceOrganizationSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'Organization resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Organization resource.'
+      description: 'Retrieves a Organization resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/organizations/{id}/telephones':
+    get:
+      operationId: api_organizations_telephones_get_subresourceOrganizationSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'Organization resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Organization resource.'
+      description: 'Retrieves a Organization resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /participations:
     get:
       operationId: getParticipationCollection
@@ -7990,6 +10482,75 @@ paths:
           name: id
           in: path
           description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/participations/{id}/learning_need_out_come':
+    get:
+      operationId: api_participations_learning_need_out_come_get_subresourceParticipationSubresource
+      tags:
+        - LearningNeedOutCome
+        - Participation
+      responses:
+        200:
+          description: 'Participation resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+      summary: 'Retrieves a Participation resource.'
+      description: 'Retrieves a Participation resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Participation identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -8898,6 +11459,590 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/people/{id}/addresses':
+    get:
+      operationId: api_people_addresses_get_subresourcePersonSubresource
+      tags:
+        - Address
+        - Person
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/emails':
+    get:
+      operationId: api_people_emails_get_subresourcePersonSubresource
+      tags:
+        - Email
+        - Person
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/organization':
+    get:
+      operationId: api_people_organization_get_subresourcePersonSubresource
+      tags:
+        - Organization
+        - Person
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/organization/addresses':
+    get:
+      operationId: api_people_organization_addresses_get_subresourcePersonSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/organization/emails':
+    get:
+      operationId: api_people_organization_emails_get_subresourcePersonSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/organization/telephones':
+    get:
+      operationId: api_people_organization_telephones_get_subresourcePersonSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}/telephones':
+    get:
+      operationId: api_people_telephones_get_subresourcePersonSubresource
+      tags:
+        - Telephone
+        - Person
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /registrations:
     get:
       operationId: getRegistrationCollection
@@ -9344,6 +12489,1480 @@ paths:
           schema:
             type: string
           style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar':
+    get:
+      operationId: api_registrations_registrar_get_subresourceRegistrationSubresource
+      tags:
+        - Person
+        - Registration
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/addresses':
+    get:
+      operationId: api_registrations_registrar_addresses_get_subresourceRegistrationSubresource
+      tags:
+        - Address
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/emails':
+    get:
+      operationId: api_registrations_registrar_emails_get_subresourceRegistrationSubresource
+      tags:
+        - Email
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/organization':
+    get:
+      operationId: api_registrations_registrar_organization_get_subresourceRegistrationSubresource
+      tags:
+        - Organization
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/organization/addresses':
+    get:
+      operationId: api_registrations_registrar_organization_addresses_get_subresourceRegistrationSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/organization/emails':
+    get:
+      operationId: api_registrations_registrar_organization_emails_get_subresourceRegistrationSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/organization/telephones':
+    get:
+      operationId: api_registrations_registrar_organization_telephones_get_subresourceRegistrationSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/registrar/telephones':
+    get:
+      operationId: api_registrations_registrar_telephones_get_subresourceRegistrationSubresource
+      tags:
+        - Telephone
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: registrar
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student':
+    get:
+      operationId: api_registrations_student_get_subresourceRegistrationSubresource
+      tags:
+        - Person
+        - Registration
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/addresses':
+    get:
+      operationId: api_registrations_student_addresses_get_subresourceRegistrationSubresource
+      tags:
+        - Address
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/emails':
+    get:
+      operationId: api_registrations_student_emails_get_subresourceRegistrationSubresource
+      tags:
+        - Email
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/organization':
+    get:
+      operationId: api_registrations_student_organization_get_subresourceRegistrationSubresource
+      tags:
+        - Organization
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/organization/addresses':
+    get:
+      operationId: api_registrations_student_organization_addresses_get_subresourceRegistrationSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/organization/emails':
+    get:
+      operationId: api_registrations_student_organization_emails_get_subresourceRegistrationSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/organization/telephones':
+    get:
+      operationId: api_registrations_student_organization_telephones_get_subresourceRegistrationSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/registrations/{id}/student/telephones':
+    get:
+      operationId: api_registrations_student_telephones_get_subresourceRegistrationSubresource
+      tags:
+        - Telephone
+        - Person
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: student
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
           explode: false
           allowReserved: false
       deprecated: false
@@ -17963,6 +22582,75 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/test_results/{id}/learning_need_out_come':
+    get:
+      operationId: api_test_results_learning_need_out_come_get_subresourceTestResultSubresource
+      tags:
+        - LearningNeedOutCome
+        - TestResult
+      responses:
+        200:
+          description: 'TestResult resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+      summary: 'Retrieves a TestResult resource.'
+      description: 'Retrieves a TestResult resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'TestResult identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /users:
     get:
       operationId: getUserCollection
@@ -18927,6 +23615,743 @@ paths:
           schema:
             type: string
           style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person':
+    get:
+      operationId: api_users_person_get_subresourceUserSubresource
+      tags:
+        - Person
+        - User
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/addresses':
+    get:
+      operationId: api_users_person_addresses_get_subresourceUserSubresource
+      tags:
+        - Address
+        - Person
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/emails':
+    get:
+      operationId: api_users_person_emails_get_subresourceUserSubresource
+      tags:
+        - Email
+        - Person
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/organization':
+    get:
+      operationId: api_users_person_organization_get_subresourceUserSubresource
+      tags:
+        - Organization
+        - Person
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Organization.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Organization-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/organization/addresses':
+    get:
+      operationId: api_users_person_organization_addresses_get_subresourceUserSubresource
+      tags:
+        - Address
+        - Organization
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/organization/emails':
+    get:
+      operationId: api_users_person_organization_emails_get_subresourceUserSubresource
+      tags:
+        - Email
+        - Organization
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/organization/telephones':
+    get:
+      operationId: api_users_person_organization_telephones_get_subresourceUserSubresource
+      tags:
+        - Telephone
+        - Organization
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: organization
+          in: path
+          description: 'Organization identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/users/{id}/person/telephones':
+    get:
+      operationId: api_users_person_telephones_get_subresourceUserSubresource
+      tags:
+        - Telephone
+        - Person
+      responses:
+        200:
+          description: 'User resource'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves a User resource.'
+      description: 'Retrieves a User resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: person
+          in: path
+          description: 'Person identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
           explode: false
           allowReserved: false
       deprecated: false
