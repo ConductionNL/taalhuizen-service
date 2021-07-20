@@ -2,23 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\EducationRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\EducationRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -58,10 +49,18 @@ class Education
     private UuidInterface $id;
 
     /**
-     * @var String|null The name of the course this student is following.
+     * @var string|null The name of the course this student is following.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language course"
+     *         }
+     *     }
+     * )
      */
     private ?string $name;
 
@@ -73,6 +72,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-07-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $startDate;
 
@@ -84,6 +91,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-10-2021"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $endDate;
 
@@ -95,6 +110,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Institution X"
+     *         }
+     *     }
+     * )
      */
     private ?string $institution;
 
@@ -106,6 +129,14 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="HBO"
+     *         }
+     *     }
+     * )
      */
     private ?string $iscedEducationLevelCode;
 
@@ -117,11 +148,19 @@ class Education
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Granted"
+     *         }
+     *     }
+     * )
      */
     private ?string $degreeGrantedStatus;
 
     /**
-     * @var String|null The group formation type of this (course) Education.
+     * @var string|null The group formation type of this (course) Education.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"INDIVIDUALLY", "GROUP"})
@@ -139,7 +178,7 @@ class Education
     private ?string $groupFormation;
 
     /**
-     * @var String|null The professionalism of the teacher for this Education.
+     * @var string|null The professionalism of the teacher for this Education.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
@@ -157,7 +196,7 @@ class Education
     private ?string $teacherProfessionalism;
 
     /**
-     * @var String|null The professionalism of this Education if this education is a course.
+     * @var string|null The professionalism of this Education if this education is a course.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"PROFESSIONAL", "VOLUNTEER", "BOTH"})
@@ -179,6 +218,14 @@ class Education
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $providesCertificate;
 
@@ -187,6 +234,14 @@ class Education
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="25"
+     *         }
+     *     }
+     * )
      */
     private ?int $amountOfHours;
 
@@ -198,6 +253,7 @@ class Education
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

@@ -2,19 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\PersonRepository;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Repository\PersonRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -67,6 +62,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="John"
      *         }
      *     }
@@ -82,6 +78,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="von"
      *         }
      *     }
@@ -98,6 +95,7 @@ class Person
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Doe"
      *         }
      *     }
@@ -109,13 +107,13 @@ class Person
      * @var string|null Gender of this person
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"Male", "Female"})
+     * @Assert\Choice({"Male", "Female", "X"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "enum"={"Male", "Female"},
+     *             "enum"={"Male", "Female", "X"},
      *             "example"="Male"
      *         }
      *     }
@@ -128,6 +126,14 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="12-02-1999"
+     *         }
+     *     }
+     * )
      */
     private ?DateTime $birthday;
 
@@ -136,6 +142,7 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -146,6 +153,7 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\ManyToMany(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -156,6 +164,7 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -166,6 +175,7 @@ class Person
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -196,6 +206,14 @@ class Person
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Send contact person a message"
+     *         }
+     *     }
+     * )
      */
     private ?string $contactPreferenceOther;
 
@@ -212,6 +230,7 @@ class Person
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

@@ -4,14 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\UserRepository;
-use App\Resolver\UserMutationResolver;
-use App\Resolver\UserQueryCollectionResolver;
-use App\Resolver\UserQueryItemResolver;
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -110,6 +105,7 @@ class User
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private Person $person;
@@ -135,7 +131,7 @@ class User
     private ?string $userEnvironment;
 
     /**
-     * @var String|null A contact component organization id of this User.
+     * @var string|null A contact component organization id of this User.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -143,7 +139,7 @@ class User
     private ?string $organizationId;
 
     /**
-     * @var String|null The organization name of this User.
+     * @var string|null The organization name of this User.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

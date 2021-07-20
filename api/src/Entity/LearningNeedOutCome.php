@@ -2,15 +2,8 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Repository\TestResultRepository;
-use App\Resolver\TestResultMutationResolver;
-use App\Resolver\TestResultQueryCollectionResolver;
-use App\Resolver\TestResultQueryItemResolver;
-use DateTimeInterface;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -52,7 +45,7 @@ class LearningNeedOutCome
     private UuidInterface $id;
 
     /**
-     * @var String The goal of this LearningNeedOutcome.
+     * @var string The goal of this LearningNeedOutcome.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -60,6 +53,7 @@ class LearningNeedOutCome
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="Learn how to work with computers"
      *         }
      *     }
@@ -68,7 +62,7 @@ class LearningNeedOutCome
     private string $goal;
 
     /**
-     * @var String The topic of this LearningNeedOutcome.
+     * @var string The topic of this LearningNeedOutcome.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -87,13 +81,14 @@ class LearningNeedOutCome
     private string $topic;
 
     /**
-     * @var String|null The topic of this LearningNeedOutcome when the OTHER option is selected.
+     * @var string|null The topic of this LearningNeedOutcome when the OTHER option is selected.
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other topic"
      *         }
      *     }
@@ -102,7 +97,7 @@ class LearningNeedOutCome
     private ?string $topicOther;
 
     /**
-     * @var String The application of this LearningNeedOutcome.
+     * @var string The application of this LearningNeedOutcome.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -121,13 +116,14 @@ class LearningNeedOutCome
     private string $application;
 
     /**
-     * @var String|null The application of this LearningNeedOutcome when the OTHER option is selected.
+     * @var string|null The application of this LearningNeedOutcome when the OTHER option is selected.
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other application"
      *         }
      *     }
@@ -136,7 +132,7 @@ class LearningNeedOutCome
     private ?string $applicationOther;
 
     /**
-     * @var String The level of this LearningNeedOutcome.
+     * @var string The level of this LearningNeedOutcome.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -155,13 +151,14 @@ class LearningNeedOutCome
     private string $level;
 
     /**
-     * @var String|null The level of this LearningNeedOutcome when the OTHER option is selected.
+     * @var string|null The level of this LearningNeedOutcome when the OTHER option is selected.
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="An other level"
      *         }
      *     }

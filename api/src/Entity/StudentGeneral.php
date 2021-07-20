@@ -45,7 +45,7 @@ class StudentGeneral
     private UuidInterface $id;
 
     /**
-     * @var String|null The country of origin of this student.
+     * @var string|null The country of origin of this student.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -53,7 +53,7 @@ class StudentGeneral
     private ?string $countryOfOrigin;
 
     /**
-     * @var String|null The native language of this student.
+     * @var string|null The native language of this student.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -61,7 +61,7 @@ class StudentGeneral
     private ?string $nativeLanguage;
 
     /**
-     * @var String|null The other languages this student speaks.
+     * @var string|null The other languages this student speaks.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -98,7 +98,7 @@ class StudentGeneral
     private ?int $childrenCount;
 
     /**
-     * @var String|null The birthdays of the children of this student.
+     * @var string|null The birthdays of the children of this student.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)

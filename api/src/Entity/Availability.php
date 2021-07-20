@@ -2,19 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\AvailabilityRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Repository\AvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -61,7 +52,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $monday;
@@ -71,7 +63,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $tuesday;
@@ -81,7 +74,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $wednesday;
@@ -91,7 +85,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $thursday;
@@ -101,7 +96,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $friday;
@@ -111,7 +107,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $saturday;
@@ -121,7 +118,8 @@ class Availability
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=AvailabilityDay::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=AvailabilityDay::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private AvailabilityDay $sunday;
@@ -138,7 +136,7 @@ class Availability
         return $this;
     }
 
-    public function getMonday(): ?AvailabilityDay
+    public function getMonday(): AvailabilityDay
     {
         return $this->monday;
     }
@@ -150,7 +148,7 @@ class Availability
         return $this;
     }
 
-    public function getTuesday(): ?AvailabilityDay
+    public function getTuesday(): AvailabilityDay
     {
         return $this->tuesday;
     }
@@ -162,7 +160,7 @@ class Availability
         return $this;
     }
 
-    public function getWednesday(): ?AvailabilityDay
+    public function getWednesday(): AvailabilityDay
     {
         return $this->wednesday;
     }
@@ -174,7 +172,7 @@ class Availability
         return $this;
     }
 
-    public function getThursday(): ?AvailabilityDay
+    public function getThursday(): AvailabilityDay
     {
         return $this->thursday;
     }
@@ -186,7 +184,7 @@ class Availability
         return $this;
     }
 
-    public function getFriday(): ?AvailabilityDay
+    public function getFriday(): AvailabilityDay
     {
         return $this->friday;
     }
@@ -198,7 +196,7 @@ class Availability
         return $this;
     }
 
-    public function getSaturday(): ?AvailabilityDay
+    public function getSaturday(): AvailabilityDay
     {
         return $this->saturday;
     }
@@ -210,7 +208,7 @@ class Availability
         return $this;
     }
 
-    public function getSunday(): ?AvailabilityDay
+    public function getSunday(): AvailabilityDay
     {
         return $this->sunday;
     }

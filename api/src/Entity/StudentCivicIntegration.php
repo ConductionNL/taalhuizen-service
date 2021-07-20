@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentCivicIntegrationRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -46,7 +46,7 @@ class StudentCivicIntegration
     private UuidInterface $id;
 
     /**
-     * @var String|null A enum for the status of the civic integration requirement of the student.
+     * @var string|null A enum for the status of the civic integration requirement of the student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"YES", "NO", "CURRENTLY_WORKING_ON_INTEGRATION"})
@@ -64,7 +64,7 @@ class StudentCivicIntegration
     private ?string $civicIntegrationRequirement;
 
     /**
-     * @var String|null The reason why this student has no civic integration requirement.
+     * @var string|null The reason why this student has no civic integration requirement.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"FINISHED", "FROM_EU_COUNTRY", "EXEMPTED_OR_ZROUTE"})

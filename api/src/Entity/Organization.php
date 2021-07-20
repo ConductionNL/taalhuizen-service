@@ -2,19 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\OrganizationRepository;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Repository\OrganizationRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -77,6 +69,7 @@ class Organization
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
+     *             "type"="string",
      *             "example"="My company"
      *         }
      *     }
@@ -108,6 +101,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -118,6 +112,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -128,6 +123,7 @@ class Organization
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -141,6 +137,7 @@ class Organization
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
         return $this;
     }
 

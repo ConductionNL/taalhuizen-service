@@ -2,18 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeMutationResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -63,6 +56,7 @@ class Employee
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private Person $person;
@@ -72,6 +66,7 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -85,6 +80,14 @@ class Employee
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation availability"
+     *         }
+     *     }
+     * )
      */
     private ?string $availabilityNotes;
 
@@ -119,8 +122,16 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language cafe"
+     *         }
+     *     }
+     * )
      */
-    private ?string $volunteeringPreference = null;
+    private ?string $volunteeringPreference;
 
     /**
      * @var ?string Got here via of this Employee.
@@ -130,6 +141,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="The Internet"
+     *         }
+     *     }
+     * )
      */
     private ?string $gotHereVia;
 
@@ -141,6 +160,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="yes"
+     *         }
+     *     }
+     * )
      */
     private ?string $hasExperienceWithTargetGroup;
 
@@ -149,6 +176,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Worked in an asylum seekers center"
+     *         }
+     *     }
+     * )
      */
     private ?string $experienceWithTargetGroupYesReason;
 
@@ -160,6 +195,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="yes"
+     *         }
+     *     }
+     * )
      */
     private ?string $currentEducation;
 
@@ -168,6 +211,7 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -178,6 +222,14 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $doesCurrentlyFollowCourse;
 
@@ -186,6 +238,7 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -199,6 +252,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Dutch language certificate"
+     *         }
+     *     }
+     * )
      */
     private ?string $otherRelevantCertificates;
 
@@ -207,14 +268,30 @@ class Employee
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private ?bool $isVOGChecked = false;
 
     /**
-     * @var String|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
+     * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationId;
 
@@ -226,6 +303,17 @@ class Employee
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="array")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *             }
+     *         }
+     *     }
+     * )
      */
     private array $userGroupIds = [];
 
@@ -239,6 +327,14 @@ class Employee
      * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private ?string $userId;
 
@@ -254,7 +350,7 @@ class Employee
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }

@@ -3,15 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\StudentRepository;
-use App\Resolver\StudentMutationResolver;
-use App\Resolver\StudentQueryCollectionResolver;
-use App\Resolver\StudentQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -88,7 +84,8 @@ class Student
      * @var StudentCivicIntegration|null The StudentCivicIntegration of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -108,7 +105,9 @@ class Student
      * @var StudentGeneral|null The StudentGeneral of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentGeneral::class)
+     * @ApiSubresource()
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -118,7 +117,8 @@ class Student
      * @var StudentReferrer|null The StudentReferrer of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentReferrer::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -128,7 +128,8 @@ class Student
      * @var StudentBackground|null The StudentBackground of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentBackground::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -138,14 +139,15 @@ class Student
      * @var StudentDutchNT|null The StudentDutchNT of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentDutchNT::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentDutchNT $dutchNTDetails;
 
     /**
-     * @var String|null The speakingLevel of this Student.
+     * @var string|null The speakingLevel of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"BEGINNER", "REASONABLE", "ADVANCED"})
@@ -166,7 +168,8 @@ class Student
      * @var StudentEducation|null The StudentEducation of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentEducation::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -176,7 +179,8 @@ class Student
      * @var StudentCourse|null The StudentCourse of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentCourse::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -186,7 +190,8 @@ class Student
      * @var StudentJob|null The StudentJob of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentJob::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -196,7 +201,8 @@ class Student
      * @var StudentMotivation|null The StudentMotivation of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentMotivation::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -206,14 +212,15 @@ class Student
      * @var StudentAvailability|null The StudentAvailability of this Student.
      *
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentAvailability::class)
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
     private ?StudentAvailability $availabilityDetails;
 
     /**
-     * @var String|null The reading test result of this Student.
+     * @var string|null The reading test result of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_READ", "A0", "A1", "A2", "B1", "B2", "C1", "C2"})
@@ -231,7 +238,7 @@ class Student
     private ?string $readingTestResult;
 
     /**
-     * @var String|null The writing test result of this Student.
+     * @var string|null The writing test result of this Student.
      *
      * @Groups({"read", "write"})
      * @Assert\Choice({"CAN_NOT_WRITE", "WRITE_NAW_DETAILS", "WRITE_SIMPLE_TEXTS", "WRITE_SIMPLE_LETTERS"})
@@ -253,7 +260,8 @@ class Student
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=StudentPermission::class)
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;

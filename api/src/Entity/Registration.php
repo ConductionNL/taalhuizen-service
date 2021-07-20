@@ -2,16 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\RegistrationRepository;
-use App\Resolver\RegistrationMutationResolver;
-use App\Resolver\RegistrationQueryCollectionResolver;
-use App\Resolver\RegistrationQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -54,13 +48,21 @@ class Registration
     private UuidInterface $id;
 
     /**
-     * @var String A language house for this registration.
+     * @var string A language house for this registration.
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
     private string $languageHouseId;
 
@@ -70,6 +72,7 @@ class Registration
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private Person $student;
@@ -80,15 +83,24 @@ class Registration
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @MaxDepth(1)
      */
     private Person $registrar;
 
     /**
-     * @var String|null A note for/with this registration.
+     * @var string|null A note for/with this registration.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation of the registration"
+     *         }
+     *     }
+     * )
      */
     private ?string $memo;
 
@@ -108,7 +120,7 @@ class Registration
      *     }
      * )
      */
-    private ?string $status = "Pending";
+    private ?string $status = 'Pending';
 
     public function getId(): UuidInterface
     {

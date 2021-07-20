@@ -2,23 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\AvailabilityDayRepository;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\AvailabilityDayRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -60,6 +50,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $morning;
 
@@ -69,6 +67,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $afternoon;
 
@@ -78,6 +84,14 @@ class AvailabilityDay
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"="true"
+     *         }
+     *     }
+     * )
      */
     private bool $evening;
 
@@ -93,7 +107,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getMorning(): ?bool
+    public function getMorning(): bool
     {
         return $this->morning;
     }
@@ -105,7 +119,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getAfternoon(): ?bool
+    public function getAfternoon(): bool
     {
         return $this->afternoon;
     }
@@ -117,7 +131,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getEvening(): ?bool
+    public function getEvening(): bool
     {
         return $this->evening;
     }

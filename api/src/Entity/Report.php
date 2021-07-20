@@ -2,12 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ReportRepository;
-use App\Resolver\ReportMutationResolver;
-use App\Resolver\ReportQueryCollectionResolver;
-use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -72,10 +69,36 @@ class Report
     private UuidInterface $id;
 
     /**
+     * @var string|null The organization the report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $organizationId;
+
+    /**
      * @var string|null A date from which you want data in the report.
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2021"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateFrom;
 
@@ -84,6 +107,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2022"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateUntil;
 
@@ -92,6 +123,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Report X"
+     *         }
+     *     }
+     * )
      */
     private ?string $filename;
 
@@ -100,6 +139,14 @@ class Report
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
     private ?string $base64;
 
@@ -111,6 +158,18 @@ class Report
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
+        return $this;
+    }
+
+    public function getOrganizationId(): ?string
+    {
+        return $this->organizationId;
+    }
+
+    public function setOrganizationId(?string $organizationId): self
+    {
+        $this->organizationId = $organizationId;
 
         return $this;
     }
