@@ -72,6 +72,16 @@ class Report
     private UuidInterface $id;
 
     /**
+     * @var string|null The organization the report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $organizationId;
+
+    /**
      * @var string|null A date from which you want data in the report.
      *
      * @Groups({"read", "write"})
@@ -111,6 +121,18 @@ class Report
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
+        return $this;
+    }
+
+    public function getOrganizationId(): ?string
+    {
+        return $this->organizationId;
+    }
+
+    public function setOrganizationId(?string $organizationId): self
+    {
+        $this->organizationId = $organizationId;
 
         return $this;
     }

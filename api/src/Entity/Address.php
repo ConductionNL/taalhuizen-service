@@ -55,7 +55,7 @@ class Address
     private UuidInterface $id;
 
     /**
-     * @var ?string Street of this address.
+     * @var string Street of this address.
      *
      * @Assert\Length(
      *     max = 255
@@ -72,10 +72,10 @@ class Address
      *     }
      * )
      */
-    private ?string $street;
+    private string $street;
 
     /**
-     * @var ?string House number of this address.
+     * @var string House number of this address.
      *
      * @Assert\Length(min=1, max=4)
      * @Assert\NotNull
@@ -89,7 +89,7 @@ class Address
      *     }
      * )
      */
-    private ?string $houseNumber;
+    private string $houseNumber;
 
     /**
      * @var ?string House number suffix of this address.
@@ -108,7 +108,7 @@ class Address
     private ?string $houseNumberSuffix;
 
     /**
-     * @var ?string Postal code of this address.
+     * @var string Postal code of this address.
      *
      * @Assert\Length(min=5, max=10)
      * @Assert\NotNull
@@ -122,10 +122,10 @@ class Address
      *     }
      * )
      */
-    private ?string $postalCode;
+    private string $postalCode;
 
     /**
-     * @var ?string Locality of this address.
+     * @var string Locality of this address.
      *
      * @Assert\Length(min=2, max=255)
      * @Assert\NotNull
@@ -139,7 +139,7 @@ class Address
      *     }
      * )
      */
-    private ?string $locality;
+    private string $locality;
 
     public function __construct()
     {
@@ -158,24 +158,24 @@ class Address
         return $this;
     }
 
-    public function getStreet(): ?string
+    public function getStreet(): string
     {
         return $this->street;
     }
 
-    public function setStreet(?string $street): self
+    public function setStreet(string $street): self
     {
         $this->street = $street;
 
         return $this;
     }
 
-    public function getHouseNumber(): ?string
+    public function getHouseNumber(): string
     {
         return $this->houseNumber;
     }
 
-    public function setHouseNumber(?string $houseNumber): self
+    public function setHouseNumber(string $houseNumber): self
     {
         $this->houseNumber = $houseNumber;
 
@@ -194,24 +194,24 @@ class Address
         return $this;
     }
 
-    public function getPostalCode(): ?string
+    public function getPostalCode(): string
     {
         return $this->postalCode;
     }
 
-    public function setPostalCode(?string $postalCode): self
+    public function setPostalCode(string $postalCode): self
     {
         $this->postalCode = $postalCode;
 
         return $this;
     }
 
-    public function getLocality(): ?string
+    public function getLocality(): string
     {
         return $this->locality;
     }
 
-    public function setLocality(?string $locality): self
+    public function setLocality(string $locality): self
     {
         $this->locality = $locality;
 

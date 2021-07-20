@@ -93,7 +93,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getMorning(): ?bool
+    public function getMorning(): bool
     {
         return $this->morning;
     }
@@ -105,7 +105,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getAfternoon(): ?bool
+    public function getAfternoon(): bool
     {
         return $this->afternoon;
     }
@@ -117,7 +117,7 @@ class AvailabilityDay
         return $this;
     }
 
-    public function getEvening(): ?bool
+    public function getEvening(): bool
     {
         return $this->evening;
     }

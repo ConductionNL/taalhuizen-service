@@ -254,7 +254,7 @@ class Employee
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function getPerson(): Person
     {
         return $this->person;
     }

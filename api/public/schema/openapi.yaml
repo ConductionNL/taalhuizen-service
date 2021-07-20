@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &
+    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
   version: V1.0
 servers:
   -
@@ -1963,6 +1963,489 @@ paths:
           name: id
           in: path
           description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/friday':
+    get:
+      operationId: api_availabilities_friday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/monday':
+    get:
+      operationId: api_availabilities_monday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/saturday':
+    get:
+      operationId: api_availabilities_saturday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/sunday':
+    get:
+      operationId: api_availabilities_sunday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/thursday':
+    get:
+      operationId: api_availabilities_thursday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/tuesday':
+    get:
+      operationId: api_availabilities_tuesday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}/wednesday':
+    get:
+      operationId: api_availabilities_wednesday_get_subresourceAvailabilitySubresource
+      tags:
+        - AvailabilityDay
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Availability identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -18797,6 +19280,14 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
+        studentId:
+          maxLength: 255
+          description: 'Student id of this document.'
+          type: string
+        providerEmployeeId:
+          maxLength: 255
+          description: 'Provider employee id of this document.'
+          type: string
       required:
         - filename
         - base64
@@ -18813,6 +19304,14 @@ components:
           type: string
         base64:
           description: 'Base64 of this document.'
+          type: string
+        studentId:
+          maxLength: 255
+          description: 'Student id of this document.'
+          type: string
+        providerEmployeeId:
+          maxLength: 255
+          description: 'Provider employee id of this document.'
           type: string
     Document.jsonld-read:
       type: object
@@ -18853,6 +19352,14 @@ components:
         base64:
           description: 'Base64 of this document.'
           type: string
+        studentId:
+          maxLength: 255
+          description: 'Student id of this document.'
+          type: string
+        providerEmployeeId:
+          maxLength: 255
+          description: 'Provider employee id of this document.'
+          type: string
       required:
         - filename
         - base64
@@ -18892,6 +19399,14 @@ components:
           type: string
         base64:
           description: 'Base64 of this document.'
+          type: string
+        studentId:
+          maxLength: 255
+          description: 'Student id of this document.'
+          type: string
+        providerEmployeeId:
+          maxLength: 255
+          description: 'Provider employee id of this document.'
           type: string
     Education-read:
       type: object
@@ -21934,6 +22449,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -21954,6 +22473,10 @@ components:
       type: object
       description: 'All properties that the DTO entity Report holds.'
       properties:
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -22002,6 +22525,10 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
@@ -22045,6 +22572,10 @@ components:
         '@type':
           readOnly: true
           type: string
+        organizationId:
+          description: 'The organization the report applies to.'
+          type: string
+          nullable: true
         dateFrom:
           description: 'A date from which you want data in the report.'
           type: string
