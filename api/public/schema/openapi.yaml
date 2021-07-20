@@ -12407,7 +12407,8 @@ components:
           type: string
           nullable: true
         email:
-          maxLength: 255
+          minLength: 3
+          maxLength: 320
           example: john@doe.com
           description: 'The actual mail address'
           type: string
@@ -12424,7 +12425,8 @@ components:
           type: string
           nullable: true
         email:
-          maxLength: 255
+          minLength: 3
+          maxLength: 320
           example: john@doe.com
           description: 'The actual mail address'
           type: string
@@ -12469,7 +12471,8 @@ components:
           type: string
           nullable: true
         email:
-          maxLength: 255
+          minLength: 3
+          maxLength: 320
           example: john@doe.com
           description: 'The actual mail address'
           type: string
@@ -12509,7 +12512,8 @@ components:
           type: string
           nullable: true
         email:
-          maxLength: 255
+          minLength: 3
+          maxLength: 320
           example: john@doe.com
           description: 'The actual mail address'
           type: string
@@ -17076,6 +17080,8 @@ components:
           type: string
           nullable: true
         nativeLanguage:
+          minLength: 2
+          maxLength: 3
           example: NL
           description: 'The native language of this student.'
           type: string
@@ -17117,6 +17123,8 @@ components:
           type: string
           nullable: true
         nativeLanguage:
+          minLength: 2
+          maxLength: 3
           example: NL
           description: 'The native language of this student.'
           type: string
@@ -17186,6 +17194,8 @@ components:
           type: string
           nullable: true
         nativeLanguage:
+          minLength: 2
+          maxLength: 3
           example: NL
           description: 'The native language of this student.'
           type: string
@@ -17250,6 +17260,8 @@ components:
           type: string
           nullable: true
         nativeLanguage:
+          minLength: 2
+          maxLength: 3
           example: NL
           description: 'The native language of this student.'
           type: string
@@ -17966,6 +17978,8 @@ components:
           type: string
           nullable: true
         email:
+          minLength: 3
+          maxLength: 320
           example: johnDoe@gmail.com
           description: 'The email of this StudentReferrer.'
           type: string
@@ -17994,6 +18008,8 @@ components:
           type: string
           nullable: true
         email:
+          minLength: 3
+          maxLength: 320
           example: johnDoe@gmail.com
           description: 'The email of this StudentReferrer.'
           type: string
@@ -18050,6 +18066,8 @@ components:
           type: string
           nullable: true
         email:
+          minLength: 3
+          maxLength: 320
           example: johnDoe@gmail.com
           description: 'The email of this StudentReferrer.'
           type: string
@@ -18101,6 +18119,8 @@ components:
           type: string
           nullable: true
         email:
+          minLength: 3
+          maxLength: 320
           example: johnDoe@gmail.com
           description: 'The email of this StudentReferrer.'
           type: string
@@ -18121,7 +18141,7 @@ components:
           type: string
           nullable: true
         telephone:
-          maxLength: 255
+          maxLength: 20
           example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
@@ -18138,7 +18158,7 @@ components:
           type: string
           nullable: true
         telephone:
-          maxLength: 255
+          maxLength: 20
           example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
@@ -18183,7 +18203,7 @@ components:
           type: string
           nullable: true
         telephone:
-          maxLength: 255
+          maxLength: 20
           example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
@@ -18223,7 +18243,7 @@ components:
           type: string
           nullable: true
         telephone:
-          maxLength: 255
+          maxLength: 20
           example: '+31 (0)20 1234567'
           description: 'The actual phone number.'
           type: string
