@@ -78,6 +78,11 @@ class StudentReferrer
      */
     private ?string $email;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Student", mappedBy="referrerDetails")
+     */
+    public ?Student $student;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -122,6 +127,18 @@ class StudentReferrer
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getStudent(): ?Student
+    {
+        return $this->student;
+    }
+
+    public function setStudent(?Student $student): self
+    {
+        $this->student = $student;
 
         return $this;
     }

@@ -105,6 +105,11 @@ class StudentGeneral
      */
     private ?string $childrenDatesOfBirth;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Student", mappedBy="generalDetails")
+     */
+    public ?Student $student;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -185,6 +190,18 @@ class StudentGeneral
     public function setChildrenDatesOfBirth(?string $childrenDatesOfBirth): self
     {
         $this->childrenDatesOfBirth = $childrenDatesOfBirth;
+
+        return $this;
+    }
+
+    public function getStudent(): ?Student
+    {
+        return $this->student;
+    }
+
+    public function setStudent(?Student $student): self
+    {
+        $this->student = $student;
 
         return $this;
     }

@@ -141,6 +141,11 @@ class StudentMotivation
      */
     private ?string $remarks;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Student", mappedBy="motivationDetails")
+     */
+    public ?Student $student;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -245,6 +250,18 @@ class StudentMotivation
     public function setRemarks(?string $remarks): self
     {
         $this->remarks = $remarks;
+
+        return $this;
+    }
+
+    public function getStudent(): ?Student
+    {
+        return $this->student;
+    }
+
+    public function setStudent(?Student $student): self
+    {
+        $this->student = $student;
 
         return $this;
     }

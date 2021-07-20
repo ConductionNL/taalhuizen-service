@@ -79,6 +79,11 @@ class StudentPermission
      */
     private bool $hasPermissionToSendInformationAboutLibraries;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Student", mappedBy="permissionDetails")
+     */
+    public ?Student $student;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -135,6 +140,18 @@ class StudentPermission
     public function setHasPermissionToSendInformationAboutLibraries(bool $hasPermissionToSendInformationAboutLibraries): self
     {
         $this->hasPermissionToSendInformationAboutLibraries = $hasPermissionToSendInformationAboutLibraries;
+
+        return $this;
+    }
+
+    public function getStudent(): ?Student
+    {
+        return $this->student;
+    }
+
+    public function setStudent(?Student $student): self
+    {
+        $this->student = $student;
 
         return $this;
     }
