@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+// TODO: REWRITE THIS FILE, this is (very) old code
 class TaalhuisSubscriber implements EventSubscriberInterface
 {
     private $entityManager;
