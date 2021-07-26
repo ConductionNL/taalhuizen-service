@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_group_students"={
  *              "method"="GET",
  *              "path"="/students/group/{uuid}",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Get the students of a group",
  *                  "description"="Get the students of a group"
  *              }
@@ -45,7 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_mentor_students"={
  *              "method"="GET",
  *              "path"="/students/mentor/{uuid}",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Get the students of a mentor",
  *                  "description"="Get the students of a mentor"
  *              }

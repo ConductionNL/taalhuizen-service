@@ -6,7 +6,6 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
 use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;

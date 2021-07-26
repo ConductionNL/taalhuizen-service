@@ -483,7 +483,7 @@ class MrcService
     }
 
     /**
-     * Updates an user for an employee.
+     * Updates a user for an employee.
      *
      * @param string      $userId       The id of the user to update
      * @param string|null $contact      The contact of the user to update

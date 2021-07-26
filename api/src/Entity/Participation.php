@@ -39,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "add_or_remove_mentor"={
  *              "method"="POST",
  *              "path"="/participations/{uuid}/mentor/{mentorId}",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Add a mentor to this Participation, or remove the one connected to it.",
  *                  "description"="Add a mentor to this Participation, or remove the one connected to it."
  *              }
@@ -47,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "update_mentor"={
  *              "method"="POST",
  *              "path"="/participations/{uuid}/mentor",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Update the Participation presence properties for the mentor connected to this participation.",
  *                  "description"="Update the Participation presence properties for the mentor connected to this participation."
  *              }
@@ -55,7 +55,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "add_or_remove_group"={
  *              "method"="POST",
  *              "path"="/participations/{uuid}/group/{groupId}",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Add a group to this Participation, or remove the one connected to it.",
  *                  "description"="Add a group to this Participation, or remove the one connected to it."
  *              }
@@ -63,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "update_group"={
  *              "method"="POST",
  *              "path"="/participations/{uuid}/group",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Update the Participation presence properties for the group connected to this participation.",
  *                  "description"="Update the Participation presence properties for the group connected to this participation."
  *              }

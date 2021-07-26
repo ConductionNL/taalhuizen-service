@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_user_roles"={
  *              "method"="GET",
  *              "path"="/organization/{uuid}/user_roles",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Get the user roles of this organization",
  *                  "description"="Get the user roles of this organization"
  *              }
