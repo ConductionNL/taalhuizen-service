@@ -5,7 +5,7 @@ info:
     API Details
     - Component: Taalhuizen Service
     - Reference: taalhuizen-service
-    - Enviroment: dev
+    - Enviroment: prod
     - Version: V1.0
     - Repository: [online](https://github.com/ConductionNL/taalhuizen-service) / [zip](https://github.com/ConductionNL/taalhuizen-service/archive/master.zip)
     - Docker Image: [online]() 
@@ -2807,8 +2807,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Document resource.'
-      description: 'Creates a Document resource.'
+      summary: 'Download a document'
+      description: 'Download a document'
       parameters: []
       requestBody:
         description: 'The new Document resource'
@@ -6668,8 +6668,8 @@ paths:
                 $ref: '#/components/schemas/Organization-read'
         404:
           description: 'Resource not found'
-      summary: 'Retrieves a Organization resource.'
-      description: 'Retrieves a Organization resource.'
+      summary: 'Get the user roles of this organization'
+      description: 'Get the user roles of this organization'
       parameters:
         -
           name: id
@@ -7922,8 +7922,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Participation resource.'
-      description: 'Creates a Participation resource.'
+      summary: 'Update the Participation presence properties for the group connected to this participation.'
+      description: 'Update the Participation presence properties for the group connected to this participation.'
       parameters: []
       requestBody:
         description: 'The new Participation resource'
@@ -8034,8 +8034,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Participation resource.'
-      description: 'Creates a Participation resource.'
+      summary: 'Add a group to this Participation, or remove the one connected to it.'
+      description: 'Add a group to this Participation, or remove the one connected to it.'
       parameters: []
       requestBody:
         description: 'The new Participation resource'
@@ -8146,8 +8146,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Participation resource.'
-      description: 'Creates a Participation resource.'
+      summary: 'Update the Participation presence properties for the mentor connected to this participation.'
+      description: 'Update the Participation presence properties for the mentor connected to this participation.'
       parameters: []
       requestBody:
         description: 'The new Participation resource'
@@ -8258,8 +8258,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Participation resource.'
-      description: 'Creates a Participation resource.'
+      summary: 'Add a mentor to this Participation, or remove the one connected to it.'
+      description: 'Add a mentor to this Participation, or remove the one connected to it.'
       parameters: []
       requestBody:
         description: 'The new Participation resource'
@@ -11109,8 +11109,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Report resource.'
-      description: 'Creates a Report resource.'
+      summary: 'Creates a learning outcomes report.'
+      description: 'Creates a learning outcomes report.'
       parameters: []
       requestBody:
         description: 'The new Report resource'
@@ -11221,8 +11221,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Report resource.'
-      description: 'Creates a Report resource.'
+      summary: 'Creates a participants report of a provider.'
+      description: 'Creates a participants report of a provider.'
       parameters: []
       requestBody:
         description: 'The new Report resource'
@@ -11333,8 +11333,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a Report resource.'
-      description: 'Creates a Report resource.'
+      summary: 'Creates a volunteers report of a provider.'
+      description: 'Creates a volunteers report of a provider.'
       parameters: []
       requestBody:
         description: 'The new Report resource'
@@ -13173,8 +13173,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Student-read'
-      summary: 'Retrieves the collection of Student resources.'
-      description: 'Retrieves the collection of Student resources.'
+      summary: 'Get the students of a group'
+      description: 'Get the students of a group'
       parameters:
         -
           name: page
@@ -13320,8 +13320,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Student-read'
-      summary: 'Retrieves the collection of Student resources.'
-      description: 'Retrieves the collection of Student resources.'
+      summary: 'Get the students of a mentor'
+      description: 'Get the students of a mentor'
       parameters:
         -
           name: page
@@ -17527,8 +17527,8 @@ paths:
                 $ref: '#/components/schemas/User-read'
         404:
           description: 'Resource not found'
-      summary: 'Retrieves a User resource.'
-      description: 'Retrieves a User resource.'
+      summary: 'Get the current user.'
+      description: 'Get the current user.'
       parameters:
         -
           name: id
@@ -17551,109 +17551,37 @@ paths:
         - User
       responses:
         201:
-          description: 'User resource created'
+          description: Created
           content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/User.jsonld-read'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/User.jsonld-read'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User-read'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/User-read'
-          links:
-            GetUserItem:
-              operationId: getUserItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /users/{id}`.'
+                type: object
+                properties:
+                  token: { type: string }
+              example:
+                token: eyJhbGciOiJSUzUxMiJ9.eyJ1c2VySWQiOiI2ZWZjYzNkYy0wN2IzLTQ5YzQtOGU1ZS1jOGIwMTQyYTk4ODYiLCJ0eXBlIjoibG9naW4iLCJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3QiLCJpYXMiOjE2MjczMDk0NDMsImV4cCI6MTYyODE3MzQ0M30.aA3rHw69mzIF2ycf36eD1DhLcnZtFtKK6r7ymajI0OTx7FvKJal7XR_sxfx-Adefps3RTc_VDAw8VOcFtl6S3P7tWgXPJCnZ2DchAlZTBAUhym0SqApW6mlouZLjBRuxL_rsz6kAHcFMWWQYyfN5jzRO1A_Qyo53IF2bs_EdiebXe-TKrAk_FTovcbxgFnznQ-P3l1IDe9v9Q3RrWfwUVI-i97pCOTvh77RtuHtvT-6mO4dW-GuKQOmYHQVijNgFVf3vuQiZk3kNeQi33jdwl0ij6e9PtVupSmroBEpZ0-SOJwv0aEfQSm3ZzLuA3gBbjXM29Evv4RobaQsT7XbSzCqkdY_VbqD4OvoQzWTuRrjufYOld1m6eFJ5-jducJBVf14QJiUkrUa0iz3IOAgcBmsMdaZOYw9IBLbJYCjzKl0SluNr0ltncySY2E3Qk8KOv7ZOoxmzjzSbrr39USgUjTePEgKXKNtU4q-363SL6cs5PD51lo2obFOZ4E-Eo12SPryCmrhixIFgQSqEKFTaOIOy1fQLd-KF8XEs-K9Op_W01sLYXA1TeW6vszHg8Lv9HtzKpoh31-Tj-hHTzpMUYHIv0Kj6y4DWUJRkAGmjdJAnmxwNy3B_WhFxYnqvcFWMi0W3d-lBx3PFFJCa3lMPHXYfBpvBBHzKzb3sFGiyZCs
         400:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a User resource.'
-      description: 'Creates a User resource.'
+      summary: 'Login a user with a username and password.'
+      description: 'Login a user with a username and password.'
       parameters: []
       requestBody:
-        description: 'The new User resource'
+        description: ''
         content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/json+ld:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+hal:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+vnd.api:
-            schema:
-              $ref: '#/components/schemas/User-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User-write'
-          application/health+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+health:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/graphql:
-            schema:
-              $ref: '#/components/schemas/User-write'
-        required: true
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            example:
+              username: JohnDoe@gmail.com
+              password: 'n$5Ssqs]eCDT!$})'
+        required: false
       deprecated: false
     parameters: []
   /users/logout:
@@ -17717,8 +17645,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a User resource.'
-      description: 'Creates a User resource.'
+      summary: 'Logout the currently logged in user.'
+      description: 'Logout the currently logged in user.'
       parameters: []
       requestBody:
         description: 'The new User resource'
@@ -17829,8 +17757,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a User resource.'
-      description: 'Creates a User resource.'
+      summary: 'Request a password reset token for a user.'
+      description: 'Request a password reset token for a user.'
       parameters: []
       requestBody:
         description: 'The new User resource'
@@ -17941,8 +17869,8 @@ paths:
           description: 'Invalid input'
         422:
           description: 'Unprocessable entity'
-      summary: 'Creates a User resource.'
-      description: 'Creates a User resource.'
+      summary: 'Reset the password of a User with a token.'
+      description: 'Reset the password of a User with a token.'
       parameters: []
       requestBody:
         description: 'The new User resource'

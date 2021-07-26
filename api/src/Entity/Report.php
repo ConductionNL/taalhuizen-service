@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "participants_report"={
  *              "method"="POST",
  *              "path"="/reports/participants",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Creates a participants report of a provider.",
  *                  "description"="Creates a participants report of a provider."
  *              }
@@ -39,7 +39,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "volunteers_report"={
  *              "method"="POST",
  *              "path"="/reports/volunteers",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Creates a volunteers report of a provider.",
  *                  "description"="Creates a volunteers report of a provider."
  *              }
@@ -47,7 +47,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "desired_learning_outcomes_report"={
  *              "method"="POST",
  *              "path"="/reports/desired_learning_outcomes",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Creates a learning outcomes report.",
  *                  "description"="Creates a learning outcomes report."
  *              }

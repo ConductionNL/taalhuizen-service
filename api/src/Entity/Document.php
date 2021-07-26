@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post_download"={
  *              "method"="POST",
  *              "path"="/documents/{uuid}/download",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Download a document",
  *                  "description"="Download a document"
  *              }
