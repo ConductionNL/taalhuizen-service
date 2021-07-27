@@ -110,8 +110,8 @@ class OrganizationSubscriber implements EventSubscriberInterface
             default:
                 return;
         }
-        $this->entityManager->remove($resource);
 
+        $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
             return;
