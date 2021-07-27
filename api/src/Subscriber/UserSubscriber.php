@@ -4,27 +4,31 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
+use App\Service\LayerService;
 use App\Service\UcService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Serializer\SerializerInterface;
 use function GuzzleHttp\json_decode;
 
 class UserSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
+    private SerializerInterface $serializer;
     private UcService $ucService;
 
     /**
      * UserSubscriber constructor.
-     * @param EntityManagerInterface $entityManager
+     * @param LayerService $layerService
      * @param UcService $ucService
      */
-    public function __construct(EntityManagerInterface $entityManager, UcService $ucService)
+    public function __construct(LayerService $layerService, UcService $ucService)
     {
-        $this->entityManager = $entityManager;
+        $this->entityManager = $layerService->entityManager;
+        $this->serializer = $layerService->serializer;
         $this->ucService = $ucService;
     }
 
@@ -75,12 +79,16 @@ class UserSubscriber implements EventSubscriberInterface
             default:
                 return;
         }
-        
+
         $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
             return;
         }
+        $response = $this->serializer->serialize(
+            $response,
+            $renderType,
+        );
         $event->setResponse(new Response(
             $response,
             Response::HTTP_OK,
