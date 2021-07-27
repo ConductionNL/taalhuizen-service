@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use function GuzzleHttp\json_decode;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -42,19 +43,49 @@ class UserSubscriber implements EventSubscriberInterface
      */
     public function user(ViewEvent $event)
     {
+        $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
+        $body = json_decode($event->getRequest()->getContent(), true);
+
+        if (!$contentType) {
+            $contentType = $event->getRequest()->headers->get('Accept');
+        }
+
+        switch ($contentType) {
+            case 'application/json':
+                $renderType = 'json';
+                break;
+            case 'application/ld+json':
+                $renderType = 'jsonld';
+                break;
+            case 'application/hal+json':
+                $renderType = 'jsonhal';
+                break;
+            default:
+                $contentType = 'application/ld+json';
+                $renderType = 'jsonld';
+        }
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_users_login_collection':
-                $event->setResponse($this->login($resource));
+                $response = $this->login($resource);
                 break;
             default:
                 return;
         }
+        
         $this->entityManager->remove($resource);
-        $this->entityManager->flush();
+        if ($response instanceof Response) {
+            $event->setResponse($response);
+            return;
+        }
+        $event->setResponse(new Response(
+            $response,
+            Response::HTTP_OK,
+            ['content-type' => $contentType]
+        ));
     }
 
     /**
