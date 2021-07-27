@@ -21,15 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get"={"openapi_context"={"description":"test"}},
- *          "post"={"openapi_context"={"description":"test"}},
- *     }
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
  * )
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
@@ -45,6 +38,25 @@ class Address
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
+
+    /**
+     * @var string|null Name of this address.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Address of this person/organization"
+     *         }
+     *     }
+     *   )
+     */
+    private ?string $name;
 
     /**
      * @var string Street of this address.
@@ -146,6 +158,18 @@ class Address
     public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

@@ -21,15 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentBackgroundRepository::class)
  */
 class StudentBackground
@@ -68,6 +62,13 @@ class StudentBackground
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other way to find a languageHouse"
+     *         }
+     *     }
+     * )
      */
     private ?string $foundViaOther;
 
@@ -84,6 +85,13 @@ class StudentBackground
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Went to this languageHouse before, because..."
+     *         }
+     *     }
+     * )
      */
     private ?string $wentToLanguageHouseBeforeReason;
 
@@ -92,6 +100,13 @@ class StudentBackground
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2016
+     *         }
+     *     }
+     * )
      */
     private ?float $wentToLanguageHouseBeforeYear;
 
@@ -121,6 +136,13 @@ class StudentBackground
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=4
+     *         }
+     *     }
+     * )
      */
     private ?int $participationLadder;
 

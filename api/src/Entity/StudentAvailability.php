@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\StudentAvailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -19,15 +21,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"},
+ * )
  * @ORM\Entity(repositoryClass=StudentAvailabilityRepository::class)
  */
 class StudentAvailability
@@ -48,6 +44,7 @@ class StudentAvailability
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -58,6 +55,13 @@ class StudentAvailability
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An note with this availability"
+     *         }
+     *     }
+     * )
      */
     private ?string $availabilityNotes;
 

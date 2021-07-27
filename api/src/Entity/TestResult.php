@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\TestResultRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -53,7 +55,15 @@ class TestResult
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private string $participationId;
 
@@ -74,23 +84,37 @@ class TestResult
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Exam x about computers"
+     *         }
+     *     }
+     * )
      */
     private string $usedExam;
 
     /**
-     * @var string The date of the exam that this TestResult is a result of.
+     * @var DateTime The date of the exam that this TestResult is a result of.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="datetime", length=255)
      */
-    private string $examDate;
+    private DateTime $examDate;
 
     /**
      * @var string|null A memo/note for this TestResult.
      *
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="This test was very hard!"
+     *         }
+     *     }
+     * )
      */
     private ?string $examMemo;
 
@@ -142,12 +166,12 @@ class TestResult
         return $this;
     }
 
-    public function getExamDate(): string
+    public function getExamDate(): DateTime
     {
         return $this->examDate;
     }
 
-    public function setExamDate(string $examDate): self
+    public function setExamDate(DateTime $examDate): self
     {
         $this->examDate = $examDate;
 

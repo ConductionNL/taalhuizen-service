@@ -20,15 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     }
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
  * )
  * @ORM\Entity(repositoryClass=TelephoneRepository::class)
  */
@@ -68,10 +61,10 @@ class Telephone
      *
      * @Assert\NotNull
      * @Assert\Length(
-     *     max = 255
+     *     max = 20
      * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={

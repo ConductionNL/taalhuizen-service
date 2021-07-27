@@ -20,15 +20,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
- *     },
- *     collectionOperations={
- *          "get",
- *          "post",
- *     })
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentMotivationRepository::class)
  */
 class StudentMotivation
@@ -77,6 +71,13 @@ class StudentMotivation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other desired skill"
+     *         }
+     *     }
+     * )
      */
     private ?string $desiredSkillsOther;
 
@@ -93,6 +94,13 @@ class StudentMotivation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="I have tried this before because..."
+     *         }
+     *     }
+     * )
      */
     private ?string $hasTriedThisBeforeExplanation;
 
@@ -101,6 +109,13 @@ class StudentMotivation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="I want to become better at it"
+     *         }
+     *     }
+     * )
      */
     private ?string $whyWantTheseSkills;
 
@@ -109,6 +124,13 @@ class StudentMotivation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Because i was inspired to do so"
+     *         }
+     *     }
+     * )
      */
     private ?string $whyWantThisNow;
 
@@ -138,6 +160,13 @@ class StudentMotivation
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Extra motivation note"
+     *         }
+     *     }
+     * )
      */
     private ?string $remarks;
 

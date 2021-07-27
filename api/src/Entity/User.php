@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_current_user"={
  *              "method"="GET",
  *              "path"="/users/current_user",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Get the current user.",
  *                  "description"="Get the current user."
  *              }
@@ -42,15 +42,52 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "login"={
  *              "method"="POST",
  *              "path"="/users/login",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Login a user with a username and password.",
- *                  "description"="Login a user with a username and password."
- *              }
+ *                  "description"="Login a user with a username and password.",
+ *                  "requestBody" = {
+ *                      "content" = {
+ *                          "application/json" = {
+ *                              "schema" = {
+ *                                  "type" = "object",
+ *                                  "properties" =
+ *                                      {
+ *                                          "username" = {"type" = "string"},
+ *                                          "password" = {"type" = "string"},
+ *                                      },
+ *                              },
+ *                              "example" = {
+ *                                  "username" = "JohnDoe@gmail.com",
+ *                                  "password" = "n$5Ssqs]eCDT!$})",
+ *                              },
+ *                          },
+ *                      },
+ *                  },
+ *                  "responses" = {
+ *                      "201" = {
+ *                          "description" = "Created",
+ *                          "content" = {
+ *                              "application/json" = {
+ *                                  "schema" = {
+ *                                      "type" = "object",
+ *                                      "properties" =
+ *                                          {
+ *                                              "token" = {"type" = "string"},
+ *                                          },
+ *                                  },
+ *                                  "example" = {
+ *                                      "token" = "eyJhbGciOiJSUzUxMiJ9.eyJ1c2VySWQiOiI2ZWZjYzNkYy0wN2IzLTQ5YzQtOGU1ZS1jOGIwMTQyYTk4ODYiLCJ0eXBlIjoibG9naW4iLCJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3QiLCJpYXMiOjE2MjczMDk0NDMsImV4cCI6MTYyODE3MzQ0M30.aA3rHw69mzIF2ycf36eD1DhLcnZtFtKK6r7ymajI0OTx7FvKJal7XR_sxfx-Adefps3RTc_VDAw8VOcFtl6S3P7tWgXPJCnZ2DchAlZTBAUhym0SqApW6mlouZLjBRuxL_rsz6kAHcFMWWQYyfN5jzRO1A_Qyo53IF2bs_EdiebXe-TKrAk_FTovcbxgFnznQ-P3l1IDe9v9Q3RrWfwUVI-i97pCOTvh77RtuHtvT-6mO4dW-GuKQOmYHQVijNgFVf3vuQiZk3kNeQi33jdwl0ij6e9PtVupSmroBEpZ0-SOJwv0aEfQSm3ZzLuA3gBbjXM29Evv4RobaQsT7XbSzCqkdY_VbqD4OvoQzWTuRrjufYOld1m6eFJ5-jducJBVf14QJiUkrUa0iz3IOAgcBmsMdaZOYw9IBLbJYCjzKl0SluNr0ltncySY2E3Qk8KOv7ZOoxmzjzSbrr39USgUjTePEgKXKNtU4q-363SL6cs5PD51lo2obFOZ4E-Eo12SPryCmrhixIFgQSqEKFTaOIOy1fQLd-KF8XEs-K9Op_W01sLYXA1TeW6vszHg8Lv9HtzKpoh31-Tj-hHTzpMUYHIv0Kj6y4DWUJRkAGmjdJAnmxwNy3B_WhFxYnqvcFWMi0W3d-lBx3PFFJCa3lMPHXYfBpvBBHzKzb3sFGiyZCs"
+ *                                  },
+ *                              },
+ *                          },
+ *                      },
+ *                  },
+ *              },
  *          },
  *          "logout"={
  *              "method"="POST",
  *              "path"="/users/logout",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Logout the currently logged in user.",
  *                  "description"="Logout the currently logged in user."
  *              }
@@ -58,15 +95,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "request_password_reset"={
  *              "method"="POST",
  *              "path"="/users/request_password_reset",
- *              "swagger_context" = {
- *                  "summary"="Request a password reset token for a User.",
- *                  "description"="Request a password reset token for a User."
+ *              "openapi_context" = {
+ *                  "summary"="Request a password reset token for a user.",
+ *                  "description"="Request a password reset token for a user."
  *              }
  *          },
  *          "reset_password"={
  *              "method"="POST",
  *              "path"="/users/reset_password",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Reset the password of a User with a token.",
  *                  "description"="Reset the password of a User with a token."
  *              }
@@ -96,6 +133,13 @@ class User
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="JohnDoe@gmail.com"
+     *         }
+     *     }
+     * )
      */
     private string $username;
 
@@ -134,7 +178,15 @@ class User
      * @var string|null A contact component organization id of this User.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationId;
 
@@ -143,16 +195,15 @@ class User
      *
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Taalhuis X"
+     *         }
+     *     }
+     * )
      */
     private ?string $organizationName;
-
-    /**
-     * @var array|null The userRoles of this User.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private ?array $userRoles = [];
 
     /**
      * @var string The Password of this User.
@@ -163,6 +214,13 @@ class User
      * )
      * @Groups({"write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="n$5Ssqs]eCDT!$})"
+     *         }
+     *     }
+     * )
      */
     private string $password;
 
@@ -174,6 +232,13 @@ class User
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlMjk4NDQ2NS0xOTBhLTQ1NjItODI5ZS1hOGNjYTgxYWEzNWQiLCJlbWFpbCI6ImpvaG5Eb2VAZ21haWwuY29tIiwiaXNzIjoiaXNzIiwiaWFzIjoiaWFzIiwiZXhwIjoiZXhwIn0.dBLCHRmqFyTv3tiyI0mpYnlcQ0UTRqG9JpKw5zd0I2U"
+     *         }
+     *     }
+     * )
      */
     private ?string $token;
 
@@ -245,18 +310,6 @@ class User
     public function setOrganizationName(?string $organizationName): self
     {
         $this->organizationName = $organizationName;
-
-        return $this;
-    }
-
-    public function getUserRoles(): ?array
-    {
-        return $this->userRoles;
-    }
-
-    public function setUserRoles(?array $userRoles): self
-    {
-        $this->userRoles = $userRoles;
 
         return $this;
     }

@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post_download"={
  *              "method"="POST",
  *              "path"="/documents/{uuid}/download",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Download a document",
  *                  "description"="Download a document"
  *              }
@@ -93,6 +93,38 @@ class Document
      */
     private string $base64;
 
+    /**
+     * @var ?string Student id of this document.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $studentId;
+
+    /**
+     * @var ?string Provider employee id of this document.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $providerEmployeeId;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -125,6 +157,30 @@ class Document
     public function setBase64(string $base64): self
     {
         $this->base64 = $base64;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?string
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(?string $studentId): self
+    {
+        $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    public function getProviderEmployeeId(): ?string
+    {
+        return $this->providerEmployeeId;
+    }
+
+    public function setProviderEmployeeId(?string $providerEmployeeId): self
+    {
+        $this->providerEmployeeId = $providerEmployeeId;
 
         return $this;
     }

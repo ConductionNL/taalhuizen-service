@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_user_roles"={
  *              "method"="GET",
  *              "path"="/organization/{uuid}/user_roles",
- *              "swagger_context" = {
+ *              "openapi_context" = {
  *                  "summary"="Get the user roles of this organization",
  *                  "description"="Get the user roles of this organization"
  *              }
@@ -78,7 +78,7 @@ class Organization
     private string $name;
 
     /**
-     * @var string|null Type of this organization.
+     * @var string|null Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**
      *
      * @Assert\Choice({"Provider", "LanguageHouse"})
      *
