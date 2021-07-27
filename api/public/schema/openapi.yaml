@@ -18,6 +18,197 @@ servers:
     url: /
     description: ''
 paths:
+  /addresses:
+    get:
+      operationId: getAddressCollection
+      tags:
+        - Address
+      responses:
+        200:
+          description: 'Address collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Address.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Address.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address-read'
+      summary: 'Retrieves the collection of Address resources.'
+      description: 'Retrieves the collection of Address resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/addresses/{id}':
+    get:
+      operationId: getAddressItem
+      tags:
+        - Address
+      responses:
+        200:
+          description: 'Address resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Address.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Address-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Address resource.'
+      description: 'Retrieves a Address resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /audit_trails:
     get:
       operationId: getAuditTrailCollection
@@ -1073,6 +1264,197 @@ paths:
         required: true
       deprecated: false
     parameters: []
+  /availabilities:
+    get:
+      operationId: getAvailabilityCollection
+      tags:
+        - Availability
+      responses:
+        200:
+          description: 'Availability collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Availability.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Availability.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability-read'
+      summary: 'Retrieves the collection of Availability resources.'
+      description: 'Retrieves the collection of Availability resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availabilities/{id}':
+    get:
+      operationId: getAvailabilityItem
+      tags:
+        - Availability
+      responses:
+        200:
+          description: 'Availability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Availability.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Availability-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Availability resource.'
+      description: 'Retrieves a Availability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/availabilities/{id}/friday':
     get:
       operationId: api_availabilities_friday_get_subresourceAvailabilitySubresource
@@ -1546,6 +1928,197 @@ paths:
           name: id
           in: path
           description: 'Availability identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /availability_days:
+    get:
+      operationId: getAvailabilityDayCollection
+      tags:
+        - AvailabilityDay
+      responses:
+        200:
+          description: 'AvailabilityDay collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/AvailabilityDay.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/AvailabilityDay.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailabilityDay-read'
+      summary: 'Retrieves the collection of AvailabilityDay resources.'
+      description: 'Retrieves the collection of AvailabilityDay resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/availability_days/{id}':
+    get:
+      operationId: getAvailabilityDayItem
+      tags:
+        - AvailabilityDay
+      responses:
+        200:
+          description: 'AvailabilityDay resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/AvailabilityDay-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a AvailabilityDay resource.'
+      description: 'Retrieves a AvailabilityDay resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -2856,6 +3429,388 @@ paths:
             schema:
               $ref: '#/components/schemas/Document-write'
         required: true
+      deprecated: false
+    parameters: []
+  /education:
+    get:
+      operationId: getEducationCollection
+      tags:
+        - Education
+      responses:
+        200:
+          description: 'Education collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Education.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Education.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Education-read'
+      summary: 'Retrieves the collection of Education resources.'
+      description: 'Retrieves the collection of Education resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/education/{id}':
+    get:
+      operationId: getEducationItem
+      tags:
+        - Education
+      responses:
+        200:
+          description: 'Education resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Education.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Education-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Education resource.'
+      description: 'Retrieves a Education resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /emails:
+    get:
+      operationId: getEmailCollection
+      tags:
+        - Email
+      responses:
+        200:
+          description: 'Email collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Email.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Email.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email-read'
+      summary: 'Retrieves the collection of Email resources.'
+      description: 'Retrieves the collection of Email resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/emails/{id}':
+    get:
+      operationId: getEmailItem
+      tags:
+        - Email
+      responses:
+        200:
+          description: 'Email resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Email.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Email-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Email resource.'
+      description: 'Retrieves a Email resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
       deprecated: false
     parameters: []
   /employees:
@@ -6096,6 +7051,197 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /learning_need_out_comes:
+    get:
+      operationId: getLearningNeedOutComeCollection
+      tags:
+        - LearningNeedOutCome
+      responses:
+        200:
+          description: 'LearningNeedOutCome collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningNeedOutCome-read'
+      summary: 'Retrieves the collection of LearningNeedOutCome resources.'
+      description: 'Retrieves the collection of LearningNeedOutCome resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/learning_need_out_comes/{id}':
+    get:
+      operationId: getLearningNeedOutComeItem
+      tags:
+        - LearningNeedOutCome
+      responses:
+        200:
+          description: 'LearningNeedOutCome resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/LearningNeedOutCome-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a LearningNeedOutCome resource.'
+      description: 'Retrieves a LearningNeedOutCome resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /learning_needs:
     get:
       operationId: getLearningNeedCollection
@@ -8307,6 +9453,197 @@ paths:
             schema:
               $ref: '#/components/schemas/Participation-write'
         required: true
+      deprecated: false
+    parameters: []
+  /people:
+    get:
+      operationId: getPersonCollection
+      tags:
+        - Person
+      responses:
+        200:
+          description: 'Person collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Person.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Person.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person-read'
+      summary: 'Retrieves the collection of Person resources.'
+      description: 'Retrieves the collection of Person resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/people/{id}':
+    get:
+      operationId: getPersonItem
+      tags:
+        - Person
+      responses:
+        200:
+          description: 'Person resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Person.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Person-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Person resource.'
+      description: 'Retrieves a Person resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
       deprecated: false
     parameters: []
   '/people/{id}/addresses':
@@ -11603,6 +12940,197 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /student_availabilities:
+    get:
+      operationId: getStudentAvailabilityCollection
+      tags:
+        - StudentAvailability
+      responses:
+        200:
+          description: 'StudentAvailability collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentAvailability.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentAvailability.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAvailability-read'
+      summary: 'Retrieves the collection of StudentAvailability resources.'
+      description: 'Retrieves the collection of StudentAvailability resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_availabilities/{id}':
+    get:
+      operationId: getStudentAvailabilityItem
+      tags:
+        - StudentAvailability
+      responses:
+        200:
+          description: 'StudentAvailability resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentAvailability-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentAvailability resource.'
+      description: 'Retrieves a StudentAvailability resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/student_availabilities/{id}/availability':
     get:
       operationId: api_student_availabilities_availability_get_subresourceStudentAvailabilitySubresource
@@ -12239,6 +13767,579 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /student_backgrounds:
+    get:
+      operationId: getStudentBackgroundCollection
+      tags:
+        - StudentBackground
+      responses:
+        200:
+          description: 'StudentBackground collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentBackground.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentBackground.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentBackground-read'
+      summary: 'Retrieves the collection of StudentBackground resources.'
+      description: 'Retrieves the collection of StudentBackground resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_backgrounds/{id}':
+    get:
+      operationId: getStudentBackgroundItem
+      tags:
+        - StudentBackground
+      responses:
+        200:
+          description: 'StudentBackground resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentBackground.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentBackground-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentBackground resource.'
+      description: 'Retrieves a StudentBackground resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_civic_integrations:
+    get:
+      operationId: getStudentCivicIntegrationCollection
+      tags:
+        - StudentCivicIntegration
+      responses:
+        200:
+          description: 'StudentCivicIntegration collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCivicIntegration-read'
+      summary: 'Retrieves the collection of StudentCivicIntegration resources.'
+      description: 'Retrieves the collection of StudentCivicIntegration resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_civic_integrations/{id}':
+    get:
+      operationId: getStudentCivicIntegrationItem
+      tags:
+        - StudentCivicIntegration
+      responses:
+        200:
+          description: 'StudentCivicIntegration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCivicIntegration-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentCivicIntegration resource.'
+      description: 'Retrieves a StudentCivicIntegration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_courses:
+    get:
+      operationId: getStudentCourseCollection
+      tags:
+        - StudentCourse
+      responses:
+        200:
+          description: 'StudentCourse collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentCourse.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentCourse.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentCourse-read'
+      summary: 'Retrieves the collection of StudentCourse resources.'
+      description: 'Retrieves the collection of StudentCourse resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_courses/{id}':
+    get:
+      operationId: getStudentCourseItem
+      tags:
+        - StudentCourse
+      responses:
+        200:
+          description: 'StudentCourse resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentCourse.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentCourse-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentCourse resource.'
+      description: 'Retrieves a StudentCourse resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/student_courses/{id}/course':
     get:
       operationId: api_student_courses_course_get_subresourceStudentCourseSubresource
@@ -12758,6 +14859,388 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /student_dutch_n_ts:
+    get:
+      operationId: getStudentDutchNTCollection
+      tags:
+        - StudentDutchNT
+      responses:
+        200:
+          description: 'StudentDutchNT collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentDutchNT.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentDutchNT.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentDutchNT-read'
+      summary: 'Retrieves the collection of StudentDutchNT resources.'
+      description: 'Retrieves the collection of StudentDutchNT resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_dutch_n_ts/{id}':
+    get:
+      operationId: getStudentDutchNTItem
+      tags:
+        - StudentDutchNT
+      responses:
+        200:
+          description: 'StudentDutchNT resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentDutchNT-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentDutchNT resource.'
+      description: 'Retrieves a StudentDutchNT resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_educations:
+    get:
+      operationId: getStudentEducationCollection
+      tags:
+        - StudentEducation
+      responses:
+        200:
+          description: 'StudentEducation collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentEducation.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentEducation.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEducation-read'
+      summary: 'Retrieves the collection of StudentEducation resources.'
+      description: 'Retrieves the collection of StudentEducation resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_educations/{id}':
+    get:
+      operationId: getStudentEducationItem
+      tags:
+        - StudentEducation
+      responses:
+        200:
+          description: 'StudentEducation resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentEducation.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentEducation-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentEducation resource.'
+      description: 'Retrieves a StudentEducation resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/student_educations/{id}/education':
     get:
       operationId: api_student_educations_education_get_subresourceStudentEducationSubresource
@@ -12817,6 +15300,961 @@ paths:
           name: id
           in: path
           description: 'StudentEducation identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_generals:
+    get:
+      operationId: getStudentGeneralCollection
+      tags:
+        - StudentGeneral
+      responses:
+        200:
+          description: 'StudentGeneral collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentGeneral.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentGeneral.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGeneral-read'
+      summary: 'Retrieves the collection of StudentGeneral resources.'
+      description: 'Retrieves the collection of StudentGeneral resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_generals/{id}':
+    get:
+      operationId: getStudentGeneralItem
+      tags:
+        - StudentGeneral
+      responses:
+        200:
+          description: 'StudentGeneral resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentGeneral-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentGeneral resource.'
+      description: 'Retrieves a StudentGeneral resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_jobs:
+    get:
+      operationId: getStudentJobCollection
+      tags:
+        - StudentJob
+      responses:
+        200:
+          description: 'StudentJob collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentJob.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentJob.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentJob-read'
+      summary: 'Retrieves the collection of StudentJob resources.'
+      description: 'Retrieves the collection of StudentJob resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_jobs/{id}':
+    get:
+      operationId: getStudentJobItem
+      tags:
+        - StudentJob
+      responses:
+        200:
+          description: 'StudentJob resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentJob.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentJob-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentJob resource.'
+      description: 'Retrieves a StudentJob resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_motivations:
+    get:
+      operationId: getStudentMotivationCollection
+      tags:
+        - StudentMotivation
+      responses:
+        200:
+          description: 'StudentMotivation collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentMotivation.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentMotivation.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentMotivation-read'
+      summary: 'Retrieves the collection of StudentMotivation resources.'
+      description: 'Retrieves the collection of StudentMotivation resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_motivations/{id}':
+    get:
+      operationId: getStudentMotivationItem
+      tags:
+        - StudentMotivation
+      responses:
+        200:
+          description: 'StudentMotivation resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentMotivation-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentMotivation resource.'
+      description: 'Retrieves a StudentMotivation resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_permissions:
+    get:
+      operationId: getStudentPermissionCollection
+      tags:
+        - StudentPermission
+      responses:
+        200:
+          description: 'StudentPermission collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentPermission.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentPermission.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentPermission-read'
+      summary: 'Retrieves the collection of StudentPermission resources.'
+      description: 'Retrieves the collection of StudentPermission resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_permissions/{id}':
+    get:
+      operationId: getStudentPermissionItem
+      tags:
+        - StudentPermission
+      responses:
+        200:
+          description: 'StudentPermission resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentPermission resource.'
+      description: 'Retrieves a StudentPermission resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /student_referrers:
+    get:
+      operationId: getStudentReferrerCollection
+      tags:
+        - StudentReferrer
+      responses:
+        200:
+          description: 'StudentReferrer collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentReferrer.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/StudentReferrer.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentReferrer-read'
+      summary: 'Retrieves the collection of StudentReferrer resources.'
+      description: 'Retrieves the collection of StudentReferrer resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/student_referrers/{id}':
+    get:
+      operationId: getStudentReferrerItem
+      tags:
+        - StudentReferrer
+      responses:
+        200:
+          description: 'StudentReferrer resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentReferrer-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a StudentReferrer resource.'
+      description: 'Retrieves a StudentReferrer resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -16724,6 +20162,197 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /telephones:
+    get:
+      operationId: getTelephoneCollection
+      tags:
+        - Telephone
+      responses:
+        200:
+          description: 'Telephone collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Telephone.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Telephone-read'
+      summary: 'Retrieves the collection of Telephone resources.'
+      description: 'Retrieves the collection of Telephone resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/telephones/{id}':
+    get:
+      operationId: getTelephoneItem
+      tags:
+        - Telephone
+      responses:
+        200:
+          description: 'Telephone resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/Telephone.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/Telephone-read'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Telephone resource.'
+      description: 'Retrieves a Telephone resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /test_results:
     get:
       operationId: getTestResultCollection
@@ -18887,6 +22516,12 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        name:
+          maxLength: 255
+          type: string
+          example: 'Address of this person/organization'
+          description: 'Name of this address.'
+          nullable: true
         street:
           maxLength: 255
           example: Dam
@@ -18925,12 +22560,13 @@ components:
     Address-write:
       type: object
       description: 'All properties that the DTO entity Address holds.'
-      required:
-        - street
-        - houseNumber
-        - postalCode
-        - locality
       properties:
+        name:
+          maxLength: 255
+          type: string
+          example: 'Address of this person/organization'
+          description: 'Name of this address.'
+          nullable: true
         street:
           maxLength: 255
           example: Dam
@@ -18961,6 +22597,11 @@ components:
           example: Amsterdam
           description: 'Locality of this address.'
           type: string
+      required:
+        - street
+        - houseNumber
+        - postalCode
+        - locality
     Address.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Address holds.'
@@ -18993,6 +22634,12 @@ components:
           description: 'The UUID identifier of this resource'
           type: string
           format: uuid
+        name:
+          maxLength: 255
+          type: string
+          example: 'Address of this person/organization'
+          description: 'Name of this address.'
+          nullable: true
         street:
           maxLength: 255
           example: Dam
@@ -19031,11 +22678,6 @@ components:
     Address.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Address holds.'
-      required:
-        - street
-        - houseNumber
-        - postalCode
-        - locality
       properties:
         '@context':
           readOnly: true
@@ -19060,6 +22702,12 @@ components:
         '@type':
           readOnly: true
           type: string
+        name:
+          maxLength: 255
+          type: string
+          example: 'Address of this person/organization'
+          description: 'Name of this address.'
+          nullable: true
         street:
           maxLength: 255
           example: Dam
@@ -19090,6 +22738,11 @@ components:
           example: Amsterdam
           description: 'Locality of this address.'
           type: string
+      required:
+        - street
+        - houseNumber
+        - postalCode
+        - locality
     AuditTrail-read:
       type: object
       description: 'An resource representing a log line.'
@@ -22256,7 +25909,7 @@ components:
             - Provider
             - LanguageHouse
           example: LanguageHouse
-          description: 'Type of this organization.'
+          description: 'Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**'
           nullable: true
         addresses:
           description: 'Address of this organization'
@@ -22295,7 +25948,7 @@ components:
             - Provider
             - LanguageHouse
           example: LanguageHouse
-          description: 'Type of this organization.'
+          description: 'Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**'
           nullable: true
         addresses:
           description: 'Address of this organization'
@@ -22358,7 +26011,7 @@ components:
             - Provider
             - LanguageHouse
           example: LanguageHouse
-          description: 'Type of this organization.'
+          description: 'Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**'
           nullable: true
         addresses:
           description: 'Address of this organization'
@@ -22420,7 +26073,7 @@ components:
             - Provider
             - LanguageHouse
           example: LanguageHouse
-          description: 'Type of this organization.'
+          description: 'Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**'
           nullable: true
         addresses:
           description: 'Address of this organization'
@@ -24209,6 +27862,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentAvailability holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -24226,12 +27885,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -24407,6 +28060,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentBackground holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -24424,12 +28083,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -24629,6 +28282,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentCivicIntegration holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -24646,12 +28305,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -24767,6 +28420,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentCourse holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -24784,12 +28443,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -25147,6 +28800,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentDutchNT holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -25164,12 +28823,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -25333,6 +28986,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -25350,12 +29009,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -25525,6 +29178,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentGeneral holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -25542,12 +29201,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -25733,6 +29386,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentJob holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -25750,12 +29409,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -25991,6 +29644,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentMotivation holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -26008,12 +29667,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -26225,6 +29878,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentPermission holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -26242,12 +29901,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'
@@ -26383,6 +30036,12 @@ components:
       type: object
       description: 'All properties that the DTO entity StudentReferrer holds.'
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -26400,12 +30059,6 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           readOnly: true
           description: 'The UUID identifier of this resource'

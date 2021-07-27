@@ -356,11 +356,12 @@ class UcService
         $expiry = new DateTime('+10 days');
 
         $jwtBody = [
-            'userId' => $resource['id'],
-            'type'   => 'login',
-            'iss'    => $this->parameterBag->get('app_url'),
-            'ias'    => $time->getTimestamp(),
-            'exp'    => $expiry->getTimestamp(),
+            'userId'    => $resource['id'],
+            'username'  => $username,
+            'type'      => 'login',
+            'iss'       => $this->parameterBag->get('app_url'),
+            'ias'       => $time->getTimestamp(),
+            'exp'       => $expiry->getTimestamp(),
         ];
 
         return $this->createJWTToken($jwtBody);
@@ -677,7 +678,7 @@ class UcService
     public function createUserGroups(array $organization, string $type): array
     {
         $userGroups = [];
-        if ($type == 'Taalhuis') {
+        if ($type == 'LanguageHouse') {
             $userGroups = $this->createTaalhuisUserGroups($organization, $userGroups);
         } else {
             $userGroups = $this->createProviderUserGroups($organization, $userGroups);

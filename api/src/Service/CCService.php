@@ -2,9 +2,13 @@
 
 namespace App\Service;
 
+use App\Entity\Address;
+use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\LanguageHouse;
+use App\Entity\Organization;
 use App\Entity\Provider;
+use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,37 +60,81 @@ class CCService
     }
 
     /**
-     * @param array  $result
-     * @param string $type
-     *
-     * @return LanguageHouse|Provider
+     * @param array $result
+     * @return Organization
      */
-    public function createOrganizationObject(array $result, string $type)
+    public function createOrganizationObject(array $result): Organization
     {
-        if ($type == 'Taalhuis') {
-            $organization = new LanguageHouse();
-        } else {
-            $organization = new Provider();
-        }
-
-        $address = [
-            'street'            => $result['addresses'][0]['street'] ?? null,
-            'houseNumber'       => $result['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $result['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode'        => $result['addresses'][0]['postalCode'] ?? null,
-            'locality'          => $result['addresses'][0]['locality'] ?? null,
-        ];
+        $organization = new Organization();
         $organization->setName($result['name']);
-        $organization->setAddress($address);
-        $organization->setEmail($result['emails'][0]['email'] ?? null);
-        $organization->setPhoneNumber($result['telephones'][0]['telephone'] ?? null);
         $organization->setType($result['type'] ?? null);
+        $organization->setAddresses(isset($result['addresses'][0]) ? $this->createAddressObject($result['addresses'][0]) : null);
+        $organization->setEmails(isset($result['emails'][0]) ? $this->createEmailObject($result['emails'][0]) : null);
+        $organization->setTelephones(isset($result['telephones'][0]) ? $this->createTelephoneObject($result['telephones'][0]) : null);
 
         $this->entityManager->persist($organization);
         $organization->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    /**
+     * @param array  $result
+     *
+     * @return Address
+     */
+    public function createAddressObject(array $result): Address
+    {
+        $address = new Address();
+        $address->setName($result['name'] ?? null);
+        $address->setStreet($result['street']);
+        $address->setHouseNumber($result['houseNumber']);
+        $address->setHouseNumberSuffix($result['houseNumberSuffix'] ?? null);
+        $address->setPostalCode($result['postalCode']);
+        $address->setLocality($result['locality']);
+
+        $this->entityManager->persist($address);
+        $address->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($address);
+
+        return $address;
+    }
+
+    /**
+     * @param array  $result
+     *
+     * @return Email
+     */
+    public function createEmailObject(array $result): Email
+    {
+        $email = new Email();
+        $email->setName($result['name'] ?? null);
+        $email->setEmail($result['email']);
+
+        $this->entityManager->persist($email);
+        $email->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($email);
+
+        return $email;
+    }
+
+    /**
+     * @param array  $result
+     *
+     * @return Telephone
+     */
+    public function createTelephoneObject(array $result): Telephone
+    {
+        $telephone = new Telephone();
+        $telephone->setName($result['name'] ?? null);
+        $telephone->setTelephone($result['telephone']);
+
+        $this->entityManager->persist($telephone);
+        $telephone->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($telephone);
+
+        return $telephone;
     }
 
     /**
@@ -140,19 +188,19 @@ class CCService
     {
         $wrcOrganization = $this->wrcService->createOrganization($organizationArray);
         $address = [
-            'name'              => 'Address of '.$organizationArray['name'],
-            'street'            => $organizationArray['address']['street'],
-            'houseNumber'       => $organizationArray['address']['houseNumber'],
-            'houseNumberSuffix' => $organizationArray['address']['postalCode'],
-            'postalCode'        => $organizationArray['address']['postalCode'],
-            'locality'          => $organizationArray['address']['locality'],
+            'name'              => $organizationArray['addresses']['name'] ?? null,
+            'street'            => $organizationArray['addresses']['street'] ?? null,
+            'houseNumber'       => $organizationArray['addresses']['houseNumber'] ?? null,
+            'houseNumberSuffix' => $organizationArray['addresses']['houseNumberSuffix'] ?? null,
+            'postalCode'        => $organizationArray['addresses']['postalCode'] ?? null,
+            'locality'          => $organizationArray['addresses']['locality'] ?? null,
         ];
         $resource = [
             'name'               => $organizationArray['name'],
             'type'               => $type,
-            'telephones'         => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
-            'emails'             => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
-            'addresses'          => [$address],
+            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'], 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'], 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
