@@ -3,12 +3,14 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Employee;
 use App\Entity\Organization;
 use App\Entity\Taalhuis;
 use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
+use App\Service\ParticipationService;
 use App\Service\UcService;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -24,30 +26,24 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\SerializerInterface;
 use function GuzzleHttp\json_decode;
 
-class OrganizationSubscriber implements EventSubscriberInterface
+class EmployeeSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
-    private CommonGroundService $commonGroundService;
-    private CCService $ccService;
-    private UcService $ucService;
-    private EDUService $eduService;
-//    private MrcService $mrcService;
+    private MrcService $mrcService;
+//    private ParticipationService $participationService;
 
     /**
-     * OrganizationSubscriber constructor.
+     * EmployeeSubscriber constructor.
+     * @param MrcService $mrcService
      * @param LayerService $layerService
-     * @param UcService $ucService
      */
-    public function __construct(LayerService $layerService, UcService $ucService)
+    public function __construct(MrcService $mrcService, LayerService $layerService)
     {
         $this->entityManager = $layerService->entityManager;
         $this->serializer = $layerService->serializer;
-        $this->commonGroundService = $layerService->commonGroundService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
-        $this->ucService = $ucService;
-        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
-//        $this->mrcService = new MrcService($layerService, $ucService);
+        $this->mrcService = $mrcService;
+//        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
 
     /**
@@ -56,7 +52,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::VIEW => ['organization', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['employee', EventPriorities::PRE_SERIALIZE],
         ];
     }
 
@@ -64,7 +60,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
      * @param ViewEvent $event
      * @throws Exception
      */
-    public function organization(ViewEvent $event)
+    public function employee(ViewEvent $event)
     {
         $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
@@ -92,8 +88,8 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
         // Lets limit the subscriber
         switch ($route) {
-            case 'api_organizations_post_collection':
-                $response = $this->createOrganization($body);
+            case 'api_employees_post_collection':
+                $response = $this->createEmployee($body);
                 break;
             default:
                 return;
@@ -117,36 +113,21 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * @param array $body
-     * @return Organization|Response
+     * @return Employee|Response
+     * @throws Exception
      */
-    private function createOrganization(array $body)
+    private function createEmployee(array $body)
     {
-        if (!isset($body['type'])) {
+        if (!isset($body['person']['emails']['email'])) {
             return new Response(
                 json_encode([
-                    'message' => 'Please give the type of organization you want to create!',
-                    'dot-notation' => 'Organization.type'
+                    'message' => 'The person of this employee must contain an email!',
+                    'dot-notation' => 'Employee.person.emails.email'
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
-        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'],'type' => $body['type']])['hydra:member'];
-        if (count($organizations) > 0) {
-            return new Response(
-                json_encode([
-                    'message' => 'There already exists a '.$body['type'].' with the name '.$body['name'].'!',
-                    'dot-notation' => 'Organization.name'
-                ]),
-                Response::HTTP_CONFLICT,
-                ['content-type' => 'application/json']
-            );
-        }
-
-        $organization = $this->ccService->createOrganization($body, $body['type']);
-        $this->eduService->saveProgram($organization);
-        $this->ucService->createUserGroups($organization, $body['type']);
-
-        return $this->ccService->createOrganizationObject($organization);
+        return $this->mrcService->createEmployee($body); // TODO: see todo notes in mrcService
     }
 }
