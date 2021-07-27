@@ -15,6 +15,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,8 +27,8 @@ use function GuzzleHttp\json_decode;
 class OrganizationSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
-//    private CommonGroundService $commonGroundService;
     private SerializerInterface $serializer;
+    private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
@@ -35,16 +36,14 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * OrganizationSubscriber constructor.
-     * @param UcService $ucService
      * @param LayerService $layerService
+     * @param UcService $ucService
      */
-    public function __construct(
-        UcService $ucService,
-        LayerService $layerService
-    ) {
+    public function __construct(LayerService $layerService, UcService $ucService)
+    {
         $this->entityManager = $layerService->entityManager;
-//        $this->commonGroundService = $layerService->commonGroundService;
         $this->serializer = $layerService->serializer;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
@@ -94,18 +93,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
         // Lets limit the subscriber
         switch ($route) {
             case 'api_organizations_post_collection':
-                if (!isset($body['type'])) {
-                    $response = new Response(
-                        json_encode(['message' => 'Please give the type of organization you want to create!']),
-                        Response::HTTP_BAD_REQUEST,
-                        ['content-type' => $contentType]
-                    );
-                    break;
-                }
-                $response = $this->serializer->serialize(
-                    $this->createOrganization($body),
-                    $renderType,
-                );
+                $response = $this->createOrganization($body);
                 break;
             default:
                 return;
@@ -116,6 +104,10 @@ class OrganizationSubscriber implements EventSubscriberInterface
             $event->setResponse($response);
             return;
         }
+        $response = $this->serializer->serialize(
+            $response,
+            $renderType,
+        );
         $event->setResponse(new Response(
             $response,
             Response::HTTP_OK,
@@ -125,11 +117,28 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * @param array $body
-     * @return Organization
-     * @throws Exception
+     * @return Organization|Response
      */
-    private function createOrganization(array $body): Organization
+    private function createOrganization(array $body)
     {
+        if (!isset($body['type'])) {
+            return new Response(
+                json_encode(['message' => 'Please give the type of organization you want to create!']),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'application/json']
+            );
+        }
+        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'],'type' => $body['type']])['hydra:member'];
+        if (count($organizations) > 0) {
+            return new Response(
+                json_encode([
+                    'message' => 'There already exists a '.$body['type'].' with the name '.$body['name'].'!'
+                ]),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'application/json']
+            );
+        }
+
         $organization = $this->ccService->createOrganization($body, $body['type']);
         $this->eduService->saveProgram($organization)['@id'];
         $this->ucService->createUserGroups($organization, $body['type']);
