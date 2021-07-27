@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * @ApiResource(
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
- *     itemOperations={},
- *     collectionOperations={}
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
  * )
  * @ORM\Entity(repositoryClass=StudentCourseRepository::class)
  */

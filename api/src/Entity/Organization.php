@@ -78,7 +78,7 @@ class Organization
     private string $name;
 
     /**
-     * @var string|null Type of this organization.
+     * @var string|null Type of this organization. <br /> **When creating a Provider or LanguageHouse this is required!**
      *
      * @Assert\Choice({"Provider", "LanguageHouse"})
      *
