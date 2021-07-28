@@ -6,7 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.1",
-        "conduction/commongroundbundle": "dev-feature-usertoken",
+        "conduction/commongroundbundle": "^2.*-dev",
         "phpdocumentor/reflection-docblock": "^5",
         "phpunit/php-code-coverage": "^9.2",
         "sensio/framework-extra-bundle": "^5.5",
