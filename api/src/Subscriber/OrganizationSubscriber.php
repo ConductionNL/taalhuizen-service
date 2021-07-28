@@ -12,6 +12,7 @@ use App\Service\MrcService;
 use App\Service\UcService;
 use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -27,7 +28,7 @@ use function GuzzleHttp\json_decode;
 class OrganizationSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
-    private SerializerInterface $serializer;
+    private SerializerService $serializerService;
     private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
@@ -42,11 +43,11 @@ class OrganizationSubscriber implements EventSubscriberInterface
     public function __construct(LayerService $layerService, UcService $ucService)
     {
         $this->entityManager = $layerService->entityManager;
-        $this->serializer = $layerService->serializer;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
+        $this->serializerService = new SerializerService($layerService->serializer);
 //        $this->mrcService = new MrcService($layerService, $ucService);
     }
 
@@ -66,29 +67,9 @@ class OrganizationSubscriber implements EventSubscriberInterface
      */
     public function organization(ViewEvent $event)
     {
-        $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
-
-        if (!$contentType) {
-            $contentType = $event->getRequest()->headers->get('Accept');
-        }
-
-        switch ($contentType) {
-            case 'application/json':
-                $renderType = 'json';
-                break;
-            case 'application/ld+json':
-                $renderType = 'jsonld';
-                break;
-            case 'application/hal+json':
-                $renderType = 'jsonhal';
-                break;
-            default:
-                $contentType = 'application/ld+json';
-                $renderType = 'jsonld';
-        }
 
         // Lets limit the subscriber
         switch ($route) {
@@ -104,15 +85,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
             $event->setResponse($response);
             return;
         }
-        $response = $this->serializer->serialize(
-            $response,
-            $renderType,
-        );
-        $event->setResponse(new Response(
-            $response,
-            Response::HTTP_OK,
-            ['content-type' => $contentType]
-        ));
+        $this->serializerService->setResponse($response, $event);
     }
 
     /**

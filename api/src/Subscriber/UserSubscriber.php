@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\UcService;
+use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ use function GuzzleHttp\json_decode;
 class UserSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
-    private SerializerInterface $serializer;
+    private SerializerService $serializerService;
     private UcService $ucService;
 
     /**
@@ -28,8 +29,8 @@ class UserSubscriber implements EventSubscriberInterface
     public function __construct(LayerService $layerService, UcService $ucService)
     {
         $this->entityManager = $layerService->entityManager;
-        $this->serializer = $layerService->serializer;
         $this->ucService = $ucService;
+        $this->serializerService = new SerializerService($layerService->serializer);
     }
 
     /**
@@ -47,29 +48,10 @@ class UserSubscriber implements EventSubscriberInterface
      */
     public function user(ViewEvent $event)
     {
-        $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
 
-        if (!$contentType) {
-            $contentType = $event->getRequest()->headers->get('Accept');
-        }
-
-        switch ($contentType) {
-            case 'application/json':
-                $renderType = 'json';
-                break;
-            case 'application/ld+json':
-                $renderType = 'jsonld';
-                break;
-            case 'application/hal+json':
-                $renderType = 'jsonhal';
-                break;
-            default:
-                $contentType = 'application/ld+json';
-                $renderType = 'jsonld';
-        }
 
         // Lets limit the subscriber
         switch ($route) {
@@ -79,21 +61,12 @@ class UserSubscriber implements EventSubscriberInterface
             default:
                 return;
         }
-
         $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
             return;
         }
-        $response = $this->serializer->serialize(
-            $response,
-            $renderType,
-        );
-        $event->setResponse(new Response(
-            $response,
-            Response::HTTP_OK,
-            ['content-type' => $contentType]
-        ));
+        $this->serializerService->setResponse($response, $event);
     }
 
     /**
