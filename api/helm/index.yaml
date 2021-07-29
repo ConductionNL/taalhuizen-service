@@ -5,7 +5,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-07-27T13:33:40.5778905Z"
+    created: "2021-07-28T11:36:39.9534848Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -39,7 +39,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 6.0.11
-    created: "2021-07-27T13:33:40.5954407Z"
+    created: "2021-07-28T11:36:39.9690805Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -69,11 +69,47 @@ entries:
     - charts/redis-12.7.7.tgz
     version: 12.7.7
   taalhuizen-service:
+  - annotations:
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
+    appVersion: V1.0
+    created: "2021-07-28T11:36:39.9379091Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.1.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.7.7
+    description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql)
+      interface beschikbaar.&amp;#039;'
+    digest: 9b302360946ac3936412b8bb22605561ebfa888ff9146a188295412d87338cb9
+    home: https://www.conduction.nl
+    icon: https://conductionnl.github.io/images/conduction_avatar_blue_on_transparant.svg
+    keywords:
+    - commonground
+    - haven
+    - nlx
+    - component
+    maintainers:
+    - email: ruben@conduction.nl
+      name: Ruben van der Linde
+    - email: info@conduction.nl
+      name: Conduction
+    name: taalhuizen-service
+    sources:
+    - https://commonground.conduction.nl/
+    - https://www.commonground.nl/
+    urls:
+    - taalhuizen-service-1.0.0.tgz
+    version: 1.0.0
   - apiVersion: v1
     appVersion: V1.0
-    created: "2021-07-27T13:33:40.561592Z"
+    created: "2021-07-28T11:36:39.9121923Z"
     description: '&amp;'
-    digest: 099b649403ec86470e01ec942c34a9b0605e8e1e3ae07c3ffb47e3abcfffc68c
+    digest: a92437764664175bf5b53f33135d636e20f6057e89ee8eac17adef540ec8ba9e
     home: https://www.conduction.nl
     icon: https://conductionnl.github.io/images/conduction_avatar_blue_on_transparant.svg
     keywords:
@@ -93,4 +129,4 @@ entries:
     urls:
     - taalhuizen-service-0.1.0.tgz
     version: 0.1.0
-generated: "2021-07-27T13:33:40.5321925Z"
+generated: "2021-07-28T11:36:39.8920914Z"
