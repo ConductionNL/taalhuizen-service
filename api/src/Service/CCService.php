@@ -62,6 +62,7 @@ class CCService
 
     /**
      * @param array $result
+     *
      * @return Organization
      */
     public function createOrganizationObject(array $result): Organization
@@ -137,7 +138,7 @@ class CCService
     }
 
     /**
-     * @param array  $result
+     * @param array $result
      *
      * @return Email
      */
@@ -155,7 +156,7 @@ class CCService
     }
 
     /**
-     * @param array  $result
+     * @param array $result
      *
      * @return Telephone
      */

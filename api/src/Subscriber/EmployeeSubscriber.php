@@ -4,39 +4,32 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Employee;
-use App\Entity\Organization;
-use App\Entity\Taalhuis;
-use App\Service\CCService;
-use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
-use App\Service\UcService;
-use App\Service\WRCService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use Doctrine\ORM\EntityManager;
+use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use phpDocumentor\Reflection\Types\Mixed_;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\SerializerInterface;
-use function GuzzleHttp\json_decode;
 
 class EmployeeSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
     private CommonGroundService $commonGroundService;
+    private SerializerService $serializerService;
     private MrcService $mrcService;
 //    private ParticipationService $participationService;
 
     /**
      * EmployeeSubscriber constructor.
-     * @param MrcService $mrcService
+     *
+     * @param MrcService   $mrcService
      * @param LayerService $layerService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
@@ -45,6 +38,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
         $this->serializer = $layerService->serializer;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->mrcService = $mrcService;
+        $this->serializerService = new SerializerService($layerService->serializer);
 //        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
 
@@ -60,33 +54,14 @@ class EmployeeSubscriber implements EventSubscriberInterface
 
     /**
      * @param ViewEvent $event
+     *
      * @throws Exception
      */
     public function employee(ViewEvent $event)
     {
-        $contentType = $event->getRequest()->headers->get('accept');
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
-
-        if (!$contentType) {
-            $contentType = $event->getRequest()->headers->get('Accept');
-        }
-
-        switch ($contentType) {
-            case 'application/json':
-                $renderType = 'json';
-                break;
-            case 'application/ld+json':
-                $renderType = 'jsonld';
-                break;
-            case 'application/hal+json':
-                $renderType = 'jsonhal';
-                break;
-            default:
-                $contentType = 'application/ld+json';
-                $renderType = 'jsonld';
-        }
 
         // Lets limit the subscriber
         switch ($route) {
@@ -100,23 +75,18 @@ class EmployeeSubscriber implements EventSubscriberInterface
         $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
+
             return;
         }
-        $response = $this->serializer->serialize(
-            $response,
-            $renderType,
-        );
-        $event->setResponse(new Response(
-            $response,
-            Response::HTTP_OK,
-            ['content-type' => $contentType]
-        ));
+        $this->serializerService->setResponse($response, $event);
     }
 
     /**
      * @param array $body
-     * @return Employee|Response
+     *
      * @throws Exception
+     *
+     * @return Employee|Response
      */
     private function createEmployee(array $body)
     {
