@@ -30,6 +30,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
+    private CommonGroundService $commonGroundService;
     private MrcService $mrcService;
 //    private ParticipationService $participationService;
 
@@ -42,6 +43,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
     {
         $this->entityManager = $layerService->entityManager;
         $this->serializer = $layerService->serializer;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->mrcService = $mrcService;
 //        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
@@ -122,12 +124,24 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'The person of this employee must contain an email!',
-                    'dot-notation' => 'Employee.person.emails.email'
+                    'path' => 'person.emails.email'
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
-        return $this->mrcService->createEmployee($body); // TODO: see todo notes in mrcService
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => $body['person']['emails']['email']])['hydra:member'];
+        if (count($users) > 0) {
+            return new Response(
+                json_encode([
+                    'message' => 'A user with this email already exists!',
+                    'path' => 'person.emails.email',
+                    'data' => ['email' => $body['person']['emails']['email']]
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
+        return $this->mrcService->createEmployee($body);
     }
 }

@@ -94,7 +94,6 @@ class Employee
     /**
      * @var ?array Target Group Preference of this Employee.
      *
-     * @example NT1
      * @Assert\Choice(multiple=true, choices={"NT1","NT2"})
      *
      * @Groups({"read","write"})
@@ -190,16 +189,15 @@ class Employee
     /**
      * @var ?string Current education of this Employee.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "example"="yes"
+     *             "enum"={"YES", "NO", "NO_BUT_DID_EARLIER"},
+     *             "example"="YES"
      *         }
      *     }
      * )
@@ -381,6 +379,18 @@ class Employee
     public function setAvailabilityNotes(?string $availabilityNotes): self
     {
         $this->availabilityNotes = $availabilityNotes;
+
+        return $this;
+    }
+
+    public function getTargetGroupPreferences(): ?array
+    {
+        return $this->targetGroupPreferences;
+    }
+
+    public function setTargetGroupPreferences(?array $targetGroupPreferences): self
+    {
+        $this->targetGroupPreferences = $targetGroupPreferences;
 
         return $this;
     }

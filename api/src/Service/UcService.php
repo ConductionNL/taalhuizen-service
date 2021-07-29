@@ -243,7 +243,7 @@ class UcService
     {
         $personId = explode('/', $this->getUserArray($id)['person']);
         $personId = end($personId);
-        $person = $this->ccService->employeeToPerson($employeeArray, $employee);
+        $person = $this->ccService->employeeToPerson($employeeArray['person']);
         $result = $this->ccService->updatePerson($personId, $person);
 
         return $result;

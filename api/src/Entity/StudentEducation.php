@@ -44,9 +44,7 @@ class StudentEducation
     /**
      * @var ?string Following education right now of this studentEducation.
      *
-     *  @Assert\Length(
-     *     max = 255
-     *)
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(

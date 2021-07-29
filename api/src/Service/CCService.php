@@ -7,6 +7,7 @@ use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\Organization;
+use App\Entity\Person;
 use App\Entity\Provider;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -77,6 +78,40 @@ class CCService
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    /**
+     * @param array $result
+     * @return Person
+     * @throws Exception
+     */
+    public function createPersonObject(array $result): Person
+    {
+        $person = new Person();
+        $person->setGivenName($result['givenName']);
+        $person->setAdditionalName($result['additionalName'] ?? null);
+        $person->setFamilyName($result['familyName']);
+        $person->setGender($result['gender'] ?? null);
+        $person->setBirthday($result['birthday'] ? new \DateTime($result['birthday']) : null);
+        if ($result['contactPreference'] != 'OTHER') {
+            $person->setContactPreference($result['contactPreference']);
+            $person->setContactPreferenceOther(null);
+        } else {
+            $person->setContactPreference('OTHER');
+            $person->setContactPreferenceOther($result['contactPreference']);
+        }
+        $person->setAddresses(isset($result['addresses'][0]) ? $this->createAddressObject($result['addresses'][0]) : null);
+        $person->setEmails(isset($result['emails'][0]) ? $this->createEmailObject($result['emails'][0]) : null);
+        foreach ($result['telephones'] as $telephone) {
+            $person->addTelephone(isset($telephone) ? $this->createTelephoneObject($telephone) : null);
+        }
+        $person->setOrganization(null);
+
+        $this->entityManager->persist($person);
+        $person->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($person);
+
+        return $person;
     }
 
     /**
@@ -285,38 +320,36 @@ class CCService
         ];
     }
 
-    //TODO:remove this? does look like we wont need this anymore
     /**
      * Stores data for an employee in a person object in the contact catalogue.
      *
-     * @param array         $employeeArray The employee object that was given as input
-     * @param Employee|null $employee      The employee the data relates to
-     *
-     * @throws Exception Thrown if givenName is not provided
+     * @param array         $employeePerson The employee['person'] object that was given as input
      *
      * @return array The resulting person array
+     *@throws Exception Thrown if givenName is not provided
+     *
      */
-    public function employeeToPerson(array $employeeArray, ?Employee $employee = null): array
+    public function employeeToPerson(array $employeePerson): array
     {
         $person = [
-            'givenName'         => key_exists('givenName', $employeeArray) ? $employeeArray['givenName'] : ($employee ? $employee->getGivenName() : new Exception('givenName must be provided')),
-            'additionalName'    => key_exists('additionalName', $employeeArray) ? $employeeArray['additionalName'] : null,
-            'familyName'        => key_exists('familyName', $employeeArray) ? $employeeArray['familyName'] : null,
-            'birthday'          => key_exists('dateOfBirth', $employeeArray) ? $employeeArray['dateOfBirth'] : null,
-            'gender'            => key_exists('gender', $employeeArray) ? ($employeeArray['gender'] == 'X' ? null : strtolower($employeeArray['gender'])) : null,
-            'contactPreference' => key_exists('contactPreference', $employeeArray) ?
-                    $employeeArray['contactPreference'] :
+            'givenName'         => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
+            'additionalName'    => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
+            'familyName'        => key_exists('familyName', $employeePerson) ? $employeePerson['familyName'] : null,
+            'birthday'          => key_exists('dateOfBirth', $employeePerson) ? $employeePerson['dateOfBirth'] : null,
+            'gender'            => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : strtolower($employeePerson['gender'])) : null,
+            'contactPreference' => key_exists('contactPreference', $employeePerson) ?
+                    $employeePerson['contactPreference'] :
                     (
-                        key_exists('contactPreferenceOther', $employeeArray) ?
-                        $employeeArray['contactPreferenceOther'] :
+                        key_exists('contactPreferenceOther', $employeePerson) ?
+                        $employeePerson['contactPreferenceOther'] :
                         null
                     ),
-            'telephones'        => key_exists('telephone', $employeeArray) && $employeeArray['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeeArray['telephone']]] : [],
-            'emails'            => key_exists('email', $employeeArray) && $employeeArray['email'] ? [['name' => 'email 1', 'email' => $employeeArray['email']]] : ($employee && $employee->getEmail() ? [['name' => 'email 1', 'email' => $employee->getEmail()]] : []),
-            'addresses'         => key_exists('address', $employeeArray) && $employeeArray['address'] ? [$this->convertAddress($employeeArray['address'])] : [],
-            'availability'      => key_exists('availability', $employeeArray) && $employeeArray['availability'] ? $employeeArray['availability'] : [],
+            'telephones'        => key_exists('telephone', $employeePerson) && $employeePerson['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephone']]] : [],
+            'emails'            => key_exists('email', $employeePerson) && $employeePerson['email'] ? [['name' => 'email 1', 'email' => $employeePerson['email']]] : [],
+            'addresses'         => key_exists('address', $employeePerson) && $employeePerson['address'] ? [$this->convertAddress($employeePerson['address'])] : [],
+            'availability'      => key_exists('availability', $employeePerson) && $employeePerson['availability'] ? $employeePerson['availability'] : [],
         ];
-        $person['telephones'][] = key_exists('contactTelephone', $employeeArray) ? ['name' => 'contact telephone', 'telephone' => $employeeArray['contactTelephone']] : null;
+        $person['telephones'][] = key_exists('contactTelephone', $employeePerson) ? ['name' => 'contact telephone', 'telephone' => $employeePerson['contactTelephone']] : null;
 
         if ($person['givenName'] instanceof Exception) {
             throw $person['givenName'];
@@ -330,15 +363,14 @@ class CCService
     /**
      * Creates a contact catalogue person for an employee object.
      *
-     * @param array $employee The employee to create a person for
-     *
-     * @throws Exception
-     *
+     * @param array $person
      * @return array The resulting person
+     * @throws Exception
      */
-    public function createPersonForEmployee(array $employee): array
+    public function createPersonForEmployee(array $person): array
     {
-        $person = $this->createPerson($employee['person']);
+        $person = $this->employeeToPerson($person);
+        $person = $this->createPerson($person);
 
         return $person;
     }

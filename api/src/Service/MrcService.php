@@ -527,83 +527,17 @@ class MrcService
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         }
 
-        //TODO: from here down; see how this is done for OrganizationSubscriber (ccService->createOrganizationObject)
-        //TODO: create Employee object +subresources with the info from employeeArray/created objects
         $employee = new Employee();
-        $employee = $this->contactToEmployeeObject($employee, $contact);
+        $employee->setPerson($this->ccService->createPersonObject($contact));
+        $employee->setAvailability($contact['availability'] ?? null);
+        $employee->setAvailabilityNotes(null); //TODO: make sure to get this!
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
-        if ($userRoleArray) {
-            //TODO: something about this?
-//            $employee->setUserRoles($userRoleArray);
-            $employee->setUserGroupIds($userRoleArray);
-        }
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($employeeArray['id']));
         $this->entityManager->persist($employee);
-
-        return $employee;
-    }
-
-    /**
-     * Stores the contact relating to an employee into the employee object.
-     *
-     * @param Employee $employee The employee to store the data in
-     * @param array    $contact  The contact found
-     *
-     * @throws Exception Thrown if the EAV is not correctly called
-     *
-     * @return Employee The updated employee
-     */
-    private function contactToEmployeeObject(Employee $employee, array $contact): Employee
-    {
-        $person = New Person();
-        $person->setGivenName($contact['givenName']);
-        $person->setAdditionalName($contact['additionalName'] ?? null);
-        $person->setFamilyName($contact['familyName']);
-        $person->setGender($contact['gender'] ?? null);
-        $person->setBirthday($contact['birthday'] ? new \DateTime($contact['birthday']) : null);
-        if (key_exists('availability', $contact)) {
-            $employee->setAvailability($contact['availability']);
-        }
-
-        if ($contact['contactPreference'] == 'PHONECALL' || $contact['contactPreference'] == 'WHATSAPP' || $contact['contactPreference'] == 'EMAIL') {
-            $person->setContactPreference($contact['contactPreference']);
-        } else {
-            $person->setContactPreference('OTHER');
-            $person->setContactPreferenceOther($contact['contactPreference']);
-        }
-
-        // TODO: User setters of the Person object for the employee object:
-        return $this->contactObjectsToEmployeeObject($employee, $contact); //TODO $person?
-    }
-
-    /**
-     * Stores the sub objects of a contact in an employee object.
-     *
-     * @param Employee $employee The employee to store the data in
-     * @param array    $contact  The contact to store
-     *
-     * @return Employee The resulting employee object
-     */
-    private function contactObjectsToEmployeeObject(Employee $employee, array $contact): Employee
-    {
-        // TODO: User setters of the Person object for the employee object
-        foreach ($contact['telephones'] as $telephone) {
-            if ($telephone['name'] == 'contact telephone') {
-                $employee->setContactTelephone($telephone['telephone']);
-            } else {
-                $employee->setTelephone($telephone['telephone']);
-            }
-        }
-        foreach ($contact['emails'] as $email) {
-            $employee->setEmail($email['email']);
-        }
-        foreach ($contact['addresses'] as $address) {
-            $employee->setAddress($address);
-        }
 
         return $employee;
     }
@@ -623,8 +557,8 @@ class MrcService
         $employee->setIsVOGChecked($employeeResult['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($employeeResult['relevantCertificates']);
         $employee->setGotHereVia($employeeResult['referrer']);
-        $employee->setDateCreated(new \DateTime($employeeResult['dateCreated']));
-        $employee->setDateModified(new \DateTime($employeeResult['dateModified']));
+//        $employee->setDateCreated(new \DateTime($employeeResult['dateCreated'])); //TODO:add this back?
+//        $employee->setDateModified(new \DateTime($employeeResult['dateModified']));
 
         return $employee;
     }
@@ -632,10 +566,11 @@ class MrcService
     /**
      * Stores subobjects of an mrc employee in the employee object.
      *
-     * @param Employee $employee       The employee to store
-     * @param array    $employeeResult The data to store
+     * @param Employee $employee The employee to store
+     * @param array $employeeResult The data to store
      *
      * @return Employee The resulting employee object
+     * @throws Exception
      */
     private function subObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
@@ -651,9 +586,7 @@ class MrcService
         }
 
         $employee = $this->handleEmployeeSkills($employeeResult, $employee);
-        $employee = $this->handleEducationType($employeeResult, $employee);
-
-        return $employee;
+        return $this->handleEducationType($employeeResult, $employee);
     }
 
     /**
@@ -707,14 +640,12 @@ class MrcService
      *
      * @return Employee The resulting employee object
      */
-    private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult)
+    private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
-        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
-        $employee->setProviderId(end($providerIdArray));
         $languageHouseIdArray = explode('/', parse_url($employeeResult['organization'])['path']);
-        $employee->setLanguageHouseId(end($languageHouseIdArray));
-
-        $employee->setBiscEmployeeId($employeeResult['id']);
+        $employee->setOrganizationId(end($languageHouseIdArray));
+        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
+        $employee->setOrganizationId(end($providerIdArray));
 
         return $employee;
     }
@@ -784,7 +715,7 @@ class MrcService
         $organizationUrl = $this->handleUserOrganizationUrl($employeeArray);
 
         $resource = [
-            'username'     => $employeeArray['email'],
+            'username'     => $employeeArray['person']['emails']['email'],
             'person'       => $contact['@id'],
             'password'     => 'ThisIsATemporaryPassword',
             'organization' => $organizationUrl ?? null,
@@ -817,7 +748,7 @@ class MrcService
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
-            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray['person']);
         }
 
         return $contact;
@@ -842,7 +773,7 @@ class MrcService
             }
 
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
-        } elseif (isset($employeeArray['email'])) {
+        } elseif (isset($employeeArray['person']['emails']['email'])) {
             return $this->createUser($employeeArray, $contact);
         }
 
@@ -863,7 +794,7 @@ class MrcService
         if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
             return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
-            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
+            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray['person']);
         }
     }
 
@@ -889,12 +820,10 @@ class MrcService
 
         $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
         if (key_exists('targetGroupPreferences', $employeeArray)) {
-            //TODO: what does this do and do we still need it?
-//            $this->createCompetences($employeeArray, $result['id'], $result);
+            $this->createCompetences($employeeArray, $result['id'], $result);
         }
         if (key_exists('volunteeringPreference', $employeeArray)) {
-            //TODO: what does this do and do we still need it?
-//            $this->createInterests($employeeArray, $result['id'], $result['interests']);
+            $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
         if (key_exists('currentEducation', $employeeArray)) {
             //TODO: needs a redo with the new education and followingCourse Education DTO subresources
@@ -923,9 +852,9 @@ class MrcService
      */
     public function createEmployee(array $employeeArray): Employee
     {
-        $employee = $this->createEmployeeArray($employeeArray); //TODO: (remove this note) createEmployeeArray should work currently
+        $employee = $this->createEmployeeArray($employeeArray);
 
-        return $this->createEmployeeObject($employee, $employee['userRoleArray']); //TODO needs some changes still, see todo's
+        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
     }
 
     /**
