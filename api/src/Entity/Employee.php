@@ -152,23 +152,23 @@ class Employee
     private ?string $gotHereVia;
 
     /**
-     * @var ?string Has experience with target group of this Employee.
+     * @var ?bool Has experience with target group of this Employee.
      *
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "type"="string",
-     *             "example"="yes"
+     *             "type"="bool",
+     *             "example"=true
      *         }
      *     }
      * )
      */
-    private ?string $hasExperienceWithTargetGroup;
+    private ?bool $hasExperienceWithTargetGroup;
 
     /**
      * @var ?string The reason for the experience with the target group?
@@ -224,7 +224,7 @@ class Employee
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
@@ -270,12 +270,12 @@ class Employee
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
      */
-    private ?bool $isVOGChecked = false;
+    private ?bool $isVOGChecked;
 
     /**
      * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**

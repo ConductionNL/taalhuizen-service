@@ -37,8 +37,6 @@ class AvailabilityService
         $availability->setSaturday($availabilityResult['saturday'] ? $this->createAvailabilityDayObject($availabilityResult['saturday']) : null);
         $availability->setSunday($availabilityResult['sunday'] ? $this->createAvailabilityDayObject($availabilityResult['sunday']) : null);
 
-//        $this->entityManager->persist($availability);
-//        $availability->setId(Uuid::fromString($availabilityResult['id']));
         $this->entityManager->persist($availability);
 
         return $availability;
@@ -51,12 +49,10 @@ class AvailabilityService
     public function createAvailabilityDayObject(array $availabilityDayResult): AvailabilityDay
     {
         $availabilityDay = new AvailabilityDay();
-        $availabilityDay->setMorning($availabilityDayResult['morning'] ?? null);
-        $availabilityDay->setAfternoon($availabilityDayResult['afternoon'] ?? null);
-        $availabilityDay->setEvening($availabilityDayResult['evening'] ?? null);
+        $availabilityDay->setMorning($availabilityDayResult['morning']);
+        $availabilityDay->setAfternoon($availabilityDayResult['afternoon']);
+        $availabilityDay->setEvening($availabilityDayResult['evening']);
 
-//        $this->entityManager->persist($availabilityDay);
-//        $availabilityDay->setId(Uuid::fromString($availabilityDay['id']));
         $this->entityManager->persist($availabilityDay);
 
         return $availabilityDay;

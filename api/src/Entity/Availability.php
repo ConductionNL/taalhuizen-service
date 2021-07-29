@@ -32,7 +32,6 @@ class Availability
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")

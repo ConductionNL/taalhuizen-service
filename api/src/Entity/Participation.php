@@ -194,7 +194,7 @@ class Participation
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="false"
+     *             "example"=false
      *         }
      *     }
      * )
@@ -244,7 +244,7 @@ class Participation
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )

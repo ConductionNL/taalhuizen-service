@@ -144,7 +144,7 @@ class MrcService
         foreach ($employeeArray['targetGroupPreferences'] as $targetGroupPreference) {
             $competence = [
                 'name'        => $targetGroupPreference,
-                'description' => '',
+                'description' => $employeeArray['experienceWithTargetGroupYesReason'] ?? '',
                 'grade'       => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced' : 'unexperienced',
                 'employee'    => "/employees/$employeeId",
             ];
@@ -588,7 +588,7 @@ class MrcService
             $employee->setVolunteeringPreference($interest['name']);
         }
 
-        $employee = $this->handleEmployeeSkills($employeeResult, $employee);
+        $employee = $this->handleEmployeeCompetence($employeeResult, $employee);
         return $this->handleEducationType($employeeResult, $employee);
     }
 
@@ -600,14 +600,14 @@ class MrcService
      *
      * @return Employee The resulting employee object
      */
-    public function handleEmployeeSkills(array $employeeResult, Employee $employee): Employee
+    public function handleEmployeeCompetence(array $employeeResult, Employee $employee): Employee
     {
         $employee->setHasExperienceWithTargetGroup(null);
         $employee->setExperienceWithTargetGroupYesReason(null);
-        foreach ($employeeResult['skills'] as $skill) {
-            if (in_array($skill['name'], $employee->getTargetGroupPreferences())) {
-                $employee->setHasExperienceWithTargetGroup($skill['grade'] == 'experienced');
-                $employee->setExperienceWithTargetGroupYesReason($skill['grade'] == 'experienced');
+        foreach ($employeeResult['competencies'] as $competence) {
+            if (in_array($competence['name'], $employee->getTargetGroupPreferences())) {
+                $employee->setHasExperienceWithTargetGroup($competence['grade'] == 'experienced');
+                $employee->setExperienceWithTargetGroupYesReason($competence['description'] != '' ? $competence['description'] : null);
             }
         }
 
@@ -756,7 +756,7 @@ class MrcService
             $contact = $this->commonGroundService->getResource($employeeArray['person']);
         // if this person does not exist we should not create it here, but before we update the student employee object!
         } else {
-            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray['person']);
+            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         }
 
         return $contact;
@@ -802,7 +802,7 @@ class MrcService
         if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
             return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
-            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray['person']);
+            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
         }
     }
 
