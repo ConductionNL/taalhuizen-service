@@ -35,7 +35,7 @@ class MrcService
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
         $this->bsService = $layerService->bsService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->eavService = new EAVService($layerService->commonGroundService);
     }
 

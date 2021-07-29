@@ -141,7 +141,7 @@ class User
      *     }
      * )
      */
-    private ?string $username;
+    private ?string $username = null;
 
     /**
      * @var Person|null A contact component person of this User.
@@ -152,7 +152,7 @@ class User
      * @ApiSubresource()
      * @MaxDepth(1)
      */
-    private ?Person $person;
+    private ?Person $person = null;
 
     /**
      * @var string|null The userEnvironment of this User.
@@ -172,7 +172,7 @@ class User
      * )
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private ?string $userEnvironment;
+    private ?string $userEnvironment = null;
 
     /**
      * @var string|null A contact component organization id of this User.
@@ -188,7 +188,7 @@ class User
      *     }
      * )
      */
-    private ?string $organizationId;
+    private ?string $organizationId = null;
 
     /**
      * @var string|null The organization name of this User.
@@ -203,10 +203,10 @@ class User
      *     }
      * )
      */
-    private ?string $organizationName;
+    private ?string $organizationName = null;
 
     /**
-     * @var string The Password of this User.
+     * @var string|null The Password of this User.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -222,7 +222,7 @@ class User
      *     }
      * )
      */
-    private ?string $password;
+    private ?string $password = null;
 
     /**
      * @var string|null The Token for password reset.
@@ -240,7 +240,7 @@ class User
      *     }
      * )
      */
-    private ?string $token;
+    private ?string $token = null;
 
     public function getId(): UuidInterface
     {

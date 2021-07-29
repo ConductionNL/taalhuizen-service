@@ -7,6 +7,7 @@ use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\Organization;
+use App\Entity\Person;
 use App\Entity\Provider;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -15,6 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CCService
 {
@@ -22,21 +25,21 @@ class CCService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private WRCService $wrcService;
+    private SerializerInterface $serializer;
 
     /**
      * CCService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
+     * @param LayerService $layerService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
-        $this->wrcService = new WRCService($entityManager, $commonGroundService);
+        $this->entityManager = $layerService->entityManager;
+        $this->serializer = $layerService->serializer;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->wrcService = new WRCService($layerService->entityManager, $layerService->commonGroundService);
     }
 
     /**
@@ -354,11 +357,39 @@ class CCService
      *
      * @return array The result from the contact catalogue and EAV
      */
-    public function createPerson(array $person): array
+    public function createPerson(Person $person): array
     {
-        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
+        $this->entityManager->persist($person);
+        $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        foreach($personArray as $key => $value){
+            if(!$value)
+                unset($personArray[$key]);
+            if($key == 'emails'){
+                $personArray[$key] = [$personArray[$key]];
+            }
+        }
+
+        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
         // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+    }
+
+    public function createPersonObject(array $personArray): Person
+    {
+        $person = new Person();
+        $person->setGivenName($personArray['givenName']);
+        $person->setFamilyName($personArray['familyName']);
+        $person->setAdditionalName($personArray['additionalName']);
+
+        $this->entityManager->persist($person);
+
+        return $person;
+//        $person->setGender($personArray['gender']);
+//        $person->setContactPreference($personArray['contactPreference']);
+//        $person->setBirthday($personArray['birthday']);
+//        $person->setEmails($this->createEmailObject($personArray['emails'][0]));
+//        $person->setGivenName($personArray['givenName']);
+//        $person->setGivenName($personArray['givenName']);
     }
 
     /**

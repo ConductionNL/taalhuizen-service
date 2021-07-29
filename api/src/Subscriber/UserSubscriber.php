@@ -54,11 +54,15 @@ class UserSubscriber implements EventSubscriberInterface
         switch ($route) {
             case 'api_users_login_collection':
                 $response = $this->login($resource);
+                $this->serializerService->setResponse($response, $event, ['token']);
+                break;
+            case 'api_users_post_collection':
+                $response = $this->createUser($resource);
+                $this->serializerService->setResponse($response, $event);
                 break;
             default:
                 return;
         }
-        $this->serializerService->setResponse($response, $event, ['token']);
     }
 
     /**
@@ -74,6 +78,12 @@ class UserSubscriber implements EventSubscriberInterface
         $user->setToken($this->ucService->login($resource->getUsername(), $resource->getPassword()));
         $this->entityManager->persist($user);
 
+        return $user;
+    }
+
+    private function createUser(User $user): User
+    {
+        $user = $this->ucService->createUser($user);
         return $user;
     }
 }
