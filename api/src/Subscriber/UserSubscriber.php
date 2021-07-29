@@ -3,7 +3,6 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Person;
 use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\UcService;
@@ -13,8 +12,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Serializer\SerializerInterface;
-use function GuzzleHttp\json_decode;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -24,8 +21,9 @@ class UserSubscriber implements EventSubscriberInterface
 
     /**
      * UserSubscriber constructor.
+     *
      * @param LayerService $layerService
-     * @param UcService $ucService
+     * @param UcService    $ucService
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
@@ -64,9 +62,10 @@ class UserSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * handle login
+     * handle login.
      *
      * @param User $resource
+     *
      * @return Response
      */
     private function login(User $resource): object
@@ -74,6 +73,7 @@ class UserSubscriber implements EventSubscriberInterface
         $user = new User();
         $user->setToken($this->ucService->login($resource->getUsername(), $resource->getPassword()));
         $this->entityManager->persist($user);
+
         return $user;
     }
 }
