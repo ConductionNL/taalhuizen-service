@@ -20,6 +20,7 @@ class MrcService
     private UcService $ucService;
     private EAVService $eavService;
     private BsService $bsService;
+    private AvailabilityService $availabilityService;
 
     /**
      * MrcService constructor.
@@ -37,6 +38,7 @@ class MrcService
         $this->bsService = $layerService->bsService;
         $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
         $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->availabilityService = new AvailabilityService($layerService->entityManager);
     }
 
     /**
@@ -519,7 +521,7 @@ class MrcService
      *
      * @return Employee The resulting employee object
      */
-    public function createEmployeeObject(array $employeeArray, array $userRoleArray = []): Employee
+    public function createEmployeeObject(array $employeeArray): Employee
     {
         if ($this->eavService->hasEavObject($employeeArray['person'])) {
             $contact = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $employeeArray['person']]);
@@ -529,8 +531,8 @@ class MrcService
 
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));
-        $employee->setAvailability($contact['availability'] ?? null);
-        $employee->setAvailabilityNotes(null); //TODO: make sure to get this!
+        $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
+        $employee->setAvailabilityNotes(null); //TODO: make sure to set and get this note!
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
@@ -581,6 +583,7 @@ class MrcService
         $employee->setTargetGroupPreferences($competences);
 
         //@TODO: Dit geeft nog intermittende problemen
+        $employee->setVolunteeringPreference(null);
         foreach ($employeeResult['interests'] as $interest) {
             $employee->setVolunteeringPreference($interest['name']);
         }
@@ -599,6 +602,8 @@ class MrcService
      */
     public function handleEmployeeSkills(array $employeeResult, Employee $employee): Employee
     {
+        $employee->setHasExperienceWithTargetGroup(null);
+        $employee->setExperienceWithTargetGroupYesReason(null);
         foreach ($employeeResult['skills'] as $skill) {
             if (in_array($skill['name'], $employee->getTargetGroupPreferences())) {
                 $employee->setHasExperienceWithTargetGroup($skill['grade'] == 'experienced');
@@ -621,6 +626,10 @@ class MrcService
      */
     public function handleEducationType(array $employeeResult, Employee $employee): Employee
     {
+        $employee->setCurrentEducation(null);
+        $employee->setEducation(null);
+        $employee->setDoesCurrentlyFollowCourse(null);
+        $employee->setFollowingCourse(null);
         foreach ($employeeResult['educations'] as $education) {
             if (!$education['institution']) {
                 $employee = $this->setCurrentEducation($employee, $education);
@@ -642,10 +651,9 @@ class MrcService
      */
     private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
-        $languageHouseIdArray = explode('/', parse_url($employeeResult['organization'])['path']);
-        $employee->setOrganizationId(end($languageHouseIdArray));
-        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
-        $employee->setOrganizationId(end($providerIdArray));
+        $employee->setOrganizationId($this->commonGroundService->getUuidFromUrl($employeeResult['organization']));
+//        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
+//        $employee->setOrganizationId(end($providerIdArray));
 
         return $employee;
     }
@@ -854,7 +862,7 @@ class MrcService
     {
         $employee = $this->createEmployeeArray($employeeArray);
 
-        return $this->createEmployeeObject($employee, $employee['userRoleArray']);
+        return $this->createEmployeeObject($employee);
     }
 
     /**
@@ -1062,7 +1070,7 @@ class MrcService
             'organization'           => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
 //            'provider'               => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : (isset($employee) ? $employee->getOrganizationId() : null),
-            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : false),
+            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : null),
             'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
             'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : (isset($employee) ? $employee->getOtherRelevantCertificates() : null),
             'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,

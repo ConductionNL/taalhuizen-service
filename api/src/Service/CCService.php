@@ -344,9 +344,9 @@ class CCService
                         $employeePerson['contactPreferenceOther'] :
                         null
                     ),
-            'telephones'        => key_exists('telephone', $employeePerson) && $employeePerson['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephone']]] : [],
-            'emails'            => key_exists('email', $employeePerson) && $employeePerson['email'] ? [['name' => 'email 1', 'email' => $employeePerson['email']]] : [],
-            'addresses'         => key_exists('address', $employeePerson) && $employeePerson['address'] ? [$this->convertAddress($employeePerson['address'])] : [],
+            'telephones'        => key_exists('telephones', $employeePerson) && $employeePerson['telephones'][0]['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
+            'emails'            => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => 'email 1', 'email' => $employeePerson['emails']['email']]] : [],
+            'addresses'         => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
             'availability'      => key_exists('availability', $employeePerson) && $employeePerson['availability'] ? $employeePerson['availability'] : [],
         ];
         $person['telephones'][] = key_exists('contactTelephone', $employeePerson) ? ['name' => 'contact telephone', 'telephone' => $employeePerson['contactTelephone']] : null;
