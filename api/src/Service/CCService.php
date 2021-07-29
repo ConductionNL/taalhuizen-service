@@ -61,6 +61,7 @@ class CCService
 
     /**
      * @param array $result
+     *
      * @return Organization
      */
     public function createOrganizationObject(array $result): Organization
@@ -80,7 +81,7 @@ class CCService
     }
 
     /**
-     * @param array  $result
+     * @param array $result
      *
      * @return Address
      */
@@ -102,7 +103,7 @@ class CCService
     }
 
     /**
-     * @param array  $result
+     * @param array $result
      *
      * @return Email
      */
@@ -120,7 +121,7 @@ class CCService
     }
 
     /**
-     * @param array  $result
+     * @param array $result
      *
      * @return Telephone
      */
@@ -286,6 +287,7 @@ class CCService
     }
 
     //TODO:remove this? does look like we wont need this anymore
+
     /**
      * Stores data for an employee in a person object in the contact catalogue.
      *

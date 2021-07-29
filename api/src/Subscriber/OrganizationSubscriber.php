@@ -4,26 +4,20 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Organization;
-use App\Entity\Taalhuis;
 use App\Service\CCService;
 use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use App\Service\WRCService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use phpDocumentor\Reflection\Types\Mixed_;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Serializer\SerializerInterface;
-use function GuzzleHttp\json_decode;
 
 class OrganizationSubscriber implements EventSubscriberInterface
 {
@@ -37,8 +31,9 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * OrganizationSubscriber constructor.
+     *
      * @param LayerService $layerService
-     * @param UcService $ucService
+     * @param UcService    $ucService
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
@@ -63,6 +58,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * @param ViewEvent $event
+     *
      * @throws Exception
      */
     public function organization(ViewEvent $event)
@@ -83,6 +79,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
+
             return;
         }
         $this->serializerService->setResponse($response, $event);
@@ -90,6 +87,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
 
     /**
      * @param array $body
+     *
      * @return Organization|Response
      */
     private function createOrganization(array $body)
@@ -97,19 +95,19 @@ class OrganizationSubscriber implements EventSubscriberInterface
         if (!isset($body['type'])) {
             return new Response(
                 json_encode([
-                    'message' => 'Please give the type of organization you want to create!',
-                    'dot-notation' => 'Organization.type'
+                    'message'      => 'Please give the type of organization you want to create!',
+                    'dot-notation' => 'Organization.type',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
-        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'],'type' => $body['type']])['hydra:member'];
+        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'], 'type' => $body['type']])['hydra:member'];
         if (count($organizations) > 0) {
             return new Response(
                 json_encode([
-                    'message' => 'There already exists a '.$body['type'].' with the name '.$body['name'].'!',
-                    'dot-notation' => 'Organization.name'
+                    'message'      => 'There already exists a '.$body['type'].' with the name '.$body['name'].'!',
+                    'dot-notation' => 'Organization.name',
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
