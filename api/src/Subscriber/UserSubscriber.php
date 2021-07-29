@@ -3,6 +3,7 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Person;
 use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\UcService;
@@ -50,8 +51,6 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-        $body = json_decode($event->getRequest()->getContent(), true);
-
 
         // Lets limit the subscriber
         switch ($route) {
@@ -61,12 +60,7 @@ class UserSubscriber implements EventSubscriberInterface
             default:
                 return;
         }
-        $this->entityManager->remove($resource);
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-            return;
-        }
-        $this->serializerService->setResponse($response, $event);
+        $this->serializerService->setResponse($response, $event, ['token']);
     }
 
     /**
@@ -75,16 +69,11 @@ class UserSubscriber implements EventSubscriberInterface
      * @param User $resource
      * @return Response
      */
-    private function login(User $resource): Response
+    private function login(User $resource): object
     {
-        $result = [
-            "token" => $this->ucService->login($resource->getUsername(), $resource->getPassword())
-        ];
-
-        return new Response(
-            json_encode($result),
-            Response::HTTP_OK,
-            ['content-type' => 'application/json']
-        );
+        $user = new User();
+        $user->setToken($this->ucService->login($resource->getUsername(), $resource->getPassword()));
+        $this->entityManager->persist($user);
+        return $user;
     }
 }

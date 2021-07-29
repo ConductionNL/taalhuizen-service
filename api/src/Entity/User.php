@@ -125,7 +125,7 @@ class User
     private UuidInterface $id;
 
     /**
-     * @var string The Username of this User.
+     * @var string|null The Username of this User.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -141,10 +141,10 @@ class User
      *     }
      * )
      */
-    private string $username;
+    private ?string $username;
 
     /**
-     * @var Person A contact component person of this User.
+     * @var Person|null A contact component person of this User.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -152,7 +152,7 @@ class User
      * @ApiSubresource()
      * @MaxDepth(1)
      */
-    private Person $person;
+    private ?Person $person;
 
     /**
      * @var string|null The userEnvironment of this User.
@@ -222,7 +222,7 @@ class User
      *     }
      * )
      */
-    private string $password;
+    private ?string $password;
 
     /**
      * @var string|null The Token for password reset.
@@ -254,24 +254,24 @@ class User
         return $this;
     }
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
 
         return $this;
     }
 
-    public function getPerson(): Person
+    public function getPerson(): ?Person
     {
         return $this->person;
     }
 
-    public function setPerson(Person $person): self
+    public function setPerson(?Person $person): self
     {
         $this->person = $person;
 
@@ -314,12 +314,12 @@ class User
         return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
