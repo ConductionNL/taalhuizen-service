@@ -313,6 +313,7 @@ class CCService
     public function convertAddress(array $addressArray): array
     {
         return [
+            'name'              => key_exists('name', $addressArray) ? $addressArray['name'] : null,
             'street'            => key_exists('street', $addressArray) ? $addressArray['street'] : null,
             'houseNumber'       => key_exists('houseNumber', $addressArray) ? $addressArray['houseNumber'] : null,
             'houseNumberSuffix' => key_exists('houseNumberSuffix', $addressArray) ? $addressArray['houseNumberSuffix'] : null,
