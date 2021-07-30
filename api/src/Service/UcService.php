@@ -6,7 +6,9 @@ use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\Person;
 use App\Entity\Provider;
+use App\Entity\Session;
 use App\Entity\User;
+use Conduction\CommonGroundBundle\Service\AuthenticationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -325,6 +327,10 @@ class UcService
      */
     public function deleteUser(string $id): bool
     {
+        $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        if($resource['person']){
+            //@TODO: create delete person service in ccservice
+        }
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
 
@@ -352,9 +358,14 @@ class UcService
         $time = new DateTime();
         $expiry = new DateTime('+10 days');
 
+
+        $this->entityManager->persist($session);
+        $this->entityManager->flush();
+
         $jwtBody = [
             'userId'    => $resource['id'],
             'username'  => $username,
+            'session'   => $session->getId(),
             'type'      => 'login',
             'iss'       => $this->parameterBag->get('app_url'),
             'ias'       => $time->getTimestamp(),
@@ -432,19 +443,11 @@ class UcService
      */
     public function logout(): bool
     {
-        $token = $this->requestStack->getCurrentRequest()->headers->get('Authorization');
+        $token = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
 
-        $item = $this->cache->getItem('invalidToken_'.md5($token));
-        if ($item->isHit()) {
-            $value = $item->get();
-            if ($value == $token) {
-                return true;
-            }
-        }
-        $value = $token;
-        $item->set($value);
-        $item->expiresAt(new DateTime('+10 days'));
-        $this->cache->save($item);
+        $authenticationService = new AuthenticationService($this->parameterBag);
+        $session = $authenticationService->verifyJWTToken($token);
+
 
         return true;
     }

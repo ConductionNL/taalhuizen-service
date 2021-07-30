@@ -49,7 +49,6 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-
         // Lets limit the subscriber
         switch ($route) {
             case 'api_users_login_collection':
@@ -59,6 +58,9 @@ class UserSubscriber implements EventSubscriberInterface
             case 'api_users_post_collection':
                 $response = $this->createUser($resource);
                 $this->serializerService->setResponse($response, $event);
+                break;
+            case 'api_users_delete_item':
+                $this->deleteUser($resource, $event);
                 break;
             default:
                 return;
@@ -85,5 +87,10 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $user = $this->ucService->createUser($user);
         return $user;
+    }
+
+    private function deleteUser(User $user, ViewEvent $event){
+        var_dump($user->getId());
+        die;
     }
 }
