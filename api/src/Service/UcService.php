@@ -14,7 +14,6 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
@@ -25,10 +24,8 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Cache\Adapter\AdapterInterface as CacheInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UcService
@@ -294,11 +291,12 @@ class UcService
     /**
      * Updates a user in the user component with the data provided.
      *
-     * @param string $id The id of the user to update
-     * @param array $userArray The data provided to update the user
+     * @param string $id        The id of the user to update
+     * @param array  $userArray The data provided to update the user
+     *
+     * @throws Exception
      *
      * @return User The resulting user
-     * @throws Exception
      */
     public function updateUser(string $id, array $userArray): User
     {
@@ -331,9 +329,10 @@ class UcService
     public function deleteUser(string $id): bool
     {
         $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
-        if($resource['person']){
+        if ($resource['person']) {
             //@TODO: create delete person service in ccservice
         }
+
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
     }
 
@@ -352,15 +351,14 @@ class UcService
             'password'  => $password,
         ];
 
-        try{
+        try {
             $resource = $this->commonGroundService->createResource($user, ['component' => 'uc', 'type' => 'login']);
-        } catch(RequestException $exception){
+        } catch (RequestException $exception) {
             throw new HttpException(403, "Authentication failed: {$exception->getMessage()}");
         }
 
         $time = new DateTime();
         $expiry = new DateTime('+10 days');
-
 
 //        $this->entityManager->persist($session);
 //        $this->entityManager->flush();
@@ -368,7 +366,7 @@ class UcService
         $jwtBody = [
             'userId'    => $resource['id'],
             'username'  => $username,
-//            'session'   => $session->getId(),
+            //            'session'   => $session->getId(),
             'type'      => 'login',
             'iss'       => $this->parameterBag->get('app_url'),
             'ias'       => $time->getTimestamp(),
@@ -458,7 +456,6 @@ class UcService
 
         $authenticationService = new AuthenticationService($this->parameterBag);
         $session = $authenticationService->verifyJWTToken($token);
-
 
         return true;
     }

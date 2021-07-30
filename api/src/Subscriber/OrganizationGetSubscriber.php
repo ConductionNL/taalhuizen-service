@@ -5,19 +5,15 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Organization;
 use App\Service\CCService;
-use App\Service\EDUService;
 use App\Service\LayerService;
-use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class OrganizationGetSubscriber implements EventSubscriberInterface
@@ -58,7 +54,7 @@ class OrganizationGetSubscriber implements EventSubscriberInterface
      */
     public function organization(RequestEvent $event)
     {
-        if(!$event->isMainRequest()){
+        if (!$event->isMainRequest()) {
             return;
         }
         $route = $event->getRequest()->attributes->get('_route');
@@ -82,6 +78,7 @@ class OrganizationGetSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
+     *
      * @return Organization
      */
     private function getOrganization(string $id): Organization
