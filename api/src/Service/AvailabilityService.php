@@ -5,8 +5,6 @@ namespace App\Service;
 use App\Entity\Availability;
 use App\Entity\AvailabilityDay;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use Ramsey\Uuid\Uuid;
 
 class AvailabilityService
 {
@@ -24,6 +22,7 @@ class AvailabilityService
 
     /**
      * @param array $availabilityResult
+     *
      * @return Availability the saved object.
      */
     public function createAvailabilityObject(array $availabilityResult): Availability
@@ -44,6 +43,7 @@ class AvailabilityService
 
     /**
      * @param array $availabilityDayResult
+     *
      * @return AvailabilityDay the saved object.
      */
     public function createAvailabilityDayObject(array $availabilityDayResult): AvailabilityDay

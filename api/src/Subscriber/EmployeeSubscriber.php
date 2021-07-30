@@ -9,7 +9,6 @@ use App\Service\MrcService;
 use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -96,7 +95,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'The person of this employee must contain an email!',
-                    'path' => 'person.emails.email'
+                    'path'    => 'person.emails.email',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -107,13 +106,14 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'A user with this email already exists!',
-                    'path' => 'person.emails.email',
-                    'data' => ['email' => $body['person']['emails']['email']]
+                    'path'    => 'person.emails.email',
+                    'data'    => ['email' => $body['person']['emails']['email']],
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
             );
         }
+
         return $this->mrcService->createEmployee($body);
     }
 }

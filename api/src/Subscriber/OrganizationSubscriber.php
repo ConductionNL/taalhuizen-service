@@ -96,8 +96,8 @@ class OrganizationSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'Please give the type of organization you want to create!',
-                    'path' => 'type',
-                    'data' => ['options' => 'LanguageHouse, Provider']
+                    'path'    => 'type',
+                    'data'    => ['options' => 'LanguageHouse, Provider'],
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -108,8 +108,8 @@ class OrganizationSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'A '.$body['type'].' with this name already exists!',
-                    'path' => 'name',
-                    'data' => ['name' => $body['name']]
+                    'path'    => 'name',
+                    'data'    => ['name' => $body['name']],
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
