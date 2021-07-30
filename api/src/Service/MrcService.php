@@ -279,15 +279,17 @@ class MrcService
     // (see studentMutationResolver->inputToEmployee,
     // studentMutationResolver->getEmployeePropertiesFromEducationDetails &
     // studentMutationResolver->getEmployeePropertiesFromCourseDetails)
+
     /**
      * Creates educations for an employee.
      *
-     * @param array $employeeArray The employee array to process
-     * @param string $employeeId The id of the employee
+     * @param array      $employeeArray      The employee array to process
+     * @param string     $employeeId         The id of the employee
      * @param array|null $existingEducations The educations already existing for the employee
      *
-     * @return array
      * @throws Exception
+     *
+     * @return array
      */
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
     {
@@ -348,11 +350,12 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array $employeeEducation The education to process
-     * @param Employee $employee The employee to update
+     * @param array    $employeeEducation The education to process
+     * @param Employee $employee          The employee to update
+     *
+     * @throws Exception
      *
      * @return Employee The updated employee
-     * @throws Exception
      */
     public function handleCurrentEducation(array $employeeEducation, Employee $employee): Employee
     {
@@ -384,11 +387,12 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array $employeeEducation The education to process
-     * @param Employee $employee The employee to update
+     * @param array    $employeeEducation The education to process
+     * @param Employee $employee          The employee to update
+     *
+     * @throws Exception
      *
      * @return Employee The updated employee
-     * @throws Exception
      */
     public function handleUnfinishedEducation(array $employeeEducation, Employee $employee): Employee
     {
@@ -608,11 +612,12 @@ class MrcService
     /**
      * Stores subobjects of an mrc employee in the employee object.
      *
-     * @param Employee $employee The employee to store
-     * @param array $employeeResult The data to store
+     * @param Employee $employee       The employee to store
+     * @param array    $employeeResult The data to store
+     *
+     * @throws Exception
      *
      * @return Employee The resulting employee object
-     * @throws Exception
      */
     private function subObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
@@ -629,6 +634,7 @@ class MrcService
         }
 
         $employee = $this->handleEmployeeCompetence($employeeResult, $employee);
+
         return $this->handleEducationType($employeeResult, $employee);
     }
 
@@ -1108,7 +1114,7 @@ class MrcService
         return [
             'organization'           => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
-//            'provider'               => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : (isset($employee) ? $employee->getOrganizationId() : null),
+            //            'provider'               => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : (isset($employee) ? $employee->getOrganizationId() : null),
             'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : null),
             'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
             'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : (isset($employee) ? $employee->getOtherRelevantCertificates() : null),
