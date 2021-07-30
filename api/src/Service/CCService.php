@@ -207,13 +207,13 @@ class CCService
      * @param string $id   The id of the organization to fetch
      * @param string $type The type of organization
      *
-     * @return LanguageHouse|Provider The organization that has been fetched
+     * @return Organization The organization that has been fetched
      */
-    public function getOrganization(string $id, string $type)
+    public function getOrganization(string $id)
     {
         $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
 
-        return $this->createOrganizationObject($result, $type);
+        return $this->createOrganizationObject($result);
     }
 
     /**

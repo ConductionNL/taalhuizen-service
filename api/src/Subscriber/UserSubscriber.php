@@ -114,11 +114,11 @@ class UserSubscriber implements EventSubscriberInterface
     private function logout(User $resource): User
     {
         //TODO:
-//        $user = new User();
-//        $user->setToken($this->ucService->login($resource->getUsername(), $resource->getPassword()));
-//        $this->entityManager->persist($user);
-//
-//        return $user;
+        $user = new User();
+//        $this->ucService->logout();
+        $this->entityManager->persist($user);
+
+        return $user;
     }
 
     /**

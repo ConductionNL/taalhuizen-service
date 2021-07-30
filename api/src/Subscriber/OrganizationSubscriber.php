@@ -67,10 +67,16 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
 
+        var_dump($route);
+        var_dump($event->getRequest()->get('id')); die();
+
         // Lets limit the subscriber
         switch ($route) {
             case 'api_organizations_post_collection':
                 $response = $this->createOrganization($body);
+                break;
+            case 'api_organizations_get_item':
+                $response = $this->getOrganization($event->getRequest()->get('id'));
                 break;
             default:
                 return;
@@ -121,5 +127,14 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $this->ucService->createUserGroups($organization, $body['type']);
 
         return $this->ccService->createOrganizationObject($organization);
+    }
+
+    /**
+     * @param string $id
+     * @return Organization
+     */
+    private function getOrganization(string $id): Organization
+    {
+        return $this->ccService->getOrganization($id);
     }
 }

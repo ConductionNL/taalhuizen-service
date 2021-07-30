@@ -24,7 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
+ *          "get"={
+ *              "read"=false
+ *          },
  *          "get_current_user"={
  *              "method"="GET",
  *              "path"="/users/current_user",
