@@ -11,6 +11,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
@@ -24,6 +25,7 @@ use Symfony\Component\Cache\Adapter\AdapterInterface as CacheInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -117,7 +119,7 @@ class UcService
      *
      * @param string $jws The signed JWT token to validate
      *
-     * @throws \Exception Thrown when the JWT token could not be verified
+     * @throws Exception Thrown when the JWT token could not be verified
      *
      * @return array The payload of a verified JWT token
      */
@@ -136,7 +138,7 @@ class UcService
             return json_decode($jwt->getPayload(), true);
         }
 
-        throw new \Exception('Token could not be verified');
+        throw new Exception('Token could not be verified');
     }
 
     /**
@@ -229,7 +231,7 @@ class UcService
      * @param array         $employeeArray The employee array of the employee to edit
      * @param Employee|null $employee      The employee object of the employee to edit
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return array The resulting contact array for the updated employee
      */
@@ -290,10 +292,11 @@ class UcService
     /**
      * Updates a user in the user component with the data provided.
      *
-     * @param string $id        The id of the user to update
-     * @param array  $userArray The data provided to update the user
+     * @param string $id The id of the user to update
+     * @param array $userArray The data provided to update the user
      *
      * @return User The resulting user
+     * @throws Exception
      */
     public function updateUser(string $id, array $userArray): User
     {
@@ -313,7 +316,7 @@ class UcService
             $this->bsService->sendPasswordChangedEmail($result['username'], $contact);
         }
 
-        return $this->createUserObject($result, $contact);
+        return $this->createUserObject($result, $this->ccService->createPersonObject($contact));
     }
 
     /**
@@ -408,15 +411,23 @@ class UcService
      * @param string $token    The password reset token for the user
      * @param string $password The new password for the user
      *
-     * @throws \Exception Thrown when the email address provided in the request does not match the email address provided in the token
+     * @throws Exception Thrown when the email address provided in the request does not match the email address provided in the token
      *
-     * @return User The resulting user object
+     * @return User|Response The resulting user object
      */
-    public function updatePasswordWithToken(string $email, string $token, string $password): User
+    public function updatePasswordWithToken(string $email, string $token, string $password)
     {
         $tokenEmail = $this->validateJWTAndGetPayload($token);
         if ($tokenEmail['email'] != $email) {
-            throw new AccessDeniedHttpException('Provided email does not match email from token');
+            return new Response(
+                json_encode([
+                    'message' => 'Provided username does not match username from token!',
+                    'path'    => 'username',
+                    'data'    => ['username' => $email],
+                ]),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'application/json']
+            );
         }
         $userId = $tokenEmail['userId'];
 

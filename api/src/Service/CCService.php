@@ -374,9 +374,7 @@ class CCService
     public function createPersonForEmployee(array $employee): array
     {
         $person = $this->employeeToPerson($employee);
-        $person = $this->createPerson($person);
-
-        return $person;
+        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
     /**
@@ -403,24 +401,6 @@ class CCService
         return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
         // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
-    }
-
-    public function createPersonObject(array $personArray): Person
-    {
-        $person = new Person();
-        $person->setGivenName($personArray['givenName']);
-        $person->setFamilyName($personArray['familyName']);
-        $person->setAdditionalName($personArray['additionalName']);
-
-        $this->entityManager->persist($person);
-
-        return $person;
-//        $person->setGender($personArray['gender']);
-//        $person->setContactPreference($personArray['contactPreference']);
-//        $person->setBirthday($personArray['birthday']);
-//        $person->setEmails($this->createEmailObject($personArray['emails'][0]));
-//        $person->setGivenName($personArray['givenName']);
-//        $person->setGivenName($personArray['givenName']);
     }
 
     /**

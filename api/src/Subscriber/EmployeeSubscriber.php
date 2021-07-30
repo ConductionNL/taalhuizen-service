@@ -21,7 +21,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 class EmployeeSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
-    private SerializerInterface $serializer;
     private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private MrcService $mrcService;
@@ -36,7 +35,6 @@ class EmployeeSubscriber implements EventSubscriberInterface
     public function __construct(MrcService $mrcService, LayerService $layerService)
     {
         $this->entityManager = $layerService->entityManager;
-        $this->serializer = $layerService->serializer;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->mrcService = $mrcService;
         $this->serializerService = new SerializerService($layerService->serializer);
@@ -101,7 +99,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => $body['person']['emails']['email']])['hydra:member'];
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+','%2B', $body['person']['emails']['email'])])['hydra:member'];
         if (count($users) > 0) {
             return new Response(
                 json_encode([
