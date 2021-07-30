@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\UserRepository;
+use App\Controller\DeleteController;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -36,7 +37,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "put",
- *          "delete"
+ *          "delete"={
+ *              "read"=false
+ *          }
  *     },
  *     collectionOperations={
  *          "get",
