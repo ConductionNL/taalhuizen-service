@@ -362,13 +362,13 @@ class UcService
         $expiry = new DateTime('+10 days');
 
 
-        $this->entityManager->persist($session);
-        $this->entityManager->flush();
+//        $this->entityManager->persist($session);
+//        $this->entityManager->flush();
 
         $jwtBody = [
             'userId'    => $resource['id'],
             'username'  => $username,
-            'session'   => $session->getId(),
+//            'session'   => $session->getId(),
             'type'      => 'login',
             'iss'       => $this->parameterBag->get('app_url'),
             'ias'       => $time->getTimestamp(),

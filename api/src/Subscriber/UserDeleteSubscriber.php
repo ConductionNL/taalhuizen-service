@@ -44,7 +44,7 @@ class UserDeleteSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param ViewEvent $event
+     * @param RequestEvent $event
      */
     public function user(RequestEvent $event)
     {

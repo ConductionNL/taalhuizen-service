@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "519a5c12110a11d1cf9dc2e013822232",
+    "content-hash": "736a5f3858db5e0f60031d2d08edc286",
     "packages": [
         {
             "name": "api-platform/api-pack",
@@ -676,16 +676,16 @@
         },
         {
             "name": "conduction/commongroundbundle",
-            "version": "v2.x-dev",
+            "version": "dev-feature-usertoken",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ConductionNL/CommonGroundBundle.git",
-                "reference": "8c0e7e5d267c3ceaeeae504a071ea9dd8fd33071"
+                "reference": "0baaff8cafb2aebbb76b8ad52f7d5febd796a4ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ConductionNL/CommonGroundBundle/zipball/8c0e7e5d267c3ceaeeae504a071ea9dd8fd33071",
-                "reference": "8c0e7e5d267c3ceaeeae504a071ea9dd8fd33071",
+                "url": "https://api.github.com/repos/ConductionNL/CommonGroundBundle/zipball/0baaff8cafb2aebbb76b8ad52f7d5febd796a4ec",
+                "reference": "0baaff8cafb2aebbb76b8ad52f7d5febd796a4ec",
                 "shasum": ""
             },
             "require": {
@@ -711,7 +711,8 @@
                 "symfony/translation": "^5.0",
                 "symfony/var-exporter": "^5.0",
                 "twig/extensions": "^1.5",
-                "twig/twig": "2.13.*"
+                "twig/twig": "2.13.*",
+                "web-token/jwt-framework": "^2.2"
             },
             "conflict": {
                 "doctrine/dbal": "<2.5",
@@ -768,7 +769,7 @@
                 "issues": "https://github.com/ConductionNL/ConductionCommonGroundBundle/issues",
                 "source": "https://github.com/ConductionNL/ConductionCommonGroundBundle"
             },
-            "time": "2021-07-29T08:56:57+00:00"
+            "time": "2021-07-30T14:50:30+00:00"
         },
         {
             "name": "doctrine/annotations",
