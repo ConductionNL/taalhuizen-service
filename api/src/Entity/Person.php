@@ -77,7 +77,7 @@ class Person
      *     }
      * )
      */
-    private ?string $additionalName;
+    private ?string $additionalName = null;
 
     /**
      * @var string|null Family name of this person
@@ -94,7 +94,7 @@ class Person
      *     }
      * )
      */
-    private ?string $familyName;
+    private ?string $familyName = null;
 
     /**
      * @var string|null Gender of this person
@@ -112,7 +112,7 @@ class Person
      *     }
      * )
      */
-    private ?string $gender;
+    private ?string $gender = null;
 
     /**
      * @var DateTime|null Birthday of this person
@@ -128,7 +128,7 @@ class Person
      *     }
      * )
      */
-    private ?DateTime $birthday;
+    private ?DateTime $birthday = null;
 
     /**
      * @var Address|null Address of this person
@@ -140,7 +140,7 @@ class Person
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Address $addresses;
+    private ?Address $addresses = null;
 
     /**
      * @var Collection|null Telephones of this person
@@ -164,7 +164,7 @@ class Person
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Email $emails;
+    private ?Email $emails = null;
 
     /**
      * @var Organization|null Organization of this person
@@ -176,7 +176,7 @@ class Person
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Organization $organization;
+    private ?Organization $organization = null;
 
     /**
      * @var string|null The contact preference of the person.
@@ -196,7 +196,7 @@ class Person
      *     }
      * )
      */
-    private ?string $contactPreference;
+    private ?string $contactPreference = null;
 
     /**
      * @var string|null The contact preference of the person for when the OTHER option is selected.
@@ -212,7 +212,7 @@ class Person
      *     }
      * )
      */
-    private ?string $contactPreferenceOther;
+    private ?string $contactPreferenceOther = null;
 
     public function __construct()
     {

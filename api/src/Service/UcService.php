@@ -4,12 +4,15 @@ namespace App\Service;
 
 use App\Entity\Employee;
 use App\Entity\LanguageHouse;
+use App\Entity\Person;
 use App\Entity\Provider;
 use App\Entity\User;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\Algorithm\RS512;
@@ -22,6 +25,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UcService
 {
@@ -46,7 +50,7 @@ class UcService
         LayerService $layerService
     ) {
         $this->bsService = $layerService->bsService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->commonGroundService = $layerService->commonGroundService;
         $this->entityManager = $layerService->entityManager;
         $this->parameterBag = $layerService->parameterBag;
@@ -163,25 +167,15 @@ class UcService
      *
      * @return User The resulting user object
      */
-    public function createUserObject(array $raw, array $contact): User
+    public function createUserObject(array $raw, Person $person): User
     {
         $user = new User();
-
-        $user->setEmail(
-            key_exists('emails', $contact) &&
-            count($contact['emails']) > 0 &&
-            key_exists('email', $contact['emails'][array_key_first($contact['emails'])]) ?
-                $contact['emails'][array_key_first($contact['emails'])]['email'] : $raw['username']
-        );
         !$raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
+        $user->setPerson($person);
         $user->setPassword('');
         $user->setUsername($raw['username']);
-        $user->setGivenName($contact['givenName']);
-        $contact['additionalName'] ? $user->setAdditionalName($contact['additionalName']) : null;
-        $user->setFamilyName($contact['familyName']);
         isset($org) && $org['id'] ? $user->setOrganizationId($org['id']) : null;
         $user->setUserEnvironment($this->userEnvironmentEnum(isset($org) ? $org['type'] : null));
-        $user->setUserRoles($raw['roles']);
         isset($org) && $org['name'] ? $user->setOrganizationName($org['name']) : null;
         $this->entityManager->persist($user);
         $user->setId(Uuid::fromString($raw['id']));
@@ -271,28 +265,26 @@ class UcService
     /**
      * Creates a user from the data provided, and stores it in the user component.
      *
-     * @param array $userArray The array of parameters provided
+     * @param array $user The array of parameters provided
      *
      * @return User The resulting user
      */
-    public function createUser(array $userArray): User
+    public function createUser(User $user): User
     {
-        $contact = $this->ccService->createPerson(['givenName' => $userArray['givenName'], 'familyName' => $userArray['familyName'], 'additionalName' => $userArray['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $userArray['email']]]]);
+//        $contact = $this->ccService->createPerson(['givenName' => $user['givenName'], 'familyName' => $user['familyName'], 'additionalName' => $user['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $user['email']]]]);
+
+        $contact = $this->ccService->createPerson($user->getPerson());
         $resource = [
-            'username'     => key_exists('username', $userArray) ? $userArray['username'] : null,
-            'password'     => key_exists('password', $userArray) ? $userArray['password'] : null,
+            'username'     => $user->getUsername(),
+            'password'     => $user->getPassword(),
             'locale'       => 'nl',
-            'person'       => $contact['@id'],
-            'organization' => isset($userArray['organizationId']) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', $userArray['organizationId']]) : null,
+            'person'       => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]),
+            'organization' => null,
         ];
 
-        if (!$resource['username'] || !$resource['password']) {
-            throw new BadRequestException('Cannot create a user without both a username and password');
-        }
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
-        $user = new User();
 
-        return $this->createUserObject($result, $contact);
+        return $this->createUserObject($result, $this->ccService->createPersonObject($contact));
     }
 
     /**
@@ -350,7 +342,12 @@ class UcService
             'username'  => $username,
             'password'  => $password,
         ];
-        $resource = $this->commonGroundService->createResource($user, ['component' => 'uc', 'type' => 'login']);
+
+        try{
+            $resource = $this->commonGroundService->createResource($user, ['component' => 'uc', 'type' => 'login']);
+        } catch(RequestException $exception){
+            throw new HttpException(403, "Authentication failed: {$exception->getMessage()}");
+        }
 
         $time = new DateTime();
         $expiry = new DateTime('+10 days');

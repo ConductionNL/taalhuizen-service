@@ -39,7 +39,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
     {
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->serializerService = new SerializerService($layerService->serializer);
