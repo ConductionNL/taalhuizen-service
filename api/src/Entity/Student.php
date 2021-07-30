@@ -82,6 +82,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -93,6 +94,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCivicIntegration::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -105,6 +107,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private Person $person;
@@ -115,6 +118,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentGeneral::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -126,6 +130,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentReferrer::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -137,6 +142,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentBackground::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -148,6 +154,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentDutchNT::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -177,6 +184,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentEducation::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -188,6 +196,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentCourse::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -199,6 +208,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentJob::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -210,6 +220,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentMotivation::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -221,6 +232,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentAvailability::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -269,6 +281,7 @@ class Student
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private StudentPermission $permissionDetails;

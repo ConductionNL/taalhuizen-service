@@ -57,6 +57,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private Person $person;
@@ -67,6 +68,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -205,11 +207,12 @@ class Employee
     private ?string $currentEducation;
 
     /**
-     * @var ?Education Education of this employee
+     * @var ?Education Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -232,11 +235,12 @@ class Employee
     private ?bool $doesCurrentlyFollowCourse;
 
     /**
-     * @var ?Education Currently following course (Education) of this Employee.
+     * @var ?Education Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

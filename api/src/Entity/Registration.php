@@ -73,6 +73,7 @@ class Registration
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private Person $student;
@@ -84,6 +85,7 @@ class Registration
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private Person $registrar;

@@ -65,6 +65,7 @@ class StudentEducation
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private ?Education $education;

@@ -2,9 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\Education;
 use App\Entity\Employee;
 use App\Entity\Person;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
@@ -168,10 +170,11 @@ class MrcService
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                => $employeeArray['currentEducationYes']['name'],
-            'startDate'           => $employeeArray['currentEducationYes']['dateSince'],
+            'name'                => $employeeArray['education']['name'] ?? 'CurrentEducation',
+            'description'         => 'CurrentEducation',
+            'startDate'           => $employeeArray['education']['startDate'] ?? null,
             'degreeGrantedStatus' => 'notGranted',
-            'providesCertificate' => $employeeArray['currentEducationYes']['doesProvideCertificate'],
+            'providesCertificate' => $employeeArray['education']['providesCertificate'] ?? null,
             'employee'            => "/employees/$employeeId",
         ];
         if ($educationId) {
@@ -195,11 +198,12 @@ class MrcService
     public function createUnfinishedEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                    => $employeeArray['currentEducationNoButDidFollow']['name'],
-            'endDate'                 => $employeeArray['currentEducationNoButDidFollow']['dateUntil'],
+            'name'                    => $employeeArray['education']['name'],
+            'description'             => 'UnfinishedEducation',
+            'endDate'                 => $employeeArray['education']['endDate'],
             'degreeGrantedStatus'     => 'notGranted',
-            'iscedEducationLevelCode' => $employeeArray['currentEducationNoButDidFollow']['level'],
-            'providesCertificate'     => $employeeArray['currentEducationNoButDidFollow']['gotCertificate'],
+            'iscedEducationLevelCode' => $employeeArray['education']['iscedEducationLevelCode'],
+            'providesCertificate'     => $employeeArray['education']['providesCertificate'],
             'employee'                => "/employees/$employeeId",
         ];
         if ($educationId) {
@@ -223,11 +227,12 @@ class MrcService
     public function createCourse(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                   => $employeeArray['currentlyFollowingCourseName'],
-            'institution'            => $employeeArray['currentlyFollowingCourseInstitute'],
-            'providesCertificate'    => $employeeArray['doesCurrentlyFollowingCourseProvideCertificate'],
-            'courseProfessionalism'  => $employeeArray['currentlyFollowingCourseCourseProfessionalism'],
-            'teacherProfessionalism' => $employeeArray['currentlyFollowingCourseTeacherProfessionalism'],
+            'name'                   => $employeeArray['followingCourse']['name'],
+            'description'            => 'Course',
+            'institution'            => $employeeArray['followingCourse']['institution'],
+            'providesCertificate'    => $employeeArray['followingCourse']['providesCertificate'],
+            'courseProfessionalism'  => $employeeArray['followingCourse']['courseProfessionalism'],
+            'teacherProfessionalism' => $employeeArray['followingCourse']['teacherProfessionalism'],
             'employee'               => "/employees/$employeeId",
         ];
         if ($educationId) {
@@ -274,42 +279,41 @@ class MrcService
     // (see studentMutationResolver->inputToEmployee,
     // studentMutationResolver->getEmployeePropertiesFromEducationDetails &
     // studentMutationResolver->getEmployeePropertiesFromCourseDetails)
-
     /**
      * Creates educations for an employee.
      *
-     * @param array      $employeeArray      The employee array to process
-     * @param string     $employeeId         The id of the employee
+     * @param array $employeeArray The employee array to process
+     * @param string $employeeId The id of the employee
      * @param array|null $existingEducations The educations already existing for the employee
      *
      * @return array
+     * @throws Exception
      */
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
     {
-        //TODO: needs a redo with the new education and followingCourse Education DTO subresources
         $educations = [];
-//        if ($employeeArray['currentEducation'] == 'YES') {
-//            if ($existingEducations && $existing = $this->getEducation('currentEducation', $existingEducations)) {
-//                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId, $existing);
-//            } else {
-//                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId);
-//            }
-//        }
-//        if ($employeeArray['currentEducation'] == 'NO_BUT_DID_FOLLOW') {
-//            if ($existingEducations && $existing = $this->getEducation('unfinishedEducation', $existingEducations)) {
-//                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId, $existing);
-//            } else {
-//                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId);
-//            }
-//        }
-//
-//        if ($employeeArray['doesCurrentlyFollowCourse']) {
-//            if ($existingEducations && $existing = $this->getEducation('course', $existingEducations)) {
-//                $educations[] = $this->createCourse($employeeArray, $employeeId, $existing);
-//            } else {
-//                $educations[] = $this->createCourse($employeeArray, $employeeId);
-//            }
-//        }
+        if ($employeeArray['currentEducation'] == 'YES') {
+            if ($existingEducations && $existing = $this->getEducation('currentEducation', $existingEducations)) {
+                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createCurrentEducation($employeeArray, $employeeId);
+            }
+        }
+        if ($employeeArray['currentEducation'] == 'NO_BUT_DID_EARLIER') {
+            if ($existingEducations && $existing = $this->getEducation('unfinishedEducation', $existingEducations)) {
+                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId);
+            }
+        }
+
+        if ($employeeArray['doesCurrentlyFollowCourse']) {
+            if ($existingEducations && $existing = $this->getEducation('course', $existingEducations)) {
+                $educations[] = $this->createCourse($employeeArray, $employeeId, $existing);
+            } else {
+                $educations[] = $this->createCourse($employeeArray, $employeeId);
+            }
+        }
 
         return $educations;
     }
@@ -344,23 +348,34 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array    $education The education to process
-     * @param Employee $employee  The employee to update
+     * @param array $employeeEducation The education to process
+     * @param Employee $employee The employee to update
      *
      * @return Employee The updated employee
+     * @throws Exception
      */
-    public function handleEducationStartDate(array $education, Employee $employee): Employee
+    public function handleCurrentEducation(array $employeeEducation, Employee $employee): Employee
     {
-        if ($education['startDate']) {
-            $employee->setCurrentEducationYes(
-                [
-                    'id'                     => $education['id'],
-                    'dateSince'              => $education['endDate'],
-                    'name'                   => $education['name'],
-                    'doesProvideCertificate' => $education['providesCertificate'],
-                ]
-            );
+        if ($employeeEducation['description'] == 'CurrentEducation') {
+            $education = new Education();
+            $education->setName($employeeEducation['name'] ?? null);
+            $education->setStartDate(new DateTime($employeeEducation['startDate']) ?? null);
+            $education->setDegreeGrantedStatus($employeeEducation['degreeGrantedStatus']);
+            $education->setProvidesCertificate($employeeEducation['providesCertificate'] ?? null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setInstitution(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setEnddate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+
+            $this->entityManager->persist($education);
+            $education->setId(Uuid::fromString($employeeEducation['id']));
+            $this->entityManager->persist($education);
+
             $employee->setCurrentEducation('YES');
+            $employee->setEducation($education);
         }
 
         return $employee;
@@ -369,23 +384,34 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array    $education The education to process
-     * @param Employee $employee  The employee to update
+     * @param array $employeeEducation The education to process
+     * @param Employee $employee The employee to update
      *
      * @return Employee The updated employee
+     * @throws Exception
      */
-    public function handleEducationEndDate(array $education, Employee $employee): Employee
+    public function handleUnfinishedEducation(array $employeeEducation, Employee $employee): Employee
     {
-        if ($education['endDate']) {
-            $employee->setCurrentEducationNoButDidFollow(
-                [
-                    'id'             => $education['id'],
-                    'dateUntil'      => $education['endDate'],
-                    'level'          => $education['iscedEducationLevelCode'],
-                    'gotCertificate' => $education['providesCertificate'],
-                ]
-            );
-            $employee->setCurrentEducation('NO_BUT_DID_FOLLOW');
+        if ($employeeEducation['description'] == 'UnfinishedEducation') {
+            $education = new Education();
+            $education->setName($employeeEducation['name'] ?? null);
+            $education->setEnddate(new DateTime($employeeEducation['endDate']) ?? null);
+            $education->setDegreeGrantedStatus($employeeEducation['degreeGrantedStatus']);
+            $education->setIscedEducationLevelCode($employeeEducation['iscedEducationLevelCode'] ?? null);
+            $education->setProvidesCertificate($employeeEducation['providesCertificate'] ?? null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setInstitution(null);
+            $education->setStartDate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+
+            $this->entityManager->persist($education);
+            $education->setId(Uuid::fromString($employeeEducation['id']));
+            $this->entityManager->persist($education);
+
+            $employee->setCurrentEducation('NO_BUT_DID_EARLIER');
+            $employee->setEducation($education);
         }
 
         return $employee;
@@ -409,8 +435,8 @@ class MrcService
             return $employee;
         }
 
-        $employee = $this->handleEducationStartDate($education, $employee);
-        $employee = $this->handleEducationEndDate($education, $employee);
+        $employee = $this->handleCurrentEducation($education, $employee);
+        $employee = $this->handleUnfinishedEducation($education, $employee);
 
         return $employee;
     }
@@ -428,12 +454,26 @@ class MrcService
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
         $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
+
+        $course = new Education();
+        $course->setName($education['name'] ?? null);
+        $course->setInstitution($education['institution'] ?? null);
+        $course->setProvidesCertificate($education['providesCertificate'] ?? null);
+        $course->setCourseProfessionalism($education['courseProfessionalism'] ?? null);
+        $course->setTeacherProfessionalism($education['teacherProfessionalism'] ?? null);
+        $course->setGroupFormation(null);
+        $course->setDegreeGrantedStatus(null);
+        $course->setAmountOfHours(null);
+        $course->setEnddate(null);
+        $course->setIscedEducationLevelCode(null);
+        $course->setStartDate(null);
+
+        $this->entityManager->persist($course);
+        $course->setId(Uuid::fromString($education['id']));
+        $this->entityManager->persist($course);
+
         $employee->setDoesCurrentlyFollowCourse(true);
-        $employee->setCurrentlyFollowingCourseName($education['name']);
-        $employee->setCurrentlyFollowingCourseInstitute($education['institution']);
-        $employee->setCurrentlyFollowingCourseTeacherProfessionalism($education['courseProfessionalism']);
-        $employee->setCurrentlyFollowingCourseCourseProfessionalism($education['teacherProfessionalism']);
-        $employee->setDoesCurrentlyFollowingCourseProvideCertificate($education['providesCertificate']);
+        $employee->setFollowingCourse($course);
 
         return $employee;
     }
@@ -834,8 +874,7 @@ class MrcService
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
         if (key_exists('currentEducation', $employeeArray)) {
-            //TODO: needs a redo with the new education and followingCourse Education DTO subresources
-//            $this->createEducations($employeeArray, $result['id'], $result['educations']);
+            $this->createEducations($employeeArray, $result['id'], $result['educations']);
         }
 
         // Saves lastEducation, followingEducation and course for student as employee

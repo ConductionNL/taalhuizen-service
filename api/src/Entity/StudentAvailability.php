@@ -11,6 +11,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * All properties that the DTO entity StudentAvailability holds.
@@ -45,6 +46,7 @@ class StudentAvailability
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

@@ -24334,7 +24334,7 @@ components:
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
@@ -24345,7 +24345,7 @@ components:
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24451,7 +24451,7 @@ components:
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
@@ -24462,7 +24462,7 @@ components:
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24590,7 +24590,7 @@ components:
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
@@ -24601,7 +24601,7 @@ components:
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24730,7 +24730,7 @@ components:
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
@@ -24741,7 +24741,7 @@ components:
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
