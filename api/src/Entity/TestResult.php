@@ -74,6 +74,7 @@ class TestResult
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private LearningNeedOutCome $learningNeedOutCome;

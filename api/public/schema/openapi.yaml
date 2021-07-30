@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
+    &
   version: V1.0
 servers:
   -
@@ -23081,12 +23081,15 @@ components:
     Availability-read:
       type: object
       description: 'All properties that the DTO entity Availability holds.'
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
       properties:
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         monday:
           description: 'Monday of this availability'
           nullable: true
@@ -23129,14 +23132,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/AvailabilityDay-read'
-      required:
-        - monday
-        - tuesday
-        - wednesday
-        - thursday
-        - friday
-        - saturday
-        - sunday
     Availability-write:
       type: object
       description: 'All properties that the DTO entity Availability holds.'
@@ -23194,6 +23189,14 @@ components:
     Availability.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Availability holds.'
+      required:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
       properties:
         '@context':
           readOnly: true
@@ -23218,11 +23221,6 @@ components:
         '@type':
           readOnly: true
           type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         monday:
           description: 'Monday of this availability'
           nullable: true
@@ -23265,14 +23263,6 @@ components:
           anyOf:
             -
               $ref: '#/components/schemas/AvailabilityDay.jsonld-read'
-      required:
-        - monday
-        - tuesday
-        - wednesday
-        - thursday
-        - friday
-        - saturday
-        - sunday
     Availability.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Availability holds.'
@@ -23353,28 +23343,23 @@ components:
     AvailabilityDay-read:
       type: object
       description: 'All properties that the DTO entity AvailabilityDay holds.'
-      properties:
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
-        morning:
-          type: bool
-          example: 'true'
-          description: 'Morning of this availability day (6:00 -> 12:00).'
-        afternoon:
-          type: bool
-          example: 'true'
-          description: 'Afternoon of this availability day (12:00 -> 18:00).'
-        evening:
-          type: bool
-          example: 'true'
-          description: 'Evening of this availability day (18:00 -> 00:00).'
       required:
         - morning
         - afternoon
         - evening
+      properties:
+        morning:
+          type: bool
+          example: true
+          description: 'Morning of this availability day (6:00 -> 12:00).'
+        afternoon:
+          type: bool
+          example: true
+          description: 'Afternoon of this availability day (12:00 -> 18:00).'
+        evening:
+          type: bool
+          example: true
+          description: 'Evening of this availability day (18:00 -> 00:00).'
     AvailabilityDay-write:
       type: object
       description: 'All properties that the DTO entity AvailabilityDay holds.'
@@ -23385,19 +23370,23 @@ components:
       properties:
         morning:
           type: bool
-          example: 'true'
+          example: true
           description: 'Morning of this availability day (6:00 -> 12:00).'
         afternoon:
           type: bool
-          example: 'true'
+          example: true
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
         evening:
           type: bool
-          example: 'true'
+          example: true
           description: 'Evening of this availability day (18:00 -> 00:00).'
     AvailabilityDay.jsonld-read:
       type: object
       description: 'All properties that the DTO entity AvailabilityDay holds.'
+      required:
+        - morning
+        - afternoon
+        - evening
       properties:
         '@context':
           readOnly: true
@@ -23422,27 +23411,18 @@ components:
         '@type':
           readOnly: true
           type: string
-        id:
-          readOnly: true
-          description: 'The UUID identifier of this resource'
-          type: string
-          format: uuid
         morning:
           type: bool
-          example: 'true'
+          example: true
           description: 'Morning of this availability day (6:00 -> 12:00).'
         afternoon:
           type: bool
-          example: 'true'
+          example: true
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
         evening:
           type: bool
-          example: 'true'
+          example: true
           description: 'Evening of this availability day (18:00 -> 00:00).'
-      required:
-        - morning
-        - afternoon
-        - evening
     AvailabilityDay.jsonld-write:
       type: object
       description: 'All properties that the DTO entity AvailabilityDay holds.'
@@ -23476,15 +23456,15 @@ components:
           type: string
         morning:
           type: bool
-          example: 'true'
+          example: true
           description: 'Morning of this availability day (6:00 -> 12:00).'
         afternoon:
           type: bool
-          example: 'true'
+          example: true
           description: 'Afternoon of this availability day (12:00 -> 18:00).'
         evening:
           type: bool
-          example: 'true'
+          example: true
           description: 'Evening of this availability day (18:00 -> 00:00).'
     ChangeLog-read:
       type: object
@@ -23873,7 +23853,7 @@ components:
           nullable: true
         providesCertificate:
           type: bool
-          example: 'true'
+          example: true
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           nullable: true
         amountOfHours:
@@ -23948,7 +23928,7 @@ components:
           nullable: true
         providesCertificate:
           type: bool
-          example: 'true'
+          example: true
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           nullable: true
         amountOfHours:
@@ -24051,7 +24031,7 @@ components:
           nullable: true
         providesCertificate:
           type: bool
-          example: 'true'
+          example: true
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           nullable: true
         amountOfHours:
@@ -24149,7 +24129,7 @@ components:
           nullable: true
         providesCertificate:
           type: bool
-          example: 'true'
+          example: true
           description: 'A boolean that is true if the Education provides a certificate when completed.'
           nullable: true
         amountOfHours:
@@ -24312,6 +24292,16 @@ components:
           example: 'Explanation availability'
           description: 'The Availability Note of this Employee.'
           nullable: true
+        targetGroupPreferences:
+          type: array
+          items:
+            type: string
+            enum:
+              - NT1
+              - NT2
+            example: NT1
+          description: 'Target Group Preference of this Employee.'
+          nullable: true
         volunteeringPreference:
           maxLength: 255
           type: string
@@ -24325,9 +24315,8 @@ components:
           description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
-          maxLength: 255
-          type: string
-          example: 'yes'
+          type: bool
+          example: true
           description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
@@ -24336,24 +24325,27 @@ components:
           description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
-          maxLength: 255
           type: string
-          example: 'yes'
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-read'
         doesCurrentlyFollowCourse:
           type: bool
-          example: 'true'
+          example: true
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24366,7 +24358,7 @@ components:
           nullable: true
         isVOGChecked:
           type: bool
-          example: 'true'
+          example: true
           description: 'Whether the employee has submitted a police certificate'
           nullable: true
         organizationId:
@@ -24417,6 +24409,16 @@ components:
           example: 'Explanation availability'
           description: 'The Availability Note of this Employee.'
           nullable: true
+        targetGroupPreferences:
+          type: array
+          items:
+            type: string
+            enum:
+              - NT1
+              - NT2
+            example: NT1
+          description: 'Target Group Preference of this Employee.'
+          nullable: true
         volunteeringPreference:
           maxLength: 255
           type: string
@@ -24430,9 +24432,8 @@ components:
           description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
-          maxLength: 255
-          type: string
-          example: 'yes'
+          type: bool
+          example: true
           description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
@@ -24441,24 +24442,27 @@ components:
           description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
-          maxLength: 255
           type: string
-          example: 'yes'
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education-write'
         doesCurrentlyFollowCourse:
           type: bool
-          example: 'true'
+          example: true
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24471,7 +24475,7 @@ components:
           nullable: true
         isVOGChecked:
           type: bool
-          example: 'true'
+          example: true
           description: 'Whether the employee has submitted a police certificate'
           nullable: true
         organizationId:
@@ -24544,6 +24548,16 @@ components:
           example: 'Explanation availability'
           description: 'The Availability Note of this Employee.'
           nullable: true
+        targetGroupPreferences:
+          type: array
+          items:
+            type: string
+            enum:
+              - NT1
+              - NT2
+            example: NT1
+          description: 'Target Group Preference of this Employee.'
+          nullable: true
         volunteeringPreference:
           maxLength: 255
           type: string
@@ -24557,9 +24571,8 @@ components:
           description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
-          maxLength: 255
-          type: string
-          example: 'yes'
+          type: bool
+          example: true
           description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
@@ -24568,24 +24581,27 @@ components:
           description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
-          maxLength: 255
           type: string
-          example: 'yes'
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education.jsonld-read'
         doesCurrentlyFollowCourse:
           type: bool
-          example: 'true'
+          example: true
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24598,7 +24614,7 @@ components:
           nullable: true
         isVOGChecked:
           type: bool
-          example: 'true'
+          example: true
           description: 'Whether the employee has submitted a police certificate'
           nullable: true
         organizationId:
@@ -24672,6 +24688,16 @@ components:
           example: 'Explanation availability'
           description: 'The Availability Note of this Employee.'
           nullable: true
+        targetGroupPreferences:
+          type: array
+          items:
+            type: string
+            enum:
+              - NT1
+              - NT2
+            example: NT1
+          description: 'Target Group Preference of this Employee.'
+          nullable: true
         volunteeringPreference:
           maxLength: 255
           type: string
@@ -24685,9 +24711,8 @@ components:
           description: 'Got here via of this Employee.'
           nullable: true
         hasExperienceWithTargetGroup:
-          maxLength: 255
-          type: string
-          example: 'yes'
+          type: bool
+          example: true
           description: 'Has experience with target group of this Employee.'
           nullable: true
         experienceWithTargetGroupYesReason:
@@ -24696,24 +24721,27 @@ components:
           description: 'The reason for the experience with the target group?'
           nullable: true
         currentEducation:
-          maxLength: 255
           type: string
-          example: 'yes'
+          enum:
+            - 'YES'
+            - 'NO'
+            - NO_BUT_DID_EARLIER
+          example: 'YES'
           description: 'Current education of this Employee.'
           nullable: true
         education:
-          description: 'Education of this employee'
+          description: 'Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**'
           nullable: true
           anyOf:
             -
               $ref: '#/components/schemas/Education.jsonld-write'
         doesCurrentlyFollowCourse:
           type: bool
-          example: 'true'
+          example: true
           description: 'Does currently follow course of this Employee.'
           nullable: true
         followingCourse:
-          description: 'Currently following course (Education) of this Employee.'
+          description: 'Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**'
           nullable: true
           anyOf:
             -
@@ -24726,7 +24754,7 @@ components:
           nullable: true
         isVOGChecked:
           type: bool
-          example: 'true'
+          example: true
           description: 'Whether the employee has submitted a police certificate'
           nullable: true
         organizationId:
@@ -24783,7 +24811,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         isFormal:
           type: bool
-          example: 'true'
+          example: true
           description: 'The isFormal boolean of this LearningNeedOutcome.'
         totalClassHours:
           type: float
@@ -24791,7 +24819,7 @@ components:
           description: 'The total class hours of this LearningNeedOutcome.'
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
         startDate:
           type: DateTime
@@ -24891,7 +24919,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         isFormal:
           type: bool
-          example: 'true'
+          example: true
           description: 'The isFormal boolean of this LearningNeedOutcome.'
         totalClassHours:
           type: float
@@ -24899,7 +24927,7 @@ components:
           description: 'The total class hours of this LearningNeedOutcome.'
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
         startDate:
           type: DateTime
@@ -25019,7 +25047,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         isFormal:
           type: bool
-          example: 'true'
+          example: true
           description: 'The isFormal boolean of this LearningNeedOutcome.'
         totalClassHours:
           type: float
@@ -25027,7 +25055,7 @@ components:
           description: 'The total class hours of this LearningNeedOutcome.'
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
         startDate:
           type: DateTime
@@ -25150,7 +25178,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         isFormal:
           type: bool
-          example: 'true'
+          example: true
           description: 'The isFormal boolean of this LearningNeedOutcome.'
         totalClassHours:
           type: float
@@ -25158,7 +25186,7 @@ components:
           description: 'The total class hours of this LearningNeedOutcome.'
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
         startDate:
           type: DateTime
@@ -26144,7 +26172,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-read'
         isFormal:
           type: bool
-          example: 'false'
+          example: false
           description: 'The isFormal boolean of this LearningNeedOutcome.'
           nullable: true
         groupFormation:
@@ -26162,7 +26190,7 @@ components:
           nullable: true
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           nullable: true
         startDate:
@@ -26237,7 +26265,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome-write'
         isFormal:
           type: bool
-          example: 'false'
+          example: false
           description: 'The isFormal boolean of this LearningNeedOutcome.'
           nullable: true
         groupFormation:
@@ -26255,7 +26283,7 @@ components:
           nullable: true
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           nullable: true
         startDate:
@@ -26358,7 +26386,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-read'
         isFormal:
           type: bool
-          example: 'false'
+          example: false
           description: 'The isFormal boolean of this LearningNeedOutcome.'
           nullable: true
         groupFormation:
@@ -26376,7 +26404,7 @@ components:
           nullable: true
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           nullable: true
         startDate:
@@ -26474,7 +26502,7 @@ components:
               $ref: '#/components/schemas/LearningNeedOutCome.jsonld-write'
         isFormal:
           type: bool
-          example: 'false'
+          example: false
           description: 'The isFormal boolean of this LearningNeedOutcome.'
           nullable: true
         groupFormation:
@@ -26492,7 +26520,7 @@ components:
           nullable: true
         certificateWillBeAwarded:
           type: bool
-          example: 'true'
+          example: true
           description: 'The certificate will be awarded boolean of this LearningNeedOutcome.'
           nullable: true
         startDate:
@@ -28937,19 +28965,13 @@ components:
           type: string
           format: uuid
         followingEducationRightNow:
-          maxLength: 255
           type: string
           enum:
             - 'YES'
             - 'NO'
             - NO_BUT_DID_EARLIER
           example: 'YES'
-          description: |-
-            Following education right now of this studentEducation.
-
-             @Assert\Length(
-                max = 255
-            )
+          description: 'Following education right now of this studentEducation.'
           nullable: true
         education:
           description: 'Education of this studentEducation.'
@@ -28962,19 +28984,13 @@ components:
       description: 'All properties that the DTO entity StudentEducation holds.'
       properties:
         followingEducationRightNow:
-          maxLength: 255
           type: string
           enum:
             - 'YES'
             - 'NO'
             - NO_BUT_DID_EARLIER
           example: 'YES'
-          description: |-
-            Following education right now of this studentEducation.
-
-             @Assert\Length(
-                max = 255
-            )
+          description: 'Following education right now of this studentEducation.'
           nullable: true
         education:
           description: 'Education of this studentEducation.'
@@ -29015,19 +29031,13 @@ components:
           type: string
           format: uuid
         followingEducationRightNow:
-          maxLength: 255
           type: string
           enum:
             - 'YES'
             - 'NO'
             - NO_BUT_DID_EARLIER
           example: 'YES'
-          description: |-
-            Following education right now of this studentEducation.
-
-             @Assert\Length(
-                max = 255
-            )
+          description: 'Following education right now of this studentEducation.'
           nullable: true
         education:
           description: 'Education of this studentEducation.'
@@ -29063,19 +29073,13 @@ components:
           readOnly: true
           type: string
         followingEducationRightNow:
-          maxLength: 255
           type: string
           enum:
             - 'YES'
             - 'NO'
             - NO_BUT_DID_EARLIER
           example: 'YES'
-          description: |-
-            Following education right now of this studentEducation.
-
-             @Assert\Length(
-                max = 255
-            )
+          description: 'Following education right now of this studentEducation.'
           nullable: true
         education:
           description: 'Education of this studentEducation.'
