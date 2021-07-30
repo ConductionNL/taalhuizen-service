@@ -58,6 +58,7 @@ class UserSubscriber implements EventSubscriberInterface
             case 'api_users_login_collection':
                 $response = $this->login($resource);
                 $this->serializerService->setResponse($response, $event, ['token']);
+
                 return; // do not use break here
 //            case 'api_users_logout_collection': //TODO:
 //                $response = $this->logout($resource);
@@ -66,6 +67,7 @@ class UserSubscriber implements EventSubscriberInterface
             case 'api_users_request_password_reset_collection':
                 $response = $this->requestPasswordReset($resource);
                 $this->serializerService->setResponse($response, $event, ['token']);
+
                 return; // do not use break here
             case 'api_users_reset_password_collection':
                 $response = $this->resetPassword($resource);
@@ -106,6 +108,7 @@ class UserSubscriber implements EventSubscriberInterface
     }
 
     // TODO:
+
     /**
      * handle logout.
      *
@@ -144,8 +147,9 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @param User $resource
      *
-     * @return User|Response
      * @throws Exception
+     *
+     * @return User|Response
      */
     private function resetPassword(User $resource)
     {
@@ -154,11 +158,12 @@ class UserSubscriber implements EventSubscriberInterface
 
     /**
      * @param User $user
+     *
      * @return User|Response
      */
     private function createUser(User $user)
     {
-        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+','%2B',$user->getUsername())])['hydra:member'];
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $user->getUsername())])['hydra:member'];
         if (count($users) > 0) {
             return new Response(
                 json_encode([
@@ -174,8 +179,9 @@ class UserSubscriber implements EventSubscriberInterface
         return $this->ucService->createUser($user);
     }
 
-    private function deleteUser(User $user, ViewEvent $event){
+    private function deleteUser(User $user, ViewEvent $event)
+    {
         var_dump($user->getId());
-        die;
+        exit;
     }
 }

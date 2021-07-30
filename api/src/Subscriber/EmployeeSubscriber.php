@@ -16,7 +16,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class EmployeeSubscriber implements EventSubscriberInterface
 {
@@ -99,7 +98,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+','%2B', $body['person']['emails']['email'])])['hydra:member'];
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $body['person']['emails']['email'])])['hydra:member'];
         if (count($users) > 0) {
             return new Response(
                 json_encode([

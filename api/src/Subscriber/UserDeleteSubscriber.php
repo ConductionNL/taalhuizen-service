@@ -3,7 +3,6 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
@@ -11,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class UserDeleteSubscriber implements EventSubscriberInterface
@@ -48,13 +46,13 @@ class UserDeleteSubscriber implements EventSubscriberInterface
      */
     public function user(RequestEvent $event)
     {
-        if(!$event->isMainRequest()){
+        if (!$event->isMainRequest()) {
             return;
         }
         $path = $event->getRequest()->getPathInfo();
         $route = $event->getRequest()->attributes->get('_route');
         $method = $event->getRequest()->getMethod();
-        if(strpos($route, 'api_users_delete_item') !== false && $method == 'DELETE'){
+        if (strpos($route, 'api_users_delete_item') !== false && $method == 'DELETE') {
             $response = $this->deleteUser($event->getRequest()->attributes->get('id'));
 //            die;
             $event->setResponse($response);
@@ -73,6 +71,7 @@ class UserDeleteSubscriber implements EventSubscriberInterface
     private function deleteUser(string $id): Response
     {
         $this->ucService->deleteUser($id);
+
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }

@@ -5,10 +5,8 @@ namespace App\Service;
 use App\Entity\Address;
 use App\Entity\Email;
 use App\Entity\Employee;
-use App\Entity\LanguageHouse;
 use App\Entity\Organization;
 use App\Entity\Person;
-use App\Entity\Provider;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class CCService
@@ -374,6 +371,7 @@ class CCService
     public function createPersonForEmployee(array $employee): array
     {
         $person = $this->employeeToPerson($employee);
+
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
@@ -390,10 +388,11 @@ class CCService
     {
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
-        foreach($personArray as $key => $value){
-            if(!$value)
+        foreach ($personArray as $key => $value) {
+            if (!$value) {
                 unset($personArray[$key]);
-            if($key == 'emails'){
+            }
+            if ($key == 'emails') {
                 $personArray[$key] = [$personArray[$key]];
             }
         }
