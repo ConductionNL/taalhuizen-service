@@ -203,12 +203,14 @@ class UcService
      * @param string $id The id of the user to fetch
      *
      * @return User The user returned
+     * @throws Exception
      */
     public function getUser(string $id): User
     {
         $userArray = $this->getUserArray($id);
+        $person = $this->commonGroundService->getResource($userArray['person']);
 
-        return $this->createUserObject($userArray, $this->commonGroundService->getResource($userArray['person']));
+        return $this->createUserObject($userArray, $this->ccService->createPersonObject($person));
     }
 
     /**

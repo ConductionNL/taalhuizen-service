@@ -3,7 +3,9 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Organization;
 use App\Entity\User;
+use App\Service\CCService;
 use App\Service\LayerService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -11,9 +13,11 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -21,6 +25,9 @@ class UserSubscriber implements EventSubscriberInterface
     private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private UcService $ucService;
+    private RequestStack $requestStack;
+    private CCService $ccService;
+    private SerializerInterface $serializer;
 
     /**
      * UserSubscriber constructor.
@@ -28,12 +35,15 @@ class UserSubscriber implements EventSubscriberInterface
      * @param LayerService $layerService
      * @param UcService    $ucService
      */
-    public function __construct(LayerService $layerService, UcService $ucService)
+    public function __construct(LayerService $layerService, UcService $ucService, RequestStack $requestStack)
     {
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
         $this->serializerService = new SerializerService($layerService->serializer);
+        $this->requestStack = $requestStack;
+        $this->ccService = new CCService($layerService);
+        $this->serializer = $layerService->serializer;
     }
 
     /**
@@ -48,6 +58,7 @@ class UserSubscriber implements EventSubscriberInterface
 
     /**
      * @param ViewEvent $event
+     * @throws Exception
      */
     public function user(ViewEvent $event)
     {
@@ -77,6 +88,12 @@ class UserSubscriber implements EventSubscriberInterface
                 break;
             case 'api_users_delete_item':
                 $this->deleteUser($resource, $event);
+                break;
+            case 'api_users_get_current_user_collection':
+                $response = $this->getCurrentUser();
+                break;
+            case 'api_users_get_current_user_organization_collection':
+                $response = $this->getCurrentUserOrganization();
                 break;
             default:
                 return;
@@ -183,5 +200,65 @@ class UserSubscriber implements EventSubscriberInterface
     {
         var_dump($user->getId());
         exit;
+    }
+
+    /**
+     * Gets the current logged in user.
+     *
+     * @throws Exception Thrown when the JWT token is not valid
+     *
+     * @return Response The user that is currently logged in
+     */
+    public function getCurrentUser(): Response
+    {
+        $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
+        $payload = $this->ucService->validateJWTAndGetPayload($token);
+
+        $response = $this->serializer->serialize(
+            $this->ucService->getUser($payload['userId']),
+            'json',
+        );
+
+        return new Response(
+            json_encode($response),
+            Response::HTTP_OK,
+            ['content-type' => 'application/json']
+        );
+    }
+
+    /**
+     * Gets the organization of the current logged in user.
+     *
+     * @throws Exception Thrown when the JWT token is not valid
+     *
+     * @return Response The user that is currently logged in
+     */
+    public function getCurrentUserOrganization(): Response
+    {
+        $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
+        $payload = $this->ucService->validateJWTAndGetPayload($token);
+        $currentUser = $this->ucService->getUserArray($payload['userId']);
+        if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
+            $response = $this->serializer->serialize(
+                $this->ccService->getOrganization($this->commonGroundService->getUuidFromUrl($currentUser['organization'])),
+                'json',
+            );
+
+            return new Response(
+                json_encode($response),
+                Response::HTTP_OK,
+                ['content-type' => 'application/json']
+            );
+        } else {
+            return new Response(
+                json_encode([
+                    'message' => 'The current user has no organization or this organization no longer exists!',
+                    'path'    => '',
+                    'data'    => ['organization' => $currentUser['organization']],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
     }
 }

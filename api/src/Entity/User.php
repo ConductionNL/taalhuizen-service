@@ -24,6 +24,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
+ *          "get"={
+ *              "read"=false
+ *          },
+ *          "put",
+ *          "delete"={
+ *              "read"=false
+ *          }
+ *     },
+ *     collectionOperations={
  *          "get",
  *          "get_current_user"={
  *              "method"="GET",
@@ -33,13 +42,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "description"="Get the current user."
  *              }
  *          },
- *          "put",
- *          "delete"={
- *              "read"=false
- *          }
- *     },
- *     collectionOperations={
- *          "get",
+ *          "get_current_user_organization"={
+ *              "method"="GET",
+ *              "path"="/users/current_user_organization",
+ *              "openapi_context" = {
+ *                  "summary"="Get the organization of the current user.",
+ *                  "description"="Get the organization of the current user."
+ *              }
+ *          },
  *          "post",
  *          "login"={
  *              "method"="POST",

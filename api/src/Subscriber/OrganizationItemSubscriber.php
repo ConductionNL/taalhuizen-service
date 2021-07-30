@@ -3,23 +3,28 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Organization;
+use App\Service\CCService;
 use App\Service\LayerService;
 use App\Service\UcService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class UserDeleteSubscriber implements EventSubscriberInterface
+class OrganizationItemSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private SerializerService $serializerService;
-    private UcService $ucService;
+    private CommonGroundService $commonGroundService;
+    private CCService $ccService;
 
     /**
-     * UserSubscriber constructor.
+     * OrganizationItemSubscriber constructor.
      *
      * @param LayerService $layerService
      * @param UcService    $ucService
@@ -27,7 +32,8 @@ class UserDeleteSubscriber implements EventSubscriberInterface
     public function __construct(LayerService $layerService, UcService $ucService)
     {
         $this->entityManager = $layerService->entityManager;
-        $this->ucService = $ucService;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->ccService = new CCService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
     }
 
@@ -37,41 +43,46 @@ class UserDeleteSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['user', EventPriorities::PRE_DESERIALIZE],
+            KernelEvents::REQUEST => ['organization', EventPriorities::PRE_DESERIALIZE],
         ];
     }
 
     /**
      * @param RequestEvent $event
+     *
+     * @throws Exception
      */
-    public function user(RequestEvent $event)
+    public function organization(RequestEvent $event)
     {
         if (!$event->isMainRequest()) {
             return;
         }
-        $path = $event->getRequest()->getPathInfo();
         $route = $event->getRequest()->attributes->get('_route');
-        $method = $event->getRequest()->getMethod();
-        if (strpos($route, 'api_users_delete_item') !== false && $method == 'DELETE') {
-            $response = $this->deleteUser($event->getRequest()->attributes->get('id'));
-//            die;
-            $event->setResponse($response);
-        }
-//        $resource = $event->getControllerResult();
+
         // Lets limit the subscriber
-//        switch ($route) {
-//            case 'api_users_delete_item':
-//                $this->deleteUser($resource, $event);
-//                break;
-//            default:
-//                return;
-//        }
+        switch ($route) {
+            case 'api_organizations_get_item':
+                $response = $this->getOrganization($event->getRequest()->get('id'));
+                break;
+            default:
+                return;
+        }
+
+        if ($response instanceof Response) {
+            $event->setResponse($response);
+
+            return;
+        }
+        $this->serializerService->setResponse($response, $event);
     }
 
-    private function deleteUser(string $id): Response
+    /**
+     * @param string $id
+     *
+     * @return Organization
+     */
+    private function getOrganization(string $id): Organization
     {
-        $this->ucService->deleteUser($id);
-
-        return new Response(null, Response::HTTP_NO_CONTENT);
+        return $this->ccService->getOrganization($id);
     }
 }

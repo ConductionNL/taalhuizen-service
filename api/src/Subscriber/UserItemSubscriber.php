@@ -4,6 +4,7 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Organization;
+use App\Entity\User;
 use App\Service\CCService;
 use App\Service\LayerService;
 use App\Service\UcService;
@@ -12,28 +13,25 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class OrganizationGetSubscriber implements EventSubscriberInterface
+class UserItemSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
     private SerializerService $serializerService;
-    private CommonGroundService $commonGroundService;
-    private CCService $ccService;
+    private UcService $ucService;
 
     /**
-     * OrganizationGetSubscriber constructor.
+     * UserItemSubscriber constructor.
      *
      * @param LayerService $layerService
      * @param UcService    $ucService
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
-        $this->entityManager = $layerService->entityManager;
-        $this->commonGroundService = $layerService->commonGroundService;
-        $this->ccService = new CCService($layerService);
+        $this->ucService = $ucService;
         $this->serializerService = new SerializerService($layerService->serializer);
     }
 
@@ -43,16 +41,15 @@ class OrganizationGetSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['organization', EventPriorities::PRE_DESERIALIZE],
+            KernelEvents::REQUEST => ['user', EventPriorities::PRE_DESERIALIZE],
         ];
     }
 
     /**
      * @param RequestEvent $event
-     *
      * @throws Exception
      */
-    public function organization(RequestEvent $event)
+    public function user(RequestEvent $event)
     {
         if (!$event->isMainRequest()) {
             return;
@@ -61,8 +58,11 @@ class OrganizationGetSubscriber implements EventSubscriberInterface
 
         // Lets limit the subscriber
         switch ($route) {
-            case 'api_organizations_get_item':
-                $response = $this->getOrganization($event->getRequest()->get('id'));
+            case 'api_users_get_item':
+                $response = $this->getUser($event->getRequest()->attributes->get('id'));
+                break;
+            case 'api_users_delete_item':
+                $response = $this->deleteUser($event->getRequest()->attributes->get('id'));
                 break;
             default:
                 return;
@@ -78,11 +78,23 @@ class OrganizationGetSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
-     *
-     * @return Organization
+     * @return Response
      */
-    private function getOrganization(string $id): Organization
+    private function deleteUser(string $id): Response
     {
-        return $this->ccService->getOrganization($id);
+        $this->ucService->deleteUser($id);
+
+        return new Response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return User
+     * @throws Exception
+     */
+    private function getUser(string $id): User
+    {
+        return $this->ucService->getUser($id);
     }
 }
