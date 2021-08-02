@@ -27,6 +27,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use ZxcvbnPhp\Zxcvbn;
 
 class UcService
 {
@@ -138,6 +139,13 @@ class UcService
         }
 
         throw new Exception('Token could not be verified');
+    }
+
+    public function assessPassword (string $password): bool
+    {
+        $zxcvbn = new Zxcvbn();
+
+        return !($zxcvbn->passwordStrength($password) < 4);
     }
 
     /**
