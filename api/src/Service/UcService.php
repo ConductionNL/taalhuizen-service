@@ -173,9 +173,9 @@ class UcService
      */
     public function userEnvironmentEnum(?string $type): string
     {
-        if ($type == 'Taalhuis') {
+        if ($type == 'LanguageHouse') {
             $result = 'TAALHUIS';
-        } elseif ($type == 'Aanbieder') {
+        } elseif ($type == 'Provider') {
             $result = 'AANBIEDER';
         } else {
             $result = 'BISC';
@@ -333,12 +333,15 @@ class UcService
         $resource['username'] = key_exists('username', $userArray) ? $userArray['username'] : null;
         $resource['password'] = key_exists('password', $userArray) ? $userArray['password'] : null;
 
-        $contact = $this->commonGroundService->getResource($resource['person']);
+        $contact = $this->ccService->getEavPerson($resource['person']);
 
         if (key_exists('email', $userArray)) {
             $contact = $this->ccService->updatePerson($contact['id'], ['emails' => [['name' => 'email', 'email' => $userArray['email']]]]);
         }
 
+        foreach ($resource['userGroups'] as &$userGroup) {
+            $userGroup = '/groups/'.$userGroup['id'];
+        }
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
 
         if (isset($resource['password'])) {

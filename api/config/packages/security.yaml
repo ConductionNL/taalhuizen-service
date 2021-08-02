@@ -22,6 +22,14 @@ security:
             anonymous: true
             pattern: (^/users|^/users/login)
             methods: [POST]
+        request_password_reset:
+            anonymous: true
+            pattern: (^/users|^/users/request_password_reset)
+            methods: [POST]
+        reset_password:
+            anonymous: true
+            pattern: (^/users|^/users/reset_password)
+            methods: [ POST ]
         main:
             provider: chain_provider
             # comment this function out on crud enviroments
