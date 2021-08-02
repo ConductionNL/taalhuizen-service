@@ -171,7 +171,9 @@ class UcService
     public function createUserObject(array $raw, Person $person): User
     {
         $user = new User();
-        !$raw['organization'] ?? $org = $this->commonGroundService->getResource($raw['organization']);
+        if (isset($raw['organization'])) {
+            $org = $this->commonGroundService->getResource($raw['organization']);
+        }
         $user->setPerson($person);
         $user->setPassword('');
         $user->setUsername($raw['username']);
@@ -208,7 +210,7 @@ class UcService
     public function getUser(string $id): User
     {
         $userArray = $this->getUserArray($id);
-        $person = $this->commonGroundService->getResource($userArray['person']);
+        $person = $this->ccService->getEavPerson($userArray['person']);
 
         return $this->createUserObject($userArray, $this->ccService->createPersonObject($person));
     }

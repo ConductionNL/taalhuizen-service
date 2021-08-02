@@ -70,7 +70,6 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 return;
         }
 
-        $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
 

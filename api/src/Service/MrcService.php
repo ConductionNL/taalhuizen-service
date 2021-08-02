@@ -567,11 +567,7 @@ class MrcService
      */
     public function createEmployeeObject(array $employeeArray): Employee
     {
-        if ($this->eavService->hasEavObject($employeeArray['person'])) {
-            $contact = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $employeeArray['person']]);
-        } else {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        }
+        $contact = $this->ccService->getEavPerson($employeeArray['person']);
 
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));

@@ -108,6 +108,9 @@ class CCService
             $person->addTelephone(isset($telephone) ? $this->createTelephoneObject($telephone) : null);
         }
         $person->setOrganization(null);
+        if (isset($result['organization']['id'])) {
+            $person->setOrganization($this->getOrganization($result['organization']['id']));
+        } // else use cc/person sourceOrganization instead?
 
         $this->entityManager->persist($person);
         $person->setId(Uuid::fromString($result['id']));
@@ -202,7 +205,6 @@ class CCService
      * Fetches an organization from the contact catalogue and returns it as an object for the type of organization.
      *
      * @param string $id   The id of the organization to fetch
-     * @param string $type The type of organization
      *
      * @return Organization The organization that has been fetched
      */
@@ -347,7 +349,8 @@ class CCService
             'emails'                 => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => 'email 1', 'email' => $employeePerson['emails']['email']]] : [],
             'addresses'              => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
             'availability'           => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
-        ];
+            'organization'           => key_exists('organizationId', $employee) && $employee['organizationId'] ? '/organizations/'.$employee['organizationId'] : null,
+        ]; //TODO: not sure if we want to set the organization for the person of an employee^
         $person['telephones'][] = key_exists('contactTelephone', $employeePerson) ? ['name' => 'contact telephone', 'telephone' => $employeePerson['contactTelephone']] : null;
 
         if ($person['givenName'] instanceof Exception) {
@@ -443,5 +446,20 @@ class CCService
         }
 
         return $person;
+    }
+
+    /**
+     * Fetches a person from the contact catalogue with the EAV and returns it as an array.
+     *
+     * @param string $self The url of the person
+     * @return array The person array
+     * @throws Exception
+     */
+    public function getEavPerson(string $self): array
+    {
+        if ($this->eavService->hasEavObject($self)) {
+            return $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $self]);
+        }
+        return $this->commonGroundService->getResource($self);
     }
 }

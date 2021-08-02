@@ -99,7 +99,6 @@ class UserSubscriber implements EventSubscriberInterface
                 return;
         }
 
-        $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
 
@@ -207,23 +206,13 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @throws Exception Thrown when the JWT token is not valid
      *
-     * @return Response The user that is currently logged in
+     * @return User The user that is currently logged in
      */
-    public function getCurrentUser(): Response
+    public function getCurrentUser(): User
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token);
-
-        $response = $this->serializer->serialize(
-            $this->ucService->getUser($payload['userId']),
-            'json',
-        );
-
-        return new Response(
-            json_encode($response),
-            Response::HTTP_OK,
-            ['content-type' => 'application/json']
-        );
+        return $this->ucService->getUser($payload['userId']);
     }
 
     /**
@@ -231,24 +220,17 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @throws Exception Thrown when the JWT token is not valid
      *
-     * @return Response The user that is currently logged in
+     * @return Organization|Response The user that is currently logged in
      */
-    public function getCurrentUserOrganization(): Response
+    public function getCurrentUserOrganization()
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token);
+//        $currentUser = $this->ucService->getUser($payload['userId']);
         $currentUser = $this->ucService->getUserArray($payload['userId']);
-        if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
-            $response = $this->serializer->serialize(
-                $this->ccService->getOrganization($this->commonGroundService->getUuidFromUrl($currentUser['organization'])),
-                'json',
-            );
 
-            return new Response(
-                json_encode($response),
-                Response::HTTP_OK,
-                ['content-type' => 'application/json']
-            );
+        if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
+            return $this->ccService->getOrganization($this->commonGroundService->getUuidFromUrl($currentUser['organization']));
         } else {
             return new Response(
                 json_encode([
