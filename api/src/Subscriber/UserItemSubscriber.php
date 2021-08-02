@@ -3,17 +3,12 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Organization;
 use App\Entity\User;
-use App\Service\CCService;
 use App\Service\LayerService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -47,6 +42,7 @@ class UserItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param RequestEvent $event
+     *
      * @throws Exception
      */
     public function user(RequestEvent $event)
@@ -78,6 +74,7 @@ class UserItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
+     *
      * @return Response
      */
     private function deleteUser(string $id): Response
@@ -90,8 +87,9 @@ class UserItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
-     * @return User
      * @throws Exception
+     *
+     * @return User
      */
     private function getUser(string $id): User
     {

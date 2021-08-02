@@ -26,7 +26,6 @@ use Symfony\Component\Cache\Adapter\AdapterInterface as CacheInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use ZxcvbnPhp\Zxcvbn;
 
 class UcService
@@ -143,9 +142,10 @@ class UcService
 
     /**
      * @param string $password
+     *
      * @return bool
      */
-    public function assessPassword (string $password): bool
+    public function assessPassword(string $password): bool
     {
         $zxcvbn = new Zxcvbn();
 
@@ -154,9 +154,10 @@ class UcService
 
     /**
      * @param string $password
+     *
      * @return int
      */
-    public function getPasswordScore (string $password): int
+    public function getPasswordScore(string $password): int
     {
         $zxcvbn = new Zxcvbn();
 
@@ -227,8 +228,9 @@ class UcService
      *
      * @param string $id The id of the user to fetch
      *
-     * @return User The user returned
      * @throws Exception
+     *
+     * @return User The user returned
      */
     public function getUser(string $id): User
     {
