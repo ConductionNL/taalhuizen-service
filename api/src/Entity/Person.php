@@ -136,6 +136,7 @@ class Person
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -147,6 +148,7 @@ class Person
      * @Groups({"read", "write"})
      * @ORM\ManyToMany(targetEntity=Telephone::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -158,6 +160,7 @@ class Person
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -169,6 +172,7 @@ class Person
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Organization::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

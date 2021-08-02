@@ -123,6 +123,7 @@ class Group
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private LearningNeedOutCome $learningNeedOutCome;
@@ -137,7 +138,7 @@ class Group
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
@@ -171,7 +172,7 @@ class Group
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
@@ -222,6 +223,7 @@ class Group
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

@@ -9,71 +9,11 @@ config:
   internal: false
 
 security:
-  applicationKey: "!changeMe!"
+  applicationKey: "8b55691f-346d-423c-bdcf-3f5365806d39"
   secret: ""
-  publicKey:
-  privateKey:
   jwt:
     id:
     privateKey:
-  dependencies:
-    parameters:
-      jwt:
-        #global variables for jwt rs512 encoding
-        id: 9a18a7ad-4671-48ed-90bb-913a35002b64
-        #The private key which is used to *sign* keys, the authenticator on the other side needs to know the public key corresponding to this key
-        privateKey: LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF4OVR6UUNRTmx1VWpGZTlua2tmMgpwWmR4aGRKT29GSXJvM2p0NjNwTHRNai93MjhFWjMxeTB6bHc3UEU4d2w0NXZPTDVVQTdkRzRsZWZ6TFJHN3hXCjhiMm5vazcrTHFRa2NLb1lCSHpuRXlzV3I2cUNLN2VsVDN5ZUdRaURTSWRSVHJpMmFvZkFjNUFEOUErQnppNjUKMW9oN3BLNjJXVVBwOHd3aUpSYzUrL3dobmtZNWwyUVM3RzFjbVU5UVN4bWtvQzRBc3A2NzFwQ0U0Zmw0TnRHdgpmTVlLQy9IVitBdjZrVWt6em03L25oeVh3eVZaTkVWWU1LeGlHN244NThuVGtVSGF1dFcwS3F4Y2NjbktDRGIzCjJhZW1yekNYc3hCOUZNTnB0SVlTd09BQXlNRFV1TzZZUFc4cCtpeVlYQUwxV0x3cGNDQmpCVWhpdXlXOVc1SngKZXdJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCi0tLS0tQkVHSU4gUlNBIFBSSVZBVEUgS0VZLS0tLS0KTUlJRW93SUJBQUtDQVFFQW9yeTNpcldTQURvNW9XVjQ5cVo5bU4zTGVqVlJLT0FRWGlBRWRCYjloTDY1bGw3RQpkRlZuR2kzM1crM2FWMWNVZFZWRE9SYUVjOVRsSDQyZEhCclNyRkZOdGRvVFJPZjBVaHF5YVZZMFNHOHJFbm5WCklkRW9USjJrVWgyYlVuMVFybXN4YW1YejNKV3dLMElsektxRktBS3lkbS9DRVY1QXMxKys0b0hDQmhnbWcxb3gKaVlFbkU2Y2NiNFIrenhvenU5a1g2YUpWNlVZN0I0UkhxRC9SWDMvU2tYSFFSZ0pYT2VFQ2lIeTAzUmpDV3FQeApDVzVTaUl5L1VxaXpOOVhqRGlJS09MS0NyV21BSHQ1QmpUWVBwdlk2VDNaM2lhQWVzT3J3NlFLNkJ6U0hNUnJHCjBDSUtaRlFCOTNmWFI2bnY0Qnl4R25ReFFpUUdZN1dUdE5zVzNRSURBUUFCQW9JQkFDTCtNZmhqYlNyYjJrOFUKZHdPUWp1TExWSWpwaEpObHhOYzhpc0NjdmZSb241Y1FOeTJ0dkk4U1VjV0Vlb1g3M1ZRU21yTWducWdhb0E4ZQpJQ211TWQxb1dTMndvQ0tadnYxVnJNWCtTWjFHdkV3TGd4TXp1cmJvMGUvdldsb05STWRRbU81Z1VHVC9FZ1BuClJDSURpOERyL1l4K29Rd2ppSVdab2IzcWVYcGVLSGY2ZVhJdnNnUEhDQUFBbmRUSmV3YUcyMDNZK3JLcFVDUU8KUHJmVkRGYlR3VHVvZi8vU0N3bHZrcWQxdytHU0I3ZzJBYmxpclFyeHJjSmozTkg0dGlvUWhrOGpsL3RKczY3cgpDSmV6c3ZhS2ljck9WY2pRRzhTTXpxdXRxTnB2MzhIUk1RU2lpRVhSTDkweWtLWkxaY29QSWg3MGRMbVI3Z01mCnl2K096T0VDZ1lFQTNoMDZ0R0h5RStPY2xpbDBZMU1uNS9zdVpVdW1YYk5VWlZtMXl5anpmNW9Vanc5eDVaSEcKcERLK21XMlpLTkRMakxBajFmNjBkVjJZaUs2QjQrMDZSTzZpRGl1WTExZUJXM2p5STk4eHZ0VHlRRFZ4ME5ZZQpkQlQ5TFRZa2dIY1lIbnZlVlZlM2RkNHc0STNXMzZpNHZsSEZoUjVQNGExYXh6TGVVMU4zRHlFQ2dZRUF1NUI5CjRZQXJqYWVDVWQwM05VdVhpcnJBV0hsQnFzMkRPYlU2dndtMzR1Z0FOdjlmYXM4NkpPazJoeDFjWStpZ0NwZzEKS2JWWDBaZ0hHMkNZTXJzTTVnRm5qYmVIOGFHUW5xMFlEZ2FFTVQ1VWt0RXFaTnNWUndkNnNtalNhcGRjRUZGWApsaFVraDNjZzE4VUtuQ1lCYitBVWREQk4zTU12RU50OXlVT1kvRDBDZ1lFQXAxelM3VFNZV2RBNkh4UGhkUzRsCmRiRll4azc0YnNZL281YXpXdi9pYXBYSlEvclpVYWhFUzFsSk1RYmFUMXowNDIrZHNST1pHbzZKN3dPL0wrV0MKOEluM1prSUhpc3VPMTBRTkFHYWZiekc1MEJQMVRPenFTWUcvTzUvK1pTWlg4REJaMldpYy9wMkxxc2gxemxXdAp6d3FDa01uRVcwSnFrb3FMNTdHT2xzRUNnWUJ6TDNZTzRQNWVQTXVzYUpUNTl0VTJ6aDlIZGhmY3c5N2R0cTFBCkdzREI2VVlRZ0YzaG95ZUsrV21TS25iTnFGTjRqaWEvMld6Myswd0tCUlVTdW9wZVNlaUZRSHVNNlhKOTc4RUIKQkFGMG1GbXAzQ2dUemZOUUxvaXNQZkZTb21kWVlndk8wR2NoaGdnMldmeDlEbDM5alhnaUxuUHlxaThpUkJrSQpXNm44NVFLQmdDeENUUjV4dXlyWUJEQzR0TjZKclgrUE1tS0FJRyt3M2NUcU5Yc3dDTzNSUVpldldSenFsM2VKCnZjMHAwc0Rndm1NU3EzMUN1MW5FR241TXdSRE15U0k1RUhQMWhrT2VXMUdLbjMweHlVK1hSM05RdG5NeG9UQm8KTG9sU25mdmZLQllMQjdYM2ZjdmZxU2JuSnN1SzFUdDJnZ1FRVlBTdlYxWXp3UEpEYjVaWAotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
-
-      components:
-        arc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://agendaservice.local
-        bs:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://berichtservice.local
-        chrc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://challenge-registration-component.local
-        cmc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://contactmoment-component.local
-        cc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://contactcatalogus.local
-        eav:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://eav-component.local
-        edu:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://education-component.local
-        mrc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://medewerkercatalogus.local
-        memo:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://memo-component.local
-        rc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://review-component.local
-        uc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://user-component.local
-        wrc:
-          apikey: !changeMe!
-          auth: apikey
-          location: http://webresourcecatalogus.local
-
 
 php:
   repository: docker.io/conduction/protocomponent-php

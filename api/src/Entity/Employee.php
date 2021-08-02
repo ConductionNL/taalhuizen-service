@@ -57,6 +57,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @MaxDepth(1)
      */
     private Person $person;
@@ -67,6 +68,7 @@ class Employee
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -94,7 +96,6 @@ class Employee
     /**
      * @var ?array Target Group Preference of this Employee.
      *
-     * @example NT1
      * @Assert\Choice(multiple=true, choices={"NT1","NT2"})
      *
      * @Groups({"read","write"})
@@ -153,23 +154,23 @@ class Employee
     private ?string $gotHereVia;
 
     /**
-     * @var ?string Has experience with target group of this Employee.
+     * @var ?bool Has experience with target group of this Employee.
      *
      * @Assert\Length(
      *     max = 255
      * )
      * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "type"="string",
-     *             "example"="yes"
+     *             "type"="bool",
+     *             "example"=true
      *         }
      *     }
      * )
      */
-    private ?string $hasExperienceWithTargetGroup;
+    private ?bool $hasExperienceWithTargetGroup;
 
     /**
      * @var ?string The reason for the experience with the target group?
@@ -190,16 +191,15 @@ class Employee
     /**
      * @var ?string Current education of this Employee.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "example"="yes"
+     *             "enum"={"YES", "NO", "NO_BUT_DID_EARLIER"},
+     *             "example"="YES"
      *         }
      *     }
      * )
@@ -207,11 +207,12 @@ class Employee
     private ?string $currentEducation;
 
     /**
-     * @var ?Education Education of this employee
+     * @var ?Education Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -226,7 +227,7 @@ class Employee
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
@@ -234,11 +235,12 @@ class Employee
     private ?bool $doesCurrentlyFollowCourse;
 
     /**
-     * @var ?Education Currently following course (Education) of this Employee.
+     * @var ?Education Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**
      *
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -272,12 +274,12 @@ class Employee
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
      */
-    private ?bool $isVOGChecked = false;
+    private ?bool $isVOGChecked;
 
     /**
      * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
@@ -381,6 +383,18 @@ class Employee
     public function setAvailabilityNotes(?string $availabilityNotes): self
     {
         $this->availabilityNotes = $availabilityNotes;
+
+        return $this;
+    }
+
+    public function getTargetGroupPreferences(): ?array
+    {
+        return $this->targetGroupPreferences;
+    }
+
+    public function setTargetGroupPreferences(?array $targetGroupPreferences): self
+    {
+        $this->targetGroupPreferences = $targetGroupPreferences;
 
         return $this;
     }

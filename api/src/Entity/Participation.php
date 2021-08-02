@@ -180,6 +180,7 @@ class Participation
      * @Groups({"read","write"})
      * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -194,7 +195,7 @@ class Participation
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="false"
+     *             "example"=false
      *         }
      *     }
      * )
@@ -244,7 +245,7 @@ class Participation
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )

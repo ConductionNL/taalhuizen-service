@@ -102,6 +102,7 @@ class Organization
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -113,6 +114,7 @@ class Organization
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Telephone::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
@@ -124,6 +126,7 @@ class Organization
      * @Groups({"read", "write"})
      * @ORM\OneToOne(targetEntity=Email::class, cascade={"persist", "remove"})
      * @ApiSubresource()
+     * @Assert\Valid
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */

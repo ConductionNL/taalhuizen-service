@@ -60,9 +60,6 @@ class Education
     /**
      * @var ?DateTime Start date of this education.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      * @ApiProperty(
@@ -79,9 +76,6 @@ class Education
     /**
      * @var ?DateTime End date of this education.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
      * @ApiProperty(
@@ -215,7 +209,7 @@ class Education
      *     attributes={
      *         "openapi_context"={
      *             "type"="bool",
-     *             "example"="true"
+     *             "example"=true
      *         }
      *     }
      * )
