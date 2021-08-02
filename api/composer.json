@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.1",
+        "bjeavons/zxcvbn-php": "^1.2",
         "conduction/commongroundbundle": "^2.*-dev",
         "phpdocumentor/reflection-docblock": "^5",
         "phpunit/php-code-coverage": "^9.2",
