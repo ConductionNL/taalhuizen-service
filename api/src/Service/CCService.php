@@ -341,7 +341,7 @@ class CCService
             'givenName'              => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
             'additionalName'         => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
             'familyName'             => key_exists('familyName', $employeePerson) ? $employeePerson['familyName'] : null,
-            'birthday'               => key_exists('dateOfBirth', $employeePerson) ? $employeePerson['dateOfBirth'] : null,
+            'birthday'               => key_exists('birthday', $employeePerson) ? $employeePerson['birthday'] : null,
             'gender'                 => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
             'contactPreference'      => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
             'contactPreferenceOther' => key_exists('contactPreferenceOther', $employeePerson) ? $employeePerson['contactPreferenceOther'] : null,
