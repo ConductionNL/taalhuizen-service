@@ -204,7 +204,7 @@ class CCService
     /**
      * Fetches an organization from the contact catalogue and returns it as an object for the type of organization.
      *
-     * @param string $id   The id of the organization to fetch
+     * @param string $id The id of the organization to fetch
      *
      * @return Organization The organization that has been fetched
      */
@@ -452,14 +452,17 @@ class CCService
      * Fetches a person from the contact catalogue with the EAV and returns it as an array.
      *
      * @param string $self The url of the person
-     * @return array The person array
+     *
      * @throws Exception
+     *
+     * @return array The person array
      */
     public function getEavPerson(string $self): array
     {
         if ($this->eavService->hasEavObject($self)) {
             return $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $self]);
         }
+
         return $this->commonGroundService->getResource($self);
     }
 }

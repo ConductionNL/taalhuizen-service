@@ -58,6 +58,7 @@ class UserSubscriber implements EventSubscriberInterface
 
     /**
      * @param ViewEvent $event
+     *
      * @throws Exception
      */
     public function user(ViewEvent $event)
@@ -105,7 +106,7 @@ class UserSubscriber implements EventSubscriberInterface
 
             return;
         }
-        $this->serializerService->setResponse($response, $event, ['attributes'=>$attributes,'ignored_attributes'=>$ignoredAttributes]);
+        $this->serializerService->setResponse($response, $event, ['attributes'=>$attributes, 'ignored_attributes'=>$ignoredAttributes]);
     }
 
     /**
@@ -185,6 +186,7 @@ class UserSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+
         return $this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword());
     }
 
@@ -233,6 +235,7 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token);
+
         return $this->ucService->getUser($payload['userId']);
     }
 

@@ -63,14 +63,15 @@ class AvailabilityService
 
     /**
      * @param array $newAvailabilityMemo An array containing the info for a new memo (description(the memo), topic & author)
+     *
      * @return array
      */
     public function saveAvailabilityMemo(array $newAvailabilityMemo): array
     {
         $availabilityMemo = ['name' => 'Availability notes'];
         $query = [
-            'name' => 'Availability notes',
-            'topic' => $newAvailabilityMemo['topic'],
+            'name'   => 'Availability notes',
+            'topic'  => $newAvailabilityMemo['topic'],
             'author' => $newAvailabilityMemo['author'] ?? $newAvailabilityMemo['topic'],
         ];
         $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], $query)['hydra:member'];
@@ -81,25 +82,28 @@ class AvailabilityService
         if (!isset($availabilityMemo['author'])) {
             $availabilityMemo['author'] = $newAvailabilityMemo['topic'];
         }
+
         return $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
     }
 
     /**
-     * @param string $topic The topic of a memo
+     * @param string      $topic  The topic of a memo
      * @param string|null $author The author of a memo
+     *
      * @return array
      */
     public function getAvailabilityMemo(string $topic, string $author = null): array
     {
         $query = [
-            'name' => 'Availability notes',
-            'topic' => $topic,
+            'name'   => 'Availability notes',
+            'topic'  => $topic,
             'author' => $author ?? $topic,
         ];
         $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], $query)['hydra:member'];
         if (count($availabilityMemos) > 0) {
             return $availabilityMemos[0];
         }
+
         return [];
     }
 }
