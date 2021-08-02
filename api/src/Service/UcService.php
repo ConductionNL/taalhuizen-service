@@ -174,9 +174,9 @@ class UcService
     public function userEnvironmentEnum(?string $type): string
     {
         if ($type == 'LanguageHouse') {
-            $result = 'TAALHUIS';
+            $result = 'LANGUAGEHOUSE';
         } elseif ($type == 'Provider') {
-            $result = 'AANBIEDER';
+            $result = 'PROVIDER';
         } else {
             $result = 'BISC';
         }
