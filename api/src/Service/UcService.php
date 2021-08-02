@@ -141,11 +141,26 @@ class UcService
         throw new Exception('Token could not be verified');
     }
 
+    /**
+     * @param string $password
+     * @return bool
+     */
     public function assessPassword (string $password): bool
     {
         $zxcvbn = new Zxcvbn();
 
-        return !($zxcvbn->passwordStrength($password) < 4);
+        return !($zxcvbn->passwordStrength($password)['score'] < 4);
+    }
+
+    /**
+     * @param string $password
+     * @return int
+     */
+    public function getPasswordScore (string $password): int
+    {
+        $zxcvbn = new Zxcvbn();
+
+        return !$zxcvbn->passwordStrength($password)['score'];
     }
 
     /**

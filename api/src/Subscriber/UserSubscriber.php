@@ -171,8 +171,7 @@ class UserSubscriber implements EventSubscriberInterface
                 json_encode([
                     'message' => 'This password is too weak, please give a stronger password!',
                     'path'    => 'password',
-                    'data'    => ['password' => $resource->getPassword()],
-                ]),
+                    'data'    => ['password' => $resource->getPassword(), 'zxcvbn-score' => $this->ucService->getPasswordScore($resource->getPassword())],                ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
             );
@@ -204,7 +203,7 @@ class UserSubscriber implements EventSubscriberInterface
                 json_encode([
                     'message' => 'This password is too weak, please give a stronger password!',
                     'path'    => 'password',
-                    'data'    => ['password' => $user->getPassword()],
+                    'data'    => ['password' => $user->getPassword(), 'zxcvbn-score' => $this->ucService->getPasswordScore($user->getPassword())],
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
