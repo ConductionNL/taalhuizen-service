@@ -86,9 +86,6 @@ class UserSubscriber implements EventSubscriberInterface
             case 'api_users_post_collection':
                 $response = $this->createUser($resource);
                 break;
-            case 'api_users_delete_item':
-                $this->deleteUser($resource, $event);
-                break;
             case 'api_users_get_current_user_collection':
                 $response = $this->getCurrentUser();
                 break;
@@ -169,6 +166,17 @@ class UserSubscriber implements EventSubscriberInterface
      */
     private function resetPassword(User $resource)
     {
+        if (!$this->ucService->assessPassword($resource->getPassword())) {
+            return new Response(
+                json_encode([
+                    'message' => 'This password is too weak, please give a stronger password!',
+                    'path'    => 'password',
+                    'data'    => ['password' => $resource->getPassword()],
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
         return $this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword());
     }
 
@@ -191,14 +199,19 @@ class UserSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+        if (!$this->ucService->assessPassword($user->getPassword())) {
+            return new Response(
+                json_encode([
+                    'message' => 'This password is too weak, please give a stronger password!',
+                    'path'    => 'password',
+                    'data'    => ['password' => $user->getPassword()],
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
 
         return $this->ucService->createUser($user);
-    }
-
-    private function deleteUser(User $user, ViewEvent $event)
-    {
-        var_dump($user->getId());
-        exit;
     }
 
     /**
