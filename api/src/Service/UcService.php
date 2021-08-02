@@ -369,9 +369,9 @@ class UcService
      * @param string $username The username of the user to login
      * @param string $password The password of the user to login
      *
-     * @return string A JWT token for the user that is logged in
+     * @return string|Response A JWT token for the user that is logged in
      */
-    public function login(string $username, string $password): string
+    public function login(string $username, string $password)
     {
         $user = [
             'username'  => $username,
@@ -381,7 +381,15 @@ class UcService
         try {
             $resource = $this->commonGroundService->createResource($user, ['component' => 'uc', 'type' => 'login']);
         } catch (RequestException $exception) {
-            throw new HttpException(403, "Authentication failed: {$exception->getMessage()}");
+            return new Response(
+                json_encode([
+                    'message' => 'Authentication failed!',
+                    'path'    => '',
+                    'data'    => ['Exception' => $exception->getMessage()],
+                ]),
+                Response::HTTP_FORBIDDEN,
+                ['content-type' => 'application/json']
+            );
         }
 
         $time = new DateTime();

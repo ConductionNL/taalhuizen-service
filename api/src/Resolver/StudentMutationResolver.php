@@ -198,6 +198,7 @@ class StudentMutationResolver implements MutationResolverInterface
         $motivationMemo = [];
         $input['languageHouseUrl'] ?? $input['languageHouseUrl'] = null;
 
+        //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeArray)
         if (isset($input['availabilityDetails'])) {
             if (isset($input['id'])) {
                 //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)

@@ -40,7 +40,7 @@ class MrcService
         $this->bsService = $layerService->bsService;
         $this->ccService = new CCService($layerService);
         $this->eavService = new EAVService($layerService->commonGroundService);
-        $this->availabilityService = new AvailabilityService($layerService->entityManager);
+        $this->availabilityService = new AvailabilityService($layerService);
     }
 
     /**
@@ -572,7 +572,8 @@ class MrcService
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));
         $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
-        $employee->setAvailabilityNotes(null); //TODO: make sure to set and get this note!
+        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($contact['@id']);
+        $employee->setAvailabilityNotes($availabilityMemo['description'] ?? null);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
@@ -861,6 +862,8 @@ class MrcService
     {
         //set contact
         $contact = $this->setContact($employeeArray);
+
+        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
 
         $this->saveUser($employeeArray, $contact);
 

@@ -64,22 +64,26 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
+
+        $attributes = null;
+        $ignoredAttributes = ['token'];
         // Lets limit the subscriber
         switch ($route) {
             case 'api_users_login_collection':
                 $response = $this->login($resource);
-                $this->serializerService->setResponse($response, $event, ['token']);
-
-                return; // do not use break here
+                $attributes = ['token'];
+                $ignoredAttributes = null;
+                break;
 //            case 'api_users_logout_collection': //TODO:
 //                $response = $this->logout($resource);
-//                $this->serializerService->setResponse($response, $event, ['token']);
-//                return; // do not use break here
+//                $attributes = ???;
+//                $ignoredAttributes = ???;
+//                break;
             case 'api_users_request_password_reset_collection':
                 $response = $this->requestPasswordReset($resource);
-                $this->serializerService->setResponse($response, $event, ['token']);
-
-                return; // do not use break here
+                $attributes = ['token'];
+                $ignoredAttributes = null;
+                break;
             case 'api_users_reset_password_collection':
                 $response = $this->resetPassword($resource);
                 break;
@@ -101,7 +105,7 @@ class UserSubscriber implements EventSubscriberInterface
 
             return;
         }
-        $this->serializerService->setResponse($response, $event);
+        $this->serializerService->setResponse($response, $event, ['attributes'=>$attributes,'ignored_attributes'=>$ignoredAttributes]);
     }
 
     /**
@@ -109,12 +113,16 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @param User $resource
      *
-     * @return User
+     * @return User|Response
      */
-    private function login(User $resource): User
+    private function login(User $resource)
     {
         $user = new User();
-        $user->setToken($this->ucService->login($resource->getUsername(), $resource->getPassword()));
+        $token = $this->ucService->login($resource->getUsername(), $resource->getPassword());
+        if ($token instanceof Response) {
+            return $token;
+        }
+        $user->setToken($token);
         $this->entityManager->persist($user);
 
         return $user;
@@ -171,7 +179,8 @@ class UserSubscriber implements EventSubscriberInterface
                 json_encode([
                     'message' => 'This password is too weak, please give a stronger password!',
                     'path'    => 'password',
-                    'data'    => ['password' => $resource->getPassword(), 'zxcvbn-score' => $this->ucService->getPasswordScore($resource->getPassword())],                ]),
+                    'data'    => ['password' => $resource->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($resource->getPassword())],
+                ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
             );
@@ -203,7 +212,7 @@ class UserSubscriber implements EventSubscriberInterface
                 json_encode([
                     'message' => 'This password is too weak, please give a stronger password!',
                     'path'    => 'password',
-                    'data'    => ['password' => $user->getPassword(), 'zxcvbn-score' => $this->ucService->getPasswordScore($user->getPassword())],
+                    'data'    => ['password' => $user->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($user->getPassword())],
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
