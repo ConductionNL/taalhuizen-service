@@ -21105,70 +21105,242 @@ paths:
     parameters: []
   /users/current_user:
     get:
-      operationId: get_current_userUserItem
+      operationId: get_current_userUserCollection
       tags:
         - User
       responses:
         200:
-          description: 'User resource'
+          description: 'User collection'
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/User.jsonld-read'
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
             application/json+ld:
               schema:
-                $ref: '#/components/schemas/User.jsonld-read'
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
             application/hal+json:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/json+hal:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/json+vnd.api:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/health+json:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/json+health:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/x-yaml:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             text/csv:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             text/html:
               schema:
-                $ref: '#/components/schemas/User-read'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
             application/graphql:
               schema:
-                $ref: '#/components/schemas/User-read'
-        404:
-          description: 'Resource not found'
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
       summary: 'Get the current user.'
       description: 'Get the current user.'
       parameters:
         -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
           deprecated: false
-          allowEmptyValue: false
+          allowEmptyValue: true
           schema:
-            type: string
-          style: simple
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /users/current_user_organization:
+    get:
+      operationId: get_current_user_organizationUserCollection
+      tags:
+        - User
+      responses:
+        200:
+          description: 'User collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json+ld:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/User.jsonld-read' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/hal+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/json+hal:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/json+vnd.api:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/json+health:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/x-yaml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+            application/graphql:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User-read'
+      summary: 'Get the organization of the current user.'
+      description: 'Get the organization of the current user.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: limit
+          in: query
+          description: 'The number of items per page'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 30
+            minimum: 0
+          style: form
           explode: false
           allowReserved: false
       deprecated: false
@@ -21332,56 +21504,15 @@ paths:
         - User
       responses:
         201:
-          description: 'User resource created'
+          description: Created
           content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/User.jsonld-read'
-            application/json+ld:
-              schema:
-                $ref: '#/components/schemas/User.jsonld-read'
-            application/hal+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+hal:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+vnd.api:
-              schema:
-                $ref: '#/components/schemas/User-read'
             application/json:
               schema:
-                $ref: '#/components/schemas/User-read'
-            application/health+json:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/json+health:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/x-yaml:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/User-read'
-            application/graphql:
-              schema:
-                $ref: '#/components/schemas/User-read'
-          links:
-            GetUserItem:
-              operationId: getUserItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /users/{id}`.'
+                type: object
+                properties:
+                  token: { type: string }
+              example:
+                token: eyJhbGciOiJSUzUxMiJ9.eyJ1c2VySWQiOiI2ZWZjYzNkYy0wN2IzLTQ5YzQtOGU1ZS1jOGIwMTQyYTk4ODYiLCJ0eXBlIjoibG9naW4iLCJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3QiLCJpYXMiOjE2MjczMDk0NDMsImV4cCI6MTYyODE3MzQ0M30.aA3rHw69mzIF2ycf36eD1DhLcnZtFtKK6r7ymajI0OTx7FvKJal7XR_sxfx-Adefps3RTc_VDAw8VOcFtl6S3P7tWgXPJCnZ2DchAlZTBAUhym0SqApW6mlouZLjBRuxL_rsz6kAHcFMWWQYyfN5jzRO1A_Qyo53IF2bs_EdiebXe-TKrAk_FTovcbxgFnznQ-P3l1IDe9v9Q3RrWfwUVI-i97pCOTvh77RtuHtvT-6mO4dW-GuKQOmYHQVijNgFVf3vuQiZk3kNeQi33jdwl0ij6e9PtVupSmroBEpZ0-SOJwv0aEfQSm3ZzLuA3gBbjXM29Evv4RobaQsT7XbSzCqkdY_VbqD4OvoQzWTuRrjufYOld1m6eFJ5-jducJBVf14QJiUkrUa0iz3IOAgcBmsMdaZOYw9IBLbJYCjzKl0SluNr0ltncySY2E3Qk8KOv7ZOoxmzjzSbrr39USgUjTePEgKXKNtU4q-363SL6cs5PD51lo2obFOZ4E-Eo12SPryCmrhixIFgQSqEKFTaOIOy1fQLd-KF8XEs-K9Op_W01sLYXA1TeW6vszHg8Lv9HtzKpoh31-Tj-hHTzpMUYHIv0Kj6y4DWUJRkAGmjdJAnmxwNy3B_WhFxYnqvcFWMi0W3d-lBx3PFFJCa3lMPHXYfBpvBBHzKzb3sFGiyZCs
         400:
           description: 'Invalid input'
         422:
@@ -21390,51 +21521,17 @@ paths:
       description: 'Request a password reset token for a user.'
       parameters: []
       requestBody:
-        description: 'The new User resource'
+        description: ''
         content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/json+ld:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+hal:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+vnd.api:
-            schema:
-              $ref: '#/components/schemas/User-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User-write'
-          application/health+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+health:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/graphql:
-            schema:
-              $ref: '#/components/schemas/User-write'
-        required: true
+              type: object
+              properties:
+                username:
+                  type: string
+            example:
+              username: JohnDoe@gmail.com
+        required: false
       deprecated: false
     parameters: []
   /users/reset_password:
@@ -21502,51 +21599,23 @@ paths:
       description: 'Reset the password of a User with a token.'
       parameters: []
       requestBody:
-        description: 'The new User resource'
+        description: ''
         content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/json+ld:
-            schema:
-              $ref: '#/components/schemas/User.jsonld-write'
-          application/hal+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+hal:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+vnd.api:
-            schema:
-              $ref: '#/components/schemas/User-write'
           application/json:
             schema:
-              $ref: '#/components/schemas/User-write'
-          application/health+json:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/json+health:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/csv:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/User-write'
-          application/graphql:
-            schema:
-              $ref: '#/components/schemas/User-write'
-        required: true
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                token:
+                  type: string
+            example:
+              username: JohnDoe@gmail.com
+              password: 'n$5Ssqs]eCDT!$})'
+              token: eyJhbGciOiJSUzUxMiJ9.eyJ1c2VySWQiOiI2ZWZjYzNkYy0wN2IzLTQ5YzQtOGU1ZS1jOGIwMTQyYTk4ODYiLCJ0eXBlIjoibG9naW4iLCJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3QiLCJpYXMiOjE2MjczMDk0NDMsImV4cCI6MTYyODE3MzQ0M30.aA3rHw69mzIF2ycf36eD1DhLcnZtFtKK6r7ymajI0OTx7FvKJal7XR_sxfx-Adefps3RTc_VDAw8VOcFtl6S3P7tWgXPJCnZ2DchAlZTBAUhym0SqApW6mlouZLjBRuxL_rsz6kAHcFMWWQYyfN5jzRO1A_Qyo53IF2bs_EdiebXe-TKrAk_FTovcbxgFnznQ-P3l1IDe9v9Q3RrWfwUVI-i97pCOTvh77RtuHtvT-6mO4dW-GuKQOmYHQVijNgFVf3vuQiZk3kNeQi33jdwl0ij6e9PtVupSmroBEpZ0-SOJwv0aEfQSm3ZzLuA3gBbjXM29Evv4RobaQsT7XbSzCqkdY_VbqD4OvoQzWTuRrjufYOld1m6eFJ5-jducJBVf14QJiUkrUa0iz3IOAgcBmsMdaZOYw9IBLbJYCjzKl0SluNr0ltncySY2E3Qk8KOv7ZOoxmzjzSbrr39USgUjTePEgKXKNtU4q-363SL6cs5PD51lo2obFOZ4E-Eo12SPryCmrhixIFgQSqEKFTaOIOy1fQLd-KF8XEs-K9Op_W01sLYXA1TeW6vszHg8Lv9HtzKpoh31-Tj-hHTzpMUYHIv0Kj6y4DWUJRkAGmjdJAnmxwNy3B_WhFxYnqvcFWMi0W3d-lBx3PFFJCa3lMPHXYfBpvBBHzKzb3sFGiyZCs
+        required: false
       deprecated: false
     parameters: []
   '/users/{id}':
