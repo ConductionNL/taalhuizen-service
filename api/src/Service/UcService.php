@@ -397,23 +397,7 @@ class UcService
             );
         }
 
-        $time = new DateTime();
-        $expiry = new DateTime('+10 days');
-
-//        $this->entityManager->persist($session);
-//        $this->entityManager->flush();
-
-        $jwtBody = [
-            'userId'    => $resource['id'],
-            'username'  => $username,
-            //            'session'   => $session->getId(),
-            'type'      => 'login',
-            'iss'       => $this->parameterBag->get('app_url'),
-            'ias'       => $time->getTimestamp(),
-            'exp'       => $expiry->getTimestamp(),
-        ];
-
-        return $this->createJWTToken($jwtBody);
+        return $resource['jwtToken'];
     }
 
     /**
