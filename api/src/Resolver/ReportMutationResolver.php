@@ -157,7 +157,7 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         $participants = $this->eduService->getParticipants($query);
         $participants = $this->cleanParticipants($participants);
-        $report->setBase64data(base64_encode($this->serializer->serialize($participants, 'csv')));
+        $report->setBase64(base64_encode($this->serializer->serialize($participants, 'csv')));
         $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
@@ -188,7 +188,7 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         $employees = $this->mrcService->getEmployees(null, $providerId, $query);
 
-        $report->setBase64data(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
+        $report->setBase64(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
         $report->setFilename("VolunteersReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
@@ -247,7 +247,7 @@ class ReportMutationResolver implements MutationResolverInterface
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = $this->fillLearningNeeds($participants, $dateFrom, $dateUntil);
         $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
-        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
+        $report->setBase64(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);

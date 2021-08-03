@@ -2,14 +2,27 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentDutchNTRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * All properties that the DTO entity StudentDutchNT holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the dutch NT details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentDutchNTRepository::class)
  */
 class StudentDutchNT
@@ -17,46 +30,94 @@ class StudentDutchNT
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var string|null The dutch NT level of this Student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"NT1", "NT2"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"NT1", "NT2"},
+     *             "example"="NT1"
+     *         }
+     *     }
+     * )
      */
-    private $dutchNTLevel;
+    private ?string $dutchNTLevel;
 
     /**
+     * @var float|null The year since when this student is in the Netherlands.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2003
+     *         }
+     *     }
+     * )
      */
-    private $inNetherlandsSinceYear;
+    private ?float $inNetherlandsSinceYear;
 
     /**
+     * @var string|null The language this student speaks in his/her daily life.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Dutch"
+     *         }
+     *     }
+     * )
      */
-    private $languageInDailyLife;
+    private ?string $languageInDailyLife;
 
     /**
+     * @var bool|null A boolean that is true if this student knows the latin alphabet.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $knowsLatinAlphabet;
+    private ?bool $knowsLatinAlphabet;
 
     /**
+     * @var string|null The last known language level of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"A0", "A1", "A2", "B1", "B2", "C1", "C2", "UNKNOWN"},
+     *             "example"="A0"
+     *         }
+     *     }
+     * )
      */
-    private $lastKnownLevel;
+    private ?string $lastKnownLevel;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 

@@ -2,14 +2,27 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentGeneralRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * All properties that the DTO entity StudentGeneral holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the general details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentGeneralRepository::class)
  */
 class StudentGeneral
@@ -17,51 +30,117 @@ class StudentGeneral
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var string|null The country of origin of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="The Netherlands"
+     *         }
+     *     }
+     * )
      */
-    private $countryOfOrigin;
+    private ?string $countryOfOrigin;
 
     /**
+     * @var string|null The native language of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=2, max=3)
+     * @ORM\Column(type="string", length=3, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="NL"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $nativeLanguage;
+
+    /**
+     * @var string|null The other languages this student speaks.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="English, Spanish"
+     *         }
+     *     }
+     * )
      */
-    private $nativeLanguage;
+    private ?string $otherLanguages;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $otherLanguages;
-
-    /**
+     * @var array|null The family composition of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"},
+     *               "example"="MARRIED_PARTNER"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $familiComposition = [];
+    private ?array $familyComposition = [];
 
     /**
+     * @var int|null The amount of children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2
+     *         }
+     *     }
+     * )
      */
-    private $childrenCount;
+    private ?int $childrenCount;
 
     /**
+     * @var string|null The birthdays of the children of this student.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="01-01-2006, 04-08-1999"
+     *         }
+     *     }
+     * )
      */
-    private $childrenDatesOfBirth;
+    private ?string $childrenDatesOfBirth;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -104,14 +183,14 @@ class StudentGeneral
         return $this;
     }
 
-    public function getFamiliComposition(): ?array
+    public function getFamilyComposition(): ?array
     {
-        return $this->familiComposition;
+        return $this->familyComposition;
     }
 
-    public function setFamiliComposition(?array $familiComposition): self
+    public function setFamilyComposition(?array $familyComposition): self
     {
-        $this->familiComposition = $familiComposition;
+        $this->familyComposition = $familyComposition;
 
         return $this;
     }

@@ -2,15 +2,19 @@
 
 namespace App\Service;
 
+use App\Entity\Address;
+use App\Entity\Email;
 use App\Entity\Employee;
-use App\Entity\LanguageHouse;
-use App\Entity\Provider;
+use App\Entity\Organization;
+use App\Entity\Person;
+use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CCService
 {
@@ -18,21 +22,21 @@ class CCService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private WRCService $wrcService;
+    private SerializerInterface $serializer;
 
     /**
      * CCService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
+     * @param LayerService $layerService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService
+        LayerService $layerService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
-        $this->wrcService = new WRCService($entityManager, $commonGroundService);
+        $this->entityManager = $layerService->entityManager;
+        $this->serializer = $layerService->serializer;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->wrcService = new WRCService($layerService->entityManager, $layerService->commonGroundService);
     }
 
     /**
@@ -47,7 +51,7 @@ class CCService
         foreach ($array as $key=>$value) {
             if (is_array($value)) {
                 $array[$key] = $this->cleanResource($value);
-            } elseif (!$value) {
+            } elseif (!is_bool($value) and !$value) {
                 unset($array[$key]);
             }
         }
@@ -56,37 +60,121 @@ class CCService
     }
 
     /**
-     * @param array  $result
-     * @param string $type
+     * @param array $result
      *
-     * @return LanguageHouse|Provider
+     * @return Organization
      */
-    public function createOrganizationObject(array $result, string $type)
+    public function createOrganizationObject(array $result): Organization
     {
-        if ($type == 'Taalhuis') {
-            $organization = new LanguageHouse();
-        } else {
-            $organization = new Provider();
-        }
-
-        $address = [
-            'street'            => $result['addresses'][0]['street'] ?? null,
-            'houseNumber'       => $result['addresses'][0]['houseNumber'] ?? null,
-            'houseNumberSuffix' => $result['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode'        => $result['addresses'][0]['postalCode'] ?? null,
-            'locality'          => $result['addresses'][0]['locality'] ?? null,
-        ];
+        $organization = new Organization();
         $organization->setName($result['name']);
-        $organization->setAddress($address);
-        $organization->setEmail($result['emails'][0]['email'] ?? null);
-        $organization->setPhoneNumber($result['telephones'][0]['telephone'] ?? null);
         $organization->setType($result['type'] ?? null);
+        $organization->setAddresses(isset($result['addresses'][0]) ? $this->createAddressObject($result['addresses'][0]) : null);
+        $organization->setEmails(isset($result['emails'][0]) ? $this->createEmailObject($result['emails'][0]) : null);
+        $organization->setTelephones(isset($result['telephones'][0]) ? $this->createTelephoneObject($result['telephones'][0]) : null);
 
         $this->entityManager->persist($organization);
         $organization->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    /**
+     * @param array $result
+     *
+     * @throws Exception
+     *
+     * @return Person
+     */
+    public function createPersonObject(array $result): Person
+    {
+        $person = new Person();
+        $person->setGivenName($result['givenName']);
+        $person->setAdditionalName($result['additionalName'] ?? null);
+        $person->setFamilyName($result['familyName']);
+        $person->setGender($result['gender'] ?? null);
+        $person->setBirthday($result['birthday'] ? new \DateTime($result['birthday']) : null);
+        if ($result['contactPreference'] != 'OTHER') {
+            $person->setContactPreference($result['contactPreference']);
+            $person->setContactPreferenceOther(null);
+        } else {
+            $person->setContactPreference('OTHER');
+            $person->setContactPreferenceOther($result['contactPreferenceOther']);
+        }
+        $person->setAddresses(isset($result['addresses'][0]) ? $this->createAddressObject($result['addresses'][0]) : null);
+        $person->setEmails(isset($result['emails'][0]) ? $this->createEmailObject($result['emails'][0]) : null);
+        foreach ($result['telephones'] as $telephone) {
+            $person->addTelephone(isset($telephone) ? $this->createTelephoneObject($telephone) : null);
+        }
+        $person->setOrganization(null);
+        if (isset($result['organization']['id'])) {
+            $person->setOrganization($this->getOrganization($result['organization']['id']));
+        } // else use cc/person sourceOrganization instead?
+
+        $this->entityManager->persist($person);
+        $person->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($person);
+
+        return $person;
+    }
+
+    /**
+     * @param array $result
+     *
+     * @return Address
+     */
+    public function createAddressObject(array $result): Address
+    {
+        $address = new Address();
+        $address->setName($result['name'] ?? null);
+        $address->setStreet($result['street']);
+        $address->setHouseNumber($result['houseNumber']);
+        $address->setHouseNumberSuffix($result['houseNumberSuffix'] ?? null);
+        $address->setPostalCode($result['postalCode']);
+        $address->setLocality($result['locality']);
+
+        $this->entityManager->persist($address);
+        $address->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($address);
+
+        return $address;
+    }
+
+    /**
+     * @param array $result
+     *
+     * @return Email
+     */
+    public function createEmailObject(array $result): Email
+    {
+        $email = new Email();
+        $email->setName($result['name'] ?? null);
+        $email->setEmail($result['email']);
+
+        $this->entityManager->persist($email);
+        $email->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($email);
+
+        return $email;
+    }
+
+    /**
+     * @param array $result
+     *
+     * @return Telephone
+     */
+    public function createTelephoneObject(array $result): Telephone
+    {
+        $telephone = new Telephone();
+        $telephone->setName($result['name'] ?? null);
+        $telephone->setTelephone($result['telephone']);
+
+        $this->entityManager->persist($telephone);
+        $telephone->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($telephone);
+
+        return $telephone;
     }
 
     /**
@@ -116,16 +204,15 @@ class CCService
     /**
      * Fetches an organization from the contact catalogue and returns it as an object for the type of organization.
      *
-     * @param string $id   The id of the organization to fetch
-     * @param string $type The type of organization
+     * @param string $id The id of the organization to fetch
      *
-     * @return LanguageHouse|Provider The organization that has been fetched
+     * @return Organization The organization that has been fetched
      */
-    public function getOrganization(string $id, string $type)
+    public function getOrganization(string $id)
     {
         $result = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
 
-        return $this->createOrganizationObject($result, $type);
+        return $this->createOrganizationObject($result);
     }
 
     /**
@@ -140,19 +227,19 @@ class CCService
     {
         $wrcOrganization = $this->wrcService->createOrganization($organizationArray);
         $address = [
-            'name'              => 'Address of '.$organizationArray['name'],
-            'street'            => $organizationArray['address']['street'],
-            'houseNumber'       => $organizationArray['address']['houseNumber'],
-            'houseNumberSuffix' => $organizationArray['address']['postalCode'],
-            'postalCode'        => $organizationArray['address']['postalCode'],
-            'locality'          => $organizationArray['address']['locality'],
+            'name'              => $organizationArray['addresses']['name'] ?? null,
+            'street'            => $organizationArray['addresses']['street'] ?? null,
+            'houseNumber'       => $organizationArray['addresses']['houseNumber'] ?? null,
+            'houseNumberSuffix' => $organizationArray['addresses']['houseNumberSuffix'] ?? null,
+            'postalCode'        => $organizationArray['addresses']['postalCode'] ?? null,
+            'locality'          => $organizationArray['addresses']['locality'] ?? null,
         ];
         $resource = [
             'name'               => $organizationArray['name'],
             'type'               => $type,
-            'telephones'         => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
-            'emails'             => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
-            'addresses'          => [$address],
+            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'], 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'], 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
@@ -214,6 +301,9 @@ class CCService
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $ccOrganization['telephones'][0]['id']]);
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $ccOrganization['emails'][0]['id']]);
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $ccOrganization['addresses'][0]['id']]);
+        foreach ($ccOrganization['persons'] as $person) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+        }
         $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
 
         return true;
@@ -229,6 +319,7 @@ class CCService
     public function convertAddress(array $addressArray): array
     {
         return [
+            'name'              => key_exists('name', $addressArray) ? $addressArray['name'] : null,
             'street'            => key_exists('street', $addressArray) ? $addressArray['street'] : null,
             'houseNumber'       => key_exists('houseNumber', $addressArray) ? $addressArray['houseNumber'] : null,
             'houseNumberSuffix' => key_exists('houseNumberSuffix', $addressArray) ? $addressArray['houseNumberSuffix'] : null,
@@ -240,34 +331,30 @@ class CCService
     /**
      * Stores data for an employee in a person object in the contact catalogue.
      *
-     * @param array         $employeeArray The employee object that was given as input
-     * @param Employee|null $employee      The employee the data relates to
+     * @param array $employee The employee object that was given as input
      *
-     * @throws Exception Thrown if givenName is not provided
+     *@throws Exception Thrown if givenName is not provided
      *
      * @return array The resulting person array
      */
-    public function employeeToPerson(array $employeeArray, ?Employee $employee = null): array
+    public function employeeToPerson(array $employee): array
     {
+        $employeePerson = $employee['person'];
         $person = [
-            'givenName'         => key_exists('givenName', $employeeArray) ? $employeeArray['givenName'] : ($employee ? $employee->getGivenName() : new Exception('givenName must be provided')),
-            'additionalName'    => key_exists('additionalName', $employeeArray) ? $employeeArray['additionalName'] : null,
-            'familyName'        => key_exists('familyName', $employeeArray) ? $employeeArray['familyName'] : null,
-            'birthday'          => key_exists('dateOfBirth', $employeeArray) ? $employeeArray['dateOfBirth'] : null,
-            'gender'            => key_exists('gender', $employeeArray) ? ($employeeArray['gender'] == 'X' ? null : strtolower($employeeArray['gender'])) : null,
-            'contactPreference' => key_exists('contactPreference', $employeeArray) ?
-                    $employeeArray['contactPreference'] :
-                    (
-                        key_exists('contactPreferenceOther', $employeeArray) ?
-                        $employeeArray['contactPreferenceOther'] :
-                        null
-                    ),
-            'telephones'        => key_exists('telephone', $employeeArray) && $employeeArray['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeeArray['telephone']]] : [],
-            'emails'            => key_exists('email', $employeeArray) && $employeeArray['email'] ? [['name' => 'email 1', 'email' => $employeeArray['email']]] : ($employee && $employee->getEmail() ? [['name' => 'email 1', 'email' => $employee->getEmail()]] : []),
-            'addresses'         => key_exists('address', $employeeArray) && $employeeArray['address'] ? [$this->convertAddress($employeeArray['address'])] : [],
-            'availability'      => key_exists('availability', $employeeArray) && $employeeArray['availability'] ? $employeeArray['availability'] : [],
-        ];
-        $person['telephones'][] = key_exists('contactTelephone', $employeeArray) ? ['name' => 'contact telephone', 'telephone' => $employeeArray['contactTelephone']] : null;
+            'givenName'              => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
+            'additionalName'         => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
+            'familyName'             => key_exists('familyName', $employeePerson) ? $employeePerson['familyName'] : null,
+            'birthday'               => key_exists('birthday', $employeePerson) ? $employeePerson['birthday'] : null,
+            'gender'                 => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
+            'contactPreference'      => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
+            'contactPreferenceOther' => key_exists('contactPreferenceOther', $employeePerson) ? $employeePerson['contactPreferenceOther'] : null,
+            'telephones'             => key_exists('telephones', $employeePerson) && $employeePerson['telephones'][0]['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
+            'emails'                 => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => 'email 1', 'email' => $employeePerson['emails']['email']]] : [],
+            'addresses'              => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
+            'availability'           => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
+            'organization'           => key_exists('organizationId', $employee) && $employee['organizationId'] ? '/organizations/'.$employee['organizationId'] : null,
+        ]; //TODO: not sure if we want to set the organization for the person of an employee^
+        $person['telephones'][] = key_exists('contactTelephone', $employeePerson) ? ['name' => 'contact telephone', 'telephone' => $employeePerson['contactTelephone']] : null;
 
         if ($person['givenName'] instanceof Exception) {
             throw $person['givenName'];
@@ -281,7 +368,7 @@ class CCService
     /**
      * Creates a contact catalogue person for an employee object.
      *
-     * @param array $employee The employee to create a person for
+     * @param array $person
      *
      * @throws Exception
      *
@@ -290,9 +377,8 @@ class CCService
     public function createPersonForEmployee(array $employee): array
     {
         $person = $this->employeeToPerson($employee);
-        $person = $this->createPerson($person);
 
-        return $person;
+        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
     /**
@@ -304,9 +390,20 @@ class CCService
      *
      * @return array The result from the contact catalogue and EAV
      */
-    public function createPerson(array $person): array
+    public function createPerson(Person $person): array
     {
-        return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
+        $this->entityManager->persist($person);
+        $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        foreach ($personArray as $key => $value) {
+            if (!$value) {
+                unset($personArray[$key]);
+            }
+            if ($key == 'emails') {
+                $personArray[$key] = [$personArray[$key]];
+            }
+        }
+
+        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
         // This will not trigger notifications in nrc:
 //        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
     }
@@ -352,5 +449,37 @@ class CCService
         }
 
         return $person;
+    }
+
+    /**
+     * Fetches a person from the contact catalogue with the EAV and returns it as an array.
+     *
+     * @param string $self The url of the person
+     *
+     * @throws Exception
+     *
+     * @return array The person array
+     */
+    public function getEavPerson(string $self): array
+    {
+        if ($this->eavService->hasEavObject($self)) {
+            return $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $self]);
+        }
+
+        return $this->commonGroundService->getResource($self);
+    }
+
+    /**
+     * Deletes a person from the contact catalogue and deletes its info from the EAV.
+     *
+     * @param string $id The id of the person
+     *
+     * @throws Exception
+     *
+     * @return bool
+     */
+    public function deletePerson(string $id): bool
+    {
+        return $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
     }
 }

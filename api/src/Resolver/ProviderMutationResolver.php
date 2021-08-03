@@ -33,7 +33,7 @@ class ProviderMutationResolver implements MutationResolverInterface
         UcService $ucService,
         LayerService $layerService
     ) {
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = new MrcService($layerService, $ucService);

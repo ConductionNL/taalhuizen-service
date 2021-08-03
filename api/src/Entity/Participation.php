@@ -2,103 +2,73 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\ParticipationRepository;
-use App\Resolver\ParticipationMutationResolver;
-use App\Resolver\ParticipationQueryCollectionResolver;
-use App\Resolver\ParticipationQueryItemResolver;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Participation holds.
+ *
+ * DTO Participation exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-63 and https://lifely.atlassian.net/browse/BISC-113.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-91
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details'.
+ * The other notable change here, is that there are no groupId or providerEmployeeId properties present in this Entity (for connecting a group or mentor to this Participation). This is because custom endpoint can be used for this purpose.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ParticipationQueryItemResolver::class,
- *              "read" = false
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *          "add_or_remove_mentor"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/mentor/{mentorId}",
+ *              "openapi_context" = {
+ *                  "summary"="Add a mentor to this Participation, or remove the one connected to it.",
+ *                  "description"="Add a mentor to this Participation, or remove the one connected to it."
+ *              }
  *          },
- *          "collection_query" = {
- *              "collection_query" = ParticipationQueryCollectionResolver::class
+ *          "update_mentor"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/mentor",
+ *              "openapi_context" = {
+ *                  "summary"="Update the Participation presence properties for the mentor connected to this participation.",
+ *                  "description"="Update the Participation presence properties for the mentor connected to this participation."
+ *              }
  *          },
- *          "create" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "write" = false
+ *          "add_or_remove_group"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/group/{groupId}",
+ *              "openapi_context" = {
+ *                  "summary"="Add a group to this Participation, or remove the one connected to it.",
+ *                  "description"="Add a group to this Participation, or remove the one connected to it."
+ *              }
  *          },
- *          "update" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeMentorFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateMentor" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "addGroupTo" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "updateGroup" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {
- *                  "participationId"={"type" = "ID!"},
- *                  "presenceEngagements"={"type" = "String"},
- *                  "presenceStartDate"={"type" = "String"},
- *                  "presenceEndDate"={"type" = "String"},
- *                  "presenceEndParticipationReason"={"type" = "String"}
- *              },
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "removeGroupFrom" = {
- *              "mutation" = ParticipationMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "groupId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *          "update_group"={
+ *              "method"="POST",
+ *              "path"="/participations/{uuid}/group",
+ *              "openapi_context" = {
+ *                  "summary"="Update the Participation presence properties for the group connected to this participation.",
+ *                  "description"="Update the Participation presence properties for the group connected to this participation."
+ *              }
  *          }
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"learningNeedId": "exact"})
+ *     })
  * @ORM\Entity(repositoryClass=ParticipationRepository::class)
  */
 class Participation
@@ -106,250 +76,341 @@ class Participation
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"ACTIVE", "COMPLETED", "REFERRED"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string|null A contact component provider id of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private $status;
+    private ?string $providerId;
 
     /**
-     * @Groups({"write"})
+     * @var string|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Provider X"
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederId;
+    private ?string $providerName;
 
     /**
-     * @Groups({"write"})
+     * @var ?string Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation of Provider X"
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederName;
+    private ?string $providerNote;
 
     /**
-     * @Groups({"write"})
+     * @var ?string Offer name of this participation
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Offer X"
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederNote;
+    private ?string $offerName;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $offerName;
-
-    /**
-     * @Groups({"write"})
+     * @var ?string Offer course of this participation.
+     *
      * @Assert\Choice({"LANGUAGE", "MATH", "DIGITAL", "OTHER"})
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"LANGUAGE", "MATH", "DIGITAL", "OTHER"},
+     *             "example"="LANGUAGE"
+     *         }
+     *     }
+     * )
      */
-    private $offerCourse;
+    private ?string $offerCourse;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?LearningNeedOutCome The learning need out come of this participation.
+     *
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private $outComesGoal;
+    private ?LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopic;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplication;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevel;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @Groups({"write"})
+     * @var bool|null The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=false
+     *         }
+     *     }
+     * )
      */
-    private $detailsIsFormal;
+    private ?bool $isFormal;
 
     /**
-     * @Groups({"write"})
+     * @var string|null The group formation of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
      * @Assert\Choice({"INDIVIDUALLY", "IN_A_GROUP"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"INDIVIDUALLY", "IN_A_GROUP"},
+     *             "example"="INDIVIDUALLY"
+     *         }
+     *     }
+     * )
      */
-    private $detailsGroupFormation;
+    private ?string $groupFormation;
 
     /**
-     * @Groups({"write"})
+     * @var float|null The total class hours of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="float",
+     *             "example"="30"
+     *         }
+     *     }
+     * )
      */
-    private $detailsTotalClassHours;
+    private ?float $totalClassHours;
 
     /**
-     * @Groups({"write"})
+     * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
      */
-    private $detailsCertificateWillBeAwarded;
+    private ?bool $certificateWillBeAwarded;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $detailsStartDate;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $detailsEndDate;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsEngagements;
-
-    /**
-     * @var string The id of the objectEntity of an eav/learning_need.
+     * @var DateTimeInterface|null The start date of this participation.
      *
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="11-04-2021"
+     *         }
+     *     }
+     * )
      */
-    private $learningNeedId;
+    private ?DateTimeInterface $startDate;
 
     /**
-     * @var string The url of the objectEntity of an eav/learning_need '@eav'.
+     * @var DateTimeInterface|null The end date of this participation.
      *
-     * @Groups({"write"})
-     * @Assert\Url
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $learningNeedUrl;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $participationId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $presenceEngagements;
-
-    /**
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="11-11-2021"
+     *         }
+     *     }
+     * )
      */
-    private $presenceStartDate;
+    private ?DateTimeInterface $endDate;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $presenceEndDate;
-
-    /**
-     * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
+     * @var ?string Details engagements of this participation
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Engagements details"
+     *         }
+     *     }
+     * )
      */
-    private $presenceEndParticipationReason;
+    private ?string $engagements;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string The id of the LearningNeed connected to this Participation.
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederEmployeeId;
+    private string $learningNeedId;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $groupId;
+    // Moved to custom endpoints, only used when updating a participation group or a participation mentor.
+//    /**
+//     * @var ?string Presence engagements of this participation.
+//     *
+//     * @Assert\Length(
+//     *     max = 255
+//     * )
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="string", length=255, nullable=true)
+//     */
+//    private ?string $presenceEngagements;
+//
+//    /**
+//     * @var ?DateTime Presence start date of this participation.
+//     *
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="datetime", nullable=true)
+//     */
+//    private ?DateTime $presenceStartDate;
+//
+//    /**
+//     * @var ?DateTime Presence end date of this participation.
+//     *
+//     * @Groups({"read","write"})
+//     * @ORM\Column(type="datetime", nullable=true)
+//     */
+//    private ?DateTime $presenceEndDate;
+//
+//    /**
+//     * @var ?string Currently following course professionalism of this Employee.
+//     *
+//     * @Assert\Choice({"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"})
+//     * @Groups({"read", "write"})
+//     * @ORM\Column(type="string", length=255, nullable=true)
+//     * @ApiProperty(
+//     *     attributes={
+//     *         "openapi_context"={
+//     *             "type"="string",
+//     *             "enum"={"MOVED", "JOB", "ILLNESS", "DEATH", "COMPLETED_SUCCESSFULLY", "FAMILY_CIRCUMSTANCES", "DOES_NOT_MEET_EXPECTATIONS", "OTHER"},
+//     *             "example"="MOVED"
+//     *         }
+//     *     }
+//     * )
+//     */
+//    private ?string $presenceEndParticipationReason;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getProviderId(): ?string
     {
-        return $this->status;
+        return $this->providerId;
     }
 
-    public function setStatus(?string $status): self
+    public function setProviderId(?string $providerId): self
     {
-        $this->status = $status;
+        $this->providerId = $providerId;
 
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getProviderName(): ?string
     {
-        return $this->aanbiederId;
+        return $this->providerName;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setProviderName(?string $providerName): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->providerName = $providerName;
 
         return $this;
     }
 
-    public function getAanbiederName(): ?string
+    public function getProviderNote(): ?string
     {
-        return $this->aanbiederName;
+        return $this->providerNote;
     }
 
-    public function setAanbiederName(?string $aanbiederName): self
+    public function setProviderNote(?string $providerNote): self
     {
-        $this->aanbiederName = $aanbiederName;
-
-        return $this;
-    }
-
-    public function getAanbiederNote(): ?string
-    {
-        return $this->aanbiederNote;
-    }
-
-    public function setAanbiederNote(?string $aanbiederNote): self
-    {
-        $this->aanbiederNote = $aanbiederNote;
+        $this->providerNote = $providerNote;
 
         return $this;
     }
@@ -378,279 +439,160 @@ class Participation
         return $this;
     }
 
-    public function getOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->outComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesGoal(?string $outComesGoal): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->outComesGoal = $outComesGoal;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getOutComesTopic(): ?string
+    public function getIsFormal(): ?bool
     {
-        return $this->outComesTopic;
+        return $this->isFormal;
     }
 
-    public function setOutComesTopic(?string $outComesTopic): self
+    public function setIsFormal(?bool $isFormal): self
     {
-        $this->outComesTopic = $outComesTopic;
+        $this->isFormal = $isFormal;
 
         return $this;
     }
 
-    public function getOutComesTopicOther(): ?string
+    public function getGroupFormation(): ?string
     {
-        return $this->outComesTopicOther;
+        return $this->groupFormation;
     }
 
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
+    public function setGroupFormation(?string $groupFormation): self
     {
-        $this->outComesTopicOther = $outComesTopicOther;
+        $this->groupFormation = $groupFormation;
 
         return $this;
     }
 
-    public function getOutComesApplication(): ?string
+    public function getTotalClassHours(): ?float
     {
-        return $this->outComesApplication;
+        return $this->totalClassHours;
     }
 
-    public function setOutComesApplication(?string $outComesApplication): self
+    public function setTotalClassHours(?float $totalClassHours): self
     {
-        $this->outComesApplication = $outComesApplication;
+        $this->totalClassHours = $totalClassHours;
 
         return $this;
     }
 
-    public function getOutComesApplicationOther(): ?string
+    public function getCertificateWillBeAwarded(): ?bool
     {
-        return $this->outComesApplicationOther;
+        return $this->certificateWillBeAwarded;
     }
 
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
+    public function setCertificateWillBeAwarded(?bool $certificateWillBeAwarded): self
     {
-        $this->outComesApplicationOther = $outComesApplicationOther;
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
 
         return $this;
     }
 
-    public function getOutComesLevel(): ?string
+    public function getStartDate(): ?DateTimeInterface
     {
-        return $this->outComesLevel;
+        return $this->startDate;
     }
 
-    public function setOutComesLevel(?string $outComesLevel): self
+    public function setStartDate(?DateTimeInterface $startDate): self
     {
-        $this->outComesLevel = $outComesLevel;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getOutComesLevelOther(): ?string
+    public function getEndDate(): ?DateTimeInterface
     {
-        return $this->outComesLevelOther;
+        return $this->endDate;
     }
 
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
-        $this->outComesLevelOther = $outComesLevelOther;
+        $this->endDate = $endDate;
 
         return $this;
     }
 
-    public function getDetailsIsFormal(): ?bool
+    public function getEngagements(): ?string
     {
-        return $this->detailsIsFormal;
+        return $this->engagements;
     }
 
-    public function setDetailsIsFormal(?bool $detailsIsFormal): self
+    public function setEngagements(?string $engagements): self
     {
-        $this->detailsIsFormal = $detailsIsFormal;
+        $this->engagements = $engagements;
 
         return $this;
     }
 
-    public function getDetailsGroupFormation(): ?string
-    {
-        return $this->detailsGroupFormation;
-    }
-
-    public function setDetailsGroupFormation(?string $detailsGroupFormation): self
-    {
-        $this->detailsGroupFormation = $detailsGroupFormation;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): ?float
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(?float $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): ?bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
-
-        return $this;
-    }
-
-    public function getDetailsEngagements(): ?string
-    {
-        return $this->detailsEngagements;
-    }
-
-    public function setDetailsEngagements(?string $detailsEngagements): self
-    {
-        $this->detailsEngagements = $detailsEngagements;
-
-        return $this;
-    }
-
-    public function getLearningNeedId(): ?string
+    public function getLearningNeedId(): string
     {
         return $this->learningNeedId;
     }
 
-    public function setLearningNeedId(?string $learningNeedId): self
+    public function setLearningNeedId(string $learningNeedId): self
     {
         $this->learningNeedId = $learningNeedId;
 
         return $this;
     }
 
-    public function getLearningNeedUrl(): ?string
-    {
-        return $this->learningNeedUrl;
-    }
-
-    public function setLearningNeedUrl(?string $learningNeedUrl): self
-    {
-        $this->learningNeedUrl = $learningNeedUrl;
-
-        return $this;
-    }
-
-    public function getParticipationId(): ?string
-    {
-        return $this->participationId;
-    }
-
-    public function setParticipationId(?string $participationId): self
-    {
-        $this->participationId = $participationId;
-
-        return $this;
-    }
-
-    public function getPresenceEngagements(): ?string
-    {
-        return $this->presenceEngagements;
-    }
-
-    public function setPresenceEngagements(?string $presenceEngagements): self
-    {
-        $this->presenceEngagements = $presenceEngagements;
-
-        return $this;
-    }
-
-    public function getPresenceStartDate(): ?\DateTimeInterface
-    {
-        return $this->presenceStartDate;
-    }
-
-    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
-    {
-        $this->presenceStartDate = $presenceStartDate;
-
-        return $this;
-    }
-
-    public function getPresenceEndDate(): ?\DateTimeInterface
-    {
-        return $this->presenceEndDate;
-    }
-
-    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
-    {
-        $this->presenceEndDate = $presenceEndDate;
-
-        return $this;
-    }
-
-    public function getPresenceEndParticipationReason(): ?string
-    {
-        return $this->presenceEndParticipationReason;
-    }
-
-    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
-    {
-        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
-
-        return $this;
-    }
-
-    public function getAanbiederEmployeeId(): ?string
-    {
-        return $this->aanbiederEmployeeId;
-    }
-
-    public function setAanbiederEmployeeId(?string $aanbiederEmployeeId): self
-    {
-        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
-
-        return $this;
-    }
-
-    public function getGroupId(): ?string
-    {
-        return $this->groupId;
-    }
-
-    public function setGroupId(?string $groupId): self
-    {
-        $this->groupId = $groupId;
-
-        return $this;
-    }
+    // Moved to custom endpoints, only used when updating a participation group or a participation mentor.
+//    public function getPresenceEngagements(): ?string
+//    {
+//        return $this->presenceEngagements;
+//    }
+//
+//    public function setPresenceEngagements(?string $presenceEngagements): self
+//    {
+//        $this->presenceEngagements = $presenceEngagements;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceStartDate(): ?\DateTimeInterface
+//    {
+//        return $this->presenceStartDate;
+//    }
+//
+//    public function setPresenceStartDate(?\DateTimeInterface $presenceStartDate): self
+//    {
+//        $this->presenceStartDate = $presenceStartDate;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceEndDate(): ?\DateTimeInterface
+//    {
+//        return $this->presenceEndDate;
+//    }
+//
+//    public function setPresenceEndDate(?\DateTimeInterface $presenceEndDate): self
+//    {
+//        $this->presenceEndDate = $presenceEndDate;
+//
+//        return $this;
+//    }
+//
+//    public function getPresenceEndParticipationReason(): ?string
+//    {
+//        return $this->presenceEndParticipationReason;
+//    }
+//
+//    public function setPresenceEndParticipationReason(?string $presenceEndParticipationReason): self
+//    {
+//        $this->presenceEndParticipationReason = $presenceEndParticipationReason;
+//
+//        return $this;
+//    }
 }
