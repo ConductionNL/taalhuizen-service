@@ -468,4 +468,18 @@ class CCService
 
         return $this->commonGroundService->getResource($self);
     }
+
+    /**
+     * Deletes a person from the contact catalogue and deletes its info from the EAV.
+     *
+     * @param string $id The id of the person
+     *
+     * @throws Exception
+     *
+     * @return bool
+     */
+    public function deletePerson(string $id): bool
+    {
+        return $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $id]);
+    }
 }

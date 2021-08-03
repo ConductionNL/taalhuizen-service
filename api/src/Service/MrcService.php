@@ -13,6 +13,7 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
+use function Symfony\Component\Translation\t;
 
 class MrcService
 {
@@ -1055,7 +1056,7 @@ class MrcService
         $this->deleteSubObjects($employeeArray);
         $this->ucService->deleteUser($employee->getUserId());
         $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $employee->getPerson()->getId()]);
+        $this->ccService->deletePerson($employee->getPerson()->getId());
 
         return true;
     }

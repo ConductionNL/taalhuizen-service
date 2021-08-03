@@ -100,7 +100,7 @@ class UserItemSubscriber implements EventSubscriberInterface
                 json_encode([
                     'message' => 'This user does not exist!',
                     'path'    => '',
-                    'data'    => ['organization' => $userUrl],
+                    'data'    => ['user' => $userUrl],
                 ]),
                 Response::HTTP_NOT_FOUND,
                 ['content-type' => 'application/json']
