@@ -118,7 +118,7 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
         try {
             //delete userGroups
             $this->ucService->deleteUserGroups($id);
-            ;
+            
             //delete employees
             $this->mrcService->deleteEmployees($id);
 
