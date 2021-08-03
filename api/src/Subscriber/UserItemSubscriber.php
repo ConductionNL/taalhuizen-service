@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\UcService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class UserItemSubscriber implements EventSubscriberInterface
 {
+    private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private UcService $ucService;
 
@@ -26,6 +28,7 @@ class UserItemSubscriber implements EventSubscriberInterface
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
         $this->serializerService = new SerializerService($layerService->serializer);
     }
@@ -75,18 +78,6 @@ class UserItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
-     * @return Response
-     */
-    private function deleteUser(string $id): Response
-    {
-        $this->ucService->deleteUser($id);
-
-        return new Response(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @param string $id
-     *
      * @throws Exception
      *
      * @return User
@@ -94,5 +85,42 @@ class UserItemSubscriber implements EventSubscriberInterface
     private function getUser(string $id): User
     {
         return $this->ucService->getUser($id);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return Response
+     */
+    private function deleteUser(string $id): Response
+    {
+        $userUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($userUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This user does not exist!',
+                    'path'    => '',
+                    'data'    => ['user' => $userUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        try {
+            $this->ucService->deleteUser($id);
+
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        } catch (Exception $exception) {
+            return new Response(
+                json_encode([
+                    'message' => 'Something went wrong!',
+                    'path'    => '',
+                    'data'    => ['Exception' => $exception->getMessage()],
+                ]),
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                ['content-type' => 'application/json']
+            );
+        }
     }
 }

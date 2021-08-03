@@ -37,7 +37,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "put",
- *          "delete"
+ *          "delete"={
+ *              "read"=false
+ *          },
  *     },
  *     collectionOperations={
  *          "get",

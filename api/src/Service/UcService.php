@@ -357,12 +357,13 @@ class UcService
      * @param string $id The id of the user to remove
      *
      * @return bool Whether or not the action has been successful
+     * @throws Exception
      */
     public function deleteUser(string $id): bool
     {
         $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
         if ($resource['person']) {
-            //@TODO: create delete person service in ccservice
+            $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($resource['person']));
         }
 
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
