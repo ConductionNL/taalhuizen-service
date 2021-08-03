@@ -301,15 +301,17 @@ class UcService
      */
     public function createUser(User $user): User
     {
-//        $contact = $this->ccService->createPerson(['givenName' => $user['givenName'], 'familyName' => $user['familyName'], 'additionalName' => $user['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $user['email']]]]);
-
+        $organization = null;
+        if ($user->getOrganizationId()) {
+            $organization = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $user->getOrganizationId()]);
+        }
         $contact = $this->ccService->createPerson($user->getPerson());
         $resource = [
             'username'     => $user->getUsername(),
             'password'     => $user->getPassword(),
             'locale'       => 'nl',
             'person'       => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]),
-            'organization' => null,
+            'organization' => $organization,
         ];
 
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);

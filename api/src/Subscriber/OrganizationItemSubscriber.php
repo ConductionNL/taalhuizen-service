@@ -88,10 +88,23 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
-     * @return Organization
+     * @return Organization|Response
      */
-    private function getOrganization(string $id): Organization
+    private function getOrganization(string $id)
     {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($organizationUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This organization does not exist!',
+                    'path'    => '',
+                    'data'    => ['organization' => $organizationUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
         return $this->ccService->getOrganization($id);
     }
 

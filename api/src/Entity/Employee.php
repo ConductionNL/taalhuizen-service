@@ -29,7 +29,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     itemOperations={
  *          "get",
  *          "put",
- *          "delete"
+ *          "delete"={
+ *              "read"=false
+ *          },
  *     },
  *     collectionOperations={
  *          "get",

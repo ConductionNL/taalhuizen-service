@@ -923,7 +923,7 @@ class MrcService
      */
     public function handleUserRoleArray(array $employeeArray)
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
+        if (key_exists('userGroupIds', $employeeArray) and isset($employeeArray['userGroupIds'][0])) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
         } else {
