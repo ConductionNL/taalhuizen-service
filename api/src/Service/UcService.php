@@ -122,13 +122,13 @@ class UcService
      *
      * @return array The payload of a verified JWT token
      */
-    public function validateJWTAndGetPayload(string $jws): array
+    public function validateJWTAndGetPayload(string $jws, string $publicKey): array
     {
         $serializer = new CompactSerializer();
         $jwt = $serializer->unserialize($jws);
 
         $algorithmManager = new AlgorithmManager([new RS512()]);
-        $pem = $this->writeFile(base64_decode($this->parameterBag->get('public_key')), 'pem');
+        $pem = $this->writeFile($publicKey, 'pem');
         $public = JWKFactory::createFromKeyFile($pem);
         $this->removeFiles([$pem]);
 
@@ -400,23 +400,7 @@ class UcService
             );
         }
 
-        $time = new DateTime();
-        $expiry = new DateTime('+10 days');
-
-//        $this->entityManager->persist($session);
-//        $this->entityManager->flush();
-
-        $jwtBody = [
-            'userId'    => $resource['id'],
-            'username'  => $username,
-            //            'session'   => $session->getId(),
-            'type'      => 'login',
-            'iss'       => $this->parameterBag->get('app_url'),
-            'ias'       => $time->getTimestamp(),
-            'exp'       => $expiry->getTimestamp(),
-        ];
-
-        return $this->createJWTToken($jwtBody);
+        return $resource['jwtToken'];
     }
 
     /**
@@ -469,7 +453,7 @@ class UcService
      */
     public function updatePasswordWithToken(string $email, string $token, string $password)
     {
-        $tokenEmail = $this->validateJWTAndGetPayload($token);
+        $tokenEmail = $this->validateJWTAndGetPayload($token, base64_decode($this->parameterBag->get('public_key')));
         if ($tokenEmail['email'] != $email) {
             return new Response(
                 json_encode([
@@ -495,12 +479,17 @@ class UcService
      */
     public function logout(): bool
     {
-        $token = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
+        $resource['jwtToken'] = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
 
-        $authenticationService = new AuthenticationService($this->parameterBag);
-        $session = $authenticationService->verifyJWTToken($token);
-
-        return true;
+        try{
+            $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'logout']);
+            return true;
+        } catch (ClientException $exception){
+            if($exception->getCode() == 422){
+                return true;
+            }
+            return false;
+        }
     }
 
     /**
