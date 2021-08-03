@@ -182,7 +182,7 @@ class UserSubscriber implements EventSubscriberInterface
                     'path'    => 'password',
                     'data'    => ['password' => $resource->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($resource->getPassword())],
                 ]),
-                Response::HTTP_CONFLICT,
+                Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
@@ -216,7 +216,7 @@ class UserSubscriber implements EventSubscriberInterface
                     'path'    => 'password',
                     'data'    => ['password' => $user->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($user->getPassword())],
                 ]),
-                Response::HTTP_CONFLICT,
+                Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
