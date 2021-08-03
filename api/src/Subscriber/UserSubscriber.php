@@ -65,7 +65,6 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-
         $attributes = null;
         $ignoredAttributes = ['token'];
         // Lets limit the subscriber
@@ -75,11 +74,9 @@ class UserSubscriber implements EventSubscriberInterface
                 $attributes = ['token'];
                 $ignoredAttributes = null;
                 break;
-//            case 'api_users_logout_collection': //TODO:
-//                $response = $this->logout($resource);
-//                $attributes = ???;
-//                $ignoredAttributes = ???;
-//                break;
+            case 'api_users_logout_collection':
+                $response = $this->logout();
+                break;
             case 'api_users_request_password_reset_collection':
                 $response = $this->requestPasswordReset($resource);
                 $attributes = ['token'];
@@ -138,14 +135,16 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @return User
      */
-    private function logout(User $resource): User
+    private function logout(): Response
     {
-        //TODO:
-        $user = new User();
-//        $this->ucService->logout();
-        $this->entityManager->persist($user);
+        if ($this->ucService->logout()) {
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        }
 
-        return $user;
+        return new Response(json_encode([
+            'message' => 'The user could not be logged out',
+            'path'    => 'Headers.Authorization',
+        ]), Response::HTTP_UNPROCESSABLE_ENTITY, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -182,7 +181,7 @@ class UserSubscriber implements EventSubscriberInterface
                     'path'    => 'password',
                     'data'    => ['password' => $resource->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($resource->getPassword())],
                 ]),
-                Response::HTTP_CONFLICT,
+                Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
@@ -216,7 +215,7 @@ class UserSubscriber implements EventSubscriberInterface
                     'path'    => 'password',
                     'data'    => ['password' => $user->getPassword(), 'zxcvbn_score' => $this->ucService->getPasswordScore($user->getPassword())],
                 ]),
-                Response::HTTP_CONFLICT,
+                Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
             );
         }
@@ -234,7 +233,7 @@ class UserSubscriber implements EventSubscriberInterface
     public function getCurrentUser(): User
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
-        $payload = $this->ucService->validateJWTAndGetPayload($token);
+        $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
 
         return $this->ucService->getUser($payload['userId']);
     }
@@ -249,7 +248,7 @@ class UserSubscriber implements EventSubscriberInterface
     public function getCurrentUserOrganization()
     {
         $token = str_replace('Bearer ', '', $this->requestStack->getCurrentRequest()->headers->get('Authorization'));
-        $payload = $this->ucService->validateJWTAndGetPayload($token);
+        $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
 //        $currentUser = $this->ucService->getUser($payload['userId']);
         $currentUser = $this->ucService->getUserArray($payload['userId']);
 

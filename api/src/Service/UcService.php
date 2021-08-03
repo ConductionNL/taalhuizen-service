@@ -6,9 +6,7 @@ use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\Person;
 use App\Entity\Provider;
-use App\Entity\Session;
 use App\Entity\User;
-use Conduction\CommonGroundBundle\Service\AuthenticationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -122,13 +120,13 @@ class UcService
      *
      * @return array The payload of a verified JWT token
      */
-    public function validateJWTAndGetPayload(string $jws): array
+    public function validateJWTAndGetPayload(string $jws, string $publicKey): array
     {
         $serializer = new CompactSerializer();
         $jwt = $serializer->unserialize($jws);
 
         $algorithmManager = new AlgorithmManager([new RS512()]);
-        $pem = $this->writeFile(base64_decode($this->parameterBag->get('public_key')), 'pem');
+        $pem = $this->writeFile($publicKey, 'pem');
         $public = JWKFactory::createFromKeyFile($pem);
         $this->removeFiles([$pem]);
 
@@ -301,15 +299,17 @@ class UcService
      */
     public function createUser(User $user): User
     {
-//        $contact = $this->ccService->createPerson(['givenName' => $user['givenName'], 'familyName' => $user['familyName'], 'additionalName' => $user['additionalName'] ?? '', 'emails' => [['name' => 'email 1', 'email' => $user['email']]]]);
-
+        $organization = null;
+        if ($user->getOrganizationId()) {
+            $organization = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $user->getOrganizationId()]);
+        }
         $contact = $this->ccService->createPerson($user->getPerson());
         $resource = [
             'username'     => $user->getUsername(),
             'password'     => $user->getPassword(),
             'locale'       => 'nl',
             'person'       => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]),
-            'organization' => null,
+            'organization' => $organization,
         ];
 
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
@@ -356,13 +356,15 @@ class UcService
      *
      * @param string $id The id of the user to remove
      *
+     * @throws Exception
+     *
      * @return bool Whether or not the action has been successful
      */
     public function deleteUser(string $id): bool
     {
         $resource = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'users', 'id' => $id]);
         if ($resource['person']) {
-            //@TODO: create delete person service in ccservice
+            $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($resource['person']));
         }
 
         return $this->commonGroundService->deleteResource(null, ['component' => 'uc', 'type' => 'users', 'id' => $id]);
@@ -397,23 +399,7 @@ class UcService
             );
         }
 
-        $time = new DateTime();
-        $expiry = new DateTime('+10 days');
-
-//        $this->entityManager->persist($session);
-//        $this->entityManager->flush();
-
-        $jwtBody = [
-            'userId'    => $resource['id'],
-            'username'  => $username,
-            //            'session'   => $session->getId(),
-            'type'      => 'login',
-            'iss'       => $this->parameterBag->get('app_url'),
-            'ias'       => $time->getTimestamp(),
-            'exp'       => $expiry->getTimestamp(),
-        ];
-
-        return $this->createJWTToken($jwtBody);
+        return $resource['jwtToken'];
     }
 
     /**
@@ -466,7 +452,7 @@ class UcService
      */
     public function updatePasswordWithToken(string $email, string $token, string $password)
     {
-        $tokenEmail = $this->validateJWTAndGetPayload($token);
+        $tokenEmail = $this->validateJWTAndGetPayload($token, base64_decode($this->parameterBag->get('public_key')));
         if ($tokenEmail['email'] != $email) {
             return new Response(
                 json_encode([
@@ -492,12 +478,19 @@ class UcService
      */
     public function logout(): bool
     {
-        $token = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
+        $resource['jwtToken'] = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
 
-        $authenticationService = new AuthenticationService($this->parameterBag);
-        $session = $authenticationService->verifyJWTToken($token);
+        try {
+            $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'logout']);
 
-        return true;
+            return true;
+        } catch (ClientException $exception) {
+            if ($exception->getCode() == 422) {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /**
