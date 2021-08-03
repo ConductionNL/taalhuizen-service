@@ -84,7 +84,11 @@ class MrcService
      */
     public function getEmployeeRaw(string $id): array
     {
-        return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
+        $self = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        if ($this->eavService->hasEavObject($self)) {
+            return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $self]);
+        }
+        return $this->commonGroundService->getResource($self);
     }
 
     /**
@@ -1020,16 +1024,16 @@ class MrcService
     public function deleteSubObjects(array $employee): bool
     {
         foreach ($employee['interests'] as $interest) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $interest['@id']));
+            $this->commonGroundService->deleteResource(null,  ['component' => 'mrc', 'type' => 'interests', 'id' => $interest['id']]);
         }
         foreach ($employee['competencies'] as $competence) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $competence['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
         }
         foreach ($employee['educations'] as $education) {
             $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]);
         }
         foreach ($employee['skills'] as $skill) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $skill['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'skills', 'id' => $skill['id']]);
         }
 
         return true;
@@ -1050,7 +1054,8 @@ class MrcService
         $employee = $this->createEmployeeObject($employeeArray);
         $this->deleteSubObjects($employeeArray);
         $this->ucService->deleteUser($employee->getUserId());
-        $this->eavService->deleteObject(null, 'employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $employee->getPerson()->getId()]);
 
         return true;
     }
@@ -1082,16 +1087,16 @@ class MrcService
      * @param string $ccOrganizationId The organization to delete the employees of
      *
      * @return bool Whether the operation has been successful or not
+     * @throws Exception
      */
     public function deleteEmployees(string $ccOrganizationId): bool
     {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
+        $ccOrganizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganizationId]);
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationUrl])['hydra:member'];
 
         if ($employees > 0) {
             foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
+                $this->deleteEmployee($employee['id']);
             }
         }
 

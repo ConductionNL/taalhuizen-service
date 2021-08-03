@@ -21,7 +21,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class OrganizationSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
     private SerializerService $serializerService;
     private CommonGroundService $commonGroundService;
     private CCService $ccService;
@@ -37,7 +36,6 @@ class OrganizationSubscriber implements EventSubscriberInterface
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
-        $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
