@@ -102,7 +102,7 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
      */
     private function deleteOrganization(string $id): Response
     {
-        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organization', 'id' => $id]);
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         if (!$this->commonGroundService->isResource($organizationUrl)) {
             return new Response(
                 json_encode([
@@ -118,7 +118,7 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
         try {
             //delete userGroups
             $this->ucService->deleteUserGroups($id);
-            
+
             //delete employees
             $this->mrcService->deleteEmployees($id);
 
