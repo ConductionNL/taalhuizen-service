@@ -11,7 +11,6 @@ use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,8 +109,10 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
-     * @return Response
+     *
      * @throws Exception
+     *
+     * @return Response
      */
     private function deleteOrganization(string $id): Response
     {

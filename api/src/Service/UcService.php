@@ -6,9 +6,7 @@ use App\Entity\Employee;
 use App\Entity\LanguageHouse;
 use App\Entity\Person;
 use App\Entity\Provider;
-use App\Entity\Session;
 use App\Entity\User;
-use Conduction\CommonGroundBundle\Service\AuthenticationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -358,8 +356,9 @@ class UcService
      *
      * @param string $id The id of the user to remove
      *
-     * @return bool Whether or not the action has been successful
      * @throws Exception
+     *
+     * @return bool Whether or not the action has been successful
      */
     public function deleteUser(string $id): bool
     {
@@ -481,13 +480,15 @@ class UcService
     {
         $resource['jwtToken'] = substr($this->requestStack->getCurrentRequest()->headers->get('Authorization'), strlen('Bearer '));
 
-        try{
+        try {
             $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'logout']);
+
             return true;
-        } catch (ClientException $exception){
-            if($exception->getCode() == 422){
+        } catch (ClientException $exception) {
+            if ($exception->getCode() == 422) {
                 return true;
             }
+
             return false;
         }
     }

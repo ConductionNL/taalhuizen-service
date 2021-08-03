@@ -137,13 +137,13 @@ class UserSubscriber implements EventSubscriberInterface
      */
     private function logout(): Response
     {
-        if($this->ucService->logout()){
+        if ($this->ucService->logout()) {
             return new Response(null, Response::HTTP_NO_CONTENT);
         }
 
         return new Response(json_encode([
             'message' => 'The user could not be logged out',
-            'path' => 'Headers.Authorization',
+            'path'    => 'Headers.Authorization',
         ]), Response::HTTP_UNPROCESSABLE_ENTITY, ['Content-Type' => 'application/json']);
     }
 

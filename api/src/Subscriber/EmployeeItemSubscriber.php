@@ -4,9 +4,6 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Employee;
-use App\Entity\Organization;
-use App\Service\CCService;
-use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
@@ -108,8 +105,10 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
-     * @return Response
+     *
      * @throws Exception
+     *
+     * @return Response
      */
     private function deleteEmployee(string $id): Response
     {
