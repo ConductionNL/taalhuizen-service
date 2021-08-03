@@ -13,7 +13,6 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use function Symfony\Component\Translation\t;
 
 class MrcService
 {
@@ -89,6 +88,7 @@ class MrcService
         if ($this->eavService->hasEavObject($self)) {
             return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $self]);
         }
+
         return $this->commonGroundService->getResource($self);
     }
 
@@ -1025,7 +1025,7 @@ class MrcService
     public function deleteSubObjects(array $employee): bool
     {
         foreach ($employee['interests'] as $interest) {
-            $this->commonGroundService->deleteResource(null,  ['component' => 'mrc', 'type' => 'interests', 'id' => $interest['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'interests', 'id' => $interest['id']]);
         }
         foreach ($employee['competencies'] as $competence) {
             $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
@@ -1087,8 +1087,9 @@ class MrcService
      *
      * @param string $ccOrganizationId The organization to delete the employees of
      *
-     * @return bool Whether the operation has been successful or not
      * @throws Exception
+     *
+     * @return bool Whether the operation has been successful or not
      */
     public function deleteEmployees(string $ccOrganizationId): bool
     {
