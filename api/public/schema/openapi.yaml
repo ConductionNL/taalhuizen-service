@@ -24448,7 +24448,7 @@ components:
           maxLength: 36
           type: string
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          description: 'User id of this Employee.'
+          description: 'User id of this Employee. <br /> **Required when updating an employee**'
           nullable: true
       required:
         - person
@@ -24565,7 +24565,7 @@ components:
           maxLength: 36
           type: string
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          description: 'User id of this Employee.'
+          description: 'User id of this Employee. <br /> **Required when updating an employee**'
           nullable: true
     Employee.jsonld-read:
       type: object
@@ -24704,7 +24704,7 @@ components:
           maxLength: 36
           type: string
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          description: 'User id of this Employee.'
+          description: 'User id of this Employee. <br /> **Required when updating an employee**'
           nullable: true
       required:
         - person
@@ -24844,7 +24844,7 @@ components:
           maxLength: 36
           type: string
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-          description: 'User id of this Employee.'
+          description: 'User id of this Employee. <br /> **Required when updating an employee**'
           nullable: true
     Group-read:
       type: object

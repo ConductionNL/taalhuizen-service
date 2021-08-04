@@ -9,7 +9,6 @@ use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -21,7 +20,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class OrganizationSubscriber implements EventSubscriberInterface
 {
     private SerializerService $serializerService;
-    private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
@@ -35,7 +33,6 @@ class OrganizationSubscriber implements EventSubscriberInterface
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
-        $this->commonGroundService = $layerService->commonGroundService;
         $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
@@ -99,17 +96,9 @@ class OrganizationSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'], 'type' => $body['type']])['hydra:member'];
-        if (count($organizations) > 0) {
-            return new Response(
-                json_encode([
-                    'message' => 'A '.$body['type'].' with this name already exists!',
-                    'path'    => 'name',
-                    'data'    => ['name' => $body['name']],
-                ]),
-                Response::HTTP_CONFLICT,
-                ['content-type' => 'application/json']
-            );
+        $uniqueName = $this->ccService->checkUniqueOrganizationName($body);
+        if ($uniqueName instanceof Response) {
+            return $uniqueName;
         }
 
         $organization = $this->ccService->createOrganization($body, $body['type']);

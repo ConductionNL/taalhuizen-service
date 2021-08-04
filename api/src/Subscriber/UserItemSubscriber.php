@@ -84,17 +84,9 @@ class UserItemSubscriber implements EventSubscriberInterface
      */
     private function getUser(string $id)
     {
-        $userUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'users', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($userUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This user does not exist!',
-                    'path'    => '',
-                    'data'    => ['user' => $userUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
+        $userExists = $this->checkIfUserExists($id);
+        if ($userExists instanceof Response) {
+            return $userExists;
         }
 
         return $this->ucService->getUser($id);
@@ -107,17 +99,9 @@ class UserItemSubscriber implements EventSubscriberInterface
      */
     private function deleteUser(string $id): Response
     {
-        $userUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'users', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($userUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This user does not exist!',
-                    'path'    => '',
-                    'data'    => ['user' => $userUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
+        $userExists = $this->checkIfUserExists($id);
+        if ($userExists instanceof Response) {
+            return $userExists;
         }
 
         try {
@@ -135,5 +119,28 @@ class UserItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return Response|null
+     */
+    private function checkIfUserExists(string $id): ?Response
+    {
+        $userUrl = $this->commonGroundService->cleanUrl(['component' => 'uc', 'type' => 'users', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($userUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This user does not exist!',
+                    'path'    => '',
+                    'data'    => ['user' => $userUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return null;
     }
 }
