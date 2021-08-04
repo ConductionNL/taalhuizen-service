@@ -12,6 +12,8 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,6 +86,7 @@ class UserSubscriber implements EventSubscriberInterface
                 break;
             case 'api_users_reset_password_collection':
                 $response = $this->resetPassword($resource);
+                $attributes = ['id'];
                 break;
             case 'api_users_post_collection':
                 $response = $this->createUser($resource);
@@ -157,7 +160,10 @@ class UserSubscriber implements EventSubscriberInterface
     private function requestPasswordReset(User $resource): User
     {
         $user = new User();
-        $user->setToken($this->ucService->createPasswordResetToken($resource->getUsername()));
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($resource->getUsername())])['hydra:member'];
+
+        $token = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => "users/{$users[0]['id']}/token"], ['type' => 'SET_PASSWORD'])['token'];
+        $user->setToken($token);
         $this->entityManager->persist($user);
 
         return $user;
@@ -186,7 +192,19 @@ class UserSubscriber implements EventSubscriberInterface
             );
         }
 
-        return $this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword());
+        if($this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword())){
+            $user = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($resource->getUsername())])['hydra:member'][0];
+
+            return $resource->setId(Uuid::fromString($user['id']));
+        }
+        return new Response(
+            json_encode([
+                'message' => 'Could not update the password. Is the token correct?',
+                'path'    => 'token',
+            ]),
+            Response::HTTP_BAD_REQUEST,
+            ['content-type' => 'application/json']
+        );
     }
 
     /**
