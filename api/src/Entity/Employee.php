@@ -2,448 +2,377 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\EmployeeRepository;
-use App\Resolver\EmployeeMutationResolver;
-use App\Resolver\EmployeeQueryCollectionResolver;
-use App\Resolver\EmployeeQueryItemResolver;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Employee holds.
+ *
+ * The main entity associated with this DTO is the mrc/Employee: https://taalhuizen-bisc.commonground.nu/api/v1/mrc#tag/Employee.
+ * DTO Employee exists of a few properties based on this medewerker catalogue entity, that is based on the following schema.org schema: https://schema.org/employee and a https://www.hropenstandards.org/ schema.
+ * But the other main source that properties of this Employee entity are based on, are the following jira epics: https://lifely.atlassian.net/browse/BISC-67, https://lifely.atlassian.net/browse/BISC-119 and https://lifely.atlassian.net/browse/BISC-167.
+ * And mainly the following issues: https://lifely.atlassian.net/browse/BISC-106, https://lifely.atlassian.net/browse/BISC-156 and https://lifely.atlassian.net/browse/BISC-169.
+ * The person input fields match the Person Entity, that is why there is a Person object used here instead of matching the exact properties in the graphql schema.
+ * Similarly, education and followingCourse input fields match the Education Entity, that is why there are two Education objects used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = EmployeeQueryItemResolver::class,
- *              "read" = false
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"={
+ *              "read"=false
  *          },
- *          "collection_query" = {
- *              "collection_query" = EmployeeQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = EmployeeMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = EmployeeMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = EmployeeMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "addMentoredParticipationTo" = {
- *              "mutation" = EmployeeMutationResolver::class,
- *              "args" = {"participationId"={"type" = "ID!"}, "aanbiederEmployeeId"={"type" = "ID!"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
- * @Gedmo\Loggable(logEntryClass="Conduction\CommonGroundBundle\Entity\ChangeLog")
- * @ApiFilter(SearchFilter::class, properties={
- *     "languageHouseId": "exact",
- *     "providerId": "exact"
- * })
  */
 class Employee
 {
     /**
-     * @var UuidInterface The UUID identifier of this resource
+     * @var UuidInterface The UUID identifier of this resource.
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @var string The Name of this Employee.
+     * @var Person Person of this employee. <br /> **This person must contain an email!**
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Person::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
      */
-    private $givenName;
+    private Person $person;
 
     /**
-     * @var string The PrefixName of this Employee.
+     * @var ?Availability The Availability of this Employee.
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private $additionalName;
+    private ?Availability $availability;
 
     /**
-     * @var string The LastName of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $familyName;
-
-    /**
-     * @var string The Telephone of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $telephone;
-
-    /**
-     * @var array|null The availability for this employee
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $availability = [];
-
-    /**
-     * @var string The Availability Note of this Employee.
+     * @var ?string The Availability Note of this Employee.
      *
      * @Assert\Length(
      *     max = 2550
      * )
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
-     */
-    private $availabilityNotes;
-
-    /**
-     * @var string The Email of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 2550
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation availability"
+     *         }
+     *     }
      * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    private ?string $availabilityNotes;
 
     /**
+     * @var ?array Target Group Preference of this Employee.
+     *
+     * @Assert\Choice(multiple=true, choices={"NT1","NT2"})
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="array", nullable=true)
-     */
-    private $userGroupIds = [];
-
-    /**
-     * @var string The Gender of this Employee. **Male**, **Female**, **X**
-     *
-     * @example Male
-     *
-     * @Assert\Choice(
-     *      {"Male","Female","X"}
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"NT1", "NT2"},
+     *               "example"="NT1"
+     *             }
+     *         }
+     *     }
      * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $gender;
-
-    /**
-     * @var string Date of birth of this Employee.
-     *
-     * @example 15-03-2000
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $dateOfBirth;
-
-    /**
-     * @var array|null The address of this Employee.
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $address = [];
-
-    /**
-     * @var string Contact Telephone of this Employee.
-     *
-     * @Assert\Length(
-     *     max = 255
-     *)
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $contactTelephone;
-
-    /**
-     * @var string|null Contact Preference of this Employee.**PHONECALL**, **WHATSAPP**, **EMAIL**, **OTHER**
-     *
-     * @Assert\Choice(
-     *      {"PHONECALL","WHATSAPP","EMAIL","OTHER"}
-     * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $contactPreference;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $contactPreferenceOther;
-
-    /**
-     * @var array|null Target Preference of this Employee. **NT1**, **NT2**
-     *
-     * @example NT1
-     *
-     * @Assert\Choice(
-     *      {"NT1","NT2"}
-     * )
-     * @Groups({"read","write"})
-     * @ORM\Column(type="json", length=255)
      */
     private ?array $targetGroupPreferences = [];
 
     /**
-     * @var string|null Volunteering Preference of this Employee.
+     * @var ?string Volunteering Preference of this Employee.
      *
-     *  @Assert\Length(
+     * @Assert\Length(
      *     max = 255
-     *)
+     * )
      * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $volunteeringPreference = null;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $gotHereVia;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $hasExperienceWithTargetGroup;
-
-    /**
-     * @var bool Shouldn't this be a string to provide the reason for the experience with the target group?
-     *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $experienceWithTargetGroupYesReason;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $currentEducation;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $currentEducationYes = [];
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private ?array $currentEducationNoButDidFollow = [];
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $doesCurrentlyFollowCourse;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $currentlyFollowingCourseName;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $currentlyFollowingCourseInstitute;
-
-    /***
-     * @Assert\Choice(
-     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language cafe"
+     *         }
+     *     }
      * )
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $currentlyFollowingCourseTeacherProfessionalism;
+    private ?string $volunteeringPreference;
 
     /**
-     * @Assert\Choice(
-     *      {"PROFESSIONAL","VOLUNTEER","BOTH"}
+     * @var ?string Got here via of this Employee.
+     *
+     * @Assert\Length(
+     *     max = 255
      * )
-     * @Groups({"read", "write"})
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="The Internet"
+     *         }
+     *     }
+     * )
      */
-    private $currentlyFollowingCourseCourseProfessionalism;
+    private ?string $gotHereVia;
 
     /**
+     * @var ?bool Has experience with target group of this Employee.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
+     */
+    private ?bool $hasExperienceWithTargetGroup;
+
+    /**
+     * @var ?string The reason for the experience with the target group?
+     *
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Worked in an asylum seekers center"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $experienceWithTargetGroupYesReason;
+
+    /**
+     * @var ?string Current education of this Employee.
+     *
+     * @Assert\Choice({"YES", "NO", "NO_BUT_DID_EARLIER"})
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"YES", "NO", "NO_BUT_DID_EARLIER"},
+     *             "example"="YES"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $currentEducation;
+
+    /**
+     * @var ?Education Education of this employee. <br /> The following input fields can be used depending on the currentEducation, note that they are not required! <br /> **if currentEducation=YES: {name, startDate & provideCertificate}** <br /> **if currentEducation=NO_BUT_DID_EARLIER: <br /> {name, endDate, iscedEducationLevelCode & provideCertificate}**
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?Education $education;
+
+    /**
+     * @var ?bool Does currently follow course of this Employee.
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
      */
-    private $doesCurrentlyFollowingCourseProvideCertificate;
+    private ?bool $doesCurrentlyFollowCourse;
 
     /**
+     * @var ?Education Currently following course (Education) of this Employee. <br /> The following input fields can be used if doesCurrentlyFollowCourse=true, note that they are not required! <br /> **{name, institution, provideCertificate, courseProfessionalism & teacherProfessionalism}**
+     *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
      */
-    private $otherRelevantCertificates;
+    private ?Education $followingCourse;
 
     /**
-     * @var bool|null Whether the employee has submitted a police certificate
+     * @var ?string Other relevant certificates of this Employee.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Dutch language certificate"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $otherRelevantCertificates;
+
+    /**
+     * @var ?bool Whether the employee has submitted a police certificate
+     *
      * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
      */
-    private ?bool $isVOGChecked = false;
+    private ?bool $isVOGChecked;
 
     /**
-     * @var string|null The provider this employee works for
+     * @var string|null A contact component organization id of this Employee. <br /> **Required for creating Provider or LanguageHouse employees!**
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private ?string $providerId;
+    private ?string $organizationId;
 
     /**
-     * @var string|null The language house this employee works for
+     * @var array User Group ids of this Employee. <br /> **Use an empty array when creating a BISC employee!**
      *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $languageHouseId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $biscEmployeeId;
-
-    /**
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $userId;
-
-    /**
-     * @var array|null The user roles of this employee
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Groups({"read", "write"})
-     * @ORM\Column(type="json", nullable=true)
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="array")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private ?array $userRoles = [];
+    private array $userGroupIds = [];
 
     /**
-     * @var Datetime The moment this resource was created
+     * @var ?string User id of this Employee.
      *
-     * @Groups({"read", "write"})
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $dateCreated;
-
-    /**
-     * @var Datetime The moment this resource last Modified
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
-     * @Groups({"read", "write"})
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @Groups({"read","write"})
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private $dateModified;
+    private ?string $userId;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getGivenName(): ?string
+    public function getPerson(): Person
     {
-        return $this->givenName;
+        return $this->person;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setPerson(Person $person): self
     {
-        $this->givenName = $givenName;
+        $this->person = $person;
 
         return $this;
     }
 
-    public function getAdditionalName(): ?string
+    public function getAvailability(): ?Availability
     {
-        return $this->additionalName;
+        return $this->availability;
     }
 
-    public function setAdditionalName(?string $additionalName): self
+    public function setAvailability(?Availability $availability): self
     {
-        $this->additionalName = $additionalName;
-
-        return $this;
-    }
-
-    public function getFamilyName(): ?string
-    {
-        return $this->familyName;
-    }
-
-    public function setFamilyName(string $familyName): self
-    {
-        $this->familyName = $familyName;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): self
-    {
-        $this->telephone = $telephone;
+        $this->availability = $availability;
 
         return $this;
     }
@@ -456,66 +385,6 @@ class Employee
     public function setAvailabilityNotes(?string $availabilityNotes): self
     {
         $this->availabilityNotes = $availabilityNotes;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?string $gender): self
-    {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getDateOfBirth(): ?\DateTimeInterface
-    {
-        return $this->dateOfBirth;
-    }
-
-    public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
-    {
-        $this->dateOfBirth = $dateOfBirth;
-
-        return $this;
-    }
-
-    public function getContactTelephone(): ?string
-    {
-        return $this->contactTelephone;
-    }
-
-    public function setContactTelephone(?string $contactTelephone): self
-    {
-        $this->contactTelephone = $contactTelephone;
-
-        return $this;
-    }
-
-    public function getContactPreference(): ?string
-    {
-        return $this->contactPreference;
-    }
-
-    public function setContactPreference(?string $contactPreference): self
-    {
-        $this->contactPreference = $contactPreference;
 
         return $this;
     }
@@ -544,38 +413,14 @@ class Employee
         return $this;
     }
 
-    public function getAddress(): array
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?array $address = []): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getUserGroupIds(): ?array
+    public function getUserGroupIds(): array
     {
         return $this->userGroupIds;
     }
 
-    public function setUserGroupIds(?array $userGroupIds): self
+    public function setUserGroupIds(array $userGroupIds): self
     {
         $this->userGroupIds = $userGroupIds;
-
-        return $this;
-    }
-
-    public function getContactPreferenceOther(): ?string
-    {
-        return $this->contactPreferenceOther;
-    }
-
-    public function setContactPreferenceOther(?string $contactPreferenceOther): self
-    {
-        $this->contactPreferenceOther = $contactPreferenceOther;
 
         return $this;
     }
@@ -604,12 +449,12 @@ class Employee
         return $this;
     }
 
-    public function getExperienceWithTargetGroupYesReason(): ?bool
+    public function getExperienceWithTargetGroupYesReason(): ?string
     {
         return $this->experienceWithTargetGroupYesReason;
     }
 
-    public function setExperienceWithTargetGroupYesReason(?bool $experienceWithTargetGroupYesReason): self
+    public function setExperienceWithTargetGroupYesReason(?string $experienceWithTargetGroupYesReason): self
     {
         $this->experienceWithTargetGroupYesReason = $experienceWithTargetGroupYesReason;
 
@@ -640,62 +485,14 @@ class Employee
         return $this;
     }
 
-    public function getCurrentlyFollowingCourseName(): ?string
+    public function getFollowingCourse(): ?Education
     {
-        return $this->currentlyFollowingCourseName;
+        return $this->followingCourse;
     }
 
-    public function setCurrentlyFollowingCourseName(?string $currentlyFollowingCourseName): self
+    public function setFollowingCourse(?Education $followingCourse): self
     {
-        $this->currentlyFollowingCourseName = $currentlyFollowingCourseName;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseInstitute(): ?string
-    {
-        return $this->currentlyFollowingCourseInstitute;
-    }
-
-    public function setCurrentlyFollowingCourseInstitute(?string $currentlyFollowingCourseInstitute): self
-    {
-        $this->currentlyFollowingCourseInstitute = $currentlyFollowingCourseInstitute;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseTeacherProfessionalism(): ?string
-    {
-        return $this->currentlyFollowingCourseTeacherProfessionalism;
-    }
-
-    public function setCurrentlyFollowingCourseTeacherProfessionalism(?string $currentlyFollowingCourseTeacherProfessionalism): self
-    {
-        $this->currentlyFollowingCourseTeacherProfessionalism = $currentlyFollowingCourseTeacherProfessionalism;
-
-        return $this;
-    }
-
-    public function getCurrentlyFollowingCourseCourseProfessionalism(): ?string
-    {
-        return $this->currentlyFollowingCourseCourseProfessionalism;
-    }
-
-    public function setCurrentlyFollowingCourseCourseProfessionalism(?string $currentlyFollowingCourseCourseProfessionalism): self
-    {
-        $this->currentlyFollowingCourseCourseProfessionalism = $currentlyFollowingCourseCourseProfessionalism;
-
-        return $this;
-    }
-
-    public function getDoesCurrentlyFollowingCourseProvideCertificate(): ?bool
-    {
-        return $this->doesCurrentlyFollowingCourseProvideCertificate;
-    }
-
-    public function setDoesCurrentlyFollowingCourseProvideCertificate(?bool $doesCurrentlyFollowingCourseProvideCertificate): self
-    {
-        $this->doesCurrentlyFollowingCourseProvideCertificate = $doesCurrentlyFollowingCourseProvideCertificate;
+        $this->followingCourse = $followingCourse;
 
         return $this;
     }
@@ -724,74 +521,26 @@ class Employee
         return $this;
     }
 
-    public function getProviderId(): ?string
+    public function getOrganizationId(): ?string
     {
-        return $this->providerId;
+        return $this->organizationId;
     }
 
-    public function setProviderId(?string $providerId): self
+    public function setOrganizationId(?string $organizationId): self
     {
-        $this->providerId = $providerId;
+        $this->organizationId = $organizationId;
 
         return $this;
     }
 
-    public function getLanguageHouseId(): ?string
+    public function getEducation(): ?Education
     {
-        return $this->languageHouseId;
+        return $this->education;
     }
 
-    public function setLanguageHouseId(?string $languageHouseId): self
+    public function setEducation(?Education $education): self
     {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
-    public function getAvailability(): ?array
-    {
-        return $this->availability;
-    }
-
-    public function setAvailability(?array $availability = []): self
-    {
-        $this->availability = $availability;
-
-        return $this;
-    }
-
-    public function getCurrentEducationYes(): ?array
-    {
-        return $this->currentEducationYes;
-    }
-
-    public function setCurrentEducationYes(?array $currentEducationYes = []): self
-    {
-        $this->currentEducationYes = $currentEducationYes;
-
-        return $this;
-    }
-
-    public function getCurrentEducationNoButDidFollow(): ?array
-    {
-        return $this->currentEducationNoButDidFollow;
-    }
-
-    public function setCurrentEducationNoButDidFollow(?array $currentEducationNoButDidFollow = []): self
-    {
-        $this->currentEducationNoButDidFollow = $currentEducationNoButDidFollow;
-
-        return $this;
-    }
-
-    public function getBiscEmployeeId(): ?string
-    {
-        return $this->biscEmployeeId;
-    }
-
-    public function setBiscEmployeeId(?string $biscEmployeeId): self
-    {
-        $this->biscEmployeeId = $biscEmployeeId;
+        $this->education = $education;
 
         return $this;
     }
@@ -804,42 +553,6 @@ class Employee
     public function setUserId(?string $userId): self
     {
         $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getUserRoles(): ?array
-    {
-        return $this->userRoles;
-    }
-
-    public function setUserRoles(?array $userRoles): self
-    {
-        $this->userRoles = $userRoles;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?\DateTimeInterface
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(\DateTimeInterface $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
-
-        return $this;
-    }
-
-    public function getDateModified(): ?\DateTimeInterface
-    {
-        return $this->dateModified;
-    }
-
-    public function setDateModified(\DateTimeInterface $dateModified): self
-    {
-        $this->dateModified = $dateModified;
 
         return $this;
     }

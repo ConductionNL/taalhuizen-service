@@ -2,73 +2,57 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ReportRepository;
-use App\Resolver\ReportMutationResolver;
-use App\Resolver\ReportQueryCollectionResolver;
-use App\Resolver\ReportQueryItemResolver;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * All properties that the DTO entity Report holds.
+ *
+ * DTO Report exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-173 and https://lifely.atlassian.net/browse/BISC-179.
+ * Notable is that there are no providerId or LanguageHouseId properties present in this Entity. This is because custom endpoint can be used for this purpose.
+ * Besides that, the property base64 was renamed from base64data to base64. This was mostly done for consistency and cleaner names.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = ReportQueryItemResolver::class,
- *              "read" = false
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *          "participants_report"={
+ *              "method"="POST",
+ *              "path"="/reports/participants",
+ *              "openapi_context" = {
+ *                  "summary"="Creates a participants report of a provider.",
+ *                  "description"="Creates a participants report of a provider."
+ *              }
  *          },
- *          "collection_query" = {
- *              "collection_query" = ReportQueryCollectionResolver::class
+ *          "volunteers_report"={
+ *              "method"="POST",
+ *              "path"="/reports/volunteers",
+ *              "openapi_context" = {
+ *                  "summary"="Creates a volunteers report of a provider.",
+ *                  "description"="Creates a volunteers report of a provider."
+ *              }
  *          },
- *          "create" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadParticipants" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadDesiredLearningOutcomes" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "downloadVolunteers" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "args" = {"languageHouseId" = {"type" = "String"}, "providerId" = {"type" = "String"}, "dateFrom" = {"type" = "String"}, "dateUntil" = {"type" = "String"}},
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = ReportMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
+ *          "desired_learning_outcomes_report"={
+ *              "method"="POST",
+ *              "path"="/reports/desired_learning_outcomes",
+ *              "openapi_context" = {
+ *                  "summary"="Creates a learning outcomes report.",
+ *                  "description"="Creates a learning outcomes report."
+ *              }
  *          }
- *     }
- * )
+ *     })
  * @ORM\Entity(repositoryClass=ReportRepository::class)
  */
 class Report
@@ -76,8 +60,7 @@ class Report
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -86,38 +69,86 @@ class Report
     private UuidInterface $id;
 
     /**
-     * @var string|null The language house the report applies to
+     * @var string|null The organization the report applies to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private ?string $languageHouseId;
+    private ?string $organizationId;
 
     /**
-     * @var string|null The provider this report applies to
+     * @var string|null A date from which you want data in the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $providerId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2021"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateFrom;
 
     /**
+     * @var string|null A date until which you want data in the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="12-06-2022"
+     *         }
+     *     }
+     * )
      */
     private ?string $dateUntil;
 
     /**
-     * @var string|null The filename of the report
+     * @var string|null The filename of the report.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Report X"
+     *         }
+     *     }
+     * )
      */
     private ?string $filename;
 
     /**
-     * @var string|null A base64 encoded string containing the file's contents
+     * @var string|null A base64 encoded string containing the file's contents.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="text", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
-    private ?string $base64data;
+    private ?string $base64;
 
     public function getId(): UuidInterface
     {
@@ -131,26 +162,14 @@ class Report
         return $this;
     }
 
-    public function getLanguageHouseId(): ?string
+    public function getOrganizationId(): ?string
     {
-        return $this->languageHouseId;
+        return $this->organizationId;
     }
 
-    public function setLanguageHouseId(?string $languageHouseId): self
+    public function setOrganizationId(?string $organizationId): self
     {
-        $this->languageHouseId = $languageHouseId;
-
-        return $this;
-    }
-
-    public function getProviderId(): ?string
-    {
-        return $this->providerId;
-    }
-
-    public function setProviderId(?string $providerId): self
-    {
-        $this->providerId = $providerId;
+        $this->organizationId = $organizationId;
 
         return $this;
     }
@@ -191,14 +210,14 @@ class Report
         return $this;
     }
 
-    public function getBase64data(): ?string
+    public function getBase64(): ?string
     {
-        return $this->base64data;
+        return $this->base64;
     }
 
-    public function setBase64data(?string $base64data): self
+    public function setBase64(?string $base64): self
     {
-        $this->base64data = $base64data;
+        $this->base64 = $base64;
 
         return $this;
     }

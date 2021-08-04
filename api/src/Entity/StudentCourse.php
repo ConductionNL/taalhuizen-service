@@ -3,13 +3,28 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\StudentCourseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * All properties that the DTO entity StudentCourse holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the course details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ * The course input fields match the Education Entity, that is why there is an Education object used here instead of matching the exact properties in the graphql schema.
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentCourseRepository::class)
  */
 class StudentCourse
@@ -17,51 +32,39 @@ class StudentCourse
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var bool|null A boolean that is true if this student is following a course right now.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isFollowingCourseRightNow;
+    private ?bool $isFollowingCourseRightNow;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?Education The course Education of this studentCourse.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Education::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
      */
-    private $courseName;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $courseTeacher;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $courseGroup;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $amountOfHours;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $doesCourseProvideCertificate;
+    private ?Education $course;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -80,62 +83,14 @@ class StudentCourse
         return $this;
     }
 
-    public function getCourseName(): ?string
+    public function getCourse(): ?Education
     {
-        return $this->courseName;
+        return $this->course;
     }
 
-    public function setCourseName(?string $courseName): self
+    public function setCourse(?Education $course): self
     {
-        $this->courseName = $courseName;
-
-        return $this;
-    }
-
-    public function getCourseTeacher(): ?string
-    {
-        return $this->courseTeacher;
-    }
-
-    public function setCourseTeacher(?string $courseTeacher): self
-    {
-        $this->courseTeacher = $courseTeacher;
-
-        return $this;
-    }
-
-    public function getCourseGroup(): ?string
-    {
-        return $this->courseGroup;
-    }
-
-    public function setCourseGroup(?string $courseGroup): self
-    {
-        $this->courseGroup = $courseGroup;
-
-        return $this;
-    }
-
-    public function getAmountOfHours(): ?int
-    {
-        return $this->amountOfHours;
-    }
-
-    public function setAmountOfHours(?int $amountOfHours): self
-    {
-        $this->amountOfHours = $amountOfHours;
-
-        return $this;
-    }
-
-    public function getDoesCourseProvideCertificate(): ?bool
-    {
-        return $this->doesCourseProvideCertificate;
-    }
-
-    public function setDoesCourseProvideCertificate(?bool $doesCourseProvideCertificate): self
-    {
-        $this->doesCourseProvideCertificate = $doesCourseProvideCertificate;
+        $this->course = $course;
 
         return $this;
     }

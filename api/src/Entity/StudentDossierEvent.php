@@ -2,15 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\DossierRepository;
-use App\Resolver\StudentDossierEventMutationResolver;
-use App\Resolver\StudentDossierEventQueryCollectionResolver;
-use App\Resolver\StudentDossierEventQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -18,40 +14,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity StudentDossierEvent holds.
+ *
+ * The main entity associated with this DTO is the edu/EducationEvent: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/EducationEvent.
+ * DTO StudentDossierEvent exists of a few properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/EducationEvent.
+ * But the other main source that properties of this StudentDossierEvent entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-61.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-83.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = StudentDossierEventQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = StudentDossierEventQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = StudentDossierEventMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact"})
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=DossierRepository::class)
  */
 class StudentDossierEvent
@@ -59,17 +40,16 @@ class StudentDossierEvent
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @var string The Event of this Student.
+     * @var string|null The Event of this Student.
      *
      * @Assert\Choice(
      *      {"FINAL_TALK","REMARK","FOLLOW_UP_TALK","INFO_FOR_STORYTELLING","INTAKE"}
@@ -77,54 +57,73 @@ class StudentDossierEvent
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"FINAL_TALK","REMARK","FOLLOW_UP_TALK","INFO_FOR_STORYTELLING","INTAKE"},
+     *             "example"="FINAL_TALK"
+     *         }
+     *     }
+     * )
      */
-    private $event;
+    private string $event;
 
     /**
-     * @var Datetime date of this student Dossier.
+     * @var DateTimeInterface Date of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="datetime")
      */
-    private $eventDate;
+    private DateTimeInterface $eventDate;
 
     /**
-     * @var string description of this student Dossier.
+     * @var string Description of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="A dossier event"
+     *         }
+     *     }
+     * )
      */
-    private $eventDescription;
+    private string $eventDescription;
 
     /**
-     * @var string|null studentId of this student Dossier.
+     * @var string|null StudentId of this student Dossier.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
-    private ?string $studentId;
+    private string $studentId;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $studentDossierEventId;
-
-    /**
-     * @var string|null creator of this student Dossier.
+     * @var string|null EmployeeId of this student Dossier.
      *
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $creatorGivenName;
-
-    /**
-     * @var string|null employeeId of this student Dossier.
-     *
-     * @Groups({"read"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
     private ?string $employeeId;
 
@@ -133,14 +132,14 @@ class StudentDossierEvent
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getEvent(): ?string
+    public function getEvent(): string
     {
         return $this->event;
     }
@@ -152,19 +151,19 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getEventDate(): ?\DateTimeInterface
+    public function getEventDate(): DateTimeInterface
     {
         return $this->eventDate;
     }
 
-    public function setEventDate(\DateTimeInterface $eventDate): self
+    public function setEventDate(DateTimeInterface $eventDate): self
     {
         $this->eventDate = $eventDate;
 
         return $this;
     }
 
-    public function getEventDescription(): ?string
+    public function getEventDescription(): string
     {
         return $this->eventDescription;
     }
@@ -176,38 +175,14 @@ class StudentDossierEvent
         return $this;
     }
 
-    public function getStudentId(): ?string
+    public function getStudentId(): string
     {
         return $this->studentId;
     }
 
-    public function setStudentId(?string $studentId): self
+    public function setStudentId(string $studentId): self
     {
         $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getStudentDossierEventId(): ?string
-    {
-        return $this->studentDossierEventId;
-    }
-
-    public function setStudentDossierEventId(?string $studentDossierEventId): self
-    {
-        $this->studentDossierEventId = $studentDossierEventId;
-
-        return $this;
-    }
-
-    public function getCreatorGivenName(): ?string
-    {
-        return $this->creatorGivenName;
-    }
-
-    public function setCreatorGivenName(?string $creatorGivenName): self
-    {
-        $this->creatorGivenName = $creatorGivenName;
 
         return $this;
     }

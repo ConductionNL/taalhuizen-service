@@ -2,56 +2,45 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\DocumentRepository;
-use App\Resolver\DocumentMutationResolver;
-use App\Resolver\DocumentQueryCollectionResolver;
-use App\Resolver\DocumentQueryItemResolver;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use SebastianBergmann\CodeCoverage\Report\Text;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity Document holds.
+ *
+ * The main entity associated with this DTO is the wrc/Document: https://taalhuizen-bisc.commonground.nu/api/v1/wrc#tag/Document.
+ * DTO Document exists of a properties based on this web resource catalogue entity.
+ * But the other main source this Document entity is based on, are the following jira epics: https://lifely.atlassian.net/browse/BISC-65, https://lifely.atlassian.net/browse/BISC-116 and https://lifely.atlassian.net/browse/BISC-120.
+ * Notable is that there are no studentId or providerEmployeeId properties present in this Entity. This is because custom endpoint can be used for this purpose.
+ * Besides that, the property base64 was renamed from base64data to base64. This name changes was mostly done for consistency and a cleaner name.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = DocumentQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = DocumentQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "download" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = DocumentMutationResolver::class,
- *              "args" = {"studentDocumentId"={"type" = "ID"}, "aanbiederEmployeeDocumentId"={"type" = "ID"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *          "post_download"={
+ *              "method"="POST",
+ *              "path"="/documents/{uuid}/download",
+ *              "openapi_context" = {
+ *                  "summary"="Download a document",
+ *                  "description"="Download a document"
+ *              }
+ *          }
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"studentId": "exact", "aanbiederEmployeeId": "exact"})
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  */
 class Document
@@ -59,83 +48,96 @@ class Document
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true, nullable=true)
+     * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
     private UuidInterface $id;
 
     /**
-     * @var string the base64 of the document
+     * @var string Filename of this document.
      *
+     * @Assert\Length(
+     *     max = 255
+     *)
      * @Assert\NotNull
-     * @ORM\Column(type="text")
-     */
-    private string $base64data;
-
-    /**
-     * @var string the name of the file
-     *
-     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Document X"
+     *         }
+     *     }
+     * )
      */
     private string $filename;
 
     /**
-     * @var string|null
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string Base64 of this document.
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="text")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="base64"
+     *         }
+     *     }
+     * )
      */
-    private ?string $aanbiederEmployeeId = null;
+    private string $base64;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?string Student id of this document.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
-    private ?string $studentId = null;
+    private ?string $studentId;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var ?string Provider employee id of this document.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
-    private ?string $aanbiederEmployeeDocumentId = null;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $studentDocumentId = null;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private ?string $dateCreated;
+    private ?string $providerEmployeeId;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getBase64data(): ?string
-    {
-        return $this->base64data;
-    }
-
-    public function setBase64data(string $base64data): self
-    {
-        $this->base64data = $base64data;
-
-        return $this;
-    }
-
-    public function getFilename(): ?string
+    public function getFilename(): string
     {
         return $this->filename;
     }
@@ -147,14 +149,14 @@ class Document
         return $this;
     }
 
-    public function getAanbiederEmployeeId(): ?string
+    public function getBase64(): string
     {
-        return $this->aanbiederEmployeeId;
+        return $this->base64;
     }
 
-    public function setAanbiederEmployeeId(string $aanbiederEmployeeId): self
+    public function setBase64(string $base64): self
     {
-        $this->aanbiederEmployeeId = $aanbiederEmployeeId;
+        $this->base64 = $base64;
 
         return $this;
     }
@@ -164,45 +166,21 @@ class Document
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
 
         return $this;
     }
 
-    public function getAanbiederEmployeeDocumentId(): ?string
+    public function getProviderEmployeeId(): ?string
     {
-        return $this->aanbiederEmployeeDocumentId;
+        return $this->providerEmployeeId;
     }
 
-    public function setAanbiederEmployeeDocumentId(?string $aanbiederEmployeeDocumentId): self
+    public function setProviderEmployeeId(?string $providerEmployeeId): self
     {
-        $this->aanbiederEmployeeDocumentId = $aanbiederEmployeeDocumentId;
-
-        return $this;
-    }
-
-    public function getStudentDocumentId(): ?string
-    {
-        return $this->studentDocumentId;
-    }
-
-    public function setStudentDocumentId(?string $studentDocumentId): self
-    {
-        $this->studentDocumentId = $studentDocumentId;
-
-        return $this;
-    }
-
-    public function getDateCreated(): ?string
-    {
-        return $this->dateCreated;
-    }
-
-    public function setDateCreated(?string $dateCreated): self
-    {
-        $this->dateCreated = $dateCreated;
+        $this->providerEmployeeId = $providerEmployeeId;
 
         return $this;
     }

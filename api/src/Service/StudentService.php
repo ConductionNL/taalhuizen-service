@@ -120,6 +120,8 @@ class StudentService
         return $person;
     }
 
+    //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeObject)
+
     /**
      * This function fetches the students availability notes.
      *

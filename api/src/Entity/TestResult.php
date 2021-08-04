@@ -2,50 +2,37 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\TestResultRepository;
-use App\Resolver\TestResultMutationResolver;
-use App\Resolver\TestResultQueryCollectionResolver;
-use App\Resolver\TestResultQueryItemResolver;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * All properties that the DTO entity TestResult holds.
+ *
+ * The main entity associated with this DTO is the edu/Result: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Result.
+ * DTO TestResult exists of properties based on the following jira epics: https://lifely.atlassian.net/browse/BISC-64 and https://lifely.atlassian.net/browse/BISC-115.
+ * And mainly the following issues: https://lifely.atlassian.net/browse/BISC-93 & https://lifely.atlassian.net/browse/BISC-140.
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ *
  * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = TestResultQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = TestResultQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "write" = false
- *          },
- *          "update" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = TestResultMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
  *     },
- * )
- * @ApiFilter(SearchFilter::class, properties={"participationId": "exact"})
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=TestResultRepository::class)
  */
 class TestResult
@@ -53,103 +40,98 @@ class TestResult
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @var string The id of a participation this TestResult is connected to.
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
      */
-    private $participationId;
+    private string $participationId;
 
     /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
+     * @var LearningNeedOutCome The learningNeedOutCome of this TestResult.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
      */
-    private $outComesGoal;
+    private LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"DUTCH_READING", "DUTCH_WRITING", "MATH_NUMBERS", "MATH_PROPORTION", "MATH_GEOMETRY", "MATH_LINKS", "DIGITAL_USING_ICT_SYSTEMS", "DIGITAL_SEARCHING_INFORMATION", "DIGITAL_PROCESSING_INFORMATION", "DIGITAL_COMMUNICATION", "KNOWLEDGE", "SKILLS", "ATTITUDE", "BEHAVIOUR", "OTHER"})
+     * @var string The used exam for this TestResult.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Exam x about computers"
+     *         }
+     *     }
+     * )
      */
-    private $outComesTopic;
+    private string $usedExam;
 
     /**
-     * @Groups({"write"})
+     * @var DateTime The date of the exam that this TestResult is a result of.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", length=255)
+     */
+    private DateTime $examDate;
+
+    /**
+     * @var string|null A memo/note for this TestResult.
+     *
+     * @Groups({"read","write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="This test was very hard!"
+     *         }
+     *     }
+     * )
      */
-    private $outComesTopicOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesApplication;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $outComesLevel;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $examUsedExam;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255)
-     */
-    private $examDate;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $examMemo;
-
-    /**
-     * @Groups({"write"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $testResultId;
+    private ?string $examMemo;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getParticipationId(): ?string
+    public function getParticipationId(): string
     {
         return $this->participationId;
     }
@@ -161,108 +143,36 @@ class TestResult
         return $this;
     }
 
-    public function getOutComesGoal(): ?string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->outComesGoal;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesGoal(string $outComesGoal): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->outComesGoal = $outComesGoal;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getOutComesTopic(): ?string
+    public function getUsedExam(): string
     {
-        return $this->outComesTopic;
+        return $this->usedExam;
     }
 
-    public function setOutComesTopic(string $outComesTopic): self
+    public function setUsedExam(string $usedExam): self
     {
-        $this->outComesTopic = $outComesTopic;
+        $this->usedExam = $usedExam;
 
         return $this;
     }
 
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevel(): ?string
-    {
-        return $this->outComesLevel;
-    }
-
-    public function setOutComesLevel(string $outComesLevel): self
-    {
-        $this->outComesLevel = $outComesLevel;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
-    public function getExamUsedExam(): ?string
-    {
-        return $this->examUsedExam;
-    }
-
-    public function setExamUsedExam(string $examUsedExam): self
-    {
-        $this->examUsedExam = $examUsedExam;
-
-        return $this;
-    }
-
-    public function getExamDate(): ?string
+    public function getExamDate(): DateTime
     {
         return $this->examDate;
     }
 
-    public function setExamDate(string $examDate): self
+    public function setExamDate(DateTime $examDate): self
     {
         $this->examDate = $examDate;
 
@@ -277,18 +187,6 @@ class TestResult
     public function setExamMemo(?string $examMemo): self
     {
         $this->examMemo = $examMemo;
-
-        return $this;
-    }
-
-    public function getTestResultId(): ?string
-    {
-        return $this->testResultId;
-    }
-
-    public function setTestResultId(?string $testResultId): self
-    {
-        $this->testResultId = $testResultId;
 
         return $this;
     }
