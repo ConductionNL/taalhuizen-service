@@ -30,7 +30,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"={
  *              "read"=false
  *          },
- *          "put",
+ *          "put"={
+ *              "read"=false
+ *          },
  *          "delete"={
  *              "read"=false
  *          },
@@ -325,7 +327,7 @@ class Employee
     private array $userGroupIds = [];
 
     /**
-     * @var ?string User id of this Employee.
+     * @var ?string User id of this Employee. <br /> **Required when updating an employee**
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *

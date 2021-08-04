@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use function GuzzleHttp\json_decode;
 
 class EmployeeItemSubscriber implements EventSubscriberInterface
 {
@@ -58,14 +59,19 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
             return;
         }
         $route = $event->getRequest()->attributes->get('_route');
+        $id = $event->getRequest()->attributes->get('id');
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_employees_get_item':
-                $response = $this->getEmployee($event->getRequest()->attributes->get('id'));
+                $response = $this->getEmployee($id);
                 break;
             case 'api_employees_delete_item':
-                $response = $this->deleteEmployee($event->getRequest()->attributes->get('id'));
+                $response = $this->deleteEmployee($id);
+                break;
+            case 'api_employees_put_item':
+                $body = json_decode($event->getRequest()->getContent(), true);
+                $response = $this->updateEmployee($body, $id);
                 break;
             default:
                 return;
@@ -124,6 +130,36 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+    }
+
+    /**
+     * @param array $body
+     * @param string $id
+     * @return Employee|Response
+     * @throws Exception
+     */
+    private function updateEmployee(array $body, string $id)
+    {
+        $employeeExists = $this->checkIfEmployeeExists($id);
+        if ($employeeExists instanceof Response) {
+            return $employeeExists;
+        }
+        if (!isset($body['userId'])) {
+            return new Response(
+                json_encode([
+                    'message' => 'Please give the userId of the employee you want to update!',
+                    'path'    => 'userId',
+                ]),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'application/json']
+            );
+        }
+        $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body, $body['userId']);
+        if ($uniqueEmail instanceof Response) {
+            return $uniqueEmail;
+        }
+
+        return $this->mrcService->updateEmployee($id, $body);
     }
 
     /**
