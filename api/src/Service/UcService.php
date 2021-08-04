@@ -12,6 +12,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
@@ -450,23 +451,15 @@ class UcService
      *
      * @return User|Response The resulting user object
      */
-    public function updatePasswordWithToken(string $email, string $token, string $password)
+    public function updatePasswordWithToken(string $email, string $token, string $password): bool
     {
-        $tokenEmail = $this->validateJWTAndGetPayload($token, base64_decode($this->parameterBag->get('public_key')));
-        if ($tokenEmail['email'] != $email) {
-            return new Response(
-                json_encode([
-                    'message' => 'Provided username does not match username from token!',
-                    'path'    => 'username',
-                    'data'    => ['username' => $email],
-                ]),
-                Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'application/json']
-            );
-        }
-        $userId = $tokenEmail['userId'];
+        try {
+            $this->commonGroundService->createResource(['password' => $password, 'token' => $token], ['component' => 'uc', 'type' => 'users/token']);
 
-        return $this->updateUser($userId, ['password' => $password]);
+            return true;
+        } catch (ClientException $exception) {
+            return false;
+        }
     }
 
     /**
@@ -485,7 +478,7 @@ class UcService
 
             return true;
         } catch (ClientException $exception) {
-            if ($exception->getCode() == 422) {
+            if ($exception->hasResponse() && $exception->getResponse()->getStatusCode() == 422) {
                 return true;
             }
 
