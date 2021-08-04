@@ -283,8 +283,9 @@ class CCService
     }
 
     /**
-     * @param array $body
+     * @param array       $body
      * @param string|null $id
+     *
      * @return Response|null
      */
     public function checkUniqueOrganizationName(array $body, string $id = null): ?Response
@@ -301,6 +302,7 @@ class CCService
                 ['content-type' => 'application/json']
             );
         }
+
         return null;
     }
 

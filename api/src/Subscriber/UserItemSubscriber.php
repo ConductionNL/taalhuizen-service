@@ -123,6 +123,7 @@ class UserItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
+     *
      * @return Response|null
      */
     private function checkIfUserExists(string $id): ?Response
@@ -139,6 +140,7 @@ class UserItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+
         return null;
     }
 }

@@ -954,8 +954,9 @@ class MrcService
     }
 
     /**
-     * @param array $body
+     * @param array       $body
      * @param string|null $id
+     *
      * @return Response|null
      */
     public function checkUniqueEmployeeEmail(array $body, string $id = null): ?Response
@@ -972,14 +973,15 @@ class MrcService
                 ['content-type' => 'application/json']
             );
         }
+
         return null;
     }
 
     /**
      * Updates an employee.
      *
-     * @param string $id The id of the employee
-     * @param array $employeeArray The input array of the employee
+     * @param string $id            The id of the employee
+     * @param array  $employeeArray The input array of the employee
      *
      * @throws Exception
      *

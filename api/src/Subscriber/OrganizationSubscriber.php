@@ -9,7 +9,6 @@ use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
 use function GuzzleHttp\json_decode;
