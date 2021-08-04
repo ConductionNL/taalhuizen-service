@@ -3,313 +3,412 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\GroupRepository;
-use App\Resolver\GroupMutationResolver;
-use App\Resolver\GroupQueryCollectionResolver;
-use App\Resolver\GroupQueryItemResolver;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
- *     graphql={
- *          "item_query" = {
- *              "item_query" = GroupQueryItemResolver::class,
- *              "read" = false
- *          },
- *          "collection_query" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "create" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "write" = false,
+ * All properties that the DTO entity Group holds.
  *
- *          },
- *          "update" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "remove" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}},
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          },
- *          "active" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "future" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "completed" = {
- *              "collection_query" = GroupQueryCollectionResolver::class
- *          },
- *          "participantsOfThe" = {
- *              "collection_query" = GroupQueryCollectionResolver::class,
- *              "args" = {"id"={"type" = "ID!", "description" =  "the identifier"}}
- *          },
- *          "changeTeachersOfThe" = {
- *              "mutation" = GroupMutationResolver::class,
- *              "read" = false,
- *              "deserialize" = false,
- *              "validate" = false,
- *              "write" = false
- *          }
- *     }
- * )
+ * The main entity associated with this DTO is the edu/Group: https://taalhuizen-bisc.commonground.nu/api/v1/edu#tag/Group.
+ * DTO Group exists of a properties based on this education component entity, that is based on the following schema.org schema: https://schema.org/Group.
+ * But the other main source that properties of this Student entity are based on, is the following jira epic: https://lifely.atlassian.net/browse/BISC-117.
+ * And mainly the following issue: https://lifely.atlassian.net/browse/BISC-146.
+ * The learningNeedOutCome input fields are a recurring thing throughout multiple DTO entities, that is why the LearningNeedOutCome Entity was created and used here instead of matching the exact properties in the graphql schema.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names.
+ * Translations from Dutch to English, but also shortening names by removing words from the names that had no added value to describe the property itself and that were just added before the name of each property like: 'details' or 'general'.
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *     },
+ *     collectionOperations={
+ *          "get",
+ *          "post",
+ *     })
  * @ORM\Entity(repositoryClass=GroupRepository::class)
- * @ApiFilter(SearchFilter::class, properties={"aanbiederId" = "exact"})
- * @ORM\Table(name="`group`")
+ * @ApiFilter(DateFilter::class, strategy=DateFilter::EXCLUDE_NULL)
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "status": "exact"
+ * })
  */
 class Group
 {
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string|null The id of the cc/organization of a provider
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederId;
+    private ?string $providerId;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string Name of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Group X"
+     *         }
+     *     }
+     * )
      */
-    private $name;
+    private string $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string Type course of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Language course"
+     *         }
+     *     }
+     * )
      */
-    private $typeCourse;
+    private string $typeCourse;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var LearningNeedOutCome The learning need out come of this Group.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity=LearningNeedOutCome::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
      */
-    private $outComesGoal;
+    private LearningNeedOutCome $learningNeedOutCome;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var bool The isFormal boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
      */
-    private $outComesTopic;
+    private bool $isFormal;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var float The total class hours of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="float")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="float",
+     *             "example"="30"
+     *         }
+     *     }
+     * )
      */
-    private $outComesTopicOther;
+    private float $totalClassHours;
 
     /**
-     * @Groups({"write"})
-     * @Assert\Choice({"FAMILY_AND_PARENTING", "LABOR_MARKET_AND_WORK", "HEALTH_AND_WELLBEING", "ADMINISTRATION_AND_FINANCE", "HOUSING_AND_NEIGHBORHOOD", "SELFRELIANCE", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var bool The certificate will be awarded boolean of this LearningNeedOutcome.
+     *
+     * @Assert\NotNull
+     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="bool",
+     *             "example"=true
+     *         }
+     *     }
+     * )
      */
-    private $outComesApplication;
+    private bool $certificateWillBeAwarded;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesApplicationOther;
-
-    /**
-     * @Groups({"write"})
-     * @Assert\Choice({"INFLOW", "NLQF1", "NLQF2", "NLQF3", "NLQF4", "OTHER"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevel;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $outComesLevelOther;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $detailsIsFormal;
-
-    /**
-     * @ORM\Column(type="integer", length=255, nullable=true)
-     */
-    private $detailsTotalClassHours;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $detailsCertificateWillBeAwarded;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true, nullable=true)
-     */
-    private $detailsStartDate;
-
-    /**
+     * @var ?DateTime Start date of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
      * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="20-07-2021"
+     *         }
+     *     }
+     * )
      */
-    private $detailsEndDate;
+    private ?DateTime $startDate;
 
     /**
-     * @ORM\Column(type="json", nullable=true)
+     * @var ?DateTime End date of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="DateTime",
+     *             "example"="20-10-2021"
+     *         }
+     *     }
+     * )
      */
-    private ?array $availability = [];
+    private ?DateTime $endDate;
 
     /**
+     * @var ?Availability Availability of this group.
+     *
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=Availability::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @ORM\JoinColumn(nullable=true)
+     * @MaxDepth(1)
+     */
+    private ?Availability $availability;
+
+    /**
+     * @var ?string Availability note of this group.
+     *
+     * @Assert\Length(
+     *     max = 2550
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Explanation availability"
+     *         }
+     *     }
+     * )
      */
-    private $availabilityNotes;
+    private ?string $availabilityNotes;
 
     /**
+     * @var string Location of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Online"
+     *         }
+     *     }
+     * )
      */
-    private $generalLocation;
+    private string $location;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @var ?int Min participation's of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="15"
+     *         }
+     *     }
+     * )
      */
-    private $generalParticipantsMin;
+    private ?int $minParticipations;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @var ?int Max participation's of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="integer", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="int",
+     *             "example"="25"
+     *         }
+     *     }
+     * )
      */
-    private $generalParticipantsMax;
+    private ?int $maxParticipations;
 
     /**
+     * @var ?string Evaluation of this group.
+     *
+     * @Assert\Length(
+     *     max = 255
+     * )
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "example"="Group evalution"
+     *         }
+     *     }
+     * )
      */
-    private $generalEvaluation;
+    private ?string $evaluation;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @var array Provider employee id's of this group. (mentors)
+     *
+     * @example e2984465-190a-4562-829e-a8cca81aa35d
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\Column(type="array")
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "example"="497f6eca-6276-4993-bfeb-53cbbbba6f08"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $aanbiederEmployeeIds = [];
+    private array $employeeIds = [];
 
     /**
+     * @var string|null The Status of this group.
+     *
+     * @Groups({"read"})
+     * @Assert\Choice({"ACTIVE", "COMPLETED"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"ACTIVE", "COMPLETED"},
+     *             "example"="ACTIVE"
+     *         }
+     *     }
+     * )
      */
-    private $groupId;
+    private ?string $status;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getProviderId(): ?string
+    {
+        return $this->providerId;
+    }
+
+    public function setProviderId(?string $providerId): self
+    {
+        $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getTypeCourse(): ?string
+    public function getTypeCourse(): string
     {
         return $this->typeCourse;
     }
 
-    public function setTypeCourse(?string $typeCourse): self
+    public function setTypeCourse(string $typeCourse): self
     {
         $this->typeCourse = $typeCourse;
-
-        return $this;
-    }
-
-    public function getOutComesGoal(): ?string
-    {
-        return $this->outComesGoal;
-    }
-
-    public function setOutComesGoal(?string $outComesGoal): self
-    {
-        $this->outComesGoal = $outComesGoal;
-
-        return $this;
-    }
-
-    public function getDetailsIsFormal(): ?string
-    {
-        return $this->detailsIsFormal;
-    }
-
-    public function setDetailsIsFormal(?string $detailsIsFormal): self
-    {
-        $this->detailsIsFormal = $detailsIsFormal;
-
-        return $this;
-    }
-
-    public function getDetailsTotalClassHours(): ?int
-    {
-        return $this->detailsTotalClassHours;
-    }
-
-    public function setDetailsTotalClassHours(?int $detailsTotalClassHours): self
-    {
-        $this->detailsTotalClassHours = $detailsTotalClassHours;
-
-        return $this;
-    }
-
-    public function getDetailsCertificateWillBeAwarded(): ?bool
-    {
-        return $this->detailsCertificateWillBeAwarded;
-    }
-
-    public function setDetailsCertificateWillBeAwarded(?bool $detailsCertificateWillBeAwarded): self
-    {
-        $this->detailsCertificateWillBeAwarded = $detailsCertificateWillBeAwarded;
-
-        return $this;
-    }
-
-    public function getDetailsStartDate(): ?\DateTimeInterface
-    {
-        return $this->detailsStartDate;
-    }
-
-    public function setDetailsStartDate(?\DateTimeInterface $detailsStartDate): self
-    {
-        $this->detailsStartDate = $detailsStartDate;
-
-        return $this;
-    }
-
-    public function getDetailsEndDate(): ?\DateTimeInterface
-    {
-        return $this->detailsEndDate;
-    }
-
-    public function setDetailsEndDate(?\DateTimeInterface $detailsEndDate): self
-    {
-        $this->detailsEndDate = $detailsEndDate;
 
         return $this;
     }
@@ -326,170 +425,158 @@ class Group
         return $this;
     }
 
-    public function getGeneralLocation(): ?string
+    public function getLocation(): string
     {
-        return $this->generalLocation;
+        return $this->location;
     }
 
-    public function setGeneralLocation(?string $generalLocation): self
+    public function setLocation(string $location): self
     {
-        $this->generalLocation = $generalLocation;
+        $this->location = $location;
 
         return $this;
     }
 
-    public function getGeneralParticipantsMin(): ?int
+    public function getEvaluation(): ?string
     {
-        return $this->generalParticipantsMin;
+        return $this->evaluation;
     }
 
-    public function setGeneralParticipantsMin(?int $generalParticipantsMin): self
+    public function setEvaluation(?string $evaluation): self
     {
-        $this->generalParticipantsMin = $generalParticipantsMin;
+        $this->evaluation = $evaluation;
 
         return $this;
     }
 
-    public function getGeneralParticipantsMax(): ?int
+    public function getEmployeeIds(): array
     {
-        return $this->generalParticipantsMax;
+        return $this->employeeIds;
     }
 
-    public function setGeneralParticipantsMax(?int $generalParticipantsMax): self
+    public function setEmployeeIds(array $employeeIds): self
     {
-        $this->generalParticipantsMax = $generalParticipantsMax;
+        $this->employeeIds = $employeeIds;
 
         return $this;
     }
 
-    public function getGeneralEvaluation(): ?string
-    {
-        return $this->generalEvaluation;
-    }
-
-    public function setGeneralEvaluation(?string $generalEvaluation): self
-    {
-        $this->generalEvaluation = $generalEvaluation;
-
-        return $this;
-    }
-
-    public function getAanbiederEmployeeIds(): ?array
-    {
-        return $this->aanbiederEmployeeIds;
-    }
-
-    public function setAanbiederEmployeeIds(?array $aanbiederEmployeeIds): self
-    {
-        $this->aanbiederEmployeeIds = $aanbiederEmployeeIds;
-
-        return $this;
-    }
-
-    public function getOutComesTopic(): ?string
-    {
-        return $this->outComesTopic;
-    }
-
-    public function setOutComesTopic(?string $outComesTopic): self
-    {
-        $this->outComesTopic = $outComesTopic;
-
-        return $this;
-    }
-
-    public function getOutComesTopicOther(): ?string
-    {
-        return $this->outComesTopicOther;
-    }
-
-    public function setOutComesTopicOther(?string $outComesTopicOther): self
-    {
-        $this->outComesTopicOther = $outComesTopicOther;
-
-        return $this;
-    }
-
-    public function getOutComesApplication(): ?string
-    {
-        return $this->outComesApplication;
-    }
-
-    public function setOutComesApplication(?string $outComesApplication): self
-    {
-        $this->outComesApplication = $outComesApplication;
-
-        return $this;
-    }
-
-    public function getOutComesApplicationOther(): ?string
-    {
-        return $this->outComesApplicationOther;
-    }
-
-    public function setOutComesApplicationOther(?string $outComesApplicationOther): self
-    {
-        $this->outComesApplicationOther = $outComesApplicationOther;
-
-        return $this;
-    }
-
-    public function getOutComesLevelOther(): ?string
-    {
-        return $this->outComesLevelOther;
-    }
-
-    public function setOutComesLevelOther(?string $outComesLevelOther): self
-    {
-        $this->outComesLevelOther = $outComesLevelOther;
-
-        return $this;
-    }
-
-    public function getAvailability(): ?array
+    public function getAvailability(): ?Availability
     {
         return $this->availability;
     }
 
-    public function setAvailability(?array $availability): self
+    public function setAvailability(?Availability $availability): self
     {
         $this->availability = $availability;
 
         return $this;
     }
 
-    public function getOutComesLevel(): ?string
+    public function getLearningNeedOutCome(): LearningNeedOutCome
     {
-        return $this->outComesLevel;
+        return $this->learningNeedOutCome;
     }
 
-    public function setOutComesLevel(?string $outComesLevel): self
+    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
     {
-        $this->outComesLevel = $outComesLevel;
+        $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getAanbiederId(): ?string
+    public function getIsFormal(): bool
     {
-        return $this->aanbiederId;
+        return $this->isFormal;
     }
 
-    public function setAanbiederId(?string $aanbiederId): self
+    public function setIsFormal(bool $isFormal): self
     {
-        $this->aanbiederId = $aanbiederId;
+        $this->isFormal = $isFormal;
 
         return $this;
     }
 
-    public function getGroupId(): ?string
+    public function getTotalClassHours(): float
     {
-        return $this->groupId;
+        return $this->totalClassHours;
     }
 
-    public function setGroupId(?string $groupId): self
+    public function setTotalClassHours(float $totalClassHours): self
     {
-        $this->groupId = $groupId;
+        $this->totalClassHours = $totalClassHours;
+
+        return $this;
+    }
+
+    public function getCertificateWillBeAwarded(): bool
+    {
+        return $this->certificateWillBeAwarded;
+    }
+
+    public function setCertificateWillBeAwarded(bool $certificateWillBeAwarded): self
+    {
+        $this->certificateWillBeAwarded = $certificateWillBeAwarded;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getMinParticipations(): ?int
+    {
+        return $this->minParticipations;
+    }
+
+    public function setMinParticipations(?int $minParticipations): self
+    {
+        $this->minParticipations = $minParticipations;
+
+        return $this;
+    }
+
+    public function getMaxParticipations(): ?int
+    {
+        return $this->maxParticipations;
+    }
+
+    public function setMaxParticipations(?int $maxParticipations): self
+    {
+        $this->maxParticipations = $maxParticipations;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
