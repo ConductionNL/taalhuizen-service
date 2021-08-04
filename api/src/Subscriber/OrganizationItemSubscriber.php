@@ -12,11 +12,11 @@ use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
+use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use function GuzzleHttp\json_decode;
 
 class OrganizationItemSubscriber implements EventSubscriberInterface
 {
@@ -147,8 +147,9 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $body
+     * @param array  $body
      * @param string $id
+     *
      * @return Organization|Response
      */
     private function updateOrganization(array $body, string $id)
@@ -172,6 +173,7 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
+     *
      * @return array|false|mixed|string|Response|null
      */
     private function checkIfOrganizationExists(string $id)
@@ -188,6 +190,7 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+
         return $this->commonGroundService->getResource($organizationUrl);
     }
 }

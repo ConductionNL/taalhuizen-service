@@ -6,16 +6,15 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Employee;
 use App\Service\LayerService;
 use App\Service\MrcService;
-use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use function GuzzleHttp\json_decode;
 
 class EmployeeItemSubscriber implements EventSubscriberInterface
 {
@@ -27,7 +26,7 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
     /**
      * EmployeeItemSubscriber constructor.
      *
-     * @param MrcService $mrcService
+     * @param MrcService   $mrcService
      * @param LayerService $layerService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
@@ -88,8 +87,9 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
-     * @return Employee|Response
      * @throws Exception
+     *
+     * @return Employee|Response
      */
     private function getEmployee(string $id)
     {
@@ -133,10 +133,12 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $body
+     * @param array  $body
      * @param string $id
-     * @return Employee|Response
+     *
      * @throws Exception
+     *
+     * @return Employee|Response
      */
     private function updateEmployee(array $body, string $id)
     {
@@ -164,6 +166,7 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $id
+     *
      * @return Response|null
      */
     private function checkIfEmployeeExists(string $id): ?Response
@@ -180,6 +183,7 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+
         return null;
     }
 }
