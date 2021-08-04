@@ -97,17 +97,9 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $body['person']['emails']['email'])])['hydra:member'];
-        if (count($users) > 0) {
-            return new Response(
-                json_encode([
-                    'message' => 'A user with this email already exists!',
-                    'path'    => 'person.emails.email',
-                    'data'    => ['email' => $body['person']['emails']['email']],
-                ]),
-                Response::HTTP_CONFLICT,
-                ['content-type' => 'application/json']
-            );
+        $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body);
+        if ($uniqueEmail instanceof Response) {
+            return $uniqueEmail;
         }
 
         return $this->mrcService->createEmployee($body);

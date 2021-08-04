@@ -261,7 +261,7 @@ class UcService
      *
      * @return array The resulting contact array for the updated employee
      */
-    public function updateUserContactForEmployee(string $id, array $employeeArray, ?Employee $employee = null): array
+    public function updateUserContactForEmployee(string $id, array $employeeArray): array
     {
         $personId = explode('/', $this->getUserArray($id)['person']);
         $personId = end($personId);
@@ -721,7 +721,7 @@ class UcService
         $userGroups = [];
         if ($type == 'LanguageHouse') {
             $userGroups = $this->createTaalhuisUserGroups($organization, $userGroups);
-        } else {
+        } elseif ($type == 'Provider') {
             $userGroups = $this->createProviderUserGroups($organization, $userGroups);
         }
 

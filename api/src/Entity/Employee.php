@@ -27,8 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
- *          "put",
+ *          "get"={
+ *              "read"=false
+ *          },
+ *          "put"={
+ *              "read"=false
+ *          },
  *          "delete"={
  *              "read"=false
  *          },
@@ -323,7 +327,7 @@ class Employee
     private array $userGroupIds = [];
 
     /**
-     * @var ?string User id of this Employee.
+     * @var ?string User id of this Employee. <br /> **Required when updating an employee**
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *

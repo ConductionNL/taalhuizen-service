@@ -36,7 +36,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "description"="Get the user roles of this organization"
  *              }
  *          },
- *          "put",
+ *          "put"={
+ *              "read"=false
+ *          },
  *          "delete"={
  *              "read"=false
  *          },

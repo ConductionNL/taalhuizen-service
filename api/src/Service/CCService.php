@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class CCService
@@ -237,8 +238,8 @@ class CCService
         $resource = [
             'name'               => $organizationArray['name'],
             'type'               => $type,
-            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'], 'telephone' => $organizationArray['telephones']['telephone']]] : [],
-            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'], 'email' => $organizationArray['emails']['email']]] : [],
+            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
             'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
@@ -262,23 +263,47 @@ class CCService
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);
         $address = [
-            'name'              => 'Address of '.$organizationArray['name'],
-            'street'            => $organizationArray['address']['street'],
-            'houseNumber'       => $organizationArray['address']['houseNumber'],
-            'houseNumberSuffix' => $organizationArray['address']['postalCode'],
-            'postalCode'        => $organizationArray['address']['postalCode'],
-            'locality'          => $organizationArray['address']['locality'],
+            'name'              => $organizationArray['addresses']['name'] ?? $ccOrganization['addresses'][0]['name'] ?? null,
+            'street'            => $organizationArray['addresses']['street'] ?? $ccOrganization['addresses'][0]['street'] ?? null,
+            'houseNumber'       => $organizationArray['addresses']['houseNumber'] ?? $ccOrganization['addresses'][0]['houseNumber'] ?? null,
+            'houseNumberSuffix' => $organizationArray['addresses']['houseNumberSuffix'] ?? $ccOrganization['addresses'][0]['houseNumberSuffix'] ?? null,
+            'postalCode'        => $organizationArray['addresses']['postalCode'] ?? $ccOrganization['addresses'][0]['postalCode'] ?? null,
+            'locality'          => $organizationArray['addresses']['locality'] ?? $ccOrganization['addresses'][0]['locality'] ?? null,
         ];
         $resource = [
             'name'               => $organizationArray['name'],
-            'telephones'         => key_exists('phoneNumber', $organizationArray) ? [['name' => 'Telephone of '.$organizationArray['name'], 'telephone' => $organizationArray['phoneNumber']]] : [],
-            'emails'             => key_exists('email', $organizationArray) ? [['name' => 'Email of '.$organizationArray['name'], 'email' => $organizationArray['email']]] : [],
-            'addresses'          => [$address],
+            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'] ?? $ccOrganization['telephones'][0]['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'] ?? $ccOrganization['emails'][0]['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
 
         return $result;
+    }
+
+    /**
+     * @param array       $body
+     * @param string|null $id
+     *
+     * @return Response|null
+     */
+    public function checkUniqueOrganizationName(array $body, string $id = null): ?Response
+    {
+        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'], 'type' => $body['type']])['hydra:member'];
+        if (count($organizations) > 0 and $organizations[0]['id'] != $id) {
+            return new Response(
+                json_encode([
+                    'message' => 'A '.$body['type'].' with this name already exists!',
+                    'path'    => 'name',
+                    'data'    => ['name' => $body['name']],
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return null;
     }
 
     /**

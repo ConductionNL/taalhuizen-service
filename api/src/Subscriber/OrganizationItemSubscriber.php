@@ -12,6 +12,7 @@ use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
+use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -63,14 +64,19 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
             return;
         }
         $route = $event->getRequest()->attributes->get('_route');
+        $id = $event->getRequest()->attributes->get('id');
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_organizations_get_item':
-                $response = $this->getOrganization($event->getRequest()->attributes->get('id'));
+                $response = $this->getOrganization($id);
                 break;
             case 'api_organizations_delete_item':
-                $response = $this->deleteOrganization($event->getRequest()->attributes->get('id'));
+                $response = $this->deleteOrganization($id);
+                break;
+            case 'api_organizations_put_item':
+                $body = json_decode($event->getRequest()->getContent(), true);
+                $response = $this->updateOrganization($body, $id);
                 break;
             default:
                 return;
@@ -91,17 +97,9 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
      */
     private function getOrganization(string $id)
     {
-        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($organizationUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This organization does not exist!',
-                    'path'    => '',
-                    'data'    => ['organization' => $organizationUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
+        $organizationExists = $this->checkIfOrganizationExists($id);
+        if ($organizationExists instanceof Response) {
+            return $organizationExists;
         }
 
         return $this->ccService->getOrganization($id);
@@ -116,17 +114,9 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
      */
     private function deleteOrganization(string $id): Response
     {
-        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($organizationUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This organization does not exist!',
-                    'path'    => '',
-                    'data'    => ['organization' => $organizationUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
+        $organizationExists = $this->checkIfOrganizationExists($id);
+        if ($organizationExists instanceof Response) {
+            return $organizationExists;
         }
 
         try {
@@ -154,5 +144,53 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+    }
+
+    /**
+     * @param array  $body
+     * @param string $id
+     *
+     * @return Organization|Response
+     */
+    private function updateOrganization(array $body, string $id)
+    {
+        $organizationExists = $this->checkIfOrganizationExists($id);
+        if ($organizationExists instanceof Response) {
+            return $organizationExists;
+        }
+        $body['type'] = $organizationExists['type'];
+        $uniqueName = $this->ccService->checkUniqueOrganizationName($body, $id);
+        if ($uniqueName instanceof Response) {
+            return $uniqueName;
+        }
+
+        $organization = $this->ccService->updateOrganization($id, $body);
+        $this->eduService->saveProgram($organization, true);
+        $this->ucService->createUserGroups($organization, $organization['type']);
+
+        return $this->ccService->createOrganizationObject($organization);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return array|false|mixed|string|Response|null
+     */
+    private function checkIfOrganizationExists(string $id)
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($organizationUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This organization does not exist!',
+                    'path'    => '',
+                    'data'    => ['organization' => $organizationUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return $this->commonGroundService->getResource($organizationUrl);
     }
 }
