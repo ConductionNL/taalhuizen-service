@@ -453,10 +453,11 @@ class UcService
      */
     public function updatePasswordWithToken(string $email, string $token, string $password): bool
     {
-        try{
+        try {
             $this->commonGroundService->createResource(['password' => $password, 'token' => $token], ['component' => 'uc', 'type' => 'users/token']);
+
             return true;
-        } catch (ClientException $exception){
+        } catch (ClientException $exception) {
             return false;
         }
     }

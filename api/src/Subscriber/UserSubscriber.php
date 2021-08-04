@@ -13,7 +13,6 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -192,11 +191,12 @@ class UserSubscriber implements EventSubscriberInterface
             );
         }
 
-        if($this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword())){
+        if ($this->ucService->updatePasswordWithToken($resource->getUsername(), $resource->getToken(), $resource->getPassword())) {
             $user = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($resource->getUsername())])['hydra:member'][0];
 
             return $resource->setId(Uuid::fromString($user['id']));
         }
+
         return new Response(
             json_encode([
                 'message' => 'Could not update the password. Is the token correct?',
