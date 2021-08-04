@@ -24,10 +24,10 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
     private MrcService $mrcService;
 
     /**
-     * OrganizationItemSubscriber constructor.
+     * EmployeeItemSubscriber constructor.
      *
+     * @param MrcService $mrcService
      * @param LayerService $layerService
-     * @param UcService    $ucService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
     {
@@ -61,9 +61,9 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
 
         // Lets limit the subscriber
         switch ($route) {
-//            case 'api_employees_get_item':
-//                $response = $this->getEmployee($event->getRequest()->attributes->get('id'));
-//                break;
+            case 'api_employees_get_item':
+                $response = $this->getEmployee($event->getRequest()->attributes->get('id'));
+                break;
             case 'api_employees_delete_item':
                 $response = $this->deleteEmployee($event->getRequest()->attributes->get('id'));
                 break;
@@ -79,29 +79,21 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
         $this->serializerService->setResponse($response, $event);
     }
 
-//    /**
-//     * @param string $id
-//     *
-//     * @return Employee|Response
-//     * @throws Exception
-//     */
-//    private function getEmployee(string $id)
-//    {
-//        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-//        if (!$this->commonGroundService->isResource($employeeUrl)) {
-//            return new Response(
-//                json_encode([
-//                    'message' => 'This employee does not exist!',
-//                    'path'    => '',
-//                    'data'    => ['employee' => $employeeUrl],
-//                ]),
-//                Response::HTTP_NOT_FOUND,
-//                ['content-type' => 'application/json']
-//            );
-//        }
-//
-//        return $this->mrcService->getEmployee($id);
-//    }
+    /**
+     * @param string $id
+     *
+     * @return Employee|Response
+     * @throws Exception
+     */
+    private function getEmployee(string $id)
+    {
+        $employeeExists = $this->checkIfEmployeeExists($id);
+        if ($employeeExists instanceof Response) {
+            return $employeeExists;
+        }
+
+        return $this->mrcService->getEmployee($id);
+    }
 
     /**
      * @param string $id
@@ -112,17 +104,9 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
      */
     private function deleteEmployee(string $id): Response
     {
-        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($employeeUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This employee does not exist!',
-                    'path'    => '',
-                    'data'    => ['employee' => $employeeUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
+        $employeeExists = $this->checkIfEmployeeExists($id);
+        if ($employeeExists instanceof Response) {
+            return $employeeExists;
         }
 
         try {
@@ -140,5 +124,26 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+    }
+
+    /**
+     * @param string $id
+     * @return Response|null
+     */
+    private function checkIfEmployeeExists(string $id): ?Response
+    {
+        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($employeeUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This employee does not exist!',
+                    'path'    => '',
+                    'data'    => ['employee' => $employeeUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+        return null;
     }
 }

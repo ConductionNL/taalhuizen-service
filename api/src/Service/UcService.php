@@ -721,7 +721,7 @@ class UcService
         $userGroups = [];
         if ($type == 'LanguageHouse') {
             $userGroups = $this->createTaalhuisUserGroups($organization, $userGroups);
-        } else {
+        } elseif ($type == 'Provider') {
             $userGroups = $this->createProviderUserGroups($organization, $userGroups);
         }
 
