@@ -8,7 +8,6 @@ use App\Entity\Person;
 use App\Entity\Provider;
 use App\Entity\User;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -17,7 +16,6 @@ use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\Algorithm\RS512;
-use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Ramsey\Uuid\Uuid;
@@ -89,10 +87,12 @@ class UcService
     /**
      * Validates a JWT token with the public key stored in the component.
      *
-     * @param string $jws The signed JWT token to validate
+     * @param string $jws       The signed JWT token to validate
      * @param string $publicKey
-     * @return array The payload of a verified JWT token
+     *
      * @throws Exception Thrown when the JWT token could not be verified
+     *
+     * @return array The payload of a verified JWT token
      */
     public function validateJWTAndGetPayload(string $jws, string $publicKey): array
     {
