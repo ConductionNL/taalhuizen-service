@@ -159,9 +159,7 @@ class UserSubscriber implements EventSubscriberInterface
     private function requestPasswordReset(User $resource): User
     {
         $user = new User();
-        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($resource->getUsername())])['hydra:member'];
-
-        $token = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => "users/{$users[0]['id']}/token"], ['type' => 'SET_PASSWORD'])['token'];
+        $token = $this->ucService->createPasswordResetToken($resource->getUsername(), true);
         $user->setToken($token);
         $this->entityManager->persist($user);
 
