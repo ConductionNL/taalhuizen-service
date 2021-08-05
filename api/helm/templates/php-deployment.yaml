@@ -104,16 +104,6 @@ spec:
                 configMapKeyRef:
                   key: url
                   name: {{ template "fullname" . }}
-            - name: PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: private_key
-                  name: {{ template "fullname" . }}
-            - name: PUBLIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: public_key
-                  name: {{ template "fullname" . }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- if .Values.nodeSelector }}
