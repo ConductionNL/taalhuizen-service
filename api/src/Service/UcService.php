@@ -8,7 +8,6 @@ use App\Entity\Person;
 use App\Entity\Provider;
 use App\Entity\User;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -17,7 +16,6 @@ use GuzzleHttp\Exception\RequestException;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\Algorithm\RS512;
-use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Ramsey\Uuid\Uuid;
@@ -87,35 +85,10 @@ class UcService
     }
 
     /**
-     * Creates a RS512-signed JWT token for a provided payload.
-     *
-     * @param array $payload The payload to encode
-     *
-     * @return string The resulting JWT token
-     */
-    public function createJWTToken(array $payload): string
-    {
-        $algorithmManager = new AlgorithmManager([new RS512()]);
-        $pem = $this->writeFile(base64_decode($this->parameterBag->get('private_key')), 'pem');
-        $jwk = JWKFactory::createFromKeyFile($pem);
-        $this->removeFiles([$pem]);
-
-        $jwsBuilder = new JWSBuilder($algorithmManager);
-        $jws = $jwsBuilder
-            ->create()
-            ->withPayload(json_encode($payload))
-            ->addSignature($jwk, ['alg' => 'RS512'])
-            ->build();
-
-        $serializer = new CompactSerializer();
-
-        return $serializer->serialize($jws, 0);
-    }
-
-    /**
      * Validates a JWT token with the public key stored in the component.
      *
-     * @param string $jws The signed JWT token to validate
+     * @param string $jws       The signed JWT token to validate
+     * @param string $publicKey
      *
      * @throws Exception Thrown when the JWT token could not be verified
      *
@@ -413,25 +386,9 @@ class UcService
      */
     public function createPasswordResetToken(string $email, bool $sendEmail = true): string
     {
-        $time = new DateTime();
-        $expiry = new DateTime('+4 hours');
-        $users = $this->getUsers(['username' => str_replace('+', '%2b', $email)]);
-        $userId = $this->findUser($users, $email);
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($email)])['hydra:member'];
 
-        if (!$userId) {
-            return '';
-        }
-
-        $jwtBody = [
-            'userId' => $userId,
-            'email'  => $email,
-            'type'   => 'passwordReset',
-            'iss'    => $this->parameterBag->get('app_url'),
-            'ias'    => $time->getTimestamp(),
-            'exp'    => $expiry->getTimestamp(),
-        ];
-
-        $token = $this->createJWTToken($jwtBody);
+        $token = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => "users/{$users[0]['id']}/token"], ['type' => 'SET_PASSWORD'])['token'];
 
         if ($sendEmail) {
             $this->bsService->sendPasswordResetMail($email, $token);
