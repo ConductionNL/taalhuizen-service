@@ -82,6 +82,10 @@ class AvailabilityService
         if (!isset($availabilityMemo['author'])) {
             $availabilityMemo['author'] = $newAvailabilityMemo['topic'];
         }
+        if (!isset($availabilityMemo['description'])) {
+            $availabilityMemo['description'] = $availabilityMemo['name'];
+        }
+
 
         return $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
     }
