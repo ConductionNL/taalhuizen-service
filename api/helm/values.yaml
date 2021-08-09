@@ -2,112 +2,116 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-settings:
-  registryBase: ghcr.io/conductionnl
-  projectName: taalhuizen-service
-  name: taalhuizen-service
+config:
   version: V1.0
-  majorVersion: v1
-  description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&amp;#039;'
-  repro: https://github.com/ConductionNL/taalhuizen-service
-  demo: taal.zaakonline.nl
-  domain: taalhuizen-bisc.commonground.nu
-  subdomain: taalhuizen-service
-  subpath: taal
-  subpathRouting: true
-  env: dev
-  web: false
-  debug: 1
-  cache: false
-  type: component
-  id: 
-  replicaCount: 1
-  corsAllowOrigin: ['*']
-  trustedHosts: '^.+$'
+  debug: 0
+  cache: true
+  internal: false
+
+security:
+  applicationKey: "8b55691f-346d-423c-bdcf-3f5365806d39"
+  secret: ""
+  jwt:
+    id:
+    privateKey:
+  dependencies:
+    arc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://agendaservice.local
+    bs:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://berichtservice.local
+    chrc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://chrc.local
+    cmc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://cmc.local
+    cc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://contactcatalogus.local
+    eav:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://eav-component.local
+    edu:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://education-component.local
+    mrc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://medewerkerregistratiecomponent.local
+    memo:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://memo-component.local
+    rc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://review-component.local
+    uc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://user-component.local
+    wrc:
+      apikey: "!changeme!"
+      auth: apikey
+      location: http://webresourcecatalogus.local
+
+php:
+  repository: docker.io/conduction/protocomponent-php
+  image: ghcr.io/conductionnl/taalhuizen-service-php
+  tag: latest
+  env: prod
+  replicaCount: 2
   pullPolicy: Always
-  # You will need these proxies on kubernetes
+  trustedHosts: '^.+$'
+  corsAllowOrigin: ['*']
   trustedProxies:
     - 10.0.0.0/8
     - 172.16.0.0/12
     - 192.168.0.0/16
-  # If you are running a single component on a kubernetes cluster you can just easily enable the load balancer, if not you need to set up a multi component load balancer
-  loadbalancerEnabled: false
-  # If you are running a single component on a kubernetes cluster you can just easily enable the load balancer, if not you need to set up a multi component load balancer
-  notificationEnabled: false
-  audittrailEnabled: false
-  authorisationEnabled: false
-  healthEnabled: false
-  archiveEnabled: false
-
-security:
-  applicationKey: "8b55691f-346d-423c-bdcf-3f5365806d39"
-
-
-php:
-  repository: docker.io/conduction/protocomponent-php
-  tag: latest
-  mercure:
-    jwtSecret: ""
-  env: prod
-  secret: ""
-  replicaCount: 2
 
 redis:
   cluster:
     enabled: false
   redisPort: 6379
   usePassword: false
-  enabled: true
-
-commonground:
-  eherkenning:
-    location: https://taalhuizen-bisc.commonground.nu/eherkenning
-  digispoof:
-    location: https://taalhuizen-bisc.commonground.nu/digispoof
+  enabled: false
+  pullPolicy: IfNotPresent
 
 nginx:
   repository: docker.io/conduction/protocomponent-nginx
+  image: ghcr.io/conductionnl/taalhuizen-service-nginx
   tag: latest
   pullPolicy: Always
   replicaCount: 2
-
-varnish:
-  enabled: true
-  #url: https://example.com
-  repository: docker.io/conduction/protocomponent-varnish
-  tag: latest
-  pullPolicy: Always
-  replicaCount: 1
 
 postgresql:
   enabled: true
   imageTag: 10-alpine
   # If bringing your own PostgreSQL, the full uri to use
-  #url: pgsql://api-platform:!ChangeMe!@example.com/api?serverVersion=10.1
+  url: "psql://a:b@example.com/c"
   postgresqlUsername: "example"
   postgresqlPassword: "!ChangeMe!"
   postgresqlDatabase: "api"
   # Persistent Volume Storage configuration.
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
-    enabled: false
+    enabled: true
   pullPolicy: IfNotPresent
-#  image:
-#    repository: postgres
-#    tag: alpine
-
-mercure:
-  enabled: true
-  publishUrl: http://mercure/hub
-  subscribeUrl: https://mercure.example.com/hub
-  allowAnonymous: "1"
-  corsAllowedOrigins: "^https?://.*?\\.example\\.com$"
-  acmeHosts: "" # TODO: Fix the Mercure chart
-  service:
-    type: NodePort
-    port: 80
 
 ingress:
+  enabled: false
+  type: "nginx"
+  hostname: taalhuizen-service.local
+  path: /
   annotations:
     # kubernetes.io/ingress.global-static-ip-name: chart-ip
     # kubernetes.io/ingress.class: gce
@@ -115,15 +119,7 @@ ingress:
   tls:
     # Secrets must be manually created in the namespace, you can also use cert-manager.
     # - hosts:
-      # - example.com
-      # - mercure.example.com
-  hosts:
-    api:
-      host: example.com
-      serviceName: varnish
-    mercure:
-      host: mercure.example.com
-      serviceName: mercure
+    # - example.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

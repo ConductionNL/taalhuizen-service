@@ -2,14 +2,28 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StudentBackgroundRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * All properties that the DTO entity StudentBackground holds.
+ *
+ * This DTO is a subresource for the DTO Student. It contains the background details for a Student.
+ * The main source that properties of this DTO entity are based on, is the following jira issue: https://lifely.atlassian.net/browse/BISC-76.
+ * Notable is that a few properties are renamed here, compared to the graphql schema, this was mostly done for consistency and cleaner names. Translations from Dutch to English
+ *
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
+ *     itemOperations={"get"},
+ *     collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass=StudentBackgroundRepository::class)
  */
 class StudentBackground
@@ -17,56 +31,127 @@ class StudentBackground
     /**
      * @var UuidInterface The UUID identifier of this resource
      *
-     * @example e2984465-190a-4562-829e-a8cca81aa35d
-     *
+     * @Groups({"read"})
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
      * @ORM\GeneratedValue(strategy="CUSTOM")
      * @ORM\CustomIdGenerator(class="Ramsey\Uuid\Doctrine\UuidGenerator")
      */
-    private $id;
+    private UuidInterface $id;
 
     /**
+     * @var string|null The way this student found the languageHouse.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice({"VOLUNTEER_CENTER", "LIBRARY_WEBSITE", "SOCIAL_MEDIA", "NEWSPAPER", "VIA_VIA", "OTHER"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="string",
+     *             "enum"={"VOLUNTEER_CENTER", "LIBRARY_WEBSITE", "SOCIAL_MEDIA", "NEWSPAPER", "VIA_VIA", "OTHER"},
+     *             "example"="VOLUNTEER_CENTER"
+     *         }
+     *     }
+     * )
      */
-    private $foundVia;
+    private ?string $foundVia;
 
     /**
+     * @var string|null The way this student found the languageHouse for if the OTHER option is selected.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="An other way to find a languageHouse"
+     *         }
+     *     }
+     * )
      */
-    private $foundViaOther;
+    private ?string $foundViaOther;
 
     /**
+     * @var bool|null A boolean that is true if this student went to this languageHouse before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $wentToTaalhuisBefore;
+    private ?bool $wentToLanguageHouseBefore;
 
     /**
+     * @var string|null The reason why this student went to this languageHouse before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="Went to this languageHouse before, because..."
+     *         }
+     *     }
+     * )
      */
-    private $wentToTaalhuisBeforeReason;
+    private ?string $wentToLanguageHouseBeforeReason;
 
     /**
+     * @var float|null The year this student went to this languageHouse before.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="float", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=2016
+     *         }
+     *     }
+     * )
      */
-    private $wentToTaalhuisBeforeYear;
+    private ?float $wentToLanguageHouseBeforeYear;
 
     /**
+     * @var array|null The network of this student.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Choice(multiple=true, choices={"HOUSEHOLD_MEMBERS", "NEIGHBORS", "FAMILY_MEMBERS", "AID_WORKERS", "FRIENDS_ACQUAINTANCES", "PEOPLE_AT_MOSQUE_CHURCH", "ACQUAINTANCES_SPEAKING_OWN_LANGUAGE", "ACQUAINTANCES_SPEAKING_DUTCH"})
      * @ORM\Column(type="array", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "type"="array",
+     *             "items"={
+     *               "type"="string",
+     *               "enum"={"HOUSEHOLD_MEMBERS", "NEIGHBORS", "FAMILY_MEMBERS", "AID_WORKERS", "FRIENDS_ACQUAINTANCES", "PEOPLE_AT_MOSQUE_CHURCH", "ACQUAINTANCES_SPEAKING_OWN_LANGUAGE", "ACQUAINTANCES_SPEAKING_DUTCH"},
+     *               "example"="HOUSEHOLD_MEMBERS"
+     *             }
+     *         }
+     *     }
+     * )
      */
-    private $network = [];
+    private ?array $network = [];
 
     /**
+     * @var int|null The place this student has on the participationLadder.
+     *
+     * @Groups({"read", "write"})
      * @ORM\Column(type="integer", nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"=4
+     *         }
+     *     }
+     * )
      */
-    private $participationLadder;
+    private ?int $participationLadder;
 
     public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function setId(?UuidInterface $uuid): self
+    public function setId(UuidInterface $uuid): self
     {
         $this->id = $uuid;
 
@@ -97,38 +182,38 @@ class StudentBackground
         return $this;
     }
 
-    public function getWentToTaalhuisBefore(): ?bool
+    public function getWentToLanguageHouseBefore(): ?bool
     {
-        return $this->wentToTaalhuisBefore;
+        return $this->wentToLanguageHouseBefore;
     }
 
-    public function setWentToTaalhuisBefore(?bool $wentToTaalhuisBefore): self
+    public function setWentToLanguageHouseBefore(?bool $wentToLanguageHouseBefore): self
     {
-        $this->wentToTaalhuisBefore = $wentToTaalhuisBefore;
+        $this->wentToLanguageHouseBefore = $wentToLanguageHouseBefore;
 
         return $this;
     }
 
-    public function getWentToTaalhuisBeforeReason(): ?string
+    public function getWentToLanguageHouseBeforeReason(): ?string
     {
-        return $this->wentToTaalhuisBeforeReason;
+        return $this->wentToLanguageHouseBeforeReason;
     }
 
-    public function setWentToTaalhuisBeforeReason(?string $wentToTaalhuisBeforeReason): self
+    public function setWentToLanguageHouseBeforeReason(?string $wentToLanguageHouseBeforeReason): self
     {
-        $this->wentToTaalhuisBeforeReason = $wentToTaalhuisBeforeReason;
+        $this->wentToLanguageHouseBeforeReason = $wentToLanguageHouseBeforeReason;
 
         return $this;
     }
 
-    public function getWentToTaalhuisBeforeYear(): ?float
+    public function getWentToLanguageHouseBeforeYear(): ?float
     {
-        return $this->wentToTaalhuisBeforeYear;
+        return $this->wentToLanguageHouseBeforeYear;
     }
 
-    public function setWentToTaalhuisBeforeYear(?float $wentToTaalhuisBeforeYear): self
+    public function setWentToLanguageHouseBeforeYear(?float $wentToLanguageHouseBeforeYear): self
     {
-        $this->wentToTaalhuisBeforeYear = $wentToTaalhuisBeforeYear;
+        $this->wentToLanguageHouseBeforeYear = $wentToLanguageHouseBeforeYear;
 
         return $this;
     }

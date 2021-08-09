@@ -16,11 +16,17 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
     private StudentService $studentService;
     private ResolverService $resolverService;
 
-    public function __construct(CommongroundService $commonGroundService, StudentService $studentService, ResolverService $resolverService)
+    /**
+     * RegistrationQueryCollectionResolver constructor.
+     *
+     * @param CommongroundService $commonGroundService
+     * @param StudentService      $studentService
+     */
+    public function __construct(CommongroundService $commonGroundService, StudentService $studentService)
     {
         $this->commonGroundService = $commonGroundService;
         $this->studentService = $studentService;
-        $this->resolverService = $resolverService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
@@ -41,6 +47,15 @@ class RegistrationQueryCollectionResolver implements QueryCollectionResolverInte
         }
     }
 
+    /**
+     * Gets all the students with the languageHouseId.
+     *
+     * @param array $context The context data.
+     *
+     * @throws Exception
+     *
+     * @return ArrayCollection The resulting Student ArrayCollection object
+     */
     public function students(array $context): ?ArrayCollection
     {
         if (key_exists('languageHouseId', $context['args'])) {

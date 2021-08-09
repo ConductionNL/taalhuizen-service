@@ -18,15 +18,14 @@ class LearningNeedService
     /**
      * LearningNeedService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
-     * @param ParticipationService   $participationService
+     * @param ParticipationService $participationService
+     * @param LayerService         $layerService
      */
-    public function __construct(EntityManagerInterface $entityManager, CommonGroundService $commonGroundService, ParticipationService $participationService)
+    public function __construct(ParticipationService $participationService, LayerService $layerService)
     {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
         $this->participationService = $participationService;
     }
 
@@ -50,12 +49,12 @@ class LearningNeedService
         if (isset($learningNeedId)) {
             // Update
             $learningNeed['dateModified'] = $now;
-            $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs', 'eav', null, $learningNeedId);
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
         } else {
             // Create
             $learningNeed['dateCreated'] = $now;
             $learningNeed['dateModified'] = $now;
-            $learningNeed = $this->eavService->saveObject($learningNeed, 'learning_needs');
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs']);
         }
 
         // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -82,7 +81,7 @@ class LearningNeedService
     public function handleParticipantLearningNeeds(string $studentUrl): array
     {
         if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             $participant['learningNeeds'] = $getParticipant['learningNeeds'];
         }
         if (!isset($participant['learningNeeds'])) {
@@ -111,7 +110,7 @@ class LearningNeedService
         // Save the participant in EAV with the EAV/learningNeed connected to it
         if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
             array_push($participant['learningNeeds'], $learningNeed['@eav']);
-            $participant = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+            $participant = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
 
             // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
             $result['participant'] = $participant;
@@ -125,7 +124,7 @@ class LearningNeedService
             }
             if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
                 array_push($updateLearningNeed['participants'], $participant['@id']);
-                $learningNeed = $this->eavService->saveObject($updateLearningNeed, 'learning_needs', 'eav', $learningNeed['@eav']);
+                $learningNeed = $this->eavService->saveObject($updateLearningNeed, ['entityName' => 'learning_needs', 'self' => $learningNeed['@eav']]);
 
                 // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
                 $result['learningNeed'] = $learningNeed;
@@ -191,7 +190,7 @@ class LearningNeedService
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             $result['participants'] = [];
             // Get the learningNeed from EAV
-            $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
 
             // Remove this learningNeed from all EAV/edu/participants
             $result = $this->removeParticipantsFromLearningNeed($learningNeed, $result);
@@ -223,12 +222,12 @@ class LearningNeedService
     {
         $result = [];
         if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             if (isset($getParticipant['learningNeeds'])) {
                 $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function ($participantLearningNeed) use ($learningNeedUrl) {
                     return $participantLearningNeed != $learningNeedUrl;
                 }));
-                $result['participant'] = $this->eavService->saveObject($participant, 'participants', 'edu', $studentUrl);
+                $result['participant'] = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             }
         }
         // only works when learningNeed is deleted after, because relation is not removed from the EAV learningNeed object in here
@@ -239,27 +238,27 @@ class LearningNeedService
      * This function gets and returns a learningNeed object from the eav-component with the EAVService.
      * It is recommended to use the id, but can also be used with an url instead.
      *
-     * @param string      $id  the id of the learningNeed (eav).
+     * @param string|null $id  the id of the learningNeed (eav).
      * @param string|null $url an url of the learningNeed (eav url).
      *
      * @throws Exception
      *
      * @return array the result array containing the learningNeed or an errorMessage.
      */
-    public function getLearningNeed(string $id, string $url = null): array
+    public function getLearningNeed(?string $id, string $url = null): array
     {
         $result = [];
         // Get the learningNeed from EAV and add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if (isset($id)) {
             if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
-                $learningNeed = $this->eavService->getObject('learning_needs', null, 'eav', $id);
+                $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
                 $result['learningNeed'] = $learningNeed;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$id.' is not an existing eav/learning_need!';
             }
         } elseif (isset($url)) {
             if ($this->eavService->hasEavObject($url)) {
-                $learningNeed = $this->eavService->getObject('learning_needs', $url);
+                $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $url]);
                 $result['learningNeed'] = $learningNeed;
             } else {
                 $result['errorMessage'] = 'Invalid request, '.$url.' is not an existing eav/learning_need!';
@@ -287,7 +286,7 @@ class LearningNeedService
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['learningNeeds'] = [];
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
-            $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+            $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             if (isset($participant['learningNeeds'])) {
                 if (isset($dateFrom)) {
                     $dateFrom = new DateTime($dateFrom);
@@ -345,18 +344,18 @@ class LearningNeedService
     }
 
     /**
-     * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update an LearningNeed.
+     * This function checks if the given learningNeed body, studentUrl and if given the learningNeedId are valid to use to create or update a LearningNeed.
      * It also cleans up some values in the learningNeed body that we might not want in there when saving the learningNeed.
      *
-     * @param array       $learningNeed   the body of an learningNeed.
-     * @param string      $studentUrl     the student url (edu/participant).
+     * @param array       $learningNeed   the body of a learningNeed.
+     * @param string|null $studentUrl     the student url (edu/participant).
      * @param string|null $learningNeedId the id of an already existing learningNeed, for updating it.
      *
      * @throws Exception
      *
      * @return array the result array containing the learningNeed or an errorMessage.
      */
-    public function checkLearningNeedValues(array $learningNeed, string $studentUrl, string $learningNeedId = null): array
+    public function checkLearningNeedValues(array $learningNeed, ?string $studentUrl, string $learningNeedId = null): array
     {
         $result = [];
         if ($learningNeed['topicOther'] == 'OTHER' && !isset($learningNeed['topicOther'])) {

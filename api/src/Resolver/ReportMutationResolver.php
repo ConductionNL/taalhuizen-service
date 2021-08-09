@@ -6,9 +6,12 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Entity\Report;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\LearningNeedService;
 use App\Service\MrcService;
+use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
@@ -23,13 +26,16 @@ class ReportMutationResolver implements MutationResolverInterface
     private LearningNeedService $learningNeedService;
     private SerializerInterface $serializer;
 
-    public function __construct(CommonGroundService $commonGroundService, EntityManagerInterface $entityManager, EDUService $eduService, MrcService $mrcService, LearningNeedService $learningNeedService, SerializerInterface $serializer)
-    {
-        $this->commonGroundService = $commonGroundService;
-        $this->entityManager = $entityManager;
-        $this->eduService = $eduService;
+    public function __construct(
+        MrcService $mrcService,
+        SerializerInterface $serializer,
+        LayerService $layerService
+    ) {
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
-        $this->learningNeedService = $learningNeedService;
+        $this->learningNeedService = new LearningNeedService(new ParticipationService($mrcService, $layerService), $layerService);
         $this->serializer = $serializer;
     }
 
@@ -59,6 +65,13 @@ class ReportMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Cleans an employee resource.
+     *
+     * @param array $employee The employee resource to clean
+     *
+     * @return array The resulting employee
+     */
     public function cleanEmployee(array $employee): array
     {
         $result = $this->commonGroundService->getResource($employee['person'], ['fields=givenName,additionalName,lastName,emails,phones']);
@@ -66,6 +79,13 @@ class ReportMutationResolver implements MutationResolverInterface
         return array_merge($result, ['dateCreated'   => $employee['dateCreated']]);
     }
 
+    /**
+     * Cleans a collection of employees.
+     *
+     * @param ArrayCollection $employees The employees to clean
+     *
+     * @return array The cleaned employees
+     */
     public function cleanEmployees(ArrayCollection $employees): array
     {
         $results = [];
@@ -76,6 +96,13 @@ class ReportMutationResolver implements MutationResolverInterface
         return $results;
     }
 
+    /**
+     * Cleans a participant.
+     *
+     * @param array $participant The participant to check
+     *
+     * @return array The cleaned participant
+     */
     public function cleanParticipant(array $participant): array
     {
         foreach ($participant as $key=>$value) {
@@ -87,6 +114,13 @@ class ReportMutationResolver implements MutationResolverInterface
         return $participant;
     }
 
+    /**
+     * Clean multiple participants.
+     *
+     * @param array $participants The participants to clean
+     *
+     * @return array The cleaned participants
+     */
     public function cleanParticipants(array $participants): array
     {
         $results = [];
@@ -97,10 +131,17 @@ class ReportMutationResolver implements MutationResolverInterface
         return $results;
     }
 
+    /**
+     * Creates a participants report.
+     *
+     * @param array $reportArray The data to convert into a report
+     *
+     * @return Report The resulting report
+     */
     public function downloadParticipantsReport(array $reportArray): Report
     {
         $report = new Report();
-        $time = new \DateTime();
+        $time = new DateTime();
         $query = [
             'extend' => 'person',
             'fields' => 'id,dateCreated,person.givenName,person.additionalName,person.familyName,person.emails,person.telephones',
@@ -116,7 +157,7 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         $participants = $this->eduService->getParticipants($query);
         $participants = $this->cleanParticipants($participants);
-        $report->setBase64data(base64_encode($this->serializer->serialize($participants, 'csv')));
+        $report->setBase64(base64_encode($this->serializer->serialize($participants, 'csv')));
         $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
@@ -124,10 +165,17 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
+    /**
+     * Creates a volunteers report.
+     *
+     * @param array $reportArray The data to convert into a report
+     *
+     * @return Report The resulting report
+     */
     public function downloadVolunteersReport(array $reportArray): Report
     {
         $report = new Report();
-        $time = new \DateTime();
+        $time = new DateTime();
         $query = [];
 
         $this->setDate($report, $reportArray);
@@ -140,7 +188,7 @@ class ReportMutationResolver implements MutationResolverInterface
         }
         $employees = $this->mrcService->getEmployees(null, $providerId, $query);
 
-        $report->setBase64data(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
+        $report->setBase64(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
         $report->setFilename("VolunteersReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
@@ -148,7 +196,15 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
-    public function setProgramProviderQuery($reportArray, $report)
+    /**
+     * Sets a program provider query.
+     *
+     * @param array  $reportArray The report data
+     * @param Report $report      The report to update
+     *
+     * @return array The resulting query
+     */
+    public function setProgramProviderQuery(array $reportArray, Report $report): array
     {
         $query = [];
         if (isset($reportArray['languageHouseId'])) {
@@ -164,10 +220,17 @@ class ReportMutationResolver implements MutationResolverInterface
         return $query;
     }
 
+    /**
+     * Creates a desired learning outcomes report.
+     *
+     * @param array $reportArray The report data
+     *
+     * @return Report The resulting report
+     */
     public function downloadDesiredLearningOutcomesReport(array $reportArray): Report
     {
         $report = new Report();
-        $time = new \DateTime();
+        $time = new DateTime();
         $query = $this->setProgramProviderQuery($reportArray, $report);
         if (isset($reportArray['dateFrom'])) {
             $report->setDateFrom($reportArray['dateFrom']);
@@ -184,7 +247,7 @@ class ReportMutationResolver implements MutationResolverInterface
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = $this->fillLearningNeeds($participants, $dateFrom, $dateUntil);
         $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
-        $report->setBase64data(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
+        $report->setBase64(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);
@@ -192,7 +255,16 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
-    public function fillLearningNeeds($participants, $dateFrom, $dateUntil)
+    /**
+     * fills the learning needs.
+     *
+     * @param array       $participants The participants for the learning needs
+     * @param string|null $dateFrom     The date from which the data starts
+     * @param string|null $dateUntil    The date on which the data ends
+     *
+     * @return array The resulting data
+     */
+    public function fillLearningNeeds(array $participants, ?string $dateFrom, ?string $dateUntil): array
     {
         $learningNeeds = [];
         foreach ($participants as $participant) {
@@ -205,7 +277,14 @@ class ReportMutationResolver implements MutationResolverInterface
         return $learningNeeds;
     }
 
-    public function fillLearningNeedsCollection($learningNeeds)
+    /**
+     * Fills the learning needs as an collection.
+     *
+     * @param array $learningNeeds The learning needs as array
+     *
+     * @return ArrayCollection The resulting collection
+     */
+    public function fillLearningNeedsCollection(array $learningNeeds)
     {
         $learningNeedsCollection = new ArrayCollection();
         foreach ($learningNeeds as $learningNeed) {
@@ -219,6 +298,13 @@ class ReportMutationResolver implements MutationResolverInterface
         return $learningNeedsCollection;
     }
 
+    /**
+     * Creates a report.
+     *
+     * @param array $reportArray The report data
+     *
+     * @return Report The resulting report
+     */
     public function createReport(array $reportArray): Report
     {
         $report = new Report();
@@ -227,6 +313,13 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
+    /**
+     * Updates a report.
+     *
+     * @param array $input The input needed to create a report
+     *
+     * @return Report The resulting report
+     */
     public function updateReport(array $input): Report
     {
         $id = explode('/', $input['id']);
@@ -237,12 +330,27 @@ class ReportMutationResolver implements MutationResolverInterface
         return $report;
     }
 
+    /**
+     * Deletes a report.
+     *
+     * @param array $report The data to delete the report
+     *
+     * @return Report|null The result of the delete action
+     */
     public function deleteReport(array $report): ?Report
     {
         return null;
     }
 
-    public function setDate($resource, array $resourceArray)
+    /**
+     * Sets the dates for a report.
+     *
+     * @param Report $resource      The report to set the dates in
+     * @param array  $resourceArray The data to extract the dates from
+     *
+     * @return bool Whether the operation has succeeded
+     */
+    public function setDate(Report $resource, array $resourceArray): bool
     {
         if (isset($resourceArray['dateFrom'])) {
             $resource->setDateFrom($resourceArray['dateFrom']);
@@ -253,6 +361,6 @@ class ReportMutationResolver implements MutationResolverInterface
             $query['dateCreated[before]'] = $resourceArray['dateUntil'];
         }
 
-        return false;
+        return true;
     }
 }

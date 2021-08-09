@@ -12,15 +12,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+// TODO: REWRITE THIS FILE, this is (very) old code
 class ParticipationSubscriber implements EventSubscriberInterface
 {
-    private $em;
+    private $entityManager;
     private $commonGroundService;
     private $eavService;
 
-    public function __construct(EntityManagerInterface $em, CommongroundService $commonGroundService, EAVService $eavService)
+    public function __construct(EntityManagerInterface $entityManager, CommongroundService $commonGroundService, EAVService $eavService)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
     }

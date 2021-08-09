@@ -2,25 +2,24 @@
 
 namespace App\Repository;
 
-use App\Entity\CurrentEducationYes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method CurrentEducationYes|null find($id, $lockMode = null, $lockVersion = null)
- * @method CurrentEducationYes|null findOneBy(array $criteria, array $orderBy = null)
- * @method CurrentEducationYes[]    findAll()
- * @method CurrentEducationYes[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method EducationRepository|null find($id, $lockMode = null, $lockVersion = null)
+ * @method EducationRepository|null findOneBy(array $criteria, array $orderBy = null)
+ * @method EducationRepository[]    findAll()
+ * @method EducationRepository[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CurrentEducationYesRepository extends ServiceEntityRepository
+class EducationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CurrentEducationYes::class);
+        parent::__construct($registry, EducationRepository::class);
     }
 
     // /**
-    //  * @return CurrentEducationYes[] Returns an array of CurrentEducationYes objects
+    //  * @return EducationRepository[] Returns an array of EducationRepository objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +36,7 @@ class CurrentEducationYesRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?CurrentEducationYes
+    public function findOneBySomeField($value): ?EducationRepository
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')

@@ -2,15 +2,18 @@
 
 namespace App\Service;
 
+use App\Entity\Education;
 use App\Entity\Employee;
+use App\Entity\Person;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class MrcService
 {
@@ -20,27 +23,25 @@ class MrcService
     private UcService $ucService;
     private EAVService $eavService;
     private BsService $bsService;
+    private AvailabilityService $availabilityService;
 
     /**
      * MrcService constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param CommonGroundService    $commonGroundService
-     * @param ParameterBagInterface  $parameterBag
-     * @param UcService              $ucService
+     * @param LayerService $layerService
+     * @param UcService    $ucService
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        ParameterBagInterface $parameterBag,
+        LayerService $layerService,
         UcService $ucService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
-        $this->bsService = new BsService($commonGroundService, $parameterBag);
-        $this->ccService = new CCService($entityManager, $commonGroundService, $parameterBag);
-        $this->eavService = new EAVService($entityManager, $commonGroundService);
+        $this->bsService = $layerService->bsService;
+        $this->ccService = new CCService($layerService);
+        $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->availabilityService = new AvailabilityService($layerService);
     }
 
     /**
@@ -84,7 +85,12 @@ class MrcService
      */
     public function getEmployeeRaw(string $id): array
     {
-        return $this->eavService->getObject('employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        $self = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        if ($this->eavService->hasEavObject($self)) {
+            return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $self]);
+        }
+
+        return $this->commonGroundService->getResource($self);
     }
 
     /**
@@ -137,7 +143,7 @@ class MrcService
                     $competence['grade'] = $employeeArray['hasExperienceWithTargetGroup'];
                     unset($employeeArray['targetGroupPreferences'][array_search($competence['name'], $employeeArray['targetGroupPreferences'])]);
                 } else {
-                    $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $employee['competences']['id']]);
+                    $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
                 }
             }
         }
@@ -146,7 +152,7 @@ class MrcService
         foreach ($employeeArray['targetGroupPreferences'] as $targetGroupPreference) {
             $competence = [
                 'name'        => $targetGroupPreference,
-                'description' => '',
+                'description' => $employeeArray['experienceWithTargetGroupYesReason'] ?? '',
                 'grade'       => $employeeArray['hasExperienceWithTargetGroup'] ? 'experienced' : 'unexperienced',
                 'employee'    => "/employees/$employeeId",
             ];
@@ -163,22 +169,25 @@ class MrcService
      * @param string      $employeeId    The id of the employee
      * @param string|null $educationId   The id of the education if it exists already
      *
+     * @throws Exception
+     *
      * @return string The id of the education
      */
     public function createCurrentEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                => $employeeArray['currentEducationYes']['name'],
-            'startDate'           => $employeeArray['currentEducationYes']['dateSince'],
+            'name'                => $employeeArray['education']['name'] ?? 'CurrentEducation',
+            'description'         => 'CurrentEducation',
+            'startDate'           => $employeeArray['education']['startDate'] ?? null,
             'degreeGrantedStatus' => 'notGranted',
-            'providesCertificate' => $employeeArray['currentEducationYes']['doesProvideCertificate'],
+            'providesCertificate' => $employeeArray['education']['providesCertificate'] ?? null,
             'employee'            => "/employees/$employeeId",
         ];
         if ($educationId) {
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId])])['id'];
         }
 
-        return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
+        return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc'])['id'];
     }
 
     /**
@@ -188,23 +197,26 @@ class MrcService
      * @param string      $employeeId    The id of the employee
      * @param string|null $educationId   The id of the education if it exists already
      *
+     * @throws Exception
+     *
      * @return string The id of the education
      */
     public function createUnfinishedEducation(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                    => $employeeArray['currentEducationNoButDidFollow']['name'],
-            'endDate'                 => $employeeArray['currentEducationNoButDidFollow']['dateUntil'],
+            'name'                    => $employeeArray['education']['name'],
+            'description'             => 'UnfinishedEducation',
+            'endDate'                 => $employeeArray['education']['endDate'],
             'degreeGrantedStatus'     => 'notGranted',
-            'iscedEducationLevelCode' => $employeeArray['currentEducationNoButDidFollow']['level'],
-            'providesCertificate'     => $employeeArray['currentEducationNoButDidFollow']['gotCertificate'],
+            'iscedEducationLevelCode' => $employeeArray['education']['iscedEducationLevelCode'],
+            'providesCertificate'     => $employeeArray['education']['providesCertificate'],
             'employee'                => "/employees/$employeeId",
         ];
         if ($educationId) {
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId])])['id'];
         }
 
-        return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
+        return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc'])['id'];
     }
 
     /**
@@ -214,23 +226,26 @@ class MrcService
      * @param string      $employeeId    The id of the employee
      * @param string|null $educationId   The id of the education if it exists already
      *
+     * @throws Exception
+     *
      * @return string The id of the education
      */
     public function createCourse(array $employeeArray, string $employeeId, ?string $educationId = null): string
     {
         $education = [
-            'name'                   => $employeeArray['currentlyFollowingCourseName'],
-            'institution'            => $employeeArray['currentlyFollowingCourseInstitute'],
-            'providesCertificate'    => $employeeArray['doesCurrentlyFollowingCourseProvideCertificate'],
-            'courseProfessionalism'  => $employeeArray['currentlyFollowingCourseCourseProfessionalism'],
-            'teacherProfessionalism' => $employeeArray['currentlyFollowingCourseTeacherProfessionalism'],
+            'name'                   => $employeeArray['followingCourse']['name'],
+            'description'            => 'Course',
+            'institution'            => $employeeArray['followingCourse']['institution'],
+            'providesCertificate'    => $employeeArray['followingCourse']['providesCertificate'],
+            'courseProfessionalism'  => $employeeArray['followingCourse']['courseProfessionalism'],
+            'teacherProfessionalism' => $employeeArray['followingCourse']['teacherProfessionalism'],
             'employee'               => "/employees/$employeeId",
         ];
         if ($educationId) {
-            return $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId]))['id'];
+            return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $educationId])])['id'];
         }
 
-        return $this->eavService->saveObject($education, 'education', 'mrc')['id'];
+        return $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc'])['id'];
     }
 
     /**
@@ -278,6 +293,8 @@ class MrcService
      * @param string     $employeeId         The id of the employee
      * @param array|null $existingEducations The educations already existing for the employee
      *
+     * @throws Exception
+     *
      * @return array
      */
     public function createEducations(array $employeeArray, string $employeeId, ?array $existingEducations = []): array
@@ -290,7 +307,7 @@ class MrcService
                 $educations[] = $this->createCurrentEducation($employeeArray, $employeeId);
             }
         }
-        if ($employeeArray['currentEducation'] == 'NO_BUT_DID_FOLLOW') {
+        if ($employeeArray['currentEducation'] == 'NO_BUT_DID_EARLIER') {
             if ($existingEducations && $existing = $this->getEducation('unfinishedEducation', $existingEducations)) {
                 $educations[] = $this->createUnfinishedEducation($employeeArray, $employeeId, $existing);
             } else {
@@ -339,23 +356,35 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array    $education The education to process
-     * @param Employee $employee  The employee to update
+     * @param array    $employeeEducation The education to process
+     * @param Employee $employee          The employee to update
+     *
+     * @throws Exception
      *
      * @return Employee The updated employee
      */
-    public function handleEducationStartDate(array $education, Employee $employee): Employee
+    public function handleCurrentEducation(array $employeeEducation, Employee $employee): Employee
     {
-        if ($education['startDate']) {
-            $employee->setCurrentEducationYes(
-                [
-                    'id'                     => $education['id'],
-                    'dateSince'              => $education['endDate'],
-                    'name'                   => $education['name'],
-                    'doesProvideCertificate' => $education['providesCertificate'],
-                ]
-            );
+        if ($employeeEducation['description'] == 'CurrentEducation') {
+            $education = new Education();
+            $education->setName($employeeEducation['name'] ?? null);
+            $education->setStartDate(new DateTime($employeeEducation['startDate']) ?? null);
+            $education->setDegreeGrantedStatus($employeeEducation['degreeGrantedStatus']);
+            $education->setProvidesCertificate($employeeEducation['providesCertificate'] ?? null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setInstitution(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setEnddate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+
+            $this->entityManager->persist($education);
+            $education->setId(Uuid::fromString($employeeEducation['id']));
+            $this->entityManager->persist($education);
+
             $employee->setCurrentEducation('YES');
+            $employee->setEducation($education);
         }
 
         return $employee;
@@ -364,23 +393,35 @@ class MrcService
     /**
      * Stores the start date of an education.
      *
-     * @param array    $education The education to process
-     * @param Employee $employee  The employee to update
+     * @param array    $employeeEducation The education to process
+     * @param Employee $employee          The employee to update
+     *
+     * @throws Exception
      *
      * @return Employee The updated employee
      */
-    public function handleEducationEndDate(array $education, Employee $employee): Employee
+    public function handleUnfinishedEducation(array $employeeEducation, Employee $employee): Employee
     {
-        if ($education['endDate']) {
-            $employee->setCurrentEducationNoButDidFollow(
-                [
-                    'id'             => $education['id'],
-                    'dateUntil'      => $education['endDate'],
-                    'level'          => $education['iscedEducationLevelCode'],
-                    'gotCertificate' => $education['providesCertificate'],
-                ]
-            );
-            $employee->setCurrentEducation('NO_BUT_DID_FOLLOW');
+        if ($employeeEducation['description'] == 'UnfinishedEducation') {
+            $education = new Education();
+            $education->setName($employeeEducation['name'] ?? null);
+            $education->setEnddate(new DateTime($employeeEducation['endDate']) ?? null);
+            $education->setDegreeGrantedStatus($employeeEducation['degreeGrantedStatus']);
+            $education->setIscedEducationLevelCode($employeeEducation['iscedEducationLevelCode'] ?? null);
+            $education->setProvidesCertificate($employeeEducation['providesCertificate'] ?? null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setInstitution(null);
+            $education->setStartDate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+
+            $this->entityManager->persist($education);
+            $education->setId(Uuid::fromString($employeeEducation['id']));
+            $this->entityManager->persist($education);
+
+            $employee->setCurrentEducation('NO_BUT_DID_EARLIER');
+            $employee->setEducation($education);
         }
 
         return $employee;
@@ -399,13 +440,13 @@ class MrcService
     public function setCurrentEducation(Employee $employee, array $education): Employee
     {
         if ($this->eavService->hasEavObject($this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]))) {
-            $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+            $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
         } else {
             return $employee;
         }
 
-        $employee = $this->handleEducationStartDate($education, $employee);
-        $employee = $this->handleEducationEndDate($education, $employee);
+        $employee = $this->handleCurrentEducation($education, $employee);
+        $employee = $this->handleUnfinishedEducation($education, $employee);
 
         return $employee;
     }
@@ -422,13 +463,27 @@ class MrcService
      */
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
-        $education = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+        $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
+
+        $course = new Education();
+        $course->setName($education['name'] ?? null);
+        $course->setInstitution($education['institution'] ?? null);
+        $course->setProvidesCertificate($education['providesCertificate'] ?? null);
+        $course->setCourseProfessionalism($education['courseProfessionalism'] ?? null);
+        $course->setTeacherProfessionalism($education['teacherProfessionalism'] ?? null);
+        $course->setGroupFormation(null);
+        $course->setDegreeGrantedStatus(null);
+        $course->setAmountOfHours(null);
+        $course->setEnddate(null);
+        $course->setIscedEducationLevelCode(null);
+        $course->setStartDate(null);
+
+        $this->entityManager->persist($course);
+        $course->setId(Uuid::fromString($education['id']));
+        $this->entityManager->persist($course);
+
         $employee->setDoesCurrentlyFollowCourse(true);
-        $employee->setCurrentlyFollowingCourseName($education['name']);
-        $employee->setCurrentlyFollowingCourseInstitute($education['institution']);
-        $employee->setCurrentlyFollowingCourseTeacherProfessionalism($education['courseProfessionalism']);
-        $employee->setCurrentlyFollowingCourseCourseProfessionalism($education['teacherProfessionalism']);
-        $employee->setDoesCurrentlyFollowingCourseProvideCertificate($education['providesCertificate']);
+        $employee->setFollowingCourse($course);
 
         return $employee;
     }
@@ -482,7 +537,7 @@ class MrcService
     }
 
     /**
-     * Updates an user for an employee.
+     * Updates a user for an employee.
      *
      * @param string      $userId       The id of the user to update
      * @param string|null $contact      The contact of the user to update
@@ -509,95 +564,29 @@ class MrcService
     /**
      * Creates an employee object for a resulting employee from the MRC.
      *
-     * @param array $employeeArray   The resulting array for fetching an employee
-     * @param array $userRoleArray   The user roles of the employee
-     * @param bool  $studentEmployee Whether or not the user is both student and employee
+     * @param array $employeeArray The resulting array for fetching an employee
+     * @param array $userRoleArray The user roles of the employee
      *
      * @throws Exception Thrown if the EAV is called incorrectly
      *
      * @return Employee The resulting employee object
      */
-    public function createEmployeeObject(array $employeeArray, array $userRoleArray = [], bool $studentEmployee = false): Employee
+    public function createEmployeeObject(array $employeeArray): Employee
     {
-        if ($this->eavService->hasEavObject($employeeArray['person'])) {
-            $contact = $this->eavService->getObject('people', $employeeArray['person'], 'cc');
-        } else {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        }
+        $contact = $this->ccService->getEavPerson($employeeArray['person']);
+
         $employee = new Employee();
-        $employee = $this->contactToEmployeeObject($employee, $contact);
+        $employee->setPerson($this->ccService->createPersonObject($contact));
+        $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
+        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($contact['@id']);
+        $employee->setAvailabilityNotes($availabilityMemo['description'] ?? null);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
-        if ($userRoleArray) {
-            $employee->setUserRoles($userRoleArray);
-        }
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
-        if (!$studentEmployee) {
-            $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
-        } else {
-            $employee = $this->relatedObjectsToEmployeeObject($employee, $employeeArray);
-        }
+        $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
 
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($employeeArray['id']));
         $this->entityManager->persist($employee);
-
-        return $employee;
-    }
-
-    /**
-     * Stores the contact relating to an employee into the employee object.
-     *
-     * @param Employee $employee The employee to store the data in
-     * @param array    $contact  The contact found
-     *
-     * @throws Exception Thrown if the EAV is not correctly called
-     *
-     * @return Employee The updated employee
-     */
-    private function contactToEmployeeObject(Employee $employee, array $contact): Employee
-    {
-        $employee->setGivenName($contact['givenName']);
-        $employee->setAdditionalName($contact['additionalName']);
-        $employee->setFamilyName($contact['familyName']);
-        $employee->setGender($contact['gender'] ?: 'X');
-        $employee->setDateOfBirth(new \DateTime($contact['birthday']));
-        if (key_exists('availability', $contact)) {
-            $employee->setAvailability($contact['availability']);
-        }
-
-        if ($contact['contactPreference'] == 'PHONECALL' || $contact['contactPreference'] == 'WHATSAPP' || $contact['contactPreference'] == 'EMAIL') {
-            $employee->setContactPreference($contact['contactPreference']);
-        } else {
-            $employee->setContactPreference('OTHER');
-            $employee->setContactPreferenceOther($contact['contactPreference']);
-        }
-
-        return $this->contactObjectsToEmployeeObject($employee, $contact);
-    }
-
-    /**
-     * Stores the sub objects of a contact in an employee object.
-     *
-     * @param Employee $employee The employee to store the data in
-     * @param array    $contact  The contact to store
-     *
-     * @return Employee The resulting employee object
-     */
-    private function contactObjectsToEmployeeObject(Employee $employee, array $contact): Employee
-    {
-        foreach ($contact['telephones'] as $telephone) {
-            if ($telephone['name'] == 'contact telephone') {
-                $employee->setContactTelephone($telephone['telephone']);
-            } else {
-                $employee->setTelephone($telephone['telephone']);
-            }
-        }
-        foreach ($contact['emails'] as $email) {
-            $employee->setEmail($email['email']);
-        }
-        foreach ($contact['addresses'] as $address) {
-            $employee->setAddress($address);
-        }
 
         return $employee;
     }
@@ -617,8 +606,8 @@ class MrcService
         $employee->setIsVOGChecked($employeeResult['hasPoliceCertificate']);
         $employee->setOtherRelevantCertificates($employeeResult['relevantCertificates']);
         $employee->setGotHereVia($employeeResult['referrer']);
-        $employee->setDateCreated(new \DateTime($employeeResult['dateCreated']));
-        $employee->setDateModified(new \DateTime($employeeResult['dateModified']));
+//        $employee->setDateCreated(new \DateTime($employeeResult['dateCreated'])); //TODO:add this back?
+//        $employee->setDateModified(new \DateTime($employeeResult['dateModified']));
 
         return $employee;
     }
@@ -628,6 +617,8 @@ class MrcService
      *
      * @param Employee $employee       The employee to store
      * @param array    $employeeResult The data to store
+     *
+     * @throws Exception
      *
      * @return Employee The resulting employee object
      */
@@ -640,14 +631,14 @@ class MrcService
         $employee->setTargetGroupPreferences($competences);
 
         //@TODO: Dit geeft nog intermittende problemen
+        $employee->setVolunteeringPreference(null);
         foreach ($employeeResult['interests'] as $interest) {
             $employee->setVolunteeringPreference($interest['name']);
         }
 
-        $employee = $this->handleEmployeeSkills($employeeResult, $employee);
-        $employee = $this->handleEducationType($employeeResult, $employee);
+        $employee = $this->handleEmployeeCompetence($employeeResult, $employee);
 
-        return $employee;
+        return $this->handleEducationType($employeeResult, $employee);
     }
 
     /**
@@ -658,12 +649,14 @@ class MrcService
      *
      * @return Employee The resulting employee object
      */
-    public function handleEmployeeSkills(array $employeeResult, Employee $employee): Employee
+    public function handleEmployeeCompetence(array $employeeResult, Employee $employee): Employee
     {
-        foreach ($employeeResult['skills'] as $skill) {
-            if (in_array($skill['name'], $employee->getTargetGroupPreferences())) {
-                $employee->setHasExperienceWithTargetGroup($skill['grade'] == 'experienced');
-                $employee->setExperienceWithTargetGroupYesReason($skill['grade'] == 'experienced');
+        $employee->setHasExperienceWithTargetGroup(null);
+        $employee->setExperienceWithTargetGroupYesReason(null);
+        foreach ($employeeResult['competencies'] as $competence) {
+            if (in_array($competence['name'], $employee->getTargetGroupPreferences())) {
+                $employee->setHasExperienceWithTargetGroup($competence['grade'] == 'experienced');
+                $employee->setExperienceWithTargetGroupYesReason($competence['description'] != '' ? $competence['description'] : null);
             }
         }
 
@@ -682,6 +675,10 @@ class MrcService
      */
     public function handleEducationType(array $employeeResult, Employee $employee): Employee
     {
+        $employee->setCurrentEducation(null);
+        $employee->setEducation(null);
+        $employee->setDoesCurrentlyFollowCourse(null);
+        $employee->setFollowingCourse(null);
         foreach ($employeeResult['educations'] as $education) {
             if (!$education['institution']) {
                 $employee = $this->setCurrentEducation($employee, $education);
@@ -701,14 +698,11 @@ class MrcService
      *
      * @return Employee The resulting employee object
      */
-    private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult)
+    private function relatedObjectsToEmployeeObject(Employee $employee, array $employeeResult): Employee
     {
-        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
-        $employee->setProviderId(end($providerIdArray));
-        $languageHouseIdArray = explode('/', parse_url($employeeResult['organization'])['path']);
-        $employee->setLanguageHouseId(end($languageHouseIdArray));
-
-        $employee->setBiscEmployeeId($employeeResult['id']);
+        $employee->setOrganizationId($this->commonGroundService->getUuidFromUrl($employeeResult['organization']));
+//        $providerIdArray = explode('/', parse_url($employeeResult['provider'])['path']);
+//        $employee->setOrganizationId(end($providerIdArray));
 
         return $employee;
     }
@@ -735,12 +729,10 @@ class MrcService
      *
      * @return string|null the url for the organization of the employee
      */
-    public function handleUserOrganizationUrl(array $employeeArray)
+    public function handleUserOrganizationUrl(array $employeeArray): ?string
     {
-        if (key_exists('languageHouseId', $employeeArray)) {
-            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]);
-        } elseif (key_exists('providerId', $employeeArray)) {
-            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]);
+        if (key_exists('organizationId', $employeeArray)) {
+            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]);
         } else {
             $organizationUrl = null;
         }
@@ -780,7 +772,7 @@ class MrcService
         $organizationUrl = $this->handleUserOrganizationUrl($employeeArray);
 
         $resource = [
-            'username'     => $employeeArray['email'],
+            'username'     => $employeeArray['person']['emails']['email'],
             'person'       => $contact['@id'],
             'password'     => 'ThisIsATemporaryPassword',
             'organization' => $organizationUrl ?? null,
@@ -791,7 +783,7 @@ class MrcService
         $result = $this->commonGroundService->createResource($resource, ['component' => 'uc', 'type' => 'users']);
 
         $token = $this->ucService->createPasswordResetToken($resource['username'], false);
-        $this->bsService->sendInvitation($resource['username'], $token, $contact, $organizationUrl);
+        $this->bsService->sendInvitation($token, ['username' => $resource['username'], 'contact' => $contact, 'organization' => $organizationUrl]);
 
         return $result;
     }
@@ -799,38 +791,33 @@ class MrcService
     /**
      * Gets the contact for an employee.
      *
-     * @param string        $userId          The user id of the employee
-     * @param array         $employeeArray   The input array for the employee
-     * @param Employee|null $employee        The employee object of the employee
-     * @param bool          $studentEmployee Whether or not the employee is also a student
+     * @param string        $userId        The user id of the employee
+     * @param array         $employeeArray The input array for the employee
+     * @param Employee|null $employee      The employee object of the employee
      *
      * @throws Exception Thrownt if the EAV is called incorrectly
      *
      * @return array The resulting contact
      */
-    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null, bool $studentEmployee = false): array
+    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null): array
     {
-        if (isset($studentEmployee) && isset($employeeArray['person'])) {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        // if this person does not exist we should not create it here, but before we update the student employee object!
+        if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
+            return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
-            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+            return $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         }
-
-        return $contact;
     }
 
     /**
      * Saves the user for an employee.
      *
-     * @param array       $employeeArray   The input array for an employee
-     * @param array       $contact         The contact for the employee
-     * @param bool        $studentEmployee Whether or not the employee is also a student
-     * @param string|null $userId          The user id of the employee
+     * @param array       $employeeArray The input array for an employee
+     * @param array       $contact       The contact for the employee
+     * @param string|null $userId        The user id of the employee
      *
      * @return array|null The resulting user object
      */
-    public function saveUser(array $employeeArray, array $contact, bool $studentEmployee = false, ?string $userId = null): ?array
+    public function saveUser(array $employeeArray, array $contact, ?string $userId = null): ?array
     {
         if ((key_exists('userId', $employeeArray) && $employeeArray['userId']) || isset($userId) || (key_exists('email', $employeeArray) && $user = $this->checkIfUserExists(null, $employeeArray['email']))) {
             if (isset($user)) {
@@ -840,7 +827,7 @@ class MrcService
             }
 
             return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
-        } elseif (!$studentEmployee) {
+        } elseif (isset($employeeArray['person']['emails']['email'])) {
             return $this->createUser($employeeArray, $contact);
         }
 
@@ -858,7 +845,7 @@ class MrcService
      */
     public function setContact(array $employeeArray)
     {
-        if (isset($employeeArray['person'])) {
+        if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
             return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
             return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
@@ -868,46 +855,61 @@ class MrcService
     /**
      * Creates an employee.
      *
-     * @param array $employeeArray   The input array of the employee
-     * @param bool  $returnMrcObject Whether or not the raw mrc object has to be inputted
+     * @param array $employeeArray The input array of the employee
      *
      * @throws Exception
      *
-     * @return Employee|array|false The resulting employee or raw mrc object
+     * @return array The resulting employee or raw mrc object
      */
-    public function createEmployee(array $employeeArray, bool $returnMrcObject = false)
+    public function createEmployeeArray(array $employeeArray): array
     {
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        // TODO fix that a student has an email for creating a user so this if statement can be removed:
-        if (!$returnMrcObject) {
-            $this->saveUser($employeeArray, $contact);
-        }
+        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
+
+        $this->saveUser($employeeArray, $contact);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
         $resource = $this->ccService->cleanResource($resource);
 
-        $result = $this->eavService->saveObject($resource, 'employees', 'mrc');
+        $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
         if (key_exists('targetGroupPreferences', $employeeArray)) {
             $this->createCompetences($employeeArray, $result['id'], $result);
         }
         if (key_exists('volunteeringPreference', $employeeArray)) {
             $this->createInterests($employeeArray, $result['id'], $result['interests']);
         }
+        if (key_exists('currentEducation', $employeeArray)) {
+            $this->createEducations($employeeArray, $result['id'], $result['educations']);
+        }
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)) {
-            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
+            //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
+//            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
-        $userRoleArray = $this->handleUserRoleArray($employeeArray);
-        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-        if ($returnMrcObject) {
-            return $result;
-        }
+        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
+        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
 
-        return $this->createEmployeeObject($result, $userRoleArray ?? []);
+        return $result;
+    }
+
+    /**
+     * Creates an employee.
+     *
+     * @param array $employeeArray The input array of the employee
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee or raw mrc object
+     */
+    public function createEmployee(array $employeeArray): Employee
+    {
+        $employee = $this->createEmployeeArray($employeeArray);
+
+        return $this->createEmployeeObject($employee);
     }
 
     /**
@@ -919,7 +921,7 @@ class MrcService
      */
     public function handleUserRoleArray(array $employeeArray)
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
+        if (key_exists('userGroupIds', $employeeArray) and isset($employeeArray['userGroupIds'][0])) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
         } else {
@@ -932,75 +934,102 @@ class MrcService
     /**
      * Saves the related user with the data from the contact of the employee.
      *
-     * @param bool     $studentEmployee Whether or not the employee is also a student
-     * @param Employee $employee        The employee object the contact should relate to
-     * @param array    $employeeArray   The input data to update a contact
+     * @param Employee $employee      The employee object the contact should relate to
+     * @param array    $employeeArray The input data to update a contact
      *
      * @throws Exception
      *
      * @return array The resulting contact
      */
-    public function handleRetrievingContact(bool $studentEmployee, Employee $employee, array $employeeArray): array
+    public function handleRetrievingContact(Employee $employee, array $employeeArray): array
     {
-        if ($studentEmployee) {
-            if (isset($employeeArray['person'])) {
-                $contact = $this->commonGroundService->getResource($employeeArray['person']);
-            }
-            // if this person does not exist we should not create it here, but before we update the student employee object!
-        } else {
-            $userId = $employee->getUserId();
-            if (empty($userId)) {
-                $userId = $employeeArray['userId'];
-            }
-            $contact = $this->getContact($userId, $employeeArray, $employee, $studentEmployee);
-            $this->saveUser($employeeArray, $contact, $studentEmployee, $userId);
+        $userId = $employee->getUserId();
+        if (empty($userId)) {
+            $userId = $employeeArray['userId'];
         }
+        $contact = $this->getContact($userId, $employeeArray, $employee);
+        $this->saveUser($employeeArray, $contact, $userId);
 
         return $contact;
     }
 
     /**
+     * @param array       $body
+     * @param string|null $id
+     *
+     * @return Response|null
+     */
+    public function checkUniqueEmployeeEmail(array $body, string $id = null): ?Response
+    {
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $body['person']['emails']['email'])])['hydra:member'];
+        if (count($users) > 0 and $users[0]['id'] != $id) {
+            return new Response(
+                json_encode([
+                    'message' => 'A employee user with this email already exists!',
+                    'path'    => 'person.emails.email',
+                    'data'    => ['email' => $body['person']['emails']['email']],
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return null;
+    }
+
+    /**
      * Updates an employee.
      *
-     * @param string $id              The id of the employee to update
-     * @param array  $employeeArray   The input array for the employee to update
-     * @param false  $returnMrcObject Whether or not the result should be a processed employee
-     * @param false  $studentEmployee Whether or not the employee is also a student
+     * @param string $id            The id of the employee
+     * @param array  $employeeArray The input array of the employee
      *
      * @throws Exception
      *
-     * @return Employee|array The resulting employee
+     * @return Employee The resulting employee or raw mrc object
      */
-    public function updateEmployee(string $id, array $employeeArray, bool $returnMrcObject = false, bool $studentEmployee = false)
+    public function updateEmployee(string $id, array $employeeArray): Employee
+    {
+        $employee = $this->updateEmployeeArray($id, $employeeArray);
+
+        return $this->createEmployeeObject($employee);
+    }
+
+    /**
+     * Updates an employee.
+     *
+     * @param string $id            The id of the employee to update
+     * @param array  $employeeArray The input array for the employee to update
+     *
+     * @throws Exception
+     *
+     * @return array The resulting employee
+     */
+    public function updateEmployeeArray(string $id, array $employeeArray): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw, [], $studentEmployee);
+        $employee = $this->createEmployeeObject($employeeRaw);
 
-        //todo remove the studentEmployee bool, also in studentMutationResolver!!! but only when the user stuff works for updating a student
-        $contact = $this->handleRetrievingContact($studentEmployee, $employee, $employeeArray);
+        $contact = $this->handleRetrievingContact($employee, $employeeArray);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, $employee, $employeeRaw);
 
         $resource = $this->ccService->cleanResource($resource);
 
-        $result = $this->eavService->saveObject($resource, 'employees', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]));
+        $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
         key_exists('targetGroupPreferences', $employeeArray) ? $this->createCompetences($employeeArray, $result['id'], $result) : null;
         key_exists('volunteeringPreference', $employeeArray) ? $this->createInterests($employeeArray, $result['id'], $result['interests']) : null;
+        key_exists('currentEducation', $employeeArray) ? $this->createEducations($employeeArray, $result['id'], $result['educations']) : null;
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)) {
-            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
+            //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
+//            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
 
-        //set userRoleArray
-        $userRoleArray = $this->setUserRoleArray($employeeArray);
+        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
+        $result['userRoleArray'] = $this->setUserRoleArray($employeeArray);
 
-        $result = $this->eavService->getObject('employees', $result['@self'], 'mrc');
-        if ($returnMrcObject) {
-            return $result;
-        }
-
-        return $this->createEmployeeObject($result, $userRoleArray);
+        return $result;
     }
 
     /**
@@ -1012,7 +1041,7 @@ class MrcService
      */
     public function setUserRoleArray(array $employeeArray)
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
+        if (key_exists('userGroupIds', $employeeArray) and isset($employeeArray['userGroupIds'][0])) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
         } elseif (isset($user) && key_exists('userGroups', $user) && count($user['userGroups']) > 0) {
@@ -1034,16 +1063,16 @@ class MrcService
     public function deleteSubObjects(array $employee): bool
     {
         foreach ($employee['interests'] as $interest) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $interest['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'interests', 'id' => $interest['id']]);
         }
         foreach ($employee['competencies'] as $competence) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $competence['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
         }
         foreach ($employee['educations'] as $education) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $education['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]);
         }
         foreach ($employee['skills'] as $skill) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $skill['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'skills', 'id' => $skill['id']]);
         }
 
         return true;
@@ -1061,10 +1090,11 @@ class MrcService
     public function deleteEmployee(string $id): bool
     {
         $employeeArray = $this->getEmployeeRaw($id);
-        $this->deleteSubObjects($employeeArray);
         $employee = $this->createEmployeeObject($employeeArray);
+        $this->deleteSubObjects($employeeArray);
         $this->ucService->deleteUser($employee->getUserId());
-        $this->eavService->deleteObject(null, 'employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        $this->ccService->deletePerson($employee->getPerson()->getId());
 
         return true;
     }
@@ -1074,6 +1104,8 @@ class MrcService
      *
      * @param array  $educations The educations to store
      * @param string $employeeId The id of the employee the educations relate to
+     *
+     * @throws Exception
      */
     public function saveEmployeeEducations(array $educations, string $employeeId): void
     {
@@ -1081,9 +1113,9 @@ class MrcService
         foreach ($educations as $education) {
             $education['employee'] = $employeeUri;
             if (isset($education['id'])) {
-                $this->eavService->saveObject($education, 'education', 'mrc', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
+                $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
             } else {
-                $this->eavService->saveObject($education, 'education', 'mrc');
+                $this->eavService->saveObject($education, ['entityName' => 'education', 'componentCode' => 'mrc']);
             }
         }
     }
@@ -1093,17 +1125,18 @@ class MrcService
      *
      * @param string $ccOrganizationId The organization to delete the employees of
      *
+     * @throws Exception
+     *
      * @return bool Whether the operation has been successful or not
      */
     public function deleteEmployees(string $ccOrganizationId): bool
     {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
+        $ccOrganizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganizationId]);
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationUrl])['hydra:member'];
 
         if ($employees > 0) {
             foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
+                $this->deleteEmployee($employee['id']);
             }
         }
 
@@ -1123,10 +1156,10 @@ class MrcService
     public function createEmployeeResource(array $employeeArray, array $contact, ?Employee $employee, ?array $employeeRaw)
     {
         return [
-            'organization'           => key_exists('languageHouseId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['languageHouseId']]) : $employeeRaw['organization'] ?? null,
+            'organization'           => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : $employeeRaw['organization'] ?? null,
             'person'                 => $contact['@id'],
-            'provider'               => key_exists('providerId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['providerId']]) : (isset($employee) ? $employee->getProviderId() : null),
-            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : false),
+            //            'provider'               => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : (isset($employee) ? $employee->getOrganizationId() : null),
+            'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : null),
             'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
             'relevantCertificates'   => key_exists('otherRelevantCertificates', $employeeArray) ? $employeeArray['otherRelevantCertificates'] : (isset($employee) ? $employee->getOtherRelevantCertificates() : null),
             'trainedForJob'          => key_exists('trainedForJob', $employeeArray) ? $employeeArray['trainedForJob'] : null,

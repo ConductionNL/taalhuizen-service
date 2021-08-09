@@ -11,17 +11,16 @@ use Exception;
 
 class DocumentQueryCollectionResolver implements QueryCollectionResolverInterface
 {
-    private CommonGroundService $cgs;
-    private EntityManagerInterface $em;
+    private CommonGroundService $commonGroundService;
     private WRCService $wrcService;
     private ResolverService $resolverService;
 
     public function __construct(
-        CommonGroundService $cgs,
-        EntityManagerInterface $em
+        CommonGroundService $commonGroundService,
+        EntityManagerInterface $entityManager
     ) {
-        $this->cgs = $cgs;
-        $this->wrcService = new WRCService($em, $cgs);
+        $this->commonGroundService = $commonGroundService;
+        $this->wrcService = new WRCService($entityManager, $commonGroundService);
         $this->resolverService = new ResolverService();
     }
 
@@ -46,13 +45,13 @@ class DocumentQueryCollectionResolver implements QueryCollectionResolverInterfac
             $studentId = explode('/', $context['args']['studentId']);
             if (is_array($studentId)) {
                 $studentId = end($studentId);
-                $contact = $this->cgs->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             }
         } elseif (key_exists('aanbiederEmployeeId', $context['args'])) {
             $aanbiederEmployeeId = explode('/', $context['args']['aanbiederEmployeeId']);
             if (is_array($aanbiederEmployeeId)) {
                 $aanbiederEmployeeId = end($aanbiederEmployeeId);
-                $contact = $this->cgs->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
+                $contact = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $aanbiederEmployeeId]);
             }
         } else {
             $contact = null;

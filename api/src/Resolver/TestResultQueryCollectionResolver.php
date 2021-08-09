@@ -3,28 +3,29 @@
 namespace App\Resolver;
 
 use ApiPlatform\Core\GraphQl\Resolver\QueryCollectionResolverInterface;
+use App\Service\LayerService;
 use App\Service\ResolverService;
 use App\Service\TestResultService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Exception;
 use Ramsey\Uuid\Uuid;
 
 class TestResultQueryCollectionResolver implements QueryCollectionResolverInterface
 {
     private TestResultService $testResultService;
     private ResolverService $resolverService;
-    private CommonGroundService $commonGroundService;
 
     public function __construct(
-        ResolverService $resolverService,
-        CommonGroundService $commonGroundService
+        LayerService $layerService
     ) {
-        $this->testResultService = new TestResultService($commonGroundService);
-        $this->resolverService = $resolverService;
+        $this->testResultService = $layerService->testResultService;
+        $this->resolverService = new ResolverService();
     }
 
     /**
      * @inheritDoc
+     *
+     * @throws Exception
      */
     public function __invoke(iterable $collection, array $context): iterable
     {

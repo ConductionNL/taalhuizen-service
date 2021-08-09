@@ -38,11 +38,25 @@ class StudentDossierEventMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Creates a student dossier event.
+     *
+     * @param array $studentDossierEventArray The data for the student dossier event
+     *
+     * @return StudentDossierEvent The resulting student dossier event
+     */
     public function createStudentDossierEvent(array $studentDossierEventArray): StudentDossierEvent
     {
         return $this->eduService->createEducationEvent($studentDossierEventArray);
     }
 
+    /**
+     * Updates a student dossier event.
+     *
+     * @param array $input The data for the student dossier event
+     *
+     * @return StudentDossierEvent The resulting student dossier event
+     */
     public function updateStudentDossierEvent(array $input): StudentDossierEvent
     {
         $idArray = explode('/', $input['id']);
@@ -51,6 +65,13 @@ class StudentDossierEventMutationResolver implements MutationResolverInterface
         return $this->eduService->updateEducationEvent($id, $input);
     }
 
+    /**
+     * Deletes a student dossier event.
+     *
+     * @param array $studentDossierEvent The data to delete the student dossier event
+     *
+     * @return StudentDossierEvent|null The resulting data
+     */
     public function deleteStudentDossierEvent(array $studentDossierEvent): ?StudentDossierEvent
     {
         $idArray = explode('/', $studentDossierEvent['id']);

@@ -6,26 +6,37 @@ use ApiPlatform\Core\GraphQl\Resolver\MutationResolverInterface;
 use App\Entity\LanguageHouse;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
+use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class LanguageHouseMutationResolver implements MutationResolverInterface
 {
+    private EntityManagerInterface $entityManager;
+    private CommonGroundService $commonGroundService;
+    private ParameterBagInterface $parameterBagInterface;
     private CCService $ccService;
     private UcService $ucService;
-    private MrcService $mrcService;
     private EDUService $eduService;
+    private MrcService $mrcService;
 
+    /**
+     * LanguageHouseMutationResolver constructor.
+     *
+     * @param UcService    $ucService
+     * @param LayerService $layerService
+     */
     public function __construct(
-        CCService $ccService,
         UcService $ucService,
-        MrcService $mrcService,
-        EDUService $eduService
+        LayerService $layerService
     ) {
-        $this->ccService = $ccService;
+        $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
-        $this->mrcService = $mrcService;
-        $this->eduService = $eduService;
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
+        $this->mrcService = new MrcService($layerService, $ucService);
     }
 
     /**
@@ -48,6 +59,13 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         }
     }
 
+    /**
+     * Create LanguageHouse.
+     *
+     * @param array $languageHouseArray the resource data.
+     *
+     * @return LanguageHouse The resulting LanguageHouse properties
+     */
     public function createLanguageHouse(array $languageHouseArray): LanguageHouse
     {
         $type = 'Taalhuis';
@@ -58,6 +76,13 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Update LanguageHouse.
+     *
+     * @param array $input the input data.
+     *
+     * @return LanguageHouse The resulting LanguageHouse properties
+     */
     public function updateLanguageHouse(array $input): LanguageHouse
     {
         $id = explode('/', $input['id']);
@@ -73,6 +98,13 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         return $this->ccService->createOrganizationObject($result, $type);
     }
 
+    /**
+     * Delete LanguageHouse.
+     *
+     * @param array $input the input data.
+     *
+     * @return ?LanguageHouse The resulting LanguageHouse properties
+     */
     public function deleteLanguageHouse(array $input): ?LanguageHouse
     {
         $id = explode('/', $input['id']);
@@ -86,7 +118,7 @@ class LanguageHouseMutationResolver implements MutationResolverInterface
         //delete employees
         $this->mrcService->deleteEmployees($id);
 
-        //delete participants
+        //delete participants, this should just be done with the studentService!
         $programId = $this->eduService->deleteParticipants($id);
 
         $this->ccService->deleteOrganization($id, $programId);

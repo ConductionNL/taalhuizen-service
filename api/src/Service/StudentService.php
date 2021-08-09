@@ -32,11 +32,11 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns student
      */
-    public function getStudent(string $id, $studentUrl = null, $skipChecks = false): array
+    public function getStudent(string $id, bool $skipChecks = false): array
     {
         if (isset($id)) {
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
@@ -61,13 +61,13 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns array with students subresources
      */
     private function getStudentObjects($studentUrl = null, $skipChecks = false): array
     {
-        $participant = $this->eavService->getObject('participants', $studentUrl, 'edu');
+        $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
 
         $person = $this->getStudentPerson($participant, $skipChecks);
 
@@ -101,7 +101,7 @@ class StudentService
      * @param array $participant Array with participants data
      * @param false $skipChecks  Bool if code should skip checks or not
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns person as array
      */
@@ -112,13 +112,15 @@ class StudentService
         }
         // Get the cc/person from EAV
         if ($skipChecks || $this->eavService->hasEavObject($participant['person'])) {
-            $person = $this->eavService->getObject('people', $participant['person'], 'cc');
+            $person = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $participant['person']]);
         } else {
             throw new Exception('Warning, '.$participant['person'].' does not have an eav object (eav/cc/people)!');
         }
 
         return $person;
     }
+
+    //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeObject)
 
     /**
      * This function fetches the students availability notes.
@@ -193,7 +195,7 @@ class StudentService
      * @param array $person     Array with persons data
      * @param false $skipChecks Bool if code should skip checks or not
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array|false|mixed|null Returns the employee as array
      */
@@ -204,7 +206,7 @@ class StudentService
         if (count($employees) > 0) {
             $employee = $employees[0];
             if ($skipChecks || $this->eavService->hasEavObject($employee['@id'])) {
-                $employee = $this->eavService->getObject('employees', $employee['@id'], 'mrc');
+                $employee = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $employee['@id']]);
             }
         }
 
@@ -217,7 +219,7 @@ class StudentService
      * @param array $query         Array with query params
      * @param bool  $registrations Bool for if there are registrations
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return array Returns an array of students
      */
@@ -240,7 +242,7 @@ class StudentService
      * @param string $providerId ID of the provider
      * @param string $status     A possible status for a student
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with Student objects
      */
@@ -250,7 +252,7 @@ class StudentService
         // Check if provider exists in eav and get it if it does
         if ($this->eavService->hasEavObject(null, 'organizations', $providerId, 'cc')) {
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $providerId]);
-            $provider = $this->eavService->getObject('organizations', $providerUrl, 'cc');
+            $provider = $this->eavService->getObject(['entityName' => 'organizations', 'componentCode' => 'cc', 'self' => $providerUrl]);
             // Get the provider eav/cc/organization participations and their edu/participant urls from EAV
             $collection = $this->getStudentWithStatusFromParticipations($collection, $provider, $status);
         } else {
@@ -279,7 +281,7 @@ class StudentService
                 //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                if ($this->eavService->hasEavObject($participationUrl)) {
                 // Get eav/Participation
-                $participation = $this->eavService->getObject('participations', $participationUrl);
+                $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
                 //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                 if ($participation['status'] == $status && isset($participation['learningNeed'])) {
                     $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
@@ -305,7 +307,7 @@ class StudentService
      * @param array                                        $studentUrls     Array of student urls
      * @param string                                       $learningNeedUrl URL of the learning need
      *
-     * @throws \Exception
+     *@throws Exception
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      */
@@ -313,13 +315,13 @@ class StudentService
     {
         //maybe just add the edu/participant (/student) url to the participation as well, to do one less call (this one:) todo?
         // Get eav/LearningNeed
-        $learningNeed = $this->eavService->getObject('learning_needs', $learningNeedUrl);
+        $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'self' => $learningNeedUrl]);
         if (isset($learningNeed['participants']) && count($learningNeed['participants']) > 0) {
             // Add studentUrl to array, if it is not already in there
             if (!in_array($learningNeed['participants'][0], $studentUrls)) {
                 $studentUrls[] = $learningNeed['participants'][0];
                 // Get the actual student, use skipChecks=true in order to reduce the amount of calls used
-                $student = $this->getStudent(null, $learningNeed['participants'][0], true);
+                $student = $this->getStudent($this->commonGroundService->getUuidFromUrl($learningNeed['participants'][0]), true);
                 if ($student['participant']['status'] == 'accepted') {
                     // Handle Result
                     $resourceResult = $this->handleResult($student);
@@ -338,7 +340,7 @@ class StudentService
      *
      * @param array $input Array with students data
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkStudentValues(array $input)
     {
@@ -372,11 +374,11 @@ class StudentService
      * @param array $student      Array with students data
      * @param false $registration
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return object Returns Student object
      */
-    public function handleResult(array $student, $registration = false): object
+    public function handleResult(array $student, bool $registration = false): object
     {
         // Put together the expected result for Lifely:
         if ($registration) {
@@ -417,6 +419,8 @@ class StudentService
      * @param mixed $resource Student object
      * @param array $student  Array with students data
      *
+     * @throws Exception
+     *
      * @return object Returns a Student object
      */
     private function handleSubResources($resource, array $student): object
@@ -430,10 +434,12 @@ class StudentService
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
 
-        $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-        $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
-        $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
-        $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        if (isset($student['employee'])) {
+            $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
+            $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
+            $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+            $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($student['person']));
         $resource->setPermissionDetails($this->handlePermissionDetails($student['person']));
@@ -628,22 +634,22 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     * @throws \Exception
+     *@throws Exception
      *
-     * @return array|null[] Returns an array of educations
+     *@return array|null[] Returns an array of educations
      */
-    public function getEducationsFromEmployee(array $employee, $followingEducation = false): array
+    public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
         $educations = [
-            'lastEducation'         => null,
-            'followingEducationNo'  => null,
-            'followingEducationYes' => null,
-            'course'                => null,
+            'lastEducation'         => [],
+            'followingEducationNo'  => [],
+            'followingEducationYes' => [],
+            'course'                => [],
         ];
 
         if (isset($employee['educations'])) {
             foreach ($employee['educations'] as $education) {
-                $this->setEducationType($educations, $education);
+                $educations = array_merge($educations, $this->setEducationType($educations, $education));
             }
         }
 
@@ -660,28 +666,30 @@ class StudentService
      * @param array $educations Array with educations data
      * @param array $education  Array with education data
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    private function setEducationType(array &$educations, array $education)
+    private function setEducationType(array $educations, array $education): array
     {
         switch ($education['description']) {
             case 'lastEducation':
                 $educations['lastEducation'] = $education;
                 break;
             case 'followingEducationNo':
-                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
                     $educations['followingEducationNo'] = $education;
                 }
                 break;
             case 'followingEducationYes':
-                if (!isset($educations['followingEducationYes']) && !isset($educations['followingEducationNo'])) {
-                    $educations['followingEducationYes'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
+                    $educations['followingEducationYes'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 }
                 break;
             case 'course':
-                $educations['course'] = $this->eavService->getObject('education', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]), 'mrc');
+                $educations['course'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 break;
         }
+
+        return $educations;
     }
 
     /**
