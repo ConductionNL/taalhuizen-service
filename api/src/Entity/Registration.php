@@ -24,13 +24,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
+ *          "get"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
  *          "put",
  *          "delete"
  *     },
  *     collectionOperations={
  *          "get",
- *          "post",
+ *          "post"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
  *     })
  * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
@@ -104,7 +110,7 @@ class Registration
      *     }
      * )
      */
-    private ?string $memo;
+    private ?string $memo = null;
 
     /**
      * @var string|null The Status of this registration.
