@@ -238,9 +238,9 @@ class CCService
         $resource = [
             'name'               => $organizationArray['name'],
             'type'               => $type,
-            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
-            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
-            'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
+            'telephones'         => key_exists('telephones', $organizationArray) && $organizationArray['telephones'] ? [['name' => $organizationArray['telephones']['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails'             => key_exists('emails', $organizationArray) && $organizationArray['emails'] ? [['name' => $organizationArray['emails']['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses'          => key_exists('addresses', $organizationArray) && $organizationArray['addresses'] ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
@@ -420,11 +420,14 @@ class CCService
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
         foreach ($personArray as $key => $value) {
-            if (!$value) {
-                unset($personArray[$key]);
+            if ($key == 'organization' && $value) {
+                $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
             }
             if ($key == 'emails') {
                 $personArray[$key] = [$personArray[$key]];
+            }
+            if (!$value) {
+                unset($personArray[$key]);
             }
         }
 

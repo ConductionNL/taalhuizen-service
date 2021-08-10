@@ -54,7 +54,7 @@ class Telephone
      *     }
      * )
      */
-    private ?string $name;
+    private ?string $name = null;
 
     /**
      * @var string The actual phone number.

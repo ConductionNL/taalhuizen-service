@@ -216,7 +216,7 @@ class Person
 
     public function __construct()
     {
-        $this->emails = new ArrayCollection();
+//        $this->emails = new ArrayCollection();
         $this->telephones = new ArrayCollection();
     }
 
