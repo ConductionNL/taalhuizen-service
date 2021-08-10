@@ -13,6 +13,7 @@ use Error;
 use Exception;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\Response;
 
 class MrcService
 {
@@ -38,9 +39,9 @@ class MrcService
         $this->commonGroundService = $layerService->commonGroundService;
         $this->ucService = $ucService;
         $this->bsService = $layerService->bsService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->eavService = new EAVService($layerService->commonGroundService);
-        $this->availabilityService = new AvailabilityService($layerService->entityManager);
+        $this->availabilityService = new AvailabilityService($layerService);
     }
 
     /**
@@ -84,7 +85,12 @@ class MrcService
      */
     public function getEmployeeRaw(string $id): array
     {
-        return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id])]);
+        $self = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        if ($this->eavService->hasEavObject($self)) {
+            return $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $self]);
+        }
+
+        return $this->commonGroundService->getResource($self);
     }
 
     /**
@@ -137,7 +143,7 @@ class MrcService
                     $competence['grade'] = $employeeArray['hasExperienceWithTargetGroup'];
                     unset($employeeArray['targetGroupPreferences'][array_search($competence['name'], $employeeArray['targetGroupPreferences'])]);
                 } else {
-                    $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $employee['competences']['id']]);
+                    $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
                 }
             }
         }
@@ -567,16 +573,13 @@ class MrcService
      */
     public function createEmployeeObject(array $employeeArray): Employee
     {
-        if ($this->eavService->hasEavObject($employeeArray['person'])) {
-            $contact = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' => $employeeArray['person']]);
-        } else {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        }
+        $contact = $this->ccService->getEavPerson($employeeArray['person']);
 
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));
         $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
-        $employee->setAvailabilityNotes(null); //TODO: make sure to set and get this note!
+        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($contact['@id']);
+        $employee->setAvailabilityNotes($availabilityMemo['description'] ?? null);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
@@ -798,14 +801,11 @@ class MrcService
      */
     public function getContact(string $userId, array $employeeArray, ?Employee $employee = null): array
     {
-        if (isset($employeeArray['person'])) {
-            $contact = $this->commonGroundService->getResource($employeeArray['person']);
-        // if this person does not exist we should not create it here, but before we update the student employee object!
+        if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
+            return  $this->commonGroundService->getResource($employeeArray['person']);
         } else {
-            $contact = $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+            return $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
         }
-
-        return $contact;
     }
 
     /**
@@ -866,6 +866,8 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
+        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
+
         $this->saveUser($employeeArray, $contact);
 
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
@@ -919,7 +921,7 @@ class MrcService
      */
     public function handleUserRoleArray(array $employeeArray)
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
+        if (key_exists('userGroupIds', $employeeArray) and isset($employeeArray['userGroupIds'][0])) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
         } else {
@@ -952,6 +954,47 @@ class MrcService
     }
 
     /**
+     * @param array       $body
+     * @param string|null $id
+     *
+     * @return Response|null
+     */
+    public function checkUniqueEmployeeEmail(array $body, string $id = null): ?Response
+    {
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $body['person']['emails']['email'])])['hydra:member'];
+        if (count($users) > 0 and $users[0]['id'] != $id) {
+            return new Response(
+                json_encode([
+                    'message' => 'A employee user with this email already exists!',
+                    'path'    => 'person.emails.email',
+                    'data'    => ['email' => $body['person']['emails']['email']],
+                ]),
+                Response::HTTP_CONFLICT,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * Updates an employee.
+     *
+     * @param string $id            The id of the employee
+     * @param array  $employeeArray The input array of the employee
+     *
+     * @throws Exception
+     *
+     * @return Employee The resulting employee or raw mrc object
+     */
+    public function updateEmployee(string $id, array $employeeArray): Employee
+    {
+        $employee = $this->updateEmployeeArray($id, $employeeArray);
+
+        return $this->createEmployeeObject($employee);
+    }
+
+    /**
      * Updates an employee.
      *
      * @param string $id            The id of the employee to update
@@ -964,7 +1007,7 @@ class MrcService
     public function updateEmployeeArray(string $id, array $employeeArray): array
     {
         $employeeRaw = $this->getEmployeeRaw($id);
-        $employee = $this->createEmployeeObject($employeeRaw, []);
+        $employee = $this->createEmployeeObject($employeeRaw);
 
         $contact = $this->handleRetrievingContact($employee, $employeeArray);
 
@@ -979,10 +1022,9 @@ class MrcService
 
         // Saves lastEducation, followingEducation and course for student as employee
         if (key_exists('educations', $employeeArray)) {
-            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
+            //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
+//            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
         }
-
-        //set userRoleArray
 
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         $result['userRoleArray'] = $this->setUserRoleArray($employeeArray);
@@ -999,7 +1041,7 @@ class MrcService
      */
     public function setUserRoleArray(array $employeeArray)
     {
-        if (key_exists('userGroupIds', $employeeArray)) {
+        if (key_exists('userGroupIds', $employeeArray) and isset($employeeArray['userGroupIds'][0])) {
             $userRole = $this->commonGroundService->getResource(['component' => 'uc', 'type' => 'groups', 'id' => $employeeArray['userGroupIds'][0]]);
             $userRoleArray = $this->convertUserRole($userRole);
         } elseif (isset($user) && key_exists('userGroups', $user) && count($user['userGroups']) > 0) {
@@ -1021,16 +1063,16 @@ class MrcService
     public function deleteSubObjects(array $employee): bool
     {
         foreach ($employee['interests'] as $interest) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $interest['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'interests', 'id' => $interest['id']]);
         }
         foreach ($employee['competencies'] as $competence) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $competence['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'competences', 'id' => $competence['id']]);
         }
         foreach ($employee['educations'] as $education) {
             $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]);
         }
         foreach ($employee['skills'] as $skill) {
-            $this->commonGroundService->deleteResource(null, str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav', '', $skill['@id']));
+            $this->commonGroundService->deleteResource(null, ['component' => 'mrc', 'type' => 'skills', 'id' => $skill['id']]);
         }
 
         return true;
@@ -1051,7 +1093,8 @@ class MrcService
         $employee = $this->createEmployeeObject($employeeArray);
         $this->deleteSubObjects($employeeArray);
         $this->ucService->deleteUser($employee->getUserId());
-        $this->eavService->deleteObject(null, 'employees', $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]), 'mrc');
+        $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
+        $this->ccService->deletePerson($employee->getPerson()->getId());
 
         return true;
     }
@@ -1082,17 +1125,18 @@ class MrcService
      *
      * @param string $ccOrganizationId The organization to delete the employees of
      *
+     * @throws Exception
+     *
      * @return bool Whether the operation has been successful or not
      */
     public function deleteEmployees(string $ccOrganizationId): bool
     {
-        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationId])['hydra:member'];
+        $ccOrganizationUrl = $this->commonGroundService->cleanUrl(['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganizationId]);
+        $employees = $this->commonGroundService->getResourceList(['component' => 'mrc', 'type' => 'employees'], ['organization' => $ccOrganizationUrl])['hydra:member'];
 
         if ($employees > 0) {
             foreach ($employees as $employee) {
-                $person = $this->commonGroundService->getResource($employee['person']);
-                $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->commonGroundService->deleteResource(null, ['component'=>'mrc', 'type'=>'employees', 'id'=>$employee['id']]);
+                $this->deleteEmployee($employee['id']);
             }
         }
 

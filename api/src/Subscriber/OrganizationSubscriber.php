@@ -9,9 +9,7 @@ use App\Service\EDUService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,9 +19,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class OrganizationSubscriber implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
     private SerializerService $serializerService;
-    private CommonGroundService $commonGroundService;
     private CCService $ccService;
     private UcService $ucService;
     private EDUService $eduService;
@@ -37,9 +33,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
      */
     public function __construct(LayerService $layerService, UcService $ucService)
     {
-        $this->entityManager = $layerService->entityManager;
-        $this->commonGroundService = $layerService->commonGroundService;
-        $this->ccService = new CCService($layerService->entityManager, $layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
         $this->ucService = $ucService;
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->serializerService = new SerializerService($layerService->serializer);
@@ -76,7 +70,6 @@ class OrganizationSubscriber implements EventSubscriberInterface
                 return;
         }
 
-        $this->entityManager->remove($resource);
         if ($response instanceof Response) {
             $event->setResponse($response);
 
@@ -103,17 +96,9 @@ class OrganizationSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-        $organizations = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['name' => $body['name'], 'type' => $body['type']])['hydra:member'];
-        if (count($organizations) > 0) {
-            return new Response(
-                json_encode([
-                    'message' => 'A '.$body['type'].' with this name already exists!',
-                    'path'    => 'name',
-                    'data'    => ['name' => $body['name']],
-                ]),
-                Response::HTTP_CONFLICT,
-                ['content-type' => 'application/json']
-            );
+        $uniqueName = $this->ccService->checkUniqueOrganizationName($body);
+        if ($uniqueName instanceof Response) {
+            return $uniqueName;
         }
 
         $organization = $this->ccService->createOrganization($body, $body['type']);
