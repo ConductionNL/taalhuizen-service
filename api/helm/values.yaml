@@ -14,55 +14,6 @@ security:
   jwt:
     id:
     privateKey:
-  dependencies:
-    arc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://agendaservice.local
-    bs:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://berichtservice.local
-    chrc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://chrc.local
-    cmc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://cmc.local
-    cc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://contactcatalogus.local
-    eav:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://eav-component.local
-    edu:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://education-component.local
-    mrc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://medewerkerregistratiecomponent.local
-    memo:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://memo-component.local
-    rc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://review-component.local
-    uc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://user-component.local
-    wrc:
-      apikey: "!changeme!"
-      auth: apikey
-      location: http://webresourcecatalogus.local
 
 php:
   repository: docker.io/conduction/protocomponent-php
