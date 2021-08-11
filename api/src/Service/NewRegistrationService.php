@@ -34,10 +34,31 @@ class NewRegistrationService
         $this->entityManager = $layerService->entityManager;
     }
 
+    public function checkRegistration(Registration $registration): void
+    {
+        if($registration->getPermissionDetails() == null){
+            throw new BadRequestPathException('Permission details are not provided.', 'permissionDetails');
+        }
+        if($registration->getRegistrar()->getOrganization() == null){
+            throw new BadRequestPathException('Organization of registrar not provided', 'registrar.organization');
+        }
+        if(!$registration->getRegistrar()->getGivenName() || !$registration->getRegistrar()->getFamilyName()){
+            throw new BadRequestPathException('Name of registrar not provided', 'registrar.' . $registration->getRegistrar()->getGivenName() ? 'familyName' : 'givenName' );
+        }
+
+        if(!$registration->getRegistrar()->getEmails() || !$registration->getRegistrar()->getEmails()->getEmail()){
+            throw new BadRequestPathException('Email of registrar not provided', 'registrar' . ($registration->getRegistrar()->getEmails() ? 'emails.email' : '.emails'));
+        }
+        if(!$registration->getRegistrar()->getTelephones() || !$registration->getRegistrar()->getTelephones()[0]->getTelephone()){
+            throw new BadRequestPathException('Email of registrar not provided', 'registrar' . $registration->getRegistrar()->getTelephones() ? 'telephones[0].email' : '.emails');
+        }
+    }
+
     public function createRegistration(Registration $registration): Registration
     {
+        $this->checkRegistration($registration);
         $registrarArray = $this->ccService->createPerson($registration->getRegistrar());
-        $studentArray = $this->ccService->createPerson($registration->getStudent());
+        $studentArray = $this->ccService->createPerson($registration->getStudent(), $registration->getPermissionDetails()->setId(Uuid::uuid4()));
         $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $registration->getLanguageHouseId()]);
         if($registration->getMemo()){
             $memo = [
@@ -66,6 +87,9 @@ class NewRegistrationService
         $this->entityManager->persist($registration->getStudent());
         $registration->getStudent()->setId(Uuid::fromString($studentArray['id']));
         $this->entityManager->persist($registration->getStudent());
+        $this->entityManager->persist($registration->getPermissionDetails());
+        $registration->getPermissionDetails()->setId(Uuid::fromString($studentArray['id']));
+        $this->entityManager->persist($registration->getPermissionDetails());
         $this->entityManager->persist($registration);
         $registration->setId(Uuid::fromString($registrationArray['id']));
         $this->entityManager->persist($registration);
@@ -112,6 +136,9 @@ class NewRegistrationService
             $studentArray = $this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $update['student']);
             $participant['person'] = $studentArray['@id'];
         }
+        if(key_exists('permissionDetails', $update)){
+            $this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $this->ccService->cleanPermissions($update['permissionDetails']));
+        }
         if(key_exists('registrar', $update)) {
             $registrarArray = $this->ccService->updatePerson($oldRegistration->getRegistrar()->getId(), $update['registrar']);
             $participant['registrar'] = $registrarArray['@id'];
@@ -122,7 +149,6 @@ class NewRegistrationService
         }
         if(key_exists('memo', $update)){
             $memo = $this->updateMemo($oldRegistration, $update['memo']);
-            var_dump($memo);
         }
 
         $registrationArray = $this->eduService->saveEavParticipant($participant, $participant['@id']);
@@ -153,7 +179,8 @@ class NewRegistrationService
     {
         $registration = new Registration;
         $registration->setStudent($this->ccService->createPersonObject($studentArray = $this->ccService->getEavPerson($participation['person'])));
-        $registration->setRegistrar($this->ccService->createPersonObject( $this->ccService->getEavPerson($participation['registrar'])));
+        $registration->setRegistrar($this->ccService->createPersonObject($this->ccService->getEavPerson($participation['registrar'])));
+        $registration->setPermissionDetails($this->ccService->createStudentPermissionsObject($studentArray));
         $registration->setStatus(ucfirst($participation['status']));
         $languageHouse = explode( '/', $participation['referredBy']);
         $registration->setLanguageHouseId(end($languageHouse));

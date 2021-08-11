@@ -134,6 +134,18 @@ class Registration
      */
     private ?string $status = 'Pending';
 
+    /**
+     * @var StudentPermission The StudentPermission of this Student.
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
+     */
+    private ?StudentPermission $permissionDetails = null;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -202,6 +214,18 @@ class Registration
     public function setStatus(?string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPermissionDetails(): ?StudentPermission
+    {
+        return $this->permissionDetails;
+    }
+
+    public function setPermissionDetails(?StudentPermission $permissionDetails): self
+    {
+        $this->permissionDetails = $permissionDetails;
 
         return $this;
     }

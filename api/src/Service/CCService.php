@@ -7,6 +7,7 @@ use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\Organization;
 use App\Entity\Person;
+use App\Entity\StudentPermission;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -79,6 +80,25 @@ class CCService
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    public function createStudentPermissionsObject(array $result): ?StudentPermission
+    {
+        if(
+            isset($result['didSignPermissionForm']) &&
+            isset($result['hasPermissionToShareDataWithAanbieders']) &&
+            isset($result['hasPermissionToShareDataWithLibraries']) &&
+            isset($result['hasPermissionToSendInformationAboutLibraries'])
+        ){
+            $permissions = new StudentPermission();
+            $permissions->setHasPermissionToShareDataWithProviders($result['hasPermissionToShareDataWithAanbieders']);
+            $permissions->setHasPermissionToShareDataWithLibraries($result['hasPermissionToShareDataWithLibraries']);
+            $permissions->setHasPermissionToSendInformationAboutLibraries($result['hasPermissionToSendInformationAboutLibraries']);
+            $permissions->setDidSignPermissionForm($result['didSignPermissionForm']);
+            return $permissions;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -406,19 +426,31 @@ class CCService
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
+    public function cleanPermissions(array $permissions): array
+    {
+        foreach($permissions as $key=>$value){
+            if($key == 'hasPermissionToShareDataWithProviders'){
+                $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
+                unset($permissions[$key]);
+            }
+        }
+        return $permissions;
+    }
+
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param array $person The person array to provide to the contact catalogue
-     *
-     * @throws Exception
-     *
+     * @param Person $person The person array to provide to the contact catalogue
+     * @param StudentPermission|null $permissions
      * @return array The result from the contact catalogue and EAV
+     * @throws Exception
      */
-    public function createPerson(Person $person): array
+    public function createPerson(Person $person, ?StudentPermission $permissions = null): array
     {
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        $permissionsArray = $permissions ? $this->cleanPermissions(json_decode($this->serializer->serialize($permissions, 'json', ['ignored_attributes' => ['id']]), true)) : [];
+        $personArray = array_merge($personArray, $permissionsArray);
         $personArray = $this->cleanPerson($personArray);
 
         return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
@@ -435,7 +467,7 @@ class CCService
             if ($key == 'emails') {
                 $personArray[$key] = [$personArray[$key]];
             }
-            if (!$value) {
+            if ($value !== false && !$value) {
                 unset($personArray[$key]);
             }
         }
