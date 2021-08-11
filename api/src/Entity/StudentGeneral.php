@@ -85,15 +85,15 @@ class StudentGeneral
     private ?string $otherLanguages;
 
     /**
-     * @var array|null The family composition of this student.
+     * @var string|null The family composition of this student.
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice(multiple=true, choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
-     * @ORM\Column(type="array", nullable=true)
+     * @Assert\Choice(choices={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"})
+     * @ORM\Column(type="string", nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
-     *             "type"="array",
+     *             "type"="string",
      *             "items"={
      *               "type"="string",
      *               "enum"={"MARRIED_PARTNER", "SINGLE", "DIVORCED", "WIDOW"},
@@ -103,7 +103,7 @@ class StudentGeneral
      *     }
      * )
      */
-    private ?array $familyComposition = [];
+    private ?string $familyComposition;
 
     /**
      * @var int|null The amount of children of this student.
@@ -183,12 +183,12 @@ class StudentGeneral
         return $this;
     }
 
-    public function getFamilyComposition(): ?array
+    public function getFamilyComposition(): ?string
     {
         return $this->familyComposition;
     }
 
-    public function setFamilyComposition(?array $familyComposition): self
+    public function setFamilyComposition(?string $familyComposition): self
     {
         $this->familyComposition = $familyComposition;
 
