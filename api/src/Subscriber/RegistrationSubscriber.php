@@ -4,17 +4,15 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Registration;
-use App\Entity\Student;
 use App\Service\LayerService;
 use App\Service\NewRegistrationService;
-use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
-use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -31,8 +29,8 @@ class RegistrationSubscriber implements EventSubscriberInterface
     /**
      * StudentSubscriber constructor.
      *
-     * @param StudentService   $registrationService
-     * @param LayerService $layerService
+     * @param StudentService $registrationService
+     * @param LayerService   $layerService
      */
     public function __construct(NewRegistrationService $registrationService, LayerService $layerService)
     {
@@ -87,7 +85,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
 
     public function createRegistration(object $registration): Registration
     {
-        if($registration instanceof Registration){
+        if ($registration instanceof Registration) {
             return $this->registrationService->createRegistration($registration);
         } else {
             throw new Error('wrong type');
