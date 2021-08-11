@@ -5,6 +5,8 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Registration;
 use App\Entity\Student;
+use App\Exception\BadRequestPathException;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewRegistrationService;
 use App\Service\StudentService;
@@ -30,6 +32,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
     private SerializerService $serializerService;
     private NewRegistrationService $registrationService;
     private UcService $ucService;
+    private ErrorSerializerService $errorSerializerService;
 //    private ParticipationService $participationService;
 
     /**
@@ -45,6 +48,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $this->registrationService = new NewRegistrationService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
         $this->ucService = $ucService;
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
 
 //        $this->participationService = new ParticipationService($studentService, $layerService);
     }
@@ -70,26 +74,29 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_registrations_post_collection':
-                $response = $this->registrationService->createRegistration($resource);
-                break;
-            case 'api_registrations_get_collection':
-                $response = $this->getRegistrations($event->getRequest()->query->all(), $event);
-                break;
-            case 'api_registrations_put_item':
-                $response = $this->registrationService->updateRegistration($event->getRequest()->attributes->get('id'), json_decode($event->getRequest()->getContent(), true));
-                break;
-            default:
-                return;
-        }
+        try{
+            switch ($route) {
+                case 'api_registrations_post_collection':
+                    $response = $this->registrationService->createRegistration($resource);
+                    break;
+                case 'api_registrations_get_collection':
+                    $response = $this->getRegistrations($event->getRequest()->query->all(), $event);
+                    break;
+                case 'api_registrations_put_item':
+                    $response = $this->registrationService->updateRegistration($event->getRequest()->attributes->get('id'), json_decode($event->getRequest()->getContent(), true));
+                    break;
+                default:
+                    return;
+            }
 
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+            }
+            $this->serializerService->setResponse($response, $event);
+        } catch (BadRequestPathException $exception) {
+            var_dump('boo!');
+            $this->errorSerializerService->serialize($exception, $event);
         }
-        $this->serializerService->setResponse($response, $event);
     }
 
     public function createRegistration(object $registration): Registration
@@ -109,7 +116,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $currentUser = $this->ucService->getUserArray($payload['userId']);
 
         if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
-            return $this->registrationService->getRegistrations(array_merge($query, ['referredBy' => $currentUser['organization']]));
+            return $this->registrationService->getRegistrations(array_merge($query, ['referredBy' => $currentUser['organization'], 'status' => 'pending']));
         } else {
             return $this->registrationService->getRegistrations($query);
         }

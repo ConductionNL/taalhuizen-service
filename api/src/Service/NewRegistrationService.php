@@ -94,7 +94,7 @@ class NewRegistrationService
     {
 //        var_dump($participant, $update);
         if(key_exists('status', $update) && ($participant['status'] == 'accepted' || $participant['status'] == 'rejected')) {
-            throw new BadRequestPathException('Cannot change status of accepted or rejected registrations', 'status', $update['status']);
+            throw new BadRequestPathException('Cannot change status of accepted or rejected registrations', 'status', ['status' => $update['status']]);
         }
         elseif (key_exists('status', $update)){
             $participant['status'] = strtolower($update['status']);
