@@ -3,21 +3,16 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Registration;
 use App\Entity\Report;
-use App\Entity\Student;
 use App\Service\EDUService;
 use App\Service\LayerService;
-use App\Service\NewRegistrationService;
-use App\Service\ReportService;
-use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\ReportService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
-use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -34,8 +29,8 @@ class ReportSubscriber implements EventSubscriberInterface
     /**
      * StudentSubscriber constructor.
      *
-     * @param ReportService   $reportService
-     * @param LayerService $layerService
+     * @param ReportService $reportService
+     * @param LayerService  $layerService
      */
     public function __construct(ReportService $reportService, LayerService $layerService)
     {
@@ -66,7 +61,7 @@ class ReportSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-        
+
         // Lets limit the subscriber
         switch ($route) {
             case 'api_reports_participants_report_collection':
@@ -110,7 +105,7 @@ class ReportSubscriber implements EventSubscriberInterface
             );
         }
 
-        if($report instanceof Report){
+        if ($report instanceof Report) {
             return $this->reportService->createParticipantsReport($report);
         } else {
             throw new Error('wrong organizationId');
@@ -137,7 +132,7 @@ class ReportSubscriber implements EventSubscriberInterface
             );
         }
 
-        if($report instanceof Report){
+        if ($report instanceof Report) {
             return $this->reportService->createParticipantsReport($report);
         } else {
             throw new Error('wrong organizationId');
@@ -164,7 +159,7 @@ class ReportSubscriber implements EventSubscriberInterface
             );
         }
 
-        if($report instanceof Report){
+        if ($report instanceof Report) {
             return $this->reportService->createParticipantsReport($report);
         } else {
             throw new Error('wrong organizationId');
