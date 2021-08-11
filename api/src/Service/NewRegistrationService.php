@@ -63,6 +63,5 @@ class NewRegistrationService
     public function getRegistration(string $id): Registration
     {
         $participation = $this->eavService->getObject(['componentCode' => 'edu', 'entityName' => 'participants', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
-
     }
 }
