@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service;
-
 
 use App\Entity\Registration;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -31,11 +29,11 @@ class NewRegistrationService
         $registrarArray = $this->ccService->createPerson($registration->getRegistrar());
         $studentArray = $this->ccService->createPerson($registration->getStudent());
         $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $registration->getLanguageHouseId()]);
-        if($registration->getMemo()){
+        if ($registration->getMemo()) {
             $memo = [
-                'name' => "Generated Memo",
-                'author' => $registrarArray['@id'],
-                'topic' => $studentArray['@id'],
+                'name'        => 'Generated Memo',
+                'author'      => $registrarArray['@id'],
+                'topic'       => $studentArray['@id'],
                 'description' => $registration->getMemo(),
             ];
             $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);

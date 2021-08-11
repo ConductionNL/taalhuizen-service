@@ -1,11 +1,7 @@
 <?php
 
-
 namespace App\Service;
 
-
-use App\Entity\LearningNeed;
-use App\Entity\Registration;
 use App\Entity\Report;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
@@ -137,9 +133,9 @@ class ReportService
     /**
      * fills the learning needs.
      *
-     * @param array $participants The participants for the learning needs
-     * @param string|null $dateFrom The date from which the data starts
-     * @param string|null $dateUntil The date on which the data ends
+     * @param array       $participants The participants for the learning needs
+     * @param string|null $dateFrom     The date from which the data starts
+     * @param string|null $dateUntil    The date on which the data ends
      *
      * @return array The resulting data
      */

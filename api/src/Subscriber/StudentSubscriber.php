@@ -5,8 +5,8 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Student;
 use App\Service\LayerService;
-use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,8 +28,8 @@ class StudentSubscriber implements EventSubscriberInterface
     /**
      * StudentSubscriber constructor.
      *
-     * @param StudentService   $studentService
-     * @param LayerService $layerService
+     * @param StudentService $studentService
+     * @param LayerService   $layerService
      */
     public function __construct(StudentService $studentService, LayerService $layerService)
     {
