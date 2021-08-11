@@ -419,6 +419,15 @@ class CCService
     {
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        $personArray = $this->cleanPerson($personArray);
+
+        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
+        // This will not trigger notifications in nrc:
+//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+    }
+
+    public function cleanPerson(array $personArray): array
+    {
         foreach ($personArray as $key => $value) {
             if ($key == 'organization' && $value) {
                 $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
@@ -430,10 +439,7 @@ class CCService
                 unset($personArray[$key]);
             }
         }
-
-        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
-        // This will not trigger notifications in nrc:
-//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+        return $personArray;
     }
 
     /**
@@ -449,6 +455,7 @@ class CCService
     public function updatePerson(string $id, array $person): array
     {
         $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
+        $person = $this->cleanPerson($person);
 
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         // This will not trigger notifications in nrc:

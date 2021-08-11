@@ -9,8 +9,11 @@ use App\Service\LayerService;
 use App\Service\NewRegistrationService;
 use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
@@ -26,20 +29,23 @@ class RegistrationSubscriber implements EventSubscriberInterface
     private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private NewRegistrationService $registrationService;
+    private UcService $ucService;
 //    private ParticipationService $participationService;
 
     /**
      * StudentSubscriber constructor.
      *
-     * @param StudentService   $registrationService
+     * @param StudentService   $ucService
      * @param LayerService $layerService
      */
-    public function __construct(NewRegistrationService $registrationService, LayerService $layerService)
+    public function __construct(UcService $ucService, LayerService $layerService)
     {
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
-        $this->registrationService = $registrationService;
+        $this->registrationService = new NewRegistrationService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
+        $this->ucService = $ucService;
+
 //        $this->participationService = new ParticipationService($studentService, $layerService);
     }
 
@@ -63,15 +69,16 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
-        var_dump($route);
-        var_dump($event->getRequest()->attributes->all());
         // Lets limit the subscriber
         switch ($route) {
             case 'api_registrations_post_collection':
                 $response = $this->registrationService->createRegistration($resource);
                 break;
-            case 'api_registrations_get_item':
-                $response = $this->registrationService->getRegistration($event->getRequest()->attributes->get('id'));
+            case 'api_registrations_get_collection':
+                $response = $this->getRegistrations($event->getRequest()->query->all(), $event);
+                break;
+            case 'api_registrations_put_item':
+                $response = $this->registrationService->updateRegistration($event->getRequest()->attributes->get('id'), json_decode($event->getRequest()->getContent(), true));
                 break;
             default:
                 return;
@@ -91,6 +98,20 @@ class RegistrationSubscriber implements EventSubscriberInterface
             return $this->registrationService->createRegistration($registration);
         } else {
             throw new Error('wrong type');
+        }
+    }
+
+    public function getRegistrations(array $query, ViewEvent $event): Collection
+    {
+        $token = str_replace('Bearer ', '', $event->getRequest()->headers->get('Authorization'));
+        $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
+//        $currentUser = $this->ucService->getUser($payload['userId']);
+        $currentUser = $this->ucService->getUserArray($payload['userId']);
+
+        if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
+            return $this->registrationService->getRegistrations(array_merge($query, ['referredBy' => $currentUser['organization']]));
+        } else {
+            return $this->registrationService->getRegistrations($query);
         }
     }
 }

@@ -61,6 +61,8 @@ class StudentSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
 
+
+
         // Lets limit the subscriber
         switch ($route) {
             case 'api_students_post_collection':
@@ -83,9 +85,9 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student|Response
+     * @return Student
      */
-    private function createStudent(array $body)
+    private function createStudent(array $body): Student
     {
 //        if (!isset($body['person']['emails']['email'])) {
 //            return new Response(

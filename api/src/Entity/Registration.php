@@ -28,8 +28,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read"=false,
  *              "validate"=false
  *          },
- *          "put",
- *          "delete"
+ *          "put"={
+ *             "read"=false,
+ *          },
+ *          "delete"={
+ *             "read"=false,
+ *          },
  *     },
  *     collectionOperations={
  *          "get",
@@ -116,13 +120,13 @@ class Registration
      * @var string|null The Status of this registration.
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"Pending", "Accepted"})
+     * @Assert\Choice({"Pending", "Accepted", "Rejected"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "enum"={"Pending", "Accepted"},
+     *             "enum"={"Pending", "Accepted", "Rejected"},
      *             "example"="Pending"
      *         }
      *     }

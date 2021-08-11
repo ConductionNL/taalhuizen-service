@@ -5,7 +5,9 @@ namespace App\Service;
 use App\Entity\Person;
 use App\Entity\Registration;
 use App\Entity\Student;
+use App\Entity\StudentCivicIntegration;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -465,7 +467,7 @@ class StudentService
      *
      * @return Person|null[] Returns Person with registrar data
      */
-    private function handleRegistrar($registrarPerson = null, $registrarOrganization = null): array
+    private function handleRegistrar($registrarPerson = null, $registrarOrganization = null): Person
     {
         $registrar = new Person();
         if (isset($registrarOrganization['id'])) {
@@ -497,15 +499,16 @@ class StudentService
      *
      * @param array $person
      *
-     * @return array|null[] Returns an array with integration details
+     * @return StudentCivicIntegration Returns an array with integration details
+     * @throws Exception
      */
-    private function handleCivicIntegrationDetails(array $person): array
+    private function handleCivicIntegrationDetails(array $person): StudentCivicIntegration
     {
-        return [
-            'civicIntegrationRequirement' => $person['civicIntegrationRequirement'] ?? null,
-            'civicIntegrationRequirementReason' => $person['civicIntegrationRequirementReason'] ?? null,
-            'civicIntegrationRequirementFinishDate' => $person['civicIntegrationRequirementFinishDate'] ?? null,
-        ];
+        $result = new StudentCivicIntegration();
+        $result->setCivicIntegrationRequirement($person['civicIntegrationRequirement']);
+        $result->setCivicIntegrationRequirementReason($person['civicIntegrationRequirementReason']);
+        $result->setCivicIntegrationRequirementFinishDate(new DateTime($person['civicIntegrationRequirementFinishDate']));
+        return $result;
     }
 
     /**
@@ -515,7 +518,7 @@ class StudentService
      *
      * @return array Returns an array with persons details
      */
-    private function handlePersonDetails(array $person): array
+    private function handlePersonDetails(array $person): Person
     {
         return [
             'givenName' => $person['givenName'] ?? null,
@@ -524,6 +527,16 @@ class StudentService
             'gender' => $person['gender'] ? $person['gender'] : 'X',
             'birthday' => $person['birthday'] ?? null,
         ];
+    }
+
+    private function handlePerson(array $input): Person
+    {
+        $result = new Person();
+        $result->setGivenName($input['givenName']);
+        $result->setAdditionalName(isset($input['additionalName']) ? $input['additionalName'] : null);
+        $result->setFamilyName($input['familyName']);
+        $result->setGender(isset($input['gender']) ? $input['gender'] : null);
+        $result->setBirthday(isset($input['birthday']) ? $input['birthday'] : null);
     }
 
     /**
@@ -840,7 +853,7 @@ class StudentService
      * @throws Exception
      *
      */
-    public function createStudent(array $input): object
+    public function createStudent(array $input): Student
     {
         if (isset($input['languageHouseId'])) {
             $languageHouseId = explode('/', $input['languageHouseId']);
