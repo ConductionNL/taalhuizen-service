@@ -66,7 +66,6 @@ class NewRegistrationService
     {
         $participation = $this->eavService->getObject(['componentCode' => 'edu', 'entityName' => 'participants', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
 
-        var_dump($participation);
-        die;
+        return $participation;
     }
 }
