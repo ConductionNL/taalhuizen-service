@@ -63,8 +63,6 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
-        var_dump($route);
-        var_dump($event->getRequest()->attributes->all());
         // Lets limit the subscriber
         switch ($route) {
             case 'api_registrations_post_collection':
