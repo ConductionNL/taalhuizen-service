@@ -94,7 +94,6 @@ class RegistrationSubscriber implements EventSubscriberInterface
             }
             $this->serializerService->setResponse($response, $event);
         } catch (BadRequestPathException $exception) {
-            var_dump('boo!');
             $this->errorSerializerService->serialize($exception, $event);
         }
     }
