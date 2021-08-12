@@ -4,17 +4,15 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Registration;
-use App\Entity\Student;
 use App\Exception\BadRequestPathException;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewRegistrationService;
-use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\StudentService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
@@ -38,8 +36,8 @@ class RegistrationSubscriber implements EventSubscriberInterface
     /**
      * StudentSubscriber constructor.
      *
-     * @param StudentService   $ucService
-     * @param LayerService $layerService
+     * @param StudentService $ucService
+     * @param LayerService   $layerService
      */
     public function __construct(UcService $ucService, LayerService $layerService)
     {
@@ -74,7 +72,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        try{
+        try {
             switch ($route) {
                 case 'api_registrations_post_collection':
                     $response = $this->registrationService->createRegistration($resource);
@@ -100,7 +98,7 @@ class RegistrationSubscriber implements EventSubscriberInterface
 
     public function createRegistration(object $registration): Registration
     {
-        if($registration instanceof Registration){
+        if ($registration instanceof Registration) {
             return $this->registrationService->createRegistration($registration);
         } else {
             throw new Error('wrong type');

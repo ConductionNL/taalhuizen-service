@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service;
-
 
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\SerializerService;
@@ -13,6 +11,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class ErrorSerializerService
 {
     private SerializerService $serializerService;
+
     public function __construct(SerializerService $serializerService)
     {
         $this->serializerService = $serializerService;

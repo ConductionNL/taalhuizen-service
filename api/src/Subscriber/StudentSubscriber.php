@@ -5,8 +5,8 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Student;
 use App\Service\LayerService;
-use App\Service\StudentService;
 use App\Service\ParticipationService;
+use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,8 +28,8 @@ class StudentSubscriber implements EventSubscriberInterface
     /**
      * StudentSubscriber constructor.
      *
-     * @param StudentService   $studentService
-     * @param LayerService $layerService
+     * @param StudentService $studentService
+     * @param LayerService   $layerService
      */
     public function __construct(StudentService $studentService, LayerService $layerService)
     {
@@ -60,8 +60,6 @@ class StudentSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
         $body = json_decode($event->getRequest()->getContent(), true);
-
-
 
         // Lets limit the subscriber
         switch ($route) {

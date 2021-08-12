@@ -4,10 +4,8 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Registration;
-use App\Entity\User;
 use App\Service\LayerService;
 use App\Service\NewRegistrationService;
-use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
@@ -25,7 +23,7 @@ class RegistrationItemSubscriber implements EventSubscriberInterface
     /**
      * UserItemSubscriber constructor.
      *
-     * @param LayerService $layerService
+     * @param LayerService           $layerService
      * @param NewRegistrationService $registrationService
      */
     public function __construct(LayerService $layerService, NewRegistrationService $registrationService)
