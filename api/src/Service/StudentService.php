@@ -504,12 +504,11 @@ class StudentService
      */
     private function handleCivicIntegrationDetails(array $person): StudentCivicIntegration
     {
-        $result = new StudentCivicIntegration();
-        $result->setCivicIntegrationRequirement($person['civicIntegrationRequirement']);
-        $result->setCivicIntegrationRequirementReason($person['civicIntegrationRequirementReason']);
-        $result->setCivicIntegrationRequirementFinishDate(new DateTime($person['civicIntegrationRequirementFinishDate']));
-
-        return $result;
+        return [
+            'civicIntegrationRequirement'           => $person['civicIntegrationRequirement'] ?? null,
+            'civicIntegrationRequirementReason'     => $person['civicIntegrationRequirementReason'] ?? null,
+            'civicIntegrationRequirementFinishDate' => $person['civicIntegrationRequirementFinishDate'] ?? null,
+        ];
     }
 
     /**
