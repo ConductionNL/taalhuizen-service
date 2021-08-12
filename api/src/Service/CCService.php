@@ -7,6 +7,7 @@ use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\Organization;
 use App\Entity\Person;
+use App\Entity\StudentPermission;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -79,6 +80,26 @@ class CCService
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    public function createStudentPermissionsObject(array $result): ?StudentPermission
+    {
+        if (
+            isset($result['didSignPermissionForm']) &&
+            isset($result['hasPermissionToShareDataWithAanbieders']) &&
+            isset($result['hasPermissionToShareDataWithLibraries']) &&
+            isset($result['hasPermissionToSendInformationAboutLibraries'])
+        ) {
+            $permissions = new StudentPermission();
+            $permissions->setHasPermissionToShareDataWithProviders($result['hasPermissionToShareDataWithAanbieders']);
+            $permissions->setHasPermissionToShareDataWithLibraries($result['hasPermissionToShareDataWithLibraries']);
+            $permissions->setHasPermissionToSendInformationAboutLibraries($result['hasPermissionToSendInformationAboutLibraries']);
+            $permissions->setDidSignPermissionForm($result['didSignPermissionForm']);
+
+            return $permissions;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -406,19 +427,43 @@ class CCService
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
+    public function cleanPermissions(array $permissions): array
+    {
+        foreach ($permissions as $key=>$value) {
+            if ($key == 'hasPermissionToShareDataWithProviders') {
+                $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
+                unset($permissions[$key]);
+            }
+        }
+
+        return $permissions;
+    }
+
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param array $person The person array to provide to the contact catalogue
+     * @param Person                 $person      The person array to provide to the contact catalogue
+     * @param StudentPermission|null $permissions
      *
      * @throws Exception
      *
      * @return array The result from the contact catalogue and EAV
      */
-    public function createPerson(Person $person): array
+    public function createPerson(Person $person, ?StudentPermission $permissions = null): array
     {
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        $permissionsArray = $permissions ? $this->cleanPermissions(json_decode($this->serializer->serialize($permissions, 'json', ['ignored_attributes' => ['id']]), true)) : [];
+        $personArray = array_merge($personArray, $permissionsArray);
+        $personArray = $this->cleanPerson($personArray);
+
+        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
+        // This will not trigger notifications in nrc:
+//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+    }
+
+    public function cleanPerson(array $personArray): array
+    {
         foreach ($personArray as $key => $value) {
             if ($key == 'organization' && $value) {
                 $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
@@ -426,14 +471,12 @@ class CCService
             if ($key == 'emails') {
                 $personArray[$key] = [$personArray[$key]];
             }
-            if (!$value) {
+            if ($value !== false && !$value) {
                 unset($personArray[$key]);
             }
         }
 
-        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
-        // This will not trigger notifications in nrc:
-//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+        return $personArray;
     }
 
     /**
@@ -449,6 +492,7 @@ class CCService
     public function updatePerson(string $id, array $person): array
     {
         $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
+        $person = $this->cleanPerson($person);
 
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         // This will not trigger notifications in nrc:
