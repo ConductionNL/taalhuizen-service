@@ -45,12 +45,29 @@ class NewRegistrationService
         }
     }
 
+    public function checkStudent(Registration $registration): void
+    {
+        if (!$registration->getStudent()->getGivenName() || !$registration->getStudent()->getFamilyName()) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'student.'.$registration->getRegistrar()->getGivenName() ? 'familyName' : 'givenName');
+        }
+        if (!$registration->getStudent()->getEmails() || !$registration->getStudent()->getEmails()->getEmail()) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'student'.($registration->getRegistrar()->getEmails() ? 'emails.email' : '.emails'));
+        }
+        if (!$registration->getStudent()->getTelephones() || !$registration->getStudent()->getTelephones()[0]->getTelephone()) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'student'.$registration->getRegistrar()->getTelephones() ? 'telephones[0].telephone' : '.telephones');
+        }
+    }
+
     public function checkRegistration(Registration $registration): void
     {
         if ($registration->getPermissionDetails() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
         }
+        if ($registration->getLanguageHouseId() == null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'languageHouseId');
+        }
         $this->checkRegistrar($registration);
+        $this->checkStudent($registration);
     }
 
     public function persistRegistration(Registration $registration, array $arrays): Registration
