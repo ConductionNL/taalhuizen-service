@@ -34,67 +34,78 @@ class NewRegistrationService
         $this->entityManager = $layerService->entityManager;
     }
 
+    public function checkRegistrar(Registration $registration): void
+    {
+        if($registration->getRegistrar()->getOrganization() == null){
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'registrar.organization');
+        }
+        if(!$registration->getRegistrar()->getGivenName() || !$registration->getRegistrar()->getFamilyName()){
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'registrar.' . $registration->getRegistrar()->getGivenName() ? 'familyName' : 'givenName' );
+        }
+        if(!$registration->getRegistrar()->getEmails() || !$registration->getRegistrar()->getEmails()->getEmail()){
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'registrar' . ($registration->getRegistrar()->getEmails() ? 'emails.email' : '.emails'));
+        }
+        if(!$registration->getRegistrar()->getTelephones() || !$registration->getRegistrar()->getTelephones()[0]->getTelephone()){
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'registrar' . $registration->getRegistrar()->getTelephones() ? 'telephones[0].telephone' : '.telephones');
+        }
+    }
+
     public function checkRegistration(Registration $registration): void
     {
         if($registration->getPermissionDetails() == null){
-            throw new BadRequestPathException('Permission details are not provided.', 'permissionDetails');
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
         }
-        if($registration->getRegistrar()->getOrganization() == null){
-            throw new BadRequestPathException('Organization of registrar not provided', 'registrar.organization');
-        }
-        if(!$registration->getRegistrar()->getGivenName() || !$registration->getRegistrar()->getFamilyName()){
-            throw new BadRequestPathException('Name of registrar not provided', 'registrar.' . $registration->getRegistrar()->getGivenName() ? 'familyName' : 'givenName' );
-        }
+        $this->checkRegistrar($registration);
+    }
 
-        if(!$registration->getRegistrar()->getEmails() || !$registration->getRegistrar()->getEmails()->getEmail()){
-            throw new BadRequestPathException('Email of registrar not provided', 'registrar' . ($registration->getRegistrar()->getEmails() ? 'emails.email' : '.emails'));
-        }
-        if(!$registration->getRegistrar()->getTelephones() || !$registration->getRegistrar()->getTelephones()[0]->getTelephone()){
-            throw new BadRequestPathException('Phone number of registrar not provided', 'registrar' . $registration->getRegistrar()->getTelephones() ? 'telephones[0].telephone' : '.telephones');
+    public function persistRegistration(Registration $registration, array $arrays): Registration
+    {
+        $this->entityManager->persist($registration->getRegistrar());
+        $registration->getRegistrar()->setId(Uuid::fromString($arrays['registrar']['id']));
+        $this->entityManager->persist($registration->getRegistrar());
+        $this->entityManager->persist($registration->getStudent());
+        $registration->getStudent()->setId(Uuid::fromString($arrays['student']['id']));
+        $this->entityManager->persist($registration->getStudent());
+        $this->entityManager->persist($registration->getPermissionDetails());
+        $registration->getPermissionDetails()->setId(Uuid::fromString($arrays['student']['id']));
+        $this->entityManager->persist($registration->getPermissionDetails());
+        $this->entityManager->persist($registration);
+        $registration->setId(Uuid::fromString($arrays['registration']['id']));
+        $this->entityManager->persist($registration);
+        return $registration;
+    }
+
+    public function createMemo(Registration $registration, array $arrays): void
+    {
+        if($registration->getMemo()){
+            $memo = [
+                'name' => "Generated Memo",
+                'author' => $arrays['registrar']['@id'],
+                'topic' => $arrays['student']['@id'],
+                'description' => $registration->getMemo(),
+            ];
+            $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
         }
     }
 
     public function createRegistration(Registration $registration): Registration
     {
         $this->checkRegistration($registration);
-        $registrarArray = $this->ccService->createPerson($registration->getRegistrar());
-        $studentArray = $this->ccService->createPerson($registration->getStudent(), $registration->getPermissionDetails()->setId(Uuid::uuid4()));
-        $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $registration->getLanguageHouseId()]);
-        if($registration->getMemo()){
-            $memo = [
-                'name' => "Generated Memo",
-                'author' => $registrarArray['@id'],
-                'topic' => $studentArray['@id'],
-                'description' => $registration->getMemo(),
-            ];
-            $this->commonGroundService->saveResource($memo, ['component' => 'memo', 'type' => 'memos']);
-        }
-
+        $arrays['registrar'] = $registrarArray = $this->ccService->createPerson($registration->getRegistrar());
+        $arrays['student'] = $studentArray = $this->ccService->createPerson($registration->getStudent(), $registration->getPermissionDetails()->setId(Uuid::uuid4()));
+        $arrays['organization'] = $organization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $registration->getLanguageHouseId()]);
+        $this->createMemo($registration, $arrays);
         $program = $this->eduService->getProgram($organization);
 
-        $registrationArray = $this->eduService->saveEavParticipant([
-            'person'    => $studentArray['@id'],
+        $arrays['registration'] = $registrationArray = $this->eduService->saveEavParticipant([
+            'person'    => $arrays['student']['@id'],
             'program'   => '/programs/'.$program['id'],
             'status'    => strtolower($registration->getStatus()),
-            'referredBy'=> $organization['@id'],
+            'referredBy'=> $arrays['organization']['@id'],
             'type'      => 'registration',
-            'registrar' => $registrarArray['@id'],
+            'registrar' => $arrays['registrar']['@id'],
         ]);
-
-        $this->entityManager->persist($registration->getRegistrar());
-        $registration->getRegistrar()->setId(Uuid::fromString($registrarArray['id']));
-        $this->entityManager->persist($registration->getRegistrar());
-        $this->entityManager->persist($registration->getStudent());
-        $registration->getStudent()->setId(Uuid::fromString($studentArray['id']));
-        $this->entityManager->persist($registration->getStudent());
-        $this->entityManager->persist($registration->getPermissionDetails());
-        $registration->getPermissionDetails()->setId(Uuid::fromString($studentArray['id']));
-        $this->entityManager->persist($registration->getPermissionDetails());
-        $this->entityManager->persist($registration);
-        $registration->setId(Uuid::fromString($registrationArray['id']));
-        $this->entityManager->persist($registration);
-
-        return $registration;
+        return $this->persistRegistration($registration, $arrays);
     }
 
     public function updateMemo(Registration $oldRegistration, string $description): array
@@ -116,7 +127,6 @@ class NewRegistrationService
 
     public function updateStatus(array $update, array &$participant): string
     {
-//        var_dump($participant, $update);
         if(key_exists('status', $update) && ($participant['status'] == 'accepted' || $participant['status'] == 'rejected')) {
             throw new BadRequestPathException('Cannot change status of accepted or rejected registrations', 'status', ['status' => $update['status']]);
         }
@@ -132,27 +142,13 @@ class NewRegistrationService
         $participant = [];
         $oldRegistration = $this->getRegistration($id, $participant);
         unset($participant['program']);
-        if(key_exists('student', $update)){
-            $studentArray = $this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $update['student']);
-            $participant['person'] = $studentArray['@id'];
-        }
-        if(key_exists('permissionDetails', $update)){
-            $this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $this->ccService->cleanPermissions($update['permissionDetails']));
-        }
-        if(key_exists('registrar', $update)) {
-            $registrarArray = $this->ccService->updatePerson($oldRegistration->getRegistrar()->getId(), $update['registrar']);
-            $participant['registrar'] = $registrarArray['@id'];
-        }
+        if(key_exists('student', $update)){$studentArray = $this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $update['student']);$participant['person'] = $studentArray['@id'];}
+        if(key_exists('permissionDetails', $update)){$this->ccService->updatePerson($oldRegistration->getStudent()->getId(), $this->ccService->cleanPermissions($update['permissionDetails']));}
+        if(key_exists('registrar', $update)) {$registrarArray = $this->ccService->updatePerson($oldRegistration->getRegistrar()->getId(), $update['registrar']);$participant['registrar'] = $registrarArray['@id'];}
         $this->updateStatus($update, $participant);
-        if(key_exists('languageHouseId', $update)){
-            $participant['referredBy'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $update['languageHouseId']]);
-        }
-        if(key_exists('memo', $update)){
-            $memo = $this->updateMemo($oldRegistration, $update['memo']);
-        }
-
+        if(key_exists('languageHouseId', $update)){$participant['referredBy'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $update['languageHouseId']]);}
+        if(key_exists('memo', $update)){$memo = $this->updateMemo($oldRegistration, $update['memo']);}
         $registrationArray = $this->eduService->saveEavParticipant($participant, $participant['@id']);
-
         return $this->participationToRegistration($registrationArray);
     }
 
