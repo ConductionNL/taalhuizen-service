@@ -7,7 +7,6 @@ use App\Entity\Registration;
 use App\Entity\Student;
 use App\Entity\StudentCivicIntegration;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
