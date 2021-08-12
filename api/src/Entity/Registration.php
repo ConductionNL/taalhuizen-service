@@ -24,13 +24,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
+ *          "put"={
+ *             "read"=false,
+ *          },
+ *          "delete"={
+ *             "read"=false,
+ *          },
  *     },
  *     collectionOperations={
  *          "get",
- *          "post",
+ *          "post"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
  *     })
  * @ORM\Entity(repositoryClass=RegistrationRepository::class)
  */
@@ -104,25 +114,37 @@ class Registration
      *     }
      * )
      */
-    private ?string $memo;
+    private ?string $memo = null;
 
     /**
      * @var string|null The Status of this registration.
      *
      * @Groups({"read", "write"})
-     * @Assert\Choice({"Pending", "Accepted"})
+     * @Assert\Choice({"Pending", "Accepted", "Rejected"})
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
      *             "type"="string",
-     *             "enum"={"Pending", "Accepted"},
+     *             "enum"={"Pending", "Accepted", "Rejected"},
      *             "example"="Pending"
      *         }
      *     }
      * )
      */
     private ?string $status = 'Pending';
+
+    /**
+     * @var StudentPermission The StudentPermission of this Student.
+     *
+     * @Assert\NotNull
+     * @Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity=StudentPermission::class, cascade={"persist", "remove"})
+     * @ApiSubresource()
+     * @Assert\Valid
+     * @MaxDepth(1)
+     */
+    private ?StudentPermission $permissionDetails = null;
 
     public function getId(): UuidInterface
     {
@@ -192,6 +214,18 @@ class Registration
     public function setStatus(?string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPermissionDetails(): ?StudentPermission
+    {
+        return $this->permissionDetails;
+    }
+
+    public function setPermissionDetails(?StudentPermission $permissionDetails): self
+    {
+        $this->permissionDetails = $permissionDetails;
 
         return $this;
     }

@@ -29183,7 +29183,7 @@ components:
           type: string
           nullable: true
         familyComposition:
-          type: array
+          type: string
           items:
             type: string
             enum:
@@ -29226,7 +29226,7 @@ components:
           type: string
           nullable: true
         familyComposition:
-          type: array
+          type: string
           items:
             type: string
             enum:
@@ -29297,7 +29297,7 @@ components:
           type: string
           nullable: true
         familyComposition:
-          type: array
+          type: string
           items:
             type: string
             enum:
@@ -29363,7 +29363,7 @@ components:
           type: string
           nullable: true
         familyComposition:
-          type: array
+          type: string
           items:
             type: string
             enum:

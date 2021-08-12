@@ -30,6 +30,10 @@ security:
             anonymous: true
             pattern: (^/users|^/users/reset_password)
             methods: [ POST ]
+        create_registration:
+            anonymous: true
+            pattern: (^/registrations)
+            methods: [ POST ]
         main:
             provider: chain_provider
             # comment this function out on crud enviroments
