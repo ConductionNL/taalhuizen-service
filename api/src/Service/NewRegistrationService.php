@@ -50,7 +50,7 @@ class NewRegistrationService
             throw new BadRequestPathException('Email of registrar not provided', 'registrar' . ($registration->getRegistrar()->getEmails() ? 'emails.email' : '.emails'));
         }
         if(!$registration->getRegistrar()->getTelephones() || !$registration->getRegistrar()->getTelephones()[0]->getTelephone()){
-            throw new BadRequestPathException('Email of registrar not provided', 'registrar' . $registration->getRegistrar()->getTelephones() ? 'telephones[0].email' : '.emails');
+            throw new BadRequestPathException('Phone number of registrar not provided', 'registrar' . $registration->getRegistrar()->getTelephones() ? 'telephones[0].telephone' : '.telephones');
         }
     }
 
