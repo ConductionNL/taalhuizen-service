@@ -84,17 +84,18 @@ class CCService
 
     public function createStudentPermissionsObject(array $result): ?StudentPermission
     {
-        if(
+        if (
             isset($result['didSignPermissionForm']) &&
             isset($result['hasPermissionToShareDataWithAanbieders']) &&
             isset($result['hasPermissionToShareDataWithLibraries']) &&
             isset($result['hasPermissionToSendInformationAboutLibraries'])
-        ){
+        ) {
             $permissions = new StudentPermission();
             $permissions->setHasPermissionToShareDataWithProviders($result['hasPermissionToShareDataWithAanbieders']);
             $permissions->setHasPermissionToShareDataWithLibraries($result['hasPermissionToShareDataWithLibraries']);
             $permissions->setHasPermissionToSendInformationAboutLibraries($result['hasPermissionToSendInformationAboutLibraries']);
             $permissions->setDidSignPermissionForm($result['didSignPermissionForm']);
+
             return $permissions;
         } else {
             return null;
@@ -428,22 +429,25 @@ class CCService
 
     public function cleanPermissions(array $permissions): array
     {
-        foreach($permissions as $key=>$value){
-            if($key == 'hasPermissionToShareDataWithProviders'){
+        foreach ($permissions as $key=>$value) {
+            if ($key == 'hasPermissionToShareDataWithProviders') {
                 $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
                 unset($permissions[$key]);
             }
         }
+
         return $permissions;
     }
 
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param Person $person The person array to provide to the contact catalogue
+     * @param Person                 $person      The person array to provide to the contact catalogue
      * @param StudentPermission|null $permissions
-     * @return array The result from the contact catalogue and EAV
+     *
      * @throws Exception
+     *
+     * @return array The result from the contact catalogue and EAV
      */
     public function createPerson(Person $person, ?StudentPermission $permissions = null): array
     {
@@ -471,6 +475,7 @@ class CCService
                 unset($personArray[$key]);
             }
         }
+
         return $personArray;
     }
 

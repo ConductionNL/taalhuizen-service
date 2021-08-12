@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Exception;
-
 
 use Throwable;
 
@@ -11,12 +9,11 @@ class BadRequestPathException extends \Symfony\Component\HttpFoundation\Exceptio
     private string $path;
     private array $data;
 
-    public function __construct(string $message = "", string $path = "", array $data = [], $code = 0, Throwable $previous = null)
+    public function __construct(string $message = '', string $path = '', array $data = [], $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->path = $path;
         $this->data = $data;
-
     }
 
     public function getPath(): ?string
@@ -28,5 +25,4 @@ class BadRequestPathException extends \Symfony\Component\HttpFoundation\Exceptio
     {
         return $this->data;
     }
-
 }

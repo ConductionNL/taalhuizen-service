@@ -86,7 +86,6 @@ class AvailabilityService
             $availabilityMemo['description'] = $availabilityMemo['name'];
         }
 
-
         return $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
     }
 
