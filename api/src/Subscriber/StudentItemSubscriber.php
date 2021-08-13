@@ -171,7 +171,7 @@ class StudentItemSubscriber implements EventSubscriberInterface
      */
     private function checkIfStudentExists(string $id): ?Response
     {
-        $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'students', 'id' => $id]);
+        $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
         if (!$this->commonGroundService->isResource($studentUrl)) {
             return new Response(
                 json_encode([

@@ -9,6 +9,7 @@ use App\Service\StudentService;
 use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -59,12 +60,15 @@ class StudentSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-        $body = json_decode($event->getRequest()->getContent(), true);
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_students_post_collection':
+                $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createStudent($body);
+                break;
+            case 'api_students_get_collection':
+                $response = $this->getStudents($event->getRequest()->query->all());
                 break;
             default:
                 return;
@@ -103,5 +107,17 @@ class StudentSubscriber implements EventSubscriberInterface
 //        }
 
         return $this->studentService->createStudent($body);
+    }
+
+    /**
+     *
+     * @throws \Exception
+     * @return ArrayCollection|Response
+     */
+    private function getStudents($queryParams)
+    {
+        $students = $this->studentService->getStudents($queryParams);
+        var_dump($students);die;
+        return ;
     }
 }

@@ -11,7 +11,7 @@ info:
     - Docker Image: [online]() 
     - Datamodel: [postman](schema/taalhuizen-service.postman_collection.json) / [oas](schema/openapi.yaml) / [pdf](schema/datamodel.pdf) / [modelio (zip)](schema/Datamodel_Modelio.zip) 
 
-    &
+    &#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&#039;
   version: V1.0
 servers:
   -
@@ -26621,10 +26621,12 @@ components:
     Person-read:
       type: object
       description: 'All properties that the DTO entity Person holds.'
-      required:
-        - givenName
-        - familyName
       properties:
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         givenName:
           type: string
           example: John
@@ -26691,6 +26693,9 @@ components:
           example: 'Send contact person a message'
           description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
+      required:
+        - givenName
+        - familyName
     Person-write:
       type: object
       description: 'All properties that the DTO entity Person holds.'
@@ -26767,9 +26772,6 @@ components:
     Person.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Person holds.'
-      required:
-        - givenName
-        - familyName
       properties:
         '@context':
           readOnly: true
@@ -26794,6 +26796,11 @@ components:
         '@type':
           readOnly: true
           type: string
+        id:
+          readOnly: true
+          description: 'The UUID identifier of this resource'
+          type: string
+          format: uuid
         givenName:
           type: string
           example: John
@@ -26860,6 +26867,9 @@ components:
           example: 'Send contact person a message'
           description: 'The contact preference of the person for when the OTHER option is selected.'
           nullable: true
+      required:
+        - givenName
+        - familyName
     Person.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Person holds.'

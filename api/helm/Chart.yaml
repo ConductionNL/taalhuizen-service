@@ -2,7 +2,7 @@ annotations:
     artifacthub.io/containsSecurityUpdates: "true"
 apiVersion: v2
 appVersion: V1.0
-description: '&amp;'
+description: '&amp;#039;Naast deze JSON rest API is er ook een [graphql](/graphql) interface beschikbaar.&amp;#039;'
 name: taalhuizen-service
 version: 1.0.0
 home: https://www.conduction.nl

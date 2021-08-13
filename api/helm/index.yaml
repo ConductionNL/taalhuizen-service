@@ -5,7 +5,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 11.10.0
-    created: "2021-08-11T17:37:15.5978091Z"
+    created: "2021-08-13T07:20:35.6536359Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -39,7 +39,7 @@ entries:
       category: Database
     apiVersion: v2
     appVersion: 6.0.11
-    created: "2021-08-11T17:37:15.6165928Z"
+    created: "2021-08-13T07:20:35.7067794Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -68,40 +68,4 @@ entries:
     urls:
     - charts/redis-12.7.7.tgz
     version: 12.7.7
-  taalhuizen-service:
-  - annotations:
-      artifacthub.io/containsSecurityUpdates: "true"
-    apiVersion: v2
-    appVersion: V1.0
-    created: "2021-08-11T17:37:15.5816076Z"
-    dependencies:
-    - condition: postgresql.enabled
-      name: postgresql
-      repository: https://charts.bitnami.com/bitnami
-      version: 10.1.1
-    - condition: redis.enabled
-      name: redis
-      repository: https://charts.bitnami.com/bitnami
-      version: 12.7.7
-    description: '&amp;'
-    digest: 9ce728c522edb12788ea5a0a4af4f27e30442b7652c9735c7db2996c38be7e9b
-    home: https://www.conduction.nl
-    icon: https://conductionnl.github.io/images/conduction_avatar_blue_on_transparant.svg
-    keywords:
-    - commonground
-    - haven
-    - nlx
-    - component
-    maintainers:
-    - email: ruben@conduction.nl
-      name: Ruben van der Linde
-    - email: info@conduction.nl
-      name: Conduction
-    name: taalhuizen-service
-    sources:
-    - https://commonground.conduction.nl/
-    - https://www.commonground.nl/
-    urls:
-    - taalhuizen-service-1.0.0.tgz
-    version: 1.0.0
-generated: "2021-08-11T17:37:15.5571794Z"
+generated: "2021-08-13T07:20:35.5452789Z"

@@ -59,11 +59,11 @@ class EmployeeSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-        $body = json_decode($event->getRequest()->getContent(), true);
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_employees_post_collection':
+                $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createEmployee($body);
                 break;
             default:
