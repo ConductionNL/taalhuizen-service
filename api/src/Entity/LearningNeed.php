@@ -25,9 +25,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
+ *          "put"={
+ *             "read"=false,
+ *          },
+ *          "delete"={
+ *             "read"=false,
+ *          },
  *     },
  *     collectionOperations={
  *          "get",
@@ -101,7 +108,7 @@ class LearningNeed
     private LearningNeedOutCome $desiredLearningNeedOutCome;
 
     /**
-     * @var string The desired offer for a student learning need.
+     * @var ?string The desired offer for a student learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -118,10 +125,10 @@ class LearningNeed
      *     }
      * )
      */
-    private string $desiredOffer;
+    private ?string $desiredOffer = null;
 
     /**
-     * @var string The advised offer of a student learning need.
+     * @var ?string The advised offer of a student learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -138,7 +145,7 @@ class LearningNeed
      *     }
      * )
      */
-    private string $advisedOffer;
+    private ?string $advisedOffer = null;
 
     /**
      * @var string The difference between the desired and advised offer of this learning need.
@@ -177,7 +184,7 @@ class LearningNeed
      *     }
      * )
      */
-    private ?string $offerDifferenceOther;
+    private ?string $offerDifferenceOther = null;
 
     /**
      * @var ?string The offer engagements for this learning need.
@@ -196,7 +203,7 @@ class LearningNeed
      *     }
      * )
      */
-    private ?string $offerEngagements;
+    private ?string $offerEngagements = null;
 
     /**
      * @var string The id of a student that this learning need is for.
@@ -264,24 +271,24 @@ class LearningNeed
         return $this;
     }
 
-    public function getDesiredOffer(): string
+    public function getDesiredOffer(): ?string
     {
         return $this->desiredOffer;
     }
 
-    public function setDesiredOffer(string $desiredOffer): self
+    public function setDesiredOffer(?string $desiredOffer): self
     {
         $this->desiredOffer = $desiredOffer;
 
         return $this;
     }
 
-    public function getAdvisedOffer(): string
+    public function getAdvisedOffer(): ?string
     {
         return $this->advisedOffer;
     }
 
-    public function setAdvisedOffer(string $advisedOffer): self
+    public function setAdvisedOffer(?string $advisedOffer): self
     {
         $this->advisedOffer = $advisedOffer;
 
