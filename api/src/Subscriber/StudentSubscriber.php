@@ -83,9 +83,9 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student|Response
+     * @return Student
      */
-    private function createStudent(array $body)
+    private function createStudent(array $body): Student
     {
 //        if (!isset($body['person']['emails']['email'])) {
 //            return new Response(
