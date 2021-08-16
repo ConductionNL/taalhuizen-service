@@ -144,9 +144,6 @@ class StudentService
             throw new Exception('Warning, ' . $participant['person'] . ' does not have an eav object (eav/cc/people)!');
         }
 
-//        var_dump($person);
-//        die;
-
         return $person;
     }
 
@@ -478,9 +475,9 @@ class StudentService
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
         if (isset($student['employee'])) {
-            $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-            $resource->setEducationDetails($this->handleEducationDetails($mrcEducations));
-            $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+            $student['employee'] = $this->getEducationsFromEmployee($student['employee']);
+            $resource->setEducationDetails($this->handleEducationDetails($student['employee']['educationDetails']));
+            $resource->setCourseDetails($this->handleCourseDetails($student['employee']['courseDetails']));
             $resource->setJobDetails($this->handleJobDetails($student['employee']));
         }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
@@ -866,26 +863,35 @@ class StudentService
      * @param array $employee Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     * @return array|null[] Returns an array of educations
+     * @return array|null[] Returns array of employee
      * @throws Exception
      *
      */
     public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
-        $educations = [
-            'course' => [],
-        ];
-        if (isset($employee) && isset($employee['educations'])) {
-            foreach ($employee['educations'] as $education) {
-                $educations = array_merge($educations, $this->setEducationType($educations, $education));
+        if (isset($employee['educations'])) {
+            foreach ($employee['educations'] as $edu) {
+                if (isset($edu['description']) && $edu['description'] == 'course') {
+                    $employee['courseDetails']['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $edu['id']])]);
+                    if (isset($employee['courseDetails']['endDate'])) {
+                        $employee['courseDetails']['isFollowingCourseRightNow'] = false;
+                    } else {
+                        $employee['courseDetails']['isFollowingCourseRightNow'] = true;
+                    }
+                }
+                if (isset($edu['description']) && $edu['description'] == 'education') {
+                    $employee['educationDetails']['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $edu['id']])]);
+                    if (isset($employee['educationDetails']['endDate'])) {
+                        $employee['educationDetails']['followingEducationRightNow'] = 'NO';
+                    } else {
+                        $employee['educationDetails']['followingEducationRightNow'] = 'YES';
+                    }
+                }
             }
         }
 
-//        if ($followingEducation) {
-//            $educations['followingEducation'] = $educations['followingEducationNo'] ?: $educations['followingEducationYes'];
-//        }
 
-        return $educations;
+        return $employee;
     }
 
     /**
@@ -980,8 +986,31 @@ class StudentService
     private function handleCourseDetails(array $course): StudentCourse
     {
         $courseDetails = new StudentCourse();
-        $courseDetails->setIsFollowingCourseRightNow(isset($course));
-        $courseDetails->setCourse(null);
+        isset ($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
+
+        if (isset($course['education'])) {
+            $newCourse = new Education();
+            $newCourse->setGroupFormation(null);
+            $newCourse->setTeacherProfessionalism(null);
+            $newCourse->setCourseProfessionalism(null);
+            $newCourse->setAmountOfHours(null);
+
+            isset ($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
+            isset ($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
+            isset ($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
+            isset ($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
+            isset ($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
+            isset ($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
+            isset ($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
+            isset ($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
+            isset ($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
+            isset ($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool)$course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
+            isset ($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
+
+            $courseDetails->setCourse($newCourse);
+        } else {
+            $courseDetails->setCourse(null);
+        }
 
 
         return $courseDetails;
@@ -1204,7 +1233,7 @@ class StudentService
 
         $employee = $this->inputToEmployee($input, $person['@id']);
         // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
-        $employee = $this->mrcService->createEmployeeArray($employee);
+        $employee = $this->mrcService->createEmployeeArray($employee, true);
 
 
         // Then save memos
@@ -1218,6 +1247,7 @@ class StudentService
 
         // Now put together the expected result in $result['result'] for Lifely:
 //        $registrar = ['registrarOrganization' => null, 'registrarPerson' => null, 'registrarMemo' => null];
+
         $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
@@ -2044,12 +2074,12 @@ class StudentService
             // set email for creating a user in mrcService
             $employee['email'] = $input['contactDetails']['email'];
         }
-        $educations = $this->getEducationsFromEmployee($updateEmployee, true);
+//        $educations = $this->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
             $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails']);
         }
         if (isset($input['courseDetails'])) {
-            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, ['course' => $educations['course'], 'details' => $input['courseDetails']]);
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails']);
         }
         if (isset($input['jobDetails'])) {
             $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
@@ -2100,30 +2130,31 @@ class StudentService
     private
     function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
-        $courseDetails = $courseData['details'];
-        $course = $courseData['course'];
-        if (isset($courseDetails['isFollowingCourseRightNow'])) {
-            if (isset($course['id'])) {
-                $newEducation['id'] = $course['id'];
-            }
-            $newEducation['description'] = 'course';
-            if ($courseDetails['isFollowingCourseRightNow'] == true) {
-                if (isset($courseDetails['courseName'])) {
-                    $newEducation['name'] = $courseDetails['courseName'];
-                }
-                if (isset($courseDetails['courseTeacher'])) {
-                    $newEducation['teacherProfessionalism'] = $courseDetails['courseTeacher'];
-                }
-                if (isset($courseDetails['courseGroup'])) {
-                    $newEducation['groupFormation'] = $courseDetails['courseGroup'];
-                }
-                if (isset($courseDetails['amountOfHours'])) {
-                    $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
-                }
-                $newEducation = $this->getCourseProvideCertificateFromCourseDetails($newEducation);
-            }
-            $employee['educations'][] = $newEducation;
+//        if (isset($courseData['isFollowingCourseRightNow'])) {
+        $newEducation = $courseData['course'];
+        if (isset($courseData['id'])) {
+            $newEducation['id'] = $courseData['id'];
         }
+        $newEducation['description'] = 'course';
+        $newEducation['isFollowingCourseRightNow'] = $courseData['isFollowingCourseRightNow'];
+//            if ($courseDetails['isFollowingCourseRightNow'] == true) {
+//                if (isset($courseDetails['courseName'])) {
+//                    $newEducation['name'] = $courseDetails['courseName'];
+//                }
+//                if (isset($courseDetails['courseTeacher'])) {
+//                    $newEducation['teacherProfessionalism'] = $courseDetails['courseTeacher'];
+//                }
+//                if (isset($courseDetails['courseGroup'])) {
+//                    $newEducation['groupFormation'] = $courseDetails['courseGroup'];
+//                }
+//                if (isset($courseDetails['amountOfHours'])) {
+//                    $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
+//                }
+//                $newEducation = $this->getCourseProvideCertificateFromCourseDetails($newEducation);
+
+//            }
+        $employee['educations'][] = $newEducation;
+//        }
 
         return $employee;
     }
@@ -2160,12 +2191,14 @@ class StudentService
     private
     function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
     {
-            if (isset($educationData['education']['id'])) {
-                $newEducation['id'] = $educationData['education']['id'];
-            }
-            $newEducation = $educationData['education'];
+        $newEducation = $educationData['education'];
+        if (isset($educationData['id'])) {
+            $newEducation['id'] = $educationData['id'];
+        }
+        $newEducation['description'] = 'education';
+        $newEducation['followingEducationRightNow'] = $educationData['followingEducationRightNow'];
 
-            $employee['educations'][] = $newEducation;
+        $employee['educations'][] = $newEducation;
 
         return $employee;
     }
