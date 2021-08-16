@@ -476,8 +476,8 @@ class StudentService
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
         if (isset($student['employee'])) {
             $student['employee'] = $this->getEducationsFromEmployee($student['employee']);
-            $resource->setEducationDetails($this->handleEducationDetails($student['employee']['educationDetails']));
-            $resource->setCourseDetails($this->handleCourseDetails($student['employee']['courseDetails']));
+            $resource->setEducationDetails($this->handleEducationDetails($student['employee']));
+            $resource->setCourseDetails($this->handleCourseDetails($student['employee']));
             $resource->setJobDetails($this->handleJobDetails($student['employee']));
         }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
@@ -492,9 +492,9 @@ class StudentService
      *
      * @param null $registrar Array with registrar data
      *
-     * @return Person|null[] Returns Person with registrar data
+     * @return Person|null Returns Person with registrar data
      */
-    private function handleRegistrar($registrar = null): Person
+    private function handleRegistrar($registrar = null): ?Person
     {
         if (is_string($registrar) == true) {
             $registrar = $this->commonGroundService->getResource($registrar);
@@ -506,7 +506,7 @@ class StudentService
         } elseif (isset($registrar['registrarOrganization']['name'])) {
             $person->setGivenName($registrar['registrarOrganization']['name']);
         } else {
-            throw new BadRequestHttpException('Registrar givenName not set!');
+            return null;
         }
         isset($registrar['additionalName']) ? $person->setAdditionalName($registrar['additionalName']) : $person->setAdditionalName(null);
         isset($registrar['familyName']) ? $person->setFamilyName($registrar['familyName']) : $person->setFamilyName(null);
@@ -932,6 +932,24 @@ class StudentService
     private function handleEducationDetails(array $educationsArray): StudentEducation
     {
         $educationDetails = new StudentEducation();
+        if (!isset($educationsArray['educationDetails'])) {
+            $education = new Education();
+            $education->setName(null);
+            $education->setStartDate(null);
+            $education->setEnddate(null);
+            $education->setGroupFormation(null);
+            $education->setInstitution(null);
+            $education->setDegreeGrantedStatus(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setProvidesCertificate(null);
+            $education->setAmountOfHours(null);
+            $educationDetails->setEducation($education);
+            $educationDetails->setFollowingEducationRightNow(null);
+            return $educationDetails;
+        }
+        $educationsArray = $educationsArray['educationDetails'];
         isset ($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
 
         if (isset($educationsArray['education'])) {
@@ -986,6 +1004,25 @@ class StudentService
     private function handleCourseDetails(array $course): StudentCourse
     {
         $courseDetails = new StudentCourse();
+        if (!isset($course['courseDetails'])) {
+            $education = new Education();
+            $education->setName(null);
+            $education->setStartDate(null);
+            $education->setEnddate(null);
+            $education->setGroupFormation(null);
+            $education->setInstitution(null);
+            $education->setDegreeGrantedStatus(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setProvidesCertificate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+            $courseDetails->setCourse($education);
+            $courseDetails->setIsFollowingCourseRightNow(null);
+            return $courseDetails;
+        }
+        $course = $course['courseDetails'];
         isset ($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
 
         if (isset($course['education'])) {

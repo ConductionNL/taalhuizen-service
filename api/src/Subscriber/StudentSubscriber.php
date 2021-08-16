@@ -87,7 +87,7 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student|Response
+     * @return Student|Response|Object
      */
     private function createStudent(array $body)
     {
@@ -112,12 +112,24 @@ class StudentSubscriber implements EventSubscriberInterface
     /**
      *
      * @throws \Exception
-     * @return ArrayCollection|Response
+     * @return object|Response
      */
     private function getStudents($queryParams)
     {
         $students = $this->studentService->getStudents($queryParams);
-        var_dump($students);die;
-        return ;
+
+        $studentsCollection = new ArrayCollection();
+        foreach ($students as $student) {
+            $studentsCollection->add($student);
+        }
+
+
+        return (object) [
+            '@context' => '/contexts/Student',
+            '@id' => '/students',
+            '@type' => '/hydra:Collection',
+            'hydra:member' => $studentsCollection,
+            'hydra:totalItems' => count($studentsCollection)
+        ];
     }
 }
