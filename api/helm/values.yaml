@@ -9,11 +9,52 @@ config:
   internal: false
 
 security:
-  applicationKey: "8b55691f-346d-423c-bdcf-3f5365806d39"
+  applicationKey: "45c1a4b6-59d3-4a6e-86bf-88a872f35845"
   secret: ""
   jwt:
     id:
     privateKey:
+  dependencies:
+    arc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://agendaservice
+    bs:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://berichtservice
+    cc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://contactcatalogus
+    eav:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://eav-component
+    edu:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://education-component
+    mrc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://medewerkercatalogus
+    memo:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://memo-component
+    rc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://review-component
+    uc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://user-component
+    wrc:
+      apikey: 45c1a4b6-59d3-4a6e-86bf-88a872f35845
+      auth: apikey
+      location: http://webresourcecatalogus
 
 php:
   repository: docker.io/conduction/protocomponent-php
