@@ -353,7 +353,6 @@ class CCService
 
         foreach ($ccOrganization['emails'] as $email) {
             $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $email['id']]);
-
         }
 
         foreach ($ccOrganization['addresses'] as $address) {

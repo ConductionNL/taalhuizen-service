@@ -147,6 +147,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
                     array_push($result['learningNeeds'], ['errorMessage' => $learningNeed['errorMessage']]);
                 }
             }
+            $result['totalItems'] = count($result['learningNeeds']);
         } else {
             $result['message'] = 'Warning, '.$studentId.' is not an existing eav/edu/participant!';
         }

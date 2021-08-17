@@ -29,9 +29,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
+ *          "put"={
+ *             "read"=false,
+ *          },
+ *          "delete"={
+ *             "read"=false,
+ *             "validate"=false
+ *          },
  *     },
  *     collectionOperations={
  *          "get",
