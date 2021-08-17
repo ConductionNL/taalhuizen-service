@@ -16,17 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NewLearningNeedService
 {
-    private CCService $ccService;
-    private EDUService $eduService;
+
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EntityManagerInterface $entityManager;
 
     public function __construct(LayerService $layerService)
     {
-        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->commonGroundService = $layerService->commonGroundService;
-        $this->ccService = new CCService($layerService);
         $this->eavService = new EAVService($this->commonGroundService);
         $this->entityManager = $layerService->entityManager;
     }
@@ -40,6 +37,46 @@ class NewLearningNeedService
         return $learningNeed;
     }
 
+    public function deleteLearningNeed($id): Response
+    {
+        if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
+            // Get the learningNeed from EAV
+            $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
+
+            // Remove this learningNeed from all EAV/edu/participants
+            foreach ($learningNeed['participants'] as $studentUrl) {
+                $this->removeLearningNeedFromStudent($learningNeed['@eav'], $studentUrl);
+            }
+
+            // Delete the learningNeed in EAV
+            $this->eavService->deleteObject($learningNeed['eavId']);
+        } else {
+            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/learning_need!', 'learning need');
+        }
+
+        return new Response(null, 204);
+    }
+
+    public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl): array
+    {
+        $result = [];
+        if ($this->eavService->hasEavObject($studentUrl)) {
+            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
+            $participant['learningNeeds'] = array_values(array_filter($getParticipant['learningNeeds'], function ($participantLearningNeed) use ($learningNeedUrl) {
+                return $participantLearningNeed != $learningNeedUrl;
+            }));
+            $result['participant'] = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
+        }
+
+        return $result;
+    }
+
+    public function updateLearningNeed(array $learningNeed, string $learningNeedId): ArrayCollection
+    {
+        $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
+
+        return new ArrayCollection($learningNeed);
+    }
 
     public function createLearningNeed(LearningNeed $learningNeed): LearningNeed
     {

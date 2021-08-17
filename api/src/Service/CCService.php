@@ -331,22 +331,35 @@ class CCService
      * Deletes an organization.
      *
      * @param string $id        The id of the organization to delete
-     * @param string $programId The program related to the organization
+     * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
      */
-    public function deleteOrganization(string $id, string $programId): bool
+    public function deleteOrganization(string $id, ?string $programId): bool
     {
         $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
         //delete program
-        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+        if ($programId !== null) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+        }
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
         $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $ccOrganization['telephones'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $ccOrganization['emails'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $ccOrganization['addresses'][0]['id']]);
+
+        foreach ($ccOrganization['telephones'] as $telephone) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
+        }
+
+        foreach ($ccOrganization['emails'] as $email) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $email['id']]);
+
+        }
+
+        foreach ($ccOrganization['addresses'] as $address) {
+            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $address['id']]);
+        }
+
         foreach ($ccOrganization['persons'] as $person) {
             $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
         }
