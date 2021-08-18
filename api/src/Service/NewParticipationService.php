@@ -230,6 +230,14 @@ class NewParticipationService
         if ($participation->getLearningNeedId() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'learning need id');
         }
+
+        if ($participation->getProviderId() !== null) {
+            $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $participation->getProviderId()]);
+            if (!$this->commonGroundService->isResource($providerUrl)) {
+                throw new BadRequestPathException('Unable to find valid provider with provided id.', 'provider');
+            }
+        }
+
     }
 
 }
