@@ -39,6 +39,7 @@ class NewLearningNeedService
 
     public function deleteLearningNeed($id): Response
     {
+
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             // Get the learningNeed from EAV
             $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
@@ -50,11 +51,10 @@ class NewLearningNeedService
 
             // Delete the learningNeed in EAV
             $this->eavService->deleteObject($learningNeed['eavId']);
+            return new Response(null, 204);
         } else {
             throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/learning_need!', 'learning need');
         }
-
-        return new Response(null, 204);
     }
 
     public function removeLearningNeedFromStudent($learningNeedUrl, $studentUrl): array
