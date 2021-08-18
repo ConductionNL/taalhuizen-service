@@ -64,7 +64,6 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
         }
         $route = $event->getRequest()->attributes->get('_route');
 
-        // Lets limit the subscriber
         try {
             switch ($route) {
                 case 'api_learning_needs_get_item':
@@ -82,6 +81,8 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
             }
             if ($response instanceof Response) {
                 $event->setResponse($response);
+                
+                return;
             }
             $this->serializerService->setResponse($response, $event);
         } catch (BadRequestPathException $exception) {
