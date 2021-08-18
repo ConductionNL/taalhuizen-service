@@ -73,7 +73,11 @@ class NewLearningNeedService
 
     public function updateLearningNeed(array $learningNeed, string $learningNeedId): ArrayCollection
     {
-        $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
+        try {
+            $learningNeed = $this->eavService->saveObject($learningNeed, ['entityName' => 'learning_needs', 'eavId' => $learningNeedId]);
+        } catch (\Throwable $e) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'learning need');
+        }
 
         return new ArrayCollection($learningNeed);
     }

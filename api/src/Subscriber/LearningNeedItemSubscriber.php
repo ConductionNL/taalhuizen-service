@@ -4,7 +4,9 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Registration;
+use App\Exception\BadRequestPathException;
 use App\Service\EAVService;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewLearningNeedService;
 use App\Service\NewRegistrationService;
@@ -23,6 +25,7 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
     private SerializerService $serializerService;
     private EAVService $eavService;
     private NewLearningNeedService $learningneedService;
+    private ErrorSerializerService $errorSerializerService;
 
     /**
      * UserItemSubscriber constructor.
@@ -36,6 +39,7 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
         $this->serializerService = new SerializerService($layerService->serializer);
         $this->eavService = $eavService;
         $this->learningneedService = new NewLearningNeedService($layerService);
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
     }
 
     /**
@@ -61,27 +65,29 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
 
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_learning_needs_get_item':
-                $response = $this->getLearningNeed($event->getRequest()->attributes->get('id'));
-                break;
-            case 'api_learning_needs_put_item':
-                $resource = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->learningneedService->updateLearningNeed($resource, $event->getRequest()->attributes->get('id'));
-                break;
-            case 'api_learning_needs_delete_item':
-                $response = $this->learningneedService->deleteLearningNeed($event->getRequest()->attributes->get('id'));
-                break;
-            default:
-                return;
+        try {
+            switch ($route) {
+                case 'api_learning_needs_get_item':
+                    $response = $this->getLearningNeed($event->getRequest()->attributes->get('id'));
+                    break;
+                case 'api_learning_needs_put_item':
+                    $resource = json_decode($event->getRequest()->getContent(), true);
+                    $response = $this->learningneedService->updateLearningNeed($resource, $event->getRequest()->attributes->get('id'));
+                    break;
+                case 'api_learning_needs_delete_item':
+                    $response = $this->learningneedService->deleteLearningNeed($event->getRequest()->attributes->get('id'));
+                    break;
+                default:
+                    return;
+            }
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+            }
+            $this->serializerService->setResponse($response, $event);
+        } catch (BadRequestPathException $exception) {
+            $this->errorSerializerService->serialize($exception, $event);
         }
 
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
-        }
-        $this->serializerService->setResponse($response, $event);
     }
 
     public function getLearningNeed($id, $url = null)
