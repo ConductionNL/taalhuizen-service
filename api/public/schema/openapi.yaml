@@ -30470,7 +30470,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30509,7 +30509,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30566,7 +30566,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30628,7 +30628,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
