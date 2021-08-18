@@ -50,7 +50,7 @@ class ParticipationSubscriber implements EventSubscriberInterface
 
         try {
             switch ($route) {
-                case 'api_learning_needs_post_collection':
+                case 'api_participations_post_collection':
                     $response = $this->participationService->createParticipation($resource);
                     break;
                 default:

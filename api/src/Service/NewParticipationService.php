@@ -66,9 +66,9 @@ class NewParticipationService
         $this->checkParticipation($participation);
 
         $array = [
-            'providerId' => $participation->getProviderId() ?? null,
-            'providerName' => $participation->getProviderName() ?? null,
-            'providerNote' => $participation->getProviderNote() ?? null,
+            'aanbiederId' => $participation->getProviderId() ?? null,
+            'aanbiederName' => $participation->getProviderName() ?? null,
+            'aanbiederNote' => $participation->getProviderNote() ?? null,
             'offerName' => $participation->getOfferName() ?? null,
             'offerCourse' => $participation->getOfferCourse() ?? null,
             'learningNeedOutCome' => $participation->getLearningNeedOutCome() ?? null,
@@ -76,8 +76,8 @@ class NewParticipationService
             'groupFormation' => $participation->getGroupFormation(),
             'totalClassHours' => $participation->getTotalClassHours() ?? null,
             'certificateWillBeAwarded' => $participation->getCertificateWillBeAwarded() ?? null,
-            'startDate' => $participation->getStartDate() ?? null,
-            'endDate' => $participation->getEndDate() ?? null,
+            'startDate' => $participation->getStartDate()->format('Y-m-d H:i:s') ?? null,
+            'endDate' => $participation->getEndDate()->format('Y-m-d H:i:s') ?? null,
             'engagements' => $participation->getEngagements() ?? null,
         ];
 
@@ -184,7 +184,7 @@ class NewParticipationService
             $result['organization'] = $organization;
 
             // Update the participation to add the cc/organization to it
-            $updateParticipation['provider'] = $organization['@id'];
+            $updateParticipation['aanbieder'] = $organization['@id'];
             $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
@@ -253,15 +253,15 @@ class NewParticipationService
             throw new BadRequestPathException('Some required fields have not been submitted.', 'learning need id');
         }
 
-        if ($participation->getProviderId() !== null && $participation->getProviderNote() == null) {
+        if ($participation->getProviderId() != null && $participation->getProviderNote() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'provider note');
         }
 
-        if ($participation->getProviderId() == null && $participation->getProviderNote() != null) {
+        if ($participation->getProviderNote() != null && $participation->getProviderId() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'provider id');
         }
 
-        if ($participation->getProviderId() !== null) {
+        if ($participation->getProviderId() != null) {
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $participation->getProviderId()]);
             if (!$this->commonGroundService->isResource($providerUrl)) {
                 throw new BadRequestPathException('Unable to find valid provider with provided id.', 'provider');

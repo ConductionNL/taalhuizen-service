@@ -107,7 +107,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $providerId;
+    private ?string $providerId = null;
 
     /**
      * @var string|null The provider name of this Participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
@@ -123,7 +123,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $providerName;
+    private ?string $providerName = null;
 
     /**
      * @var ?string Provider note of this participation. <br /> **Either ProviderName or; ProviderId & ProviderNote is required!**
@@ -142,7 +142,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $providerNote;
+    private ?string $providerNote = null;
 
     /**
      * @var ?string Offer name of this participation
@@ -161,7 +161,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $offerName;
+    private ?string $offerName = null;
 
     /**
      * @var ?string Offer course of this participation.
@@ -180,7 +180,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $offerCourse;
+    private ?string $offerCourse = null;
 
     /**
      * @var ?LearningNeedOutCome The learning need out come of this participation.
@@ -192,7 +192,7 @@ class Participation
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?LearningNeedOutCome $learningNeedOutCome;
+    private ?LearningNeedOutCome $learningNeedOutCome = null;
 
     /**
      * @var bool|null The isFormal boolean of this LearningNeedOutcome.
@@ -208,7 +208,7 @@ class Participation
      *     }
      * )
      */
-    private ?bool $isFormal;
+    private ?bool $isFormal = null;
 
     /**
      * @var string|null The group formation of this LearningNeedOutcome.
@@ -226,7 +226,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $groupFormation;
+    private ?string $groupFormation = null;
 
     /**
      * @var float|null The total class hours of this LearningNeedOutcome.
@@ -242,7 +242,7 @@ class Participation
      *     }
      * )
      */
-    private ?float $totalClassHours;
+    private ?float $totalClassHours = null;
 
     /**
      * @var bool|null The certificate will be awarded boolean of this LearningNeedOutcome.
@@ -258,7 +258,7 @@ class Participation
      *     }
      * )
      */
-    private ?bool $certificateWillBeAwarded;
+    private ?bool $certificateWillBeAwarded = null;
 
     /**
      * @var DateTimeInterface|null The start date of this participation.
@@ -309,7 +309,7 @@ class Participation
      *     }
      * )
      */
-    private ?string $engagements;
+    private ?string $engagements = null;
 
     /**
      * @var string The id of the LearningNeed connected to this Participation.
@@ -447,7 +447,7 @@ class Participation
         return $this;
     }
 
-    public function getLearningNeedOutCome(): LearningNeedOutCome
+    public function getLearningNeedOutCome(): ?LearningNeedOutCome
     {
         return $this->learningNeedOutCome;
     }
