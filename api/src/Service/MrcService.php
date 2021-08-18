@@ -762,11 +762,15 @@ class MrcService
      */
     public function handleUserOrganizationUrl(array $employeeArray, array $contact = null): ?string
     {
+        if (isset($contact['organization']['@id'])) {
+            return $contact['organization']['@id'];
+        }
+
         $contact = $this->commonGroundService->getResource($contact['@id']);
-        if (key_exists('organizationId', $employeeArray)) {
-            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]);
-        } elseif (isset($contact['organization'])) {
+        if (isset($contact['organization'])) {
             $organizationUrl = isset($contact['organization']);
+        } elseif (key_exists('organizationId', $employeeArray)) {
+            $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]);
         } else {
             $organizationUrl = null;
 
@@ -805,6 +809,7 @@ class MrcService
     public function createUser(array $employeeArray, array $contact): array
     {
         $organizationUrl = $this->handleUserOrganizationUrl($employeeArray, $contact);
+        
         if (isset($employeeArray['person']['emails']['email'])) {
             $resource = [
                 'username' => $employeeArray['person']['emails']['email'],
