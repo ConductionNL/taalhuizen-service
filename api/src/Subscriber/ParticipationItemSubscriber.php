@@ -66,13 +66,13 @@ class ParticipationItemSubscriber implements EventSubscriberInterface
             case 'api_participations_get_item':
                 $response = $this->getParticipation($event->getRequest()->attributes->get('id'));
                 break;
-//            case 'api_participations_put_item':
-//                $resource = json_decode($event->getRequest()->getContent(), true);
-//                $response = $this->learningneedService->updateLearningNeed($resource, $event->getRequest()->attributes->get('id'));
-//                break;
-//            case 'api_participations_delete_item':
-//                $response = $this->learningneedService->deleteLearningNeed($event->getRequest()->attributes->get('id'));
-//                break;
+            case 'api_participations_put_item':
+                $resource = json_decode($event->getRequest()->getContent(), true);
+                $response = $this->participationService->updateParticipation($resource, $event->getRequest()->attributes->get('id'));
+                break;
+            case 'api_participations_delete_item':
+                $response = $this->participationService->deleteParticipation($event->getRequest()->attributes->get('id'));
+                break;
             default:
                 return;
         }

@@ -38,6 +38,29 @@ class NewParticipationService
         return $participation;
     }
 
+    public function deleteParticipation($id): Response
+    {
+        if ($this->eavService->hasEavObject(null, 'participations', $id)) {
+            // Get the learningNeed from EAV
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $id]);
+
+            // Delete the learningNeed in EAV
+            $this->eavService->deleteObject($participation['eavId']);
+        } else {
+            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/participation!', 'participation');
+        }
+
+        return new Response(null, 204);
+    }
+
+
+    public function updateParticipation(array $participation, string $participationId): ArrayCollection
+    {
+        $learningNeed = $this->eavService->saveObject($participation, ['entityName' => 'participations', 'eavId' => $participationId]);
+
+        return new ArrayCollection($learningNeed);
+    }
+
     public function createParticipation(Participation $participation): Participation
     {
         $this->checkParticipation($participation);
@@ -56,7 +79,6 @@ class NewParticipationService
             'startDate' => $participation->getStartDate() ?? null,
             'endDate' => $participation->getEndDate() ?? null,
             'engagements' => $participation->getEngagements() ?? null,
-            'learningNeedId' => $participation->getLearningNeedId(),
         ];
 
         $arrays['participation'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'participations']);
