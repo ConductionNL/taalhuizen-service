@@ -50,7 +50,7 @@ class CCService
      */
     public function cleanResource(array $array): array
     {
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $array[$key] = $this->cleanResource($value);
             } elseif (!is_bool($value) and !$value) {
@@ -337,20 +337,20 @@ class CCService
      */
     public function deleteOrganization(string $id, string $programId): bool
     {
-        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         //delete program
-        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
-        $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $ccOrganization['telephones'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $ccOrganization['emails'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $ccOrganization['addresses'][0]['id']]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'telephones', 'id' => $ccOrganization['telephones'][0]['id']]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'emails', 'id' => $ccOrganization['emails'][0]['id']]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'addresses', 'id' => $ccOrganization['addresses'][0]['id']]);
         foreach ($ccOrganization['persons'] as $person) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
         }
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
 
         return true;
     }
@@ -379,7 +379,7 @@ class CCService
      *
      * @param array $employee The employee object that was given as input
      *
-     *@throws Exception Thrown if givenName is not provided
+     * @throws Exception Thrown if givenName is not provided
      *
      * @return array The resulting person array
      */
@@ -512,6 +512,19 @@ class CCService
     public function saveEavPerson(array $body, $personUrl = null): array
     {
         // Save the cc/people in EAV
+
+        // unset org, emails, telephones etc (cant save subobjects)
+        unset($body['availability']);
+//        if (isset($body['organization'])) {
+//            foreach ($body['organization'] as $key => $prop) {
+//                var_dump($key);
+//                var_dump(!is_int($key));
+//                if (!is_int($key)) {
+//                    unset($body['organization'][$key]);
+//                }
+//            }
+//        }
+
         if (isset($personUrl)) {
             // Update
             $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
