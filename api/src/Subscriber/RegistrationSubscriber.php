@@ -108,7 +108,6 @@ class RegistrationSubscriber implements EventSubscriberInterface
     {
         $token = str_replace('Bearer ', '', $event->getRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
-//        $currentUser = $this->ucService->getUser($payload['userId']);
         $currentUser = $this->ucService->getUserArray($payload['userId']);
 
         if (isset($currentUser['organization']) && $this->commonGroundService->isResource($currentUser['organization'])) {
