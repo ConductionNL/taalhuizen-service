@@ -26,8 +26,8 @@ class StudentItemSubscriber implements EventSubscriberInterface
     /**
      * StudentItemSubscriber constructor.
      *
-     * @param StudentService   $studentService
-     * @param LayerService $layerService
+     * @param StudentService $studentService
+     * @param LayerService   $layerService
      */
     public function __construct(StudentService $studentService, LayerService $layerService)
     {
