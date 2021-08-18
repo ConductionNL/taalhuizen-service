@@ -253,6 +253,14 @@ class NewParticipationService
             throw new BadRequestPathException('Some required fields have not been submitted.', 'learning need id');
         }
 
+        if ($participation->getProviderId() !== null && $participation->getProviderNote() == null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'provider note');
+        }
+
+        if ($participation->getProviderId() == null && $participation->getProviderNote() != null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'provider id');
+        }
+
         if ($participation->getProviderId() !== null) {
             $providerUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $participation->getProviderId()]);
             if (!$this->commonGroundService->isResource($providerUrl)) {
