@@ -343,7 +343,7 @@ class Employee
      *     }
      * )
      */
-    private ?string $userId;
+    private ?string $userId = null;
 
     public function getId(): UuidInterface
     {

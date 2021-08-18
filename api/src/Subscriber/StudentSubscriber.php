@@ -9,6 +9,7 @@ use App\Service\ParticipationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -66,6 +67,9 @@ class StudentSubscriber implements EventSubscriberInterface
                 $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createStudent($body);
                 break;
+            case 'api_students_get_collection':
+                $response = $this->getStudents($event->getRequest()->query->all());
+                break;
             default:
                 return;
         }
@@ -83,7 +87,7 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student
+     * @return Student|Response|Object
      */
     private function createStudent(array $body): Student
     {
@@ -103,5 +107,29 @@ class StudentSubscriber implements EventSubscriberInterface
 //        }
 
         return $this->studentService->createStudent($body);
+    }
+
+    /**
+     *
+     * @throws \Exception
+     * @return object|Response
+     */
+    private function getStudents($queryParams)
+    {
+        $students = $this->studentService->getStudents($queryParams);
+
+        $studentsCollection = new ArrayCollection();
+        foreach ($students as $student) {
+            $studentsCollection->add($student);
+        }
+
+
+        return (object) [
+            '@context' => '/contexts/Student',
+            '@id' => '/students',
+            '@type' => '/hydra:Collection',
+            'hydra:member' => $studentsCollection,
+            'hydra:totalItems' => count($studentsCollection)
+        ];
     }
 }
