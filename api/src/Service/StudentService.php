@@ -28,7 +28,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class StudentService
 {
@@ -58,10 +57,10 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     * @return Student|object Returns student
      * @throws Exception
      *
-     * @return array Returns student
+     * @return Student|object Returns student
+     * @return array          Returns student
      */
     public function getStudent(string $id, bool $skipChecks = false): Student
     {
@@ -208,7 +207,6 @@ class StudentService
                 $registrarMemo = $registrarMemos[0];
             }
         }
-
 
         return [
             'registrarOrganization' => $registrarOrganization ?? null,
@@ -756,6 +754,7 @@ class StudentService
             foreach ($person['ownedContactLists'][0]['people'] as $child) {
                 if (isset($child['birthday'])) {
                     $birthdayCount++;
+
                     try {
                         $birthday = new \DateTime($child['birthday']);
                         $childrenDatesOfBirth .= $birthday->format('d-m-Y');
@@ -837,13 +836,13 @@ class StudentService
     private function handleBackgroundDetails(array $person): StudentBackground
     {
         $studentBackground = new StudentBackground();
-        $foundViaArray = ["VOLUNTEER_CENTER", "LIBRARY_WEBSITE", "SOCIAL_MEDIA", "NEWSPAPER", "VIA_VIA", "OTHER"];
+        $foundViaArray = ['VOLUNTEER_CENTER', 'LIBRARY_WEBSITE', 'SOCIAL_MEDIA', 'NEWSPAPER', 'VIA_VIA', 'OTHER'];
         isset($person['foundVia']) ? in_array($person['foundVia'], $foundViaArray) ? $studentBackground->setFoundVia($person['foundVia']) && $studentBackground->setFoundViaOther(null) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther($person['foundVia']) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther(null);
-        isset($person['wentToLanguageHouseBefore']) ? $studentBackground->setWentToLanguageHouseBefore((bool)$person['wentToLanguageHouseBefore']) : $studentBackground->setWentToLanguageHouseBefore(null);
+        isset($person['wentToLanguageHouseBefore']) ? $studentBackground->setWentToLanguageHouseBefore((bool) $person['wentToLanguageHouseBefore']) : $studentBackground->setWentToLanguageHouseBefore(null);
         isset($person['wentToLanguageHouseBeforeReason']) ? $studentBackground->setWentToLanguageHouseBeforeReason($person['wentToLanguageHouseBeforeReason']) : $studentBackground->setWentToLanguageHouseBeforeReason(null);
         isset($person['wentToLanguageHouseBeforeYear']) ? $studentBackground->setWentToLanguageHouseBeforeYear($person['wentToLanguageHouseBeforeYear']) : $studentBackground->setWentToLanguageHouseBeforeYear(null);
         isset($person['network']) ? $studentBackground->setNetwork($person['network']) : $studentBackground->setNetwork(null);
-        isset($person['participationLadder']) ? $studentBackground->setParticipationLadder((int)$person['participationLadder']) : $studentBackground->setParticipationLadder(null);
+        isset($person['participationLadder']) ? $studentBackground->setParticipationLadder((int) $person['participationLadder']) : $studentBackground->setParticipationLadder(null);
 
         return $studentBackground;
     }
@@ -873,9 +872,9 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     * @return array|null[] Returns array of employee
      * @throws Exception
      *
+     * @return array|null[] Returns array of employee
      * @return array|null[] Returns an array of educations
      */
     public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
@@ -900,7 +899,6 @@ class StudentService
                 }
             }
         }
-
 
         return $employee;
     }
@@ -958,10 +956,11 @@ class StudentService
             $education->setAmountOfHours(null);
             $educationDetails->setEducation($education);
             $educationDetails->setFollowingEducationRightNow(null);
+
             return $educationDetails;
         }
         $educationsArray = $educationsArray['educationDetails'];
-        isset ($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
+        isset($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
 
         if (isset($educationsArray['education'])) {
             $education = new Education();
@@ -970,18 +969,17 @@ class StudentService
             $education->setCourseProfessionalism(null);
             $education->setAmountOfHours(null);
 
-            isset ($educationsArray['education']['name']) ? $education->setName($educationsArray['education']['name']) : $education->setName(null);
-            isset ($educationsArray['education']['startDate']) ? $education->setStartDate(new \DateTime($educationsArray['education']['startDate'])) : $education->setStartDate(null);
-            isset ($educationsArray['education']['endDate']) ? $education->setEnddate(new \DateTime($educationsArray['education']['endDate'])) : $education->setEnddate(null);
-            isset ($educationsArray['education']['institution']) ? $education->setInstitution($educationsArray['education']['institution']) : $education->setInstitution(null);
-            isset ($educationsArray['education']['iscedEducationLevelCode']) ? $education->setIscedEducationLevelCode($educationsArray['education']['iscedEducationLevelCode']) : $education->setIscedEducationLevelCode(null);
-            isset ($educationsArray['education']['degreeGrantedStatus']) ? $education->setDegreeGrantedStatus($educationsArray['education']['degreeGrantedStatus']) : $education->setDegreeGrantedStatus(null);
-            isset ($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
-            isset ($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
-            isset ($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
-            isset ($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool)$educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
-            isset ($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
-
+            isset($educationsArray['education']['name']) ? $education->setName($educationsArray['education']['name']) : $education->setName(null);
+            isset($educationsArray['education']['startDate']) ? $education->setStartDate(new \DateTime($educationsArray['education']['startDate'])) : $education->setStartDate(null);
+            isset($educationsArray['education']['endDate']) ? $education->setEnddate(new \DateTime($educationsArray['education']['endDate'])) : $education->setEnddate(null);
+            isset($educationsArray['education']['institution']) ? $education->setInstitution($educationsArray['education']['institution']) : $education->setInstitution(null);
+            isset($educationsArray['education']['iscedEducationLevelCode']) ? $education->setIscedEducationLevelCode($educationsArray['education']['iscedEducationLevelCode']) : $education->setIscedEducationLevelCode(null);
+            isset($educationsArray['education']['degreeGrantedStatus']) ? $education->setDegreeGrantedStatus($educationsArray['education']['degreeGrantedStatus']) : $education->setDegreeGrantedStatus(null);
+            isset($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
+            isset($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
+            isset($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
+            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool) $educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
+            isset($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
 
             $educationDetails->setEducation($education);
         } else {
@@ -1031,10 +1029,11 @@ class StudentService
             $education->setGroupFormation(null);
             $courseDetails->setCourse($education);
             $courseDetails->setIsFollowingCourseRightNow(null);
+
             return $courseDetails;
         }
         $course = $course['courseDetails'];
-        isset ($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
+        isset($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
 
         if (isset($course['education'])) {
             $newCourse = new Education();
@@ -1043,23 +1042,22 @@ class StudentService
             $newCourse->setCourseProfessionalism(null);
             $newCourse->setAmountOfHours(null);
 
-            isset ($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
-            isset ($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
-            isset ($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
-            isset ($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
-            isset ($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
-            isset ($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
-            isset ($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
-            isset ($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
-            isset ($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
-            isset ($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool)$course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
-            isset ($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
+            isset($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
+            isset($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
+            isset($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
+            isset($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
+            isset($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
+            isset($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
+            isset($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
+            isset($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
+            isset($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
+            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool) $course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
+            isset($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
 
             $courseDetails->setCourse($newCourse);
         } else {
             $courseDetails->setCourse(null);
         }
-
 
         return $courseDetails;
 //        return [
@@ -1162,9 +1160,9 @@ class StudentService
             $availability = new Availability();
             foreach ($person['availability'] as $key => $day) {
                 $availabilityDay = new AvailabilityDay();
-                $availabilityDay->setMorning((bool)$day['morning']);
-                $availabilityDay->setAfternoon((bool)$day['afternoon']);
-                $availabilityDay->setEvening((bool)$day['evening']);
+                $availabilityDay->setMorning((bool) $day['morning']);
+                $availabilityDay->setAfternoon((bool) $day['afternoon']);
+                $availabilityDay->setEvening((bool) $day['evening']);
 
                 switch ($key) {
                     case 'monday':
@@ -1214,23 +1212,24 @@ class StudentService
     {
         $studentPermission = new StudentPermission();
         if (isset($person['didSignPermissionForm'])) {
-            $studentPermission->setDidSignPermissionForm((bool)$person['didSignPermissionForm']);
+            $studentPermission->setDidSignPermissionForm((bool) $person['didSignPermissionForm']);
         }
         if (isset($person['hasPermissionToShareDataWithProviders'])) {
-            $studentPermission->setHasPermissionToShareDataWithProviders((bool)$person['hasPermissionToShareDataWithProviders']);
+            $studentPermission->setHasPermissionToShareDataWithProviders((bool) $person['hasPermissionToShareDataWithProviders']);
         } else {
             $studentPermission->setHasPermissionToShareDataWithProviders(false);
         }
         if (isset($person['hasPermissionToShareDataWithLibraries'])) {
-            $studentPermission->setHasPermissionToShareDataWithLibraries((bool)$person['hasPermissionToShareDataWithLibraries']);
+            $studentPermission->setHasPermissionToShareDataWithLibraries((bool) $person['hasPermissionToShareDataWithLibraries']);
         } else {
             $studentPermission->setHasPermissionToShareDataWithLibraries(false);
         }
         if (isset($person['hasPermissionToSendInformationAboutLibraries'])) {
-            $studentPermission->setHasPermissionToSendInformationAboutLibraries((bool)$person['hasPermissionToSendInformationAboutLibraries']);
+            $studentPermission->setHasPermissionToSendInformationAboutLibraries((bool) $person['hasPermissionToSendInformationAboutLibraries']);
         } else {
             $studentPermission->setHasPermissionToSendInformationAboutLibraries(false);
         }
+
         return $studentPermission;
     }
 
@@ -1287,7 +1286,6 @@ class StudentService
         // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
         $employee = $this->mrcService->createEmployeeArray($employee, true);
 
-
         // Then save memos
         $memos = $this->saveMemos($input, $person['@id']);
         if (isset($memos['availabilityMemo']['description'])) {
@@ -1318,35 +1316,35 @@ class StudentService
         if (isset($registrar['addresses'])) {
             $address = $registrar['addresses'];
             unset($registrar['addresses']);
-            $registrar['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+            $registrar['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
         }
         if (isset($registrar['telephones'])) {
             $telephones = $registrar['telephones'];
             unset($registrar['telephones']);
             foreach ($telephones as $tel) {
-                $registrar['telephones'][] = '/telephones/' . $this->commonGroundService->saveResource($tel, ['component' => 'cc', 'type' => 'telephones'])['id'];
+                $registrar['telephones'][] = '/telephones/'.$this->commonGroundService->saveResource($tel, ['component' => 'cc', 'type' => 'telephones'])['id'];
             }
         }
         if (isset($registrar['emails'])) {
             $email = $registrar['emails'];
             unset($registrar['emails']);
-            $registrar['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+            $registrar['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
         }
         if (isset($registrar['organization'])) {
             if (isset($registrar['organization']['addresses'])) {
                 $address = $registrar['organization']['addresses'];
                 unset($registrar['organization']['addresses']);
-                $registrar['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+                $registrar['organization']['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
             }
             if (isset($registrar['organization']['telephones'])) {
                 $telephones = $registrar['organization']['telephones'];
                 unset($registrar['organization']['telephones']);
-                $registrar['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
+                $registrar['organization']['telephones'][0] = '/telephones/'.$this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
             }
             if (isset($registrar['organization']['emails'])) {
                 $email = $registrar['organization']['emails'];
                 unset($registrar['organization']['emails']);
-                $registrar['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+                $registrar['organization']['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
             }
         }
 
@@ -1360,27 +1358,26 @@ class StudentService
      *
      * @return array Returns person with given data
      */
-    private
-    function savePersonsOrganizationSubresources(array $person): array
+    private function savePersonsOrganizationSubresources(array $person): array
     {
         if (isset($person['organization']['addresses'])) {
             $address = $person['organization']['addresses'];
             unset($person['organization']['addresses']);
-            $person['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+            $person['organization']['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
         }
         if (isset($person['organization']['emails'])) {
             $emails = $person['organization']['emails'];
             unset($person['organization']['emails']);
-            $person['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($emails, ['component' => 'cc', 'type' => 'emails'])['id'];
+            $person['organization']['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($emails, ['component' => 'cc', 'type' => 'emails'])['id'];
         }
         if (isset($person['organization']['telephones'])) {
             $telephones = $person['organization']['telephones'];
             unset($person['organization']['telephones']);
-            $person['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
+            $person['organization']['telephones'][0] = '/telephones/'.$this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
         }
         $org = $person['organization'];
         unset($person['organization']);
-        $person['organization'] =  '/organizations/' . $this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
+        $person['organization'] = '/organizations/'.$this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
 
         return $person;
     }
@@ -1393,8 +1390,7 @@ class StudentService
      *
      * @return array Returns person with given data
      */
-    private
-    function inputToPerson(array $input, $updatePerson = null): array
+    private function inputToPerson(array $input, $updatePerson = null): array
     {
 //        if (isset($input['languageHouseId'])) {
 //            $person['organization'] = '/organizations/' . $input['languageHouseId'];
@@ -1438,8 +1434,7 @@ class StudentService
      *
      * @return array Returns person array
      */
-    private
-    function getPersonPropertiesFromPermissionDetails(array $person, array $permissionDetails): array
+    private function getPersonPropertiesFromPermissionDetails(array $person, array $permissionDetails): array
     {
         if (isset($permissionDetails['didSignPermissionForm'])) {
             $person['didSignPermissionForm'] = $permissionDetails['didSignPermissionForm'];
@@ -1465,8 +1460,7 @@ class StudentService
      *
      * @return array Returns person array
      */
-    private
-    function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
+    private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
     {
         if (isset($availabilityDetails['availability'])) {
             $person['availability'] = $availabilityDetails['availability'];
@@ -1483,8 +1477,7 @@ class StudentService
      *
      * @return array Returns person array
      */
-    private
-    function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
+    private function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
     {
         if (isset($dutchNTDetails['dutchNTLevel'])) {
             $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'];
@@ -1513,8 +1506,7 @@ class StudentService
      *
      * @return array Returns a person array with background details
      */
-    private
-    function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
+    private function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
     {
         //todo: check in StudentService -> checkStudentValues() for enum options and if other is chosen make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
         // (VOLUNTEER_CENTER, LIBRARY_WEBSITE, SOCIAL_MEDIA, NEWSPAPER, VIA_VIA, OTHER)
@@ -1524,7 +1516,7 @@ class StudentService
             $person['foundVia'] = $backgroundDetails['foundViaOther'];
         }
         if (isset($backgroundDetails['wentToLanguageHouseBefore'])) {
-            $person['wentToLanguageHouseBefore'] = (bool)$backgroundDetails['wentToLanguageHouseBefore'];
+            $person['wentToLanguageHouseBefore'] = (bool) $backgroundDetails['wentToLanguageHouseBefore'];
         }
         if (isset($backgroundDetails['wentToLanguageHouseBeforeReason'])) {
             $person['wentToLanguageHouseBeforeReason'] = $backgroundDetails['wentToLanguageHouseBeforeReason'];
@@ -1553,8 +1545,7 @@ class StudentService
      *
      * @return array Returns a person with properties from general details
      */
-    private
-    function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['countryOfOrigin'])) {
             $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
@@ -1584,8 +1575,7 @@ class StudentService
      *
      * @return array Returns person array with children properties
      */
-    private
-    function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
     {
         if (isset($generalDetails['childrenCount'])) {
             $childrenCount = (int) $generalDetails['childrenCount'];
@@ -1614,8 +1604,7 @@ class StudentService
      *
      * @return array Returns an updated person array
      */
-    private
-    function updatePersonChildrenContactList(array $person, array $updatePerson): array
+    private function updatePersonChildrenContactList(array $person, array $updatePerson): array
     {
         // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
         if (isset($updatePerson['ownedContactLists'][0]['people'])) {
@@ -1643,8 +1632,7 @@ class StudentService
      *
      * @return array Returns an array with childrens data
      */
-    private
-    function setChildrenFromChildrenCount(array $person, int $childrenCount, array $childrenDatesOfBirth): array
+    private function setChildrenFromChildrenCount(array $person, int $childrenCount, array $childrenDatesOfBirth): array
     {
         $children = [];
         for ($i = 0; $i < $childrenCount; $i++) {
@@ -1671,8 +1659,7 @@ class StudentService
      *
      * @return array
      */
-    private
-    function setChildrenDatesOfBirthFromGeneralDetails(string $childrenDatesOfBirth): array
+    private function setChildrenDatesOfBirthFromGeneralDetails(string $childrenDatesOfBirth): array
     {
         $childrenDatesOfBirth = explode(',', $childrenDatesOfBirth);
         foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
@@ -1695,8 +1682,7 @@ class StudentService
      *
      * @return array Returns person array with birthplace property
      */
-    private
-    function setPersonBirthplaceFromCountryOfOrigin(array $person, string $countryOfOrigin, $updatePerson = null): array
+    private function setPersonBirthplaceFromCountryOfOrigin(array $person, string $countryOfOrigin, $updatePerson = null): array
     {
         $person['birthplace'] = [
             'country' => $countryOfOrigin,
@@ -1716,16 +1702,15 @@ class StudentService
     /**
      * This function passes given contact details to the person array.
      *
-     * @param array $person Array with persons data
-     * @param array $input Array with inputted person data
-     * @param null $updatePerson Bool if person should be updated
+     * @param array $person       Array with persons data
+     * @param array $input        Array with inputted person data
+     * @param null  $updatePerson Bool if person should be updated
      *
      * @return array Returns a person array with civic integration details
      */
-    private
-    function getPersonPropertiesFromContactDetails(array $person, array $input, $updatePerson = null): array
+    private function getPersonPropertiesFromContactDetails(array $person, array $input, $updatePerson = null): array
     {
-        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'] . ' ' . $person['familyName'] : $person['givenName'] : '';
+        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
         $person = $this->getPersonEmailsFromContactDetails($person, $input, $personName);
         $person = $this->getPersonTelephonesFromContactDetails($person, $input, $personName);
         $person = $this->getPersonAdressesFromContactDetails($person, $input, $personName);
@@ -1746,14 +1731,13 @@ class StudentService
     /**
      * This function passes given organization details to the person array.
      *
-     * @param array $person Array with persons data
-     * @param array $input Array with inputted person data
-     * @param null $updatePerson Bool if person should be updated
+     * @param array $person       Array with persons data
+     * @param array $input        Array with inputted person data
+     * @param null  $updatePerson Bool if person should be updated
      *
      * @return array Returns a person array with civic integration details
      */
-    private
-    function getPersonPropertiesFromOrganizationDetails(array $person, array $input, $updatePerson = null): array
+    private function getPersonPropertiesFromOrganizationDetails(array $person, array $input, $updatePerson = null): array
     {
         if (isset($input['organization']['id'])) {
             $person['organization']['id'] = $input['organization']['id'];
@@ -1785,8 +1769,7 @@ class StudentService
      *
      * @return array Returns a person array with updated contact details
      */
-    private
-    function updatePersonContactDetailsSubobjects(array $person, array $updatePerson): array
+    private function updatePersonContactDetailsSubobjects(array $person, array $updatePerson): array
     {
         if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
             //merge person emails into updatePerson emails and update the updatePerson email
@@ -1819,8 +1802,7 @@ class StudentService
      *
      * @return array Returns a person array with updated contact details telephones
      */
-    private
-    function updatePersonContactDetailsTelephones(array $person, array $updatePerson): array
+    private function updatePersonContactDetailsTelephones(array $person, array $updatePerson): array
     {
         if (isset($person['telephones'][0]) && isset($updatePerson['telephones'][0]['id'])) {
             //merge person telephones into updatePerson telephones and update the updatePerson telephone
@@ -1841,19 +1823,18 @@ class StudentService
     /**
      * This function passes given addresses from contact details to the person array.
      *
-     * @param array $person Array with persons data
-     * @param array $input Array with inputted persons data
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted persons data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with address properties
      */
-    private
-    function getPersonAdressesFromContactDetails(array $person, array $input, $personName): array
+    private function getPersonAdressesFromContactDetails(array $person, array $input, $personName): array
     {
         if (isset($input['addresses']['name'])) {
             $person['addresses'][0]['name'] = $input['addresses']['name'];
         } else {
-            $person['addresses'][0]['name'] = 'Address of ' . $personName;
+            $person['addresses'][0]['name'] = 'Address of '.$personName;
         }
         if (isset($input['addresses']['street'])) {
             $person['addresses'][0]['street'] = $input['addresses']['street'];
@@ -1877,21 +1858,20 @@ class StudentService
     /**
      * This function passes given telephones from contact details to the person array.
      *
-     * @param array $person Array with persons data
-     * @param array $input Array with inputted person data
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted person data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with telephone properties
      */
-    private
-    function getPersonTelephonesFromContactDetails(array $person, array $input, string $personName): array
+    private function getPersonTelephonesFromContactDetails(array $person, array $input, string $personName): array
     {
         if (isset($input['telephones'])) {
             foreach ($input['telephones'] as $key => $telephone) {
                 if (isset($telephone['name'])) {
                     $person['telephones'][$key]['name'] = $telephone['name'];
                 } else {
-                    $person['telephones'][$key]['name'] = 'Telephone of ' . $personName;
+                    $person['telephones'][$key]['name'] = 'Telephone of '.$personName;
                 }
                 $person['telephones'][$key]['telephone'] = $telephone['telephone'];
             }
@@ -1907,20 +1887,19 @@ class StudentService
     /**
      * This function passes given emails from contact details to the person array.
      *
-     * @param array $person Array with persons data
-     * @param array $input Array with inputted person data
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted person data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with email properties
      */
-    private
-    function getPersonEmailsFromContactDetails(array $person, array $input, string $personName): array
+    private function getPersonEmailsFromContactDetails(array $person, array $input, string $personName): array
     {
         if (isset($input['emails']['email'])) {
             if (isset($input['emails']['name'])) {
                 $person['emails'][0]['name'] = $input['emails']['name'];
             } else {
-                $person['emails'][0]['name'] = 'Email of ' . $personName;
+                $person['emails'][0]['name'] = 'Email of '.$personName;
             }
             $person['emails'][0]['email'] = $input['emails']['email'];
         }
@@ -1936,8 +1915,7 @@ class StudentService
      *
      * @return array Returns a person array with civic integration details
      */
-    private
-    function getPersonPropertiesFromPersonDetails(array $person, array $personDetails): array
+    private function getPersonPropertiesFromPersonDetails(array $person, array $personDetails): array
     {
         if (isset($personDetails['givenName'])) {
             $person['givenName'] = $personDetails['givenName'];
@@ -1966,8 +1944,7 @@ class StudentService
      *
      * @return array Returns a person array with civic integration details
      */
-    private
-    function getPersonPropertiesFromCivicIntegrationDetails(array $person, array $civicIntegrationDetails): array
+    private function getPersonPropertiesFromCivicIntegrationDetails(array $person, array $civicIntegrationDetails): array
     {
         if (isset($civicIntegrationDetails['civicIntegrationRequirement'])) {
             $person['civicIntegrationRequirement'] = $civicIntegrationDetails['civicIntegrationRequirement'];
@@ -1992,8 +1969,7 @@ class StudentService
      *
      * @return array Returns an participant array
      */
-    private
-    function inputToParticipant(array $input, string $ccPersonUrl = null): array
+    private function inputToParticipant(array $input, string $ccPersonUrl = null): array
     {
         // Add cc/person to this edu/participant
         if (isset($ccPersonUrl)) {
@@ -2039,8 +2015,7 @@ class StudentService
      *
      * @return array Returns participant array
      */
-    private
-    function getParticipantPropertiesFromMotivationDetails(array $participant, array $motivationDetails): array
+    private function getParticipantPropertiesFromMotivationDetails(array $participant, array $motivationDetails): array
     {
         if (isset($motivationDetails['desiredSkills'])) {
             $participant['desiredSkills'] = $motivationDetails['desiredSkills'];
@@ -2075,8 +2050,7 @@ class StudentService
      *
      * @return array Returns participant array
      */
-    private
-    function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
+    private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
     {
         $referringOrganization = [];
 
@@ -2117,8 +2091,7 @@ class StudentService
      *
      * @return array Returns employee array
      */
-    private
-    function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
+    private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
     {
         $employee = ['person' => $personUrl];
         //check if this person has a user and if so add its id to the employee body as userId
@@ -2158,8 +2131,7 @@ class StudentService
      *
      * @return array Returns employee array
      */
-    private
-    function getEmployeePropertiesFromJobDetails(array $employee, array $jobDetails): array
+    private function getEmployeePropertiesFromJobDetails(array $employee, array $jobDetails): array
     {
         //todo make sure these attributes exist in eav! fixtures and online!
         if (isset($jobDetails['trainedForJob'])) {
@@ -2186,8 +2158,7 @@ class StudentService
      *
      * @return array Returns employee array
      */
-    private
-    function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
 //        if (isset($courseData['isFollowingCourseRightNow'])) {
         $newEducation = $courseData['course'];
@@ -2225,8 +2196,7 @@ class StudentService
      *
      * @return array Returns new education array
      */
-    private
-    function getCourseProvideCertificateFromCourseDetails(array $newEducation): array
+    private function getCourseProvideCertificateFromCourseDetails(array $newEducation): array
     {
         if (isset($courseDetails['doesCourseProvideCertificate'])) {
             if ($courseDetails['doesCourseProvideCertificate'] == true) {
@@ -2247,8 +2217,7 @@ class StudentService
      *
      * @return array Returns employee array
      */
-    private
-    function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
     {
         $newEducation = $educationData['education'];
         if (isset($educationData['id'])) {
@@ -2270,8 +2239,7 @@ class StudentService
      *
      * @return array Returns new education array
      */
-    private
-    function getFollowingEducationNoFromEducationDetails(array $educationDetails, array $newEducation): array
+    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, array $newEducation): array
     {
         $newEducation['description'] = 'followingEducationNo';
         if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
@@ -2288,7 +2256,6 @@ class StudentService
                 $newEducation['degreeGrantedStatus'] = 'notGranted';
             }
         }
-
 
         if (isset($educationDetails['education']['endDate'])) {
             $newEducation['endDate'] = $educationDetails['education']['endDate'];
@@ -2316,8 +2283,7 @@ class StudentService
      *
      * @return array Returns a new education array
      */
-    private
-    function getFollowingEducationYesFromEducationDetails(array $educationDetails, array $newEducation): array
+    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, array $newEducation): array
     {
         $newEducation['description'] = 'followingEducationYes';
         if (isset($educationDetails['education']['startDate'])) {
@@ -2352,8 +2318,7 @@ class StudentService
      *
      * @return array Returns new education array
      */
-    private
-    function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
+    private function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
     {
         $newEducation = [
             'name'                    => $educationDetails['lastFollowedEducation'],
@@ -2382,8 +2347,7 @@ class StudentService
      *
      * @return array[] Returns array with memo properties
      */
-    private
-    function saveMemos(array $input, string $ccPersonUrl): array
+    private function saveMemos(array $input, string $ccPersonUrl): array
     {
         $availabilityMemo = [];
         $motivationMemo = [];
@@ -2435,8 +2399,7 @@ class StudentService
      *
      * @return array Returns a memo as array
      */
-    private
-    function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
+    private function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
     {
         $memo['name'] = 'Remarks';
         $memo['description'] = $motivationDetails['remarks'];
@@ -2457,8 +2420,7 @@ class StudentService
      *
      * @return array Returns a memo as array
      */
-    private
-    function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
+    private function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
     {
         $memo['name'] = 'Availability notes';
         $memo['description'] = $availabilityDetails['availabilityNotes'];
@@ -2475,9 +2437,9 @@ class StudentService
      *
      * @param array $input Array with students data
      *
-     * @return object Returns a Student object
      * @throws Exception
      *
+     * @return object Returns a Student object
      */
     public function updateStudent(array $input, string $id = null): object
     {
@@ -2501,7 +2463,6 @@ class StudentService
 
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);
-
 
         // Transform DTO info to edu/participant body
         $participant = $this->inputToParticipant($input, $person['@id']);
@@ -2532,14 +2493,14 @@ class StudentService
         $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
 
-
         return $resourceResult;
     }
 
     /**
      * @throws \Exception
      */
-    public function deleteStudent(string $id) {
+    public function deleteStudent(string $id)
+    {
         $student['participant'] = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
         $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
         $student['employee'] = $this->getStudentEmployee($student['person']);
@@ -2555,7 +2516,6 @@ class StudentService
             $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($student['participant']['registrar']));
         }
         $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $student['participant']['id']]);
-
 
         if (isset($student['telephones'])) {
             foreach ($student['telephones'] as $telephone) {
@@ -2583,7 +2543,7 @@ class StudentService
             }
         }
         if (isset($student['birthplace'])) {
-                $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
+            $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
         }
         if (isset($student['organization'])) {
             if (isset($student['organization']['telephones'])) {
@@ -2606,14 +2566,12 @@ class StudentService
 
         $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $student['person']['id']]);
 
-        if  (isset($student['employee']['educations'])) {
+        if (isset($student['employee']['educations'])) {
             foreach ($student['employee']['educations'] as $edu) {
                 $this->commonGroundService->deleteResource($edu, $edu['@id']);
-
             }
         }
 
         $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $student['person']['id']]);
-
     }
 }
