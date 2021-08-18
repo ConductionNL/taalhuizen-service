@@ -59,7 +59,7 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false $skipChecks Bool if code should skip checks or not
      *
-     * @return Student Returns student
+     * @return Student|object Returns student
      * @throws Exception
      *
      */
@@ -1248,7 +1248,6 @@ class StudentService
         // Transform DTO info to cc/person body
         $person = $this->inputToPerson($input);
 
-
         if (isset($person['organization'])) {
             // Save person->organization its subresources
             $person = $this->savePersonsOrganizationSubresources($person);
@@ -1256,6 +1255,7 @@ class StudentService
 
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person);
+//        var_dump($person['@id']);
 
         // Transform DTO info to edu/participant body
         $participant = $this->inputToParticipant($input, $person['@id']);
@@ -1363,6 +1363,9 @@ class StudentService
             unset($person['organization']['telephones']);
             $person['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
         }
+        $org = $person['organization'];
+        unset($person['organization']);
+        $person['organization'] =  '/organizations/' . $this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
 
         return $person;
     }
@@ -1737,6 +1740,9 @@ class StudentService
     private
     function getPersonPropertiesFromOrganizationDetails(array $person, array $input, $updatePerson = null): array
     {
+        if (isset($input['organization']['id'])) {
+            $person['organization']['id'] = $input['organization']['id'];
+        }
         if (isset($input['organization']['name'])) {
             $person['organization']['name'] = $input['organization']['name'];
         }
@@ -2102,6 +2108,7 @@ class StudentService
         $employee = ['person' => $personUrl];
         //check if this person has a user and if so add its id to the employee body as userId
         $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $personUrl])['hydra:member'];
+//        var_dump($personUrl); var_dump($users);die;
         if (count($users) > 0) {
             $user = $users[0];
             $employee['userId'] = $user['id'];
@@ -2446,5 +2453,71 @@ class StudentService
         }
 
         return $memo;
+    }
+
+    /**
+     * This function updates a Student with given input.
+     *
+     * @param array $input Array with students data
+     *
+     * @return object Returns a Student object
+     * @throws Exception
+     *
+     */
+    public function updateStudent(array $input, string $id = null): object
+    {
+        // Fetch existing data (Student)
+        $student['participant'] = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
+        $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
+        $student['employee'] = $this->getStudentEmployee($student['person']);
+
+        // Do some checks and error handling
+        $this->checkStudentValues($input);
+
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
+
+        // Transform DTO info to cc/person body
+        $person = $this->inputToPerson($input, $student['person']);
+
+        if (isset($person['organization'])) {
+            // Save person->organization its subresources
+            $person = $this->savePersonsOrganizationSubresources($person);
+        }
+
+        // Save cc/person
+        $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);
+
+
+        // Transform DTO info to edu/participant body
+        $participant = $this->inputToParticipant($input, $person['@id']);
+
+        // Transform registrar into cc/person and save it
+        if (isset($input['registrar'])) {
+            $participant['registrar'] = $this->saveRegistrarAsPerson($input['registrar']);
+        }
+
+        // Save edu/participant
+        $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
+
+        $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
+        // Save mrc/employee
+
+        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
+
+        //Then save memos
+        $memos = $this->saveMemos($input, $student['person']['@id']);
+        if (isset($memos['availabilityMemo']['description'])) {
+            $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
+        }
+        if (isset($memos['motivationMemo']['description'])) {
+            $participant['remarks'] = $memos['motivationMemo']['description'];
+        }
+
+        // Now put together the expected result in $result['result'] for Lifely:
+        $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
+
+        return $resourceResult;
     }
 }

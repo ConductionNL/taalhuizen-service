@@ -138,7 +138,7 @@ class StudentItemSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student|Response
+     * @return Student|Response|object
      */
     private function updateStudent(array $body, string $id)
     {
@@ -146,22 +146,22 @@ class StudentItemSubscriber implements EventSubscriberInterface
         if ($studentExists instanceof Response) {
             return $studentExists;
         }
-        if (!isset($body['userId'])) {
-            return new Response(
-                json_encode([
-                    'message' => 'Please give the userId of the student you want to update!',
-                    'path'    => 'userId',
-                ]),
-                Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'application/json']
-            );
-        }
-        $uniqueEmail = $this->studentService->checkUniqueStudentEmail($body, $body['userId']);
-        if ($uniqueEmail instanceof Response) {
-            return $uniqueEmail;
-        }
-
-        return $this->studentService->updateStudent($id, $body);
+//        if (!isset($body['userId'])) {
+//            return new Response(
+//                json_encode([
+//                    'message' => 'Please give the userId of the student you want to update!',
+//                    'path'    => 'userId',
+//                ]),
+//                Response::HTTP_BAD_REQUEST,
+//                ['content-type' => 'application/json']
+//            );
+//        }
+//        $uniqueEmail = $this->studentService->checkUniqueStudentEmail($body, $body['userId']);
+//        if ($uniqueEmail instanceof Response) {
+//            return $uniqueEmail;
+//        }
+//
+        return $this->studentService->updateStudent($body, $id);
     }
 
     /**
