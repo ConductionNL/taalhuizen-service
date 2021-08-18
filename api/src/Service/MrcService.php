@@ -809,7 +809,7 @@ class MrcService
     public function createUser(array $employeeArray, array $contact): array
     {
         $organizationUrl = $this->handleUserOrganizationUrl($employeeArray, $contact);
-        
+
         if (isset($employeeArray['person']['emails']['email'])) {
             $resource = [
                 'username' => $employeeArray['person']['emails']['email'],

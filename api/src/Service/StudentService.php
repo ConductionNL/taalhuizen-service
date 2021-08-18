@@ -1191,9 +1191,13 @@ class StudentService
                 }
             }
             $studentAvailability->setAvailability($availability);
+        } else {
+            $studentAvailability->setAvailability(null);
         }
         if (isset($person['availabilityNotes'])) {
             $studentAvailability->setAvailabilityNotes($person['availabilityNotes']);
+        } else {
+            $studentAvailability->setAvailabilityNotes(null);
         }
 
         return $studentAvailability;
@@ -2531,4 +2535,44 @@ class StudentService
 
         return $resourceResult;
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function deleteStudent(string $id) {
+        $student['participant'] = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
+        $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
+        $student['employee'] = $this->getStudentEmployee($student['person']);
+
+        if (isset($student['participant']['registrar'])) {
+            $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($student['participant']['registrar']));
+        }
+        $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $student['participant']['id']]);
+
+
+        if (isset($student['telephones'])) {
+            foreach ($student['telephones'] as $telephone) {
+                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+            }
+        }
+        if (isset($student['emails'])) {
+            foreach ($student['emails'] as $email) {
+                $this->commonGroundService->deleteResource($email, $email['@id']);
+            }
+        }
+        if (isset($student['addresses'])) {
+            foreach ($student['addresses'] as $address) {
+                $this->commonGroundService->deleteResource($address, $address['@id']);
+            }
+        }
+        if (isset($student['addresses'])) {
+            foreach ($student['addresses'] as $address) {
+                $this->commonGroundService->deleteResource($address, $address['@id']);
+            }
+        }
+
+        var_dump($student);die;
+
+    }
+
 }
