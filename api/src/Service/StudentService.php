@@ -2544,6 +2544,13 @@ class StudentService
         $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
         $student['employee'] = $this->getStudentEmployee($student['person']);
 
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $student['person']['@id']])['hydra:member'];
+        if (isset($users)) {
+            foreach ($users as $user) {
+                $this->commonGroundService->deleteResource($user, $user['@id']);
+            }
+        }
+
         if (isset($student['participant']['registrar'])) {
             $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($student['participant']['registrar']));
         }
@@ -2565,14 +2572,48 @@ class StudentService
                 $this->commonGroundService->deleteResource($address, $address['@id']);
             }
         }
-        if (isset($student['addresses'])) {
-            foreach ($student['addresses'] as $address) {
-                $this->commonGroundService->deleteResource($address, $address['@id']);
+        if (isset($student['ownedContactLists'])) {
+            foreach ($student['ownedContactLists'] as $oCL) {
+                $this->commonGroundService->deleteResource($oCL, $address['@id']);
+                if (isset($oCL['people'])) {
+                    foreach ($oCL['people'] as $person) {
+                        $this->commonGroundService->deleteResource($person, $person['@id']);
+                    }
+                }
+            }
+        }
+        if (isset($student['birthplace'])) {
+                $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
+        }
+        if (isset($student['organization'])) {
+            if (isset($student['organization']['telephones'])) {
+                foreach ($student['organization']['telephones'] as $telephone) {
+                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+                }
+            }
+            if (isset($student['organization']['emails'])) {
+                foreach ($student['organization']['emails'] as $email) {
+                    $this->commonGroundService->deleteResource($email, $email['@id']);
+                }
+            }
+            if (isset($student['organization']['addresses'])) {
+                foreach ($student['organization']['addresses'] as $address) {
+                    $this->commonGroundService->deleteResource($address, $address['@id']);
+                }
+            }
+            $this->commonGroundService->deleteResource($student['organization'], $student['organization']['@id']);
+        }
+
+        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $student['person']['id']]);
+
+        if  (isset($student['employee']['educations'])) {
+            foreach ($student['employee']['educations'] as $edu) {
+                $this->commonGroundService->deleteResource($edu, $edu['@id']);
+
             }
         }
 
-        var_dump($student);die;
+        $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $student['person']['id']]);
 
     }
-
 }
