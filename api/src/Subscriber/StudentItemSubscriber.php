@@ -30,7 +30,7 @@ class StudentItemSubscriber implements EventSubscriberInterface
      * StudentItemSubscriber constructor.
      *
      * @param StudentService $studentService
-     * @param LayerService $layerService
+     * @param LayerService   $layerService
      */
     public function __construct(StudentService $studentService, LayerService $layerService)
     {
@@ -89,15 +89,14 @@ class StudentItemSubscriber implements EventSubscriberInterface
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-
     }
 
     /**
      * @param string $id
      *
-     * @return Student|Response
      * @throws Exception
      *
+     * @return Student|Response
      */
     private function getStudent(string $id)
     {
@@ -112,9 +111,9 @@ class StudentItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
-     * @return Response
      * @throws Exception
      *
+     * @return Response
      */
     private function deleteStudent(string $id): Response
     {
@@ -131,8 +130,8 @@ class StudentItemSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'Something went wrong!',
-                    'path' => '',
-                    'data' => ['Exception' => $exception->getMessage()],
+                    'path'    => '',
+                    'data'    => ['Exception' => $exception->getMessage()],
                 ]),
                 Response::HTTP_INTERNAL_SERVER_ERROR,
                 ['content-type' => 'application/json']
@@ -141,12 +140,12 @@ class StudentItemSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $body
+     * @param array  $body
      * @param string $id
      *
-     * @return Student|Response|object
      * @throws Exception
      *
+     * @return Student|Response|object
      */
     private function updateStudent(array $body, string $id)
     {
@@ -184,8 +183,8 @@ class StudentItemSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'This student does not exist!',
-                    'path' => '',
-                    'data' => ['student' => $studentUrl],
+                    'path'    => '',
+                    'data'    => ['student' => $studentUrl],
                 ]),
                 Response::HTTP_NOT_FOUND,
                 ['content-type' => 'application/json']
