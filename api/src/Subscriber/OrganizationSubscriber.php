@@ -10,7 +10,6 @@ use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use function GuzzleHttp\json_decode;
