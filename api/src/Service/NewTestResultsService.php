@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\LearningNeed;
 use App\Entity\LearningNeedOutCome;
 use App\Entity\Registration;
+use App\Entity\TestResult;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,13 +29,13 @@ class NewTestResultsService
         $this->entityManager = $layerService->entityManager;
     }
 
-    public function persistLearningNeed(LearningNeed $learningNeed, array $arrays): LearningNeed
+    public function persistTestResult(TestResult $testResult, array $arrays): TestResult
     {
-        $this->entityManager->persist($learningNeed);
-        $learningNeed->setId(Uuid::fromString($arrays['learningNeed']['id']));
-        $this->entityManager->persist($learningNeed);
+        $this->entityManager->persist($testResult);
+        $testResult->setId(Uuid::fromString($arrays['testResult']['id']));
+        $this->entityManager->persist($testResult);
 
-        return $learningNeed;
+        return $testResult;
     }
 
     public function deleteLearningNeed($id): Response
@@ -82,94 +83,170 @@ class NewTestResultsService
         return new ArrayCollection($learningNeed);
     }
 
-    public function createLearningNeed(LearningNeed $learningNeed): LearningNeed
+    public function createTestResult(TestResult $testResult): TestResult
     {
-        $this->checkLearningNeed($learningNeed);
+        $this->checkTestResult($testResult);
 
-        $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $learningNeed->getStudentId()]);
+        if ($this->eavService->hasEavObject(null, 'participations', $testResult->getParticipationId())) {
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'eavId' => $testResult->getParticipationId()]);
+        } else {
+            throw new BadRequestPathException('Unable to find participation with provided id', 'participation');
+        }
 
         $array = [
-            'description' => $learningNeed->getDescription(),
-            'motivation' => $learningNeed->getMotivation(),
-            'goal'              => $learningNeed->getDesiredLearningNeedOutCome()->getGoal(),
-            'topic'             => $learningNeed->getDesiredLearningNeedOutCome()->getTopic(),
-            'topicOther'        => $learningNeed->getDesiredLearningNeedOutCome()->getTopicOther() ?? null,
-            'application'       => $learningNeed->getDesiredLearningNeedOutCome()->getApplication(),
-            'applicationOther'  => $learningNeed->getDesiredLearningNeedOutCome()->getApplicationOther() ?? null,
-            'level'             => $learningNeed->getDesiredLearningNeedOutCome()->getLevel(),
-            'levelOther'        => $learningNeed->getDesiredLearningNeedOutCome()->getLevelOther() ?? null,
-            'desiredOffer' => $learningNeed->getDesiredOffer() ?? null,
-            'advisedOffer' => $learningNeed->getAdvisedOffer() ?? null,
-            'offerDifference' => $learningNeed->getOfferDifference(),
-            'offerDifferenceOther' => $learningNeed->getOfferDifferenceOther() ?? null,
-            'offerEngagements' => $learningNeed->getOfferEngagements() ?? null,
+            'participation' => "/participations/" . $participation['id'],
+            'memo' => $testResult->getMemo() ?? null,
+            'examDate' => $testResult->getExamDate()->format('Y-m-d H:i:s'),
+            'usedExam' => $testResult->getUsedExam(),
+            'level' => $testResult->getLearningNeedOutCome()->getLevel(),
+            'levelOther' => $testResult->getLearningNeedOutCome()->getLevelOther() ?? null,
+            'application' => $testResult->getLearningNeedOutCome()->getApplication(),
+            'applicationOther' => $testResult->getLearningNeedOutCome()->getApplicationOther() ?? null,
+            'topic' => $testResult->getLearningNeedOutCome()->getTopic(),
+            'topicOther' => $testResult->getLearningNeedOutCome()->getTopicOther() ?? null,
+            'goal' => $testResult->getLearningNeedOutCome()->jace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            7j8ofdfthgsrfryrtuuu7uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        mukghfgddsasaaxgetGoal(),
+
         ];
 
-        $arrays['learningNeed'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'learning_needs']);
+        $arrays['testResult'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'results', 'componentCode' => 'edu']);
 
-
-        $this->addStudentToLearningNeed($studentUrl, $arrays['learningNeed']);
-
-        return $this->persistLearningNeed($learningNeed, $arrays);
+        return $this->persistTestResult($testResult, $arrays);
     }
 
-    public function addStudentToLearningNeed($studentUrl, $learningNeed)
+    public function checkTestResult(TestResult $testResult): void
     {
-        $result = [];
-        // Check if student already has an EAV object
-        if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
-
-            $participant['learningNeeds'] = $getParticipant['learningNeeds'] ?? [];
-        } else {
-            $participant['learningNeeds'] = [];
+        if ($testResult->getExamDate() == null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'exam date');
+        }
+        if ($testResult->getUsedExam() == null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'used exam');
+        }
+        if ($testResult->getParticipationId() == null) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'participation id');
         }
 
-        // Save the participant in EAV with the EAV/learningNeed connected to it
-        if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
-            array_push($participant['learningNeeds'], $learningNeed['@eav']);
-            $participant = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
-
-            // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
-            $result['participant'] = $participant;
-
-            // Update the learningNeed to add the EAV/edu/participant to it
-            if (isset($learningNeed['participants'])) {
-                $updateLearningNeed['participants'] = $learningNeed['participants'];
-            } else {
-                $updateLearningNeed['participants'] = [];
-            }
-            if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
-                array_push($updateLearningNeed['participants'], $participant['@id']);
-                $learningNeed = $this->eavService->saveObject($updateLearningNeed, ['entityName' => 'learning_needs', 'self' => $learningNeed['@eav']]);
-
-                // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-                $result['learningNeed'] = $learningNeed;
-            }
-        }
-
-        return $result;
-    }
-
-    public function checkLearningNeed(LearningNeed $learningNeed): void
-    {
-        if ($learningNeed->getDescription() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'description');
-        }
-        if ($learningNeed->getMotivation() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'motivation');
-        }
-        if ($learningNeed->getDesiredLearningNeedOutCome() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'desired learning need outcome');
-        }
-        if ($learningNeed->getStudentId() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'student id');
-        }
-        if ($learningNeed->getOfferDifference() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'offer difference');
-        }
-
-        $this->checkLearningNeedOutcome($learningNeed->getDesiredLearningNeedOutCome());
+        $this->checkLearningNeedOutcome($testResult->getLearningNeedOutCome());
 
     }
 

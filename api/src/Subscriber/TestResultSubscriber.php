@@ -10,6 +10,7 @@ use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewLearningNeedService;
 use App\Service\NewParticipationService;
+use App\Service\NewTestResultsService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +23,7 @@ class TestResultSubscriber implements EventSubscriberInterface
 {
     private $commonGroundService;
     private $eavService;
-    private $participationService;
+    private $testResultService;
     private SerializerService $serializerService;
     private ErrorSerializerService $errorSerializerService;
 
@@ -30,7 +31,7 @@ class TestResultSubscriber implements EventSubscriberInterface
     {
         $this->commonGroundService = $commonGroundService;
         $this->eavService = $eavService;
-        $this->participationService = new NewParticipationService($layerService);
+        $this->testResultService = new NewTestResultsService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
         $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
 
@@ -39,11 +40,11 @@ class TestResultSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['participation', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['testResult', EventPriorities::PRE_SERIALIZE],
         ];
     }
 
-    public function participation(ViewEvent $event)
+    public function testResult(ViewEvent $event)
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
@@ -51,7 +52,7 @@ class TestResultSubscriber implements EventSubscriberInterface
         try {
             switch ($route) {
                 case 'api_test_results_post_collection':
-                    $response = $this->participationService->createParticipation($resource);
+                    $response = $this->testResultService->createTestResult($resource);
                     break;
                 default:
                     return;
