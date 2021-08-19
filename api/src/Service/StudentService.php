@@ -23,6 +23,7 @@ use App\Entity\StudentMotivation;
 use App\Entity\StudentPermission;
 use App\Entity\StudentReferrer;
 use App\Entity\Telephone;
+use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -374,28 +375,199 @@ class StudentService
      */
     public function checkStudentValues(array $input)
     {
-        if (isset($input['languageHouseUrl']) and !$this->commonGroundService->isResource($input['languageHouseUrl'])) {
-            throw new Exception('Invalid request, languageHouseId is not an existing cc/organization!');
+
+        // todo: make sure every subresource json array from the input follows the rules (required, datatype, etc) from the corresponding entities! (enums done)
+
+        if (!isset($input['languageHouseId']) || $this->commonGroundService->isResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['languageHouseId']]) == false)) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'languageHouseId');
+        }
+        if (!isset($input['person'])) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'person');
+        }
+        if (!isset($input['permissionDetails'])) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
+        }
+        if (isset($input['speakingLevel']) && !in_array($input['speakingLevel'], ['BEGINNER', 'REASONABLE', 'ADVANCED'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'speakingLevel');
+        }
+        if (isset($input['readingTestResult']) && !in_array($input['readingTestResult'], ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'readingTestResult');
+        }
+        if (isset($input['writingTestResult']) && !in_array($input['writingTestResult'], ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'writingTestResult');
+        }
+        if (isset($input['status']) && !in_array($input['status'], ['REFERRED', 'ACTIVE', 'COMPLETED'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'status');
+        }
+        if (isset($input['registrar'])) {
+            $this->checkPersonValues($input['registrar'], 'registrar');
+        }
+        if (isset($input['civicIntegrationDetails'])) {
+            $this->checkStudentCivicIntegrationValues($input['civicIntegrationDetails']);
+        }
+        if (isset($input['person'])) {
+            $this->checkPersonValues($input['person'], 'person');
+        }
+        if (isset($input['generalDetails'])) {
+            if (isset($input['generalDetails']['civicIntegrationRequirement']) && !in_array($input['generalDetails']['familyComposition'], ['MARRIED_PARTNER', 'SINGLE', 'DIVORCED'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'generalDetails.familyComposition');
+            }
+        }
+        if (isset($input['referrerDetails'])) {
+            if (isset($input['referrerDetails']['referringOrganization']) && !in_array($input['referrerDetails']['referringOrganization'], ['UWV', 'SOCIAL_SERVICE', 'LIBRARY', 'WELFARE_WORK', 'NEIGHBORHOOD_TEAM', 'VOLUNTEER_ORGANIZATION', 'LANGUAGE_PROVIDER', 'OTHER'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'referrerDetails.referringOrganization');
+            }
+        }
+        if (isset($input['backgroundDetails'])) {
+            $this->checkStudentBackgroundValues($input['backgroundDetails']);
+        }
+        if (isset($input['dutchNTDetails'])) {
+            $this->checkStudentDutchNTValues($input['dutchNTDetails']);
+        }
+        if (isset($input['educationDetails'])) {
+            if (isset($input['educationDetails']['followingEducationRightNow']) && !in_array($input['educationDetails']['followingEducationRightNow'], ['YES', 'NO', 'NO_BUT_DID_EARLIER'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'educationDetails.followingEducationRightNow');
+            }
+            if (isset($input['educationDetails']['education'])) {
+                $this->checkStudentEducationValues($input['educationDetails']['education'], 'educationDetails.education');
+            }
+        }
+        if (isset($input['courseDetails'])) {
+            if (isset($input['courseDetails']['course'])) {
+                $this->checkStudentEducationValues($input['courseDetails']['course'], 'courseDetails.course');
+            }
+        }
+        if (isset($input['jobDetails']['dayTimeActivities'])) {
+            foreach ($input['jobDetails']['dayTimeActivities'] as $activity) {
+                if (!in_array($activity, ['SEARCHING_FOR_JOB', 'RE_INTEGRATION', 'SCHOOL', 'VOLUNTEER_JOB', 'JOB', 'OTHER'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'jobDetails.dayTimeActivities');
+                }
+            }
+        }
+        if (isset($input['motivationDetails'])) {
+            $this->checkStudentMotivationValues($input['motivationDetails']);
+        }
+    }
+
+    /**
+     * This function checks if the given student registrar array its data is valid.
+     *
+     * @param array $person Array with person data
+     *
+     * @throws Exception
+     */
+    public function checkPersonValues(array $person, string $pathParent)
+    {
+        if (isset($person['gender']) && !in_array($person['gender'], ['Male', 'Female', 'X'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', $pathParent . '.gender');
+        }
+        if (isset($person['contactPreference']) && !in_array($person['contactPreference'], ['PHONECALL', 'WHATSAPP', 'EMAIL', 'OTHER'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', $pathParent . 'contactPreference');
         }
 
-        // todo: make sure every subresource json array from the input follows the rules (required, enums, etc) from the corresponding entities!
-        $personDetails = $input['person'];
-        if (isset($personDetails['gender']) && $personDetails['gender'] != 'Male' && $personDetails['gender'] != 'Female') {
-            throw new Exception('Invalid request, personDetails gender: the selected value is not a valid option [Male, Female]');
+    }
+
+    /**
+     * This function checks if the given education array its data is valid.
+     *
+     * @param array $edu Array with education data
+     *
+     * @throws Exception
+     */
+    public function checkStudentEducationValues(array $edu, string $pathParent)
+    {
+        if (isset($edu['groupFormation']) && !in_array($edu['groupFormation'], ['INDIVIDUALLY', 'GROUP'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', $pathParent . '.groupFormation');
         }
-        if (isset($personDetails['dateOfBirth'])) {
-            try {
-                new \DateTime($personDetails['dateOfBirth']);
-            } catch (Exception $e) {
-                throw new Exception('Invalid request, personDetails dateOfBirth: failed to parse String to DateTime');
+        if (isset($edu['teacherProfessionalism']) && !in_array($edu['teacherProfessionalism'], ['PROFESSIONAL', 'VOLUNTEER', 'BOTH'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', $pathParent . '.teacherProfessionalism');
+        }
+        if (isset($edu['courseProfessionalism']) && !in_array($edu['courseProfessionalism'], ['PROFESSIONAL', 'VOLUNTEER', 'BOTH'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', $pathParent . '.courseProfessionalism');
+        }
+
+    }
+
+    /**
+     * This function checks if the given student civic integration array its data is valid.
+     *
+     * @param array $civicInt Array with students civic integration data
+     *
+     * @throws Exception
+     */
+    public function checkStudentCivicIntegrationValues(array $civicInt)
+    {
+        if (isset($civicInt['civicIntegrationRequirement']) && !in_array($civicInt['civicIntegrationRequirement'], ['YES', 'NO', 'CURRENTLY_WORKING_ON_INTEGRATION'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'civicIntegrationDetails.civicIntegrationRequirement');
+        }
+        if (isset($civicInt['civicIntegrationRequirementReason']) && !in_array($civicInt['civicIntegrationRequirementReason'], ['FINISHED', 'FROM_EU_COUNTRY', 'EXEMPTED_OR_ZROUTE'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'civicIntegrationDetails.civicIntegrationRequirementReason');
+        }
+
+    }
+
+    /**
+     * This function checks if the given student civic integration array its data is valid.
+     *
+     * @param array $backgroundDetails Array with students civic integration data
+     *
+     * @throws Exception
+     */
+    public function checkStudentBackgroundValues(array $backgroundDetails)
+    {
+        if (isset($backgroundDetails['foundVia']) && !in_array($backgroundDetails['foundVia'], ['VOLUNTEER_CENTER', 'LIBRARY_WEBSITE', 'SOCIAL_MEDIA', 'NEWSPAPER', 'VIA_VIA', 'OTHER'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'backgroundDetails.foundVia');
+        }
+        if (isset($backgroundDetails['network'])) {
+            foreach ($backgroundDetails['network'] as $net) {
+                if (!in_array($net, ['HOUSEHOLD_MEMBERS', 'NEIGHBORS', 'FAMILY_MEMBERS', 'FAMILY_MEMBERS', 'AID_WORKERS', 'FRIENDS_ACQUAINTANCES', 'PEOPLE_AT_MOSQUE_CHURCH', 'ACQUAINTANCES_SPEAKING_OWN_LANGUAGE', 'ACQUAINTANCES_SPEAKING_DUTCH'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'backgroundDetails.network');
+                }
             }
         }
 
-        // todo: etc...
-//        $personDetails = $input['personDetails'];
-//        if (isset($personDetails['gender']) && $personDetails['gender'] != 'Male' && $personDetails['gender'] != 'Female') {
-//            throw new Exception('Invalid request, personDetails gender: the selected value is not a valid option [Male, Female]');
-//        }
+    }
+
+    /**
+     * This function checks if the given student dutch NT array its data is valid.
+     *
+     * @param array $dutchNT Array with students dutch NT data
+     *
+     * @throws Exception
+     */
+    public function checkStudentDutchNTValues(array $dutchNT)
+    {
+        if (isset($dutchNT['dutchNTLevel']) && !in_array($dutchNT['dutchNTLevel'], ['NT1', 'NT2'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'dutchNTDetails.dutchNTLevel');
+        }
+        if (isset($dutchNT['lastKnownLevel']) && !in_array($dutchNT['lastKnownLevel'], ['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'UNKNOWN'])) {
+            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'dutchNTDetails.lastKnownLevel');
+        }
+    }
+
+    /**
+     * This function checks if the given student motivation array its data is valid.
+     *
+     * @param array $motivation Array with students motivation data
+     *
+     * @throws Exception
+     */
+    public function checkStudentMotivationValues(array $motivation)
+    {
+        if (isset($motivation['desiredSkills'])) {
+            foreach ($motivation['desiredSkills'] as $skill) {
+                if (!in_array($skill, ['KLIKTIK', 'USING_WHATSAPP', 'USING_SKYPE', 'DEVICE_FUNCTIONALITIES', 'DIGITAL_GOVERNMENT', 'RESERVE_BOOKS_IN_LIBRARY', 'ADS_ON_MARKTPLAATS', 'READ_FOR_CHILDREN', 'UNDERSTAND_PRESCRIPTIONS', 'WRITE_APPLICATION_LETTER', 'DO_ADMINISTRATION', 'CALCULATIONS_FOR_RECIPES', 'OTHER'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'motivationDetails.desiredSkills');
+                }
+            }
+        }
+        if (isset($motivation['desiredLearningMethod'])) {
+            foreach ($motivation['desiredLearningMethod'] as $method) {
+                if (!in_array($method, ['IN_A_GROUP', 'ONE_ON_ONE', 'HOME_ENVIRONMENT', 'IN_LIBRARY_OR_OTHER', 'ONLINE'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'motivationDetails.desiredLearningMethod');
+                }
+            }
+        }
     }
 
     /**
@@ -842,11 +1014,11 @@ class StudentService
         $studentBackground = new StudentBackground();
         $foundViaArray = ['VOLUNTEER_CENTER', 'LIBRARY_WEBSITE', 'SOCIAL_MEDIA', 'NEWSPAPER', 'VIA_VIA', 'OTHER'];
         isset($person['foundVia']) ? in_array($person['foundVia'], $foundViaArray) ? $studentBackground->setFoundVia($person['foundVia']) && $studentBackground->setFoundViaOther(null) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther($person['foundVia']) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther(null);
-        isset($person['wentToLanguageHouseBefore']) ? $studentBackground->setWentToLanguageHouseBefore((bool) $person['wentToLanguageHouseBefore']) : $studentBackground->setWentToLanguageHouseBefore(null);
+        isset($person['wentToLanguageHouseBefore']) ? $studentBackground->setWentToLanguageHouseBefore((bool)$person['wentToLanguageHouseBefore']) : $studentBackground->setWentToLanguageHouseBefore(null);
         isset($person['wentToLanguageHouseBeforeReason']) ? $studentBackground->setWentToLanguageHouseBeforeReason($person['wentToLanguageHouseBeforeReason']) : $studentBackground->setWentToLanguageHouseBeforeReason(null);
         isset($person['wentToLanguageHouseBeforeYear']) ? $studentBackground->setWentToLanguageHouseBeforeYear($person['wentToLanguageHouseBeforeYear']) : $studentBackground->setWentToLanguageHouseBeforeYear(null);
         isset($person['network']) ? $studentBackground->setNetwork($person['network']) : $studentBackground->setNetwork(null);
-        isset($person['participationLadder']) ? $studentBackground->setParticipationLadder((int) $person['participationLadder']) : $studentBackground->setParticipationLadder(null);
+        isset($person['participationLadder']) ? $studentBackground->setParticipationLadder((int)$person['participationLadder']) : $studentBackground->setParticipationLadder(null);
 
         return $studentBackground;
     }
@@ -982,7 +1154,7 @@ class StudentService
             isset($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
             isset($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
             isset($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
-            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool) $educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
+            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool)$educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
             isset($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
 
             $educationDetails->setEducation($education);
@@ -1055,7 +1227,7 @@ class StudentService
             isset($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
             isset($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
             isset($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
-            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool) $course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
+            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool)$course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
             isset($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
 
             $courseDetails->setCourse($newCourse);
@@ -1164,9 +1336,9 @@ class StudentService
             $availability = new Availability();
             foreach ($person['availability'] as $key => $day) {
                 $availabilityDay = new AvailabilityDay();
-                $availabilityDay->setMorning((bool) $day['morning']);
-                $availabilityDay->setAfternoon((bool) $day['afternoon']);
-                $availabilityDay->setEvening((bool) $day['evening']);
+                $availabilityDay->setMorning((bool)$day['morning']);
+                $availabilityDay->setAfternoon((bool)$day['afternoon']);
+                $availabilityDay->setEvening((bool)$day['evening']);
 
                 switch ($key) {
                     case 'monday':
@@ -1216,20 +1388,20 @@ class StudentService
     {
         $studentPermission = new StudentPermission();
         if (isset($person['didSignPermissionForm'])) {
-            $studentPermission->setDidSignPermissionForm((bool) $person['didSignPermissionForm']);
+            $studentPermission->setDidSignPermissionForm((bool)$person['didSignPermissionForm']);
         }
         if (isset($person['hasPermissionToShareDataWithProviders'])) {
-            $studentPermission->setHasPermissionToShareDataWithProviders((bool) $person['hasPermissionToShareDataWithProviders']);
+            $studentPermission->setHasPermissionToShareDataWithProviders((bool)$person['hasPermissionToShareDataWithProviders']);
         } else {
             $studentPermission->setHasPermissionToShareDataWithProviders(false);
         }
         if (isset($person['hasPermissionToShareDataWithLibraries'])) {
-            $studentPermission->setHasPermissionToShareDataWithLibraries((bool) $person['hasPermissionToShareDataWithLibraries']);
+            $studentPermission->setHasPermissionToShareDataWithLibraries((bool)$person['hasPermissionToShareDataWithLibraries']);
         } else {
             $studentPermission->setHasPermissionToShareDataWithLibraries(false);
         }
         if (isset($person['hasPermissionToSendInformationAboutLibraries'])) {
-            $studentPermission->setHasPermissionToSendInformationAboutLibraries((bool) $person['hasPermissionToSendInformationAboutLibraries']);
+            $studentPermission->setHasPermissionToSendInformationAboutLibraries((bool)$person['hasPermissionToSendInformationAboutLibraries']);
         } else {
             $studentPermission->setHasPermissionToSendInformationAboutLibraries(false);
         }
@@ -1248,18 +1420,9 @@ class StudentService
      */
     public function createStudent(array $input): Student
     {
-        if (isset($input['languageHouseId'])) {
-            $languageHouseId = explode('/', $input['languageHouseId']);
-            if (is_array($languageHouseId)) {
-                $languageHouseId = end($languageHouseId);
-            }
-            $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
-        } else {
-            throw new Exception('languageHouseId not given');
-        }
-
         // Do some checks and error handling
         $this->checkStudentValues($input);
+        $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['languageHouseId']]);
 
         //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
 
@@ -1318,43 +1481,39 @@ class StudentService
      */
     private function saveRegistrarAsPerson(array $registrar): string
     {
-        try {
-            if (isset($registrar['addresses'])) {
-                $address = $registrar['addresses'];
-                unset($registrar['addresses']);
-                $registrar['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+        if (isset($registrar['addresses'])) {
+            $address = $registrar['addresses'];
+            unset($registrar['addresses']);
+            $registrar['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+        }
+        if (isset($registrar['telephones'])) {
+            $telephones = $registrar['telephones'];
+            unset($registrar['telephones']);
+            foreach ($telephones as $tel) {
+                $registrar['telephones'][] = '/telephones/' . $this->commonGroundService->saveResource($tel, ['component' => 'cc', 'type' => 'telephones'])['id'];
             }
-            if (isset($registrar['telephones'])) {
-                $telephones = $registrar['telephones'];
-                unset($registrar['telephones']);
-                foreach ($telephones as $tel) {
-                    $registrar['telephones'][] = '/telephones/' . $this->commonGroundService->saveResource($tel, ['component' => 'cc', 'type' => 'telephones'])['id'];
-                }
+        }
+        if (isset($registrar['emails'])) {
+            $email = $registrar['emails'];
+            unset($registrar['emails']);
+            $registrar['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+        }
+        if (isset($registrar['organization'])) {
+            if (isset($registrar['organization']['addresses'])) {
+                $address = $registrar['organization']['addresses'];
+                unset($registrar['organization']['addresses']);
+                $registrar['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
             }
-            if (isset($registrar['emails'])) {
-                $email = $registrar['emails'];
-                unset($registrar['emails']);
-                $registrar['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+            if (isset($registrar['organization']['telephones'])) {
+                $telephones = $registrar['organization']['telephones'];
+                unset($registrar['organization']['telephones']);
+                $registrar['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
             }
-            if (isset($registrar['organization'])) {
-                if (isset($registrar['organization']['addresses'])) {
-                    $address = $registrar['organization']['addresses'];
-                    unset($registrar['organization']['addresses']);
-                    $registrar['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
-                }
-                if (isset($registrar['organization']['telephones'])) {
-                    $telephones = $registrar['organization']['telephones'];
-                    unset($registrar['organization']['telephones']);
-                    $registrar['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
-                }
-                if (isset($registrar['organization']['emails'])) {
-                    $email = $registrar['organization']['emails'];
-                    unset($registrar['organization']['emails']);
-                    $registrar['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
-                }
+            if (isset($registrar['organization']['emails'])) {
+                $email = $registrar['organization']['emails'];
+                unset($registrar['organization']['emails']);
+                $registrar['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
             }
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage());
         }
 
         return $this->commonGroundService->saveResource($registrar, ['component' => 'cc', 'type' => 'people'])['@id'];
@@ -1370,28 +1529,25 @@ class StudentService
      */
     private function savePersonsOrganizationSubresources(array $person): array
     {
-        try {
-            if (isset($person['organization']['addresses'])) {
-                $address = $person['organization']['addresses'];
-                unset($person['organization']['addresses']);
-                $person['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
-            }
-            if (isset($person['organization']['emails'])) {
-                $emails = $person['organization']['emails'];
-                unset($person['organization']['emails']);
-                $person['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($emails, ['component' => 'cc', 'type' => 'emails'])['id'];
-            }
-            if (isset($person['organization']['telephones'])) {
-                $telephones = $person['organization']['telephones'];
-                unset($person['organization']['telephones']);
-                $person['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
-            }
-            $org = $person['organization'];
-            unset($person['organization']);
-            $person['organization'] = '/organizations/' . $this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage());
+        if (isset($person['organization']['addresses'])) {
+            $address = $person['organization']['addresses'];
+            unset($person['organization']['addresses']);
+            $person['organization']['addresses'][0] = '/addresses/' . $this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
         }
+        if (isset($person['organization']['emails'])) {
+            $emails = $person['organization']['emails'];
+            unset($person['organization']['emails']);
+            $person['organization']['emails'][0] = '/emails/' . $this->commonGroundService->saveResource($emails, ['component' => 'cc', 'type' => 'emails'])['id'];
+        }
+        if (isset($person['organization']['telephones'])) {
+            $telephones = $person['organization']['telephones'];
+            unset($person['organization']['telephones']);
+            $person['organization']['telephones'][0] = '/telephones/' . $this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
+        }
+        $org = $person['organization'];
+        unset($person['organization']);
+        $person['organization'] = '/organizations/' . $this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
+
 
         return $person;
     }
@@ -1530,7 +1686,7 @@ class StudentService
             $person['foundVia'] = $backgroundDetails['foundViaOther'];
         }
         if (isset($backgroundDetails['wentToLanguageHouseBefore'])) {
-            $person['wentToLanguageHouseBefore'] = (bool) $backgroundDetails['wentToLanguageHouseBefore'];
+            $person['wentToLanguageHouseBefore'] = (bool)$backgroundDetails['wentToLanguageHouseBefore'];
         }
         if (isset($backgroundDetails['wentToLanguageHouseBeforeReason'])) {
             $person['wentToLanguageHouseBeforeReason'] = $backgroundDetails['wentToLanguageHouseBeforeReason'];
@@ -1716,15 +1872,15 @@ class StudentService
     /**
      * This function passes given contact details to the person array.
      *
-     * @param array $person       Array with persons data
-     * @param array $input        Array with inputted person data
-     * @param null  $updatePerson Bool if person should be updated
+     * @param array $person Array with persons data
+     * @param array $input Array with inputted person data
+     * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns a person array with civic integration details
      */
     private function getPersonPropertiesFromContactDetails(array $person, array $input, $updatePerson = null): array
     {
-        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
+        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'] . ' ' . $person['familyName'] : $person['givenName'] : '';
         $person = $this->getPersonEmailsFromContactDetails($person, $input, $personName);
         $person = $this->getPersonTelephonesFromContactDetails($person, $input, $personName);
         $person = $this->getPersonAdressesFromContactDetails($person, $input, $personName);
@@ -1745,9 +1901,9 @@ class StudentService
     /**
      * This function passes given organization details to the person array.
      *
-     * @param array $person       Array with persons data
-     * @param array $input        Array with inputted person data
-     * @param null  $updatePerson Bool if person should be updated
+     * @param array $person Array with persons data
+     * @param array $input Array with inputted person data
+     * @param null $updatePerson Bool if person should be updated
      *
      * @return array Returns a person array with civic integration details
      */
@@ -1837,8 +1993,8 @@ class StudentService
     /**
      * This function passes given addresses from contact details to the person array.
      *
-     * @param array  $person     Array with persons data
-     * @param array  $input      Array with inputted persons data
+     * @param array $person Array with persons data
+     * @param array $input Array with inputted persons data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with address properties
@@ -1848,7 +2004,7 @@ class StudentService
         if (isset($input['addresses']['name'])) {
             $person['addresses'][0]['name'] = $input['addresses']['name'];
         } else {
-            $person['addresses'][0]['name'] = 'Address of '.$personName;
+            $person['addresses'][0]['name'] = 'Address of ' . $personName;
         }
         if (isset($input['addresses']['street'])) {
             $person['addresses'][0]['street'] = $input['addresses']['street'];
@@ -1872,8 +2028,8 @@ class StudentService
     /**
      * This function passes given telephones from contact details to the person array.
      *
-     * @param array  $person     Array with persons data
-     * @param array  $input      Array with inputted person data
+     * @param array $person Array with persons data
+     * @param array $input Array with inputted person data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with telephone properties
@@ -1885,7 +2041,7 @@ class StudentService
                 if (isset($telephone['name'])) {
                     $person['telephones'][$key]['name'] = $telephone['name'];
                 } else {
-                    $person['telephones'][$key]['name'] = 'Telephone of '.$personName;
+                    $person['telephones'][$key]['name'] = 'Telephone of ' . $personName;
                 }
                 $person['telephones'][$key]['telephone'] = $telephone['telephone'];
             }
@@ -1901,8 +2057,8 @@ class StudentService
     /**
      * This function passes given emails from contact details to the person array.
      *
-     * @param array  $person     Array with persons data
-     * @param array  $input      Array with inputted person data
+     * @param array $person Array with persons data
+     * @param array $input Array with inputted person data
      * @param string $personName Name of person as string
      *
      * @return array Returns a person array with email properties
@@ -1913,7 +2069,7 @@ class StudentService
             if (isset($input['emails']['name'])) {
                 $person['emails'][0]['name'] = $input['emails']['name'];
             } else {
-                $person['emails'][0]['name'] = 'Email of '.$personName;
+                $person['emails'][0]['name'] = 'Email of ' . $personName;
             }
             $person['emails'][0]['email'] = $input['emails']['email'];
         }
@@ -2364,43 +2520,39 @@ class StudentService
      */
     private function saveMemos(array $input, string $ccPersonUrl): array
     {
-        try {
-            $availabilityMemo = [];
-            $motivationMemo = [];
-            $input['languageHouseUrl'] ?? $input['languageHouseUrl'] = null;
+        $availabilityMemo = [];
+        $motivationMemo = [];
+        $input['languageHouseUrl'] ?? $input['languageHouseUrl'] = null;
 
-            //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeArray)
-            if (isset($input['availabilityDetails'])) {
-                if (isset($input['id'])) {
-                    //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                    $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $ccPersonUrl])['hydra:member'];
-                    if (count($availabilityMemos) > 0) {
-                        $availabilityMemo = $availabilityMemos[0];
-                    }
+        //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeArray)
+        if (isset($input['availabilityDetails'])) {
+            if (isset($input['id'])) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $ccPersonUrl])['hydra:member'];
+                if (count($availabilityMemos) > 0) {
+                    $availabilityMemo = $availabilityMemos[0];
                 }
-                $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
-                if (!isset($availabilityMemo['author'])) {
-                    $availabilityMemo['author'] = $ccPersonUrl;
-                }
-                $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
             }
+            $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($availabilityMemo['author'])) {
+                $availabilityMemo['author'] = $ccPersonUrl;
+            }
+            $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
+        }
 
-            if (isset($input['motivationDetails'])) {
-                if (isset($input['id'])) {
-                    //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
-                    $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $ccPersonUrl])['hydra:member'];
-                    if (count($motivationMemos) > 0) {
-                        $motivationMemo = $motivationMemos[0];
-                    }
+        if (isset($input['motivationDetails'])) {
+            if (isset($input['id'])) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $ccPersonUrl])['hydra:member'];
+                if (count($motivationMemos) > 0) {
+                    $motivationMemo = $motivationMemos[0];
                 }
-                $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
-                if (!isset($motivationMemo['author'])) {
-                    $motivationMemo['author'] = $ccPersonUrl;
-                }
-                $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
             }
-        } catch (\Exception $e) {
-            throw new Exception($e->getMessage());
+            $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($motivationMemo['author'])) {
+                $motivationMemo['author'] = $ccPersonUrl;
+            }
+            $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
         }
 
         return [
@@ -2456,9 +2608,9 @@ class StudentService
      *
      * @param array $input Array with students data
      *
+     * @return object Returns a Student object
      * @throws Exception
      *
-     * @return object Returns a Student object
      */
     public function updateStudent(array $input, string $id = null): object
     {

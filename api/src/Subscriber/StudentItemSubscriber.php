@@ -4,6 +4,8 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Student;
+use App\Exception\BadRequestPathException;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -22,12 +24,13 @@ class StudentItemSubscriber implements EventSubscriberInterface
     private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private StudentService $studentService;
+    private ErrorSerializerService $errorSerializerService;
 
     /**
      * StudentItemSubscriber constructor.
      *
      * @param StudentService $studentService
-     * @param LayerService   $layerService
+     * @param LayerService $layerService
      */
     public function __construct(StudentService $studentService, LayerService $layerService)
     {
@@ -35,6 +38,7 @@ class StudentItemSubscriber implements EventSubscriberInterface
         $this->commonGroundService = $layerService->commonGroundService;
         $this->studentService = $studentService;
         $this->serializerService = new SerializerService($layerService->serializer);
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
     }
 
     /**
@@ -61,35 +65,39 @@ class StudentItemSubscriber implements EventSubscriberInterface
         $id = $event->getRequest()->attributes->get('id');
 
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_students_get_item':
-                $response = $this->getStudent($id);
-                break;
-            case 'api_students_delete_item':
-                $response = $this->deleteStudent($id);
-                break;
-            case 'api_students_put_item':
-                $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->updateStudent($body, $id);
-                break;
-            default:
+        try {
+            switch ($route) {
+                case 'api_students_get_item':
+                    $response = $this->getStudent($id);
+                    break;
+                case 'api_students_delete_item':
+                    $response = $this->deleteStudent($id);
+                    break;
+                case 'api_students_put_item':
+                    $body = json_decode($event->getRequest()->getContent(), true);
+                    $response = $this->updateStudent($body, $id);
+                    break;
+                default:
+                    return;
+            }
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+
                 return;
+            }
+            $this->serializerService->setResponse($response, $event);
+        } catch (BadRequestPathException $exception) {
+            $this->errorSerializerService->serialize($exception, $event);
         }
 
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
-        }
-        $this->serializerService->setResponse($response, $event);
     }
 
     /**
      * @param string $id
      *
+     * @return Student|Response
      * @throws Exception
      *
-     * @return Student|Response
      */
     private function getStudent(string $id)
     {
@@ -104,9 +112,9 @@ class StudentItemSubscriber implements EventSubscriberInterface
     /**
      * @param string $id
      *
+     * @return Response
      * @throws Exception
      *
-     * @return Response
      */
     private function deleteStudent(string $id): Response
     {
@@ -123,8 +131,8 @@ class StudentItemSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'Something went wrong!',
-                    'path'    => '',
-                    'data'    => ['Exception' => $exception->getMessage()],
+                    'path' => '',
+                    'data' => ['Exception' => $exception->getMessage()],
                 ]),
                 Response::HTTP_INTERNAL_SERVER_ERROR,
                 ['content-type' => 'application/json']
@@ -133,12 +141,12 @@ class StudentItemSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array  $body
+     * @param array $body
      * @param string $id
      *
+     * @return Student|Response|object
      * @throws Exception
      *
-     * @return Student|Response|object
      */
     private function updateStudent(array $body, string $id)
     {
@@ -176,8 +184,8 @@ class StudentItemSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'This student does not exist!',
-                    'path'    => '',
-                    'data'    => ['student' => $studentUrl],
+                    'path' => '',
+                    'data' => ['student' => $studentUrl],
                 ]),
                 Response::HTTP_NOT_FOUND,
                 ['content-type' => 'application/json']
