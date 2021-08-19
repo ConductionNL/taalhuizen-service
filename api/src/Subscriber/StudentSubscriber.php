@@ -19,7 +19,6 @@ use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class StudentSubscriber implements EventSubscriberInterface
@@ -36,7 +35,7 @@ class StudentSubscriber implements EventSubscriberInterface
      * StudentSubscriber constructor.
      *
      * @param StudentService $studentService
-     * @param LayerService $layerService
+     * @param LayerService   $layerService
      */
     public function __construct(StudentService $studentService, MrcService $mrcService, LayerService $layerService)
     {
@@ -92,15 +91,14 @@ class StudentSubscriber implements EventSubscriberInterface
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-
     }
 
     /**
      * @param array $body
      *
-     * @return Student|Response|object
      * @throws Exception
      *
+     * @return Student|Response|object
      */
     private function createStudent(array $body): Student
     {
@@ -108,7 +106,7 @@ class StudentSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'The person of this student must contain an email!',
-                    'path' => 'person.emails.email',
+                    'path'    => 'person.emails.email',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -123,9 +121,9 @@ class StudentSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return object|Response
      * @throws \Exception
      *
+     * @return object|Response
      */
     private function getStudents($queryParams)
     {
@@ -136,11 +134,11 @@ class StudentSubscriber implements EventSubscriberInterface
             $studentsCollection->add($student);
         }
 
-        return (object)[
-            '@context' => '/contexts/Student',
-            '@id' => '/students',
-            '@type' => '/hydra:Collection',
-            'hydra:member' => $studentsCollection,
+        return (object) [
+            '@context'         => '/contexts/Student',
+            '@id'              => '/students',
+            '@type'            => '/hydra:Collection',
+            'hydra:member'     => $studentsCollection,
             'hydra:totalItems' => count($studentsCollection),
         ];
     }

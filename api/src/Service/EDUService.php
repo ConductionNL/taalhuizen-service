@@ -592,10 +592,10 @@ class EDUService
      *
      * @param string $id ID of the participant that will be deleted
      *
-     * @return string Returns the id of a program
-     * @return ?string Returns the id of a program or null if no programs are found
      * @throws \Exception
      *
+     * @return string  Returns the id of a program
+     * @return ?string Returns the id of a program or null if no programs are found
      */
     public function deleteParticipants(string $id): ?string
     {
