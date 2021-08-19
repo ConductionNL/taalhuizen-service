@@ -10,6 +10,8 @@ use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Exception;
 use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -66,6 +68,13 @@ class OrganizationSubscriber implements EventSubscriberInterface
                 $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createOrganization($body);
                 break;
+            case 'api_organizations_get_collection':
+                $response = $this->getOrganizations($event->getRequest()->query->all());
+                break;
+            case 'api_organizations_put_item':
+                $body = json_decode($event->getRequest()->getContent(), true);
+                $response = $this->updateOrganization($body, $event->getRequest()->attributes->get('id'));
+                break;
             default:
                 return;
         }
@@ -106,5 +115,40 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $this->ucService->createUserGroups($organization, $body['type']);
 
         return $this->ccService->createOrganizationObject($organization);
+    }
+
+    /**
+     * @param array  $body
+     * @param string $id
+     *
+     * @return Organization|Response
+     */
+    private function updateOrganization(array $body, string $id)
+    {
+        $organizationExists = $this->ccService->checkIfOrganizationExists($id);
+        if ($organizationExists instanceof Response) {
+            return $organizationExists;
+        }
+        if (isset($body['name'])) {
+            $body['type'] = $organizationExists['type'];
+            $uniqueName = $this->ccService->checkUniqueOrganizationName($body, $id);
+            if ($uniqueName instanceof Response) {
+                return $uniqueName;
+            }
+        }
+
+        $organizationExists['emails'] = $organizationExists['emails'][0] ?? null;
+        $organizationExists['telephones'] = $organizationExists['telephones'][0] ?? null;
+        $body = array_merge($organizationExists, $body);
+        $organization = $this->ccService->updateOrganization($id, $body);
+        $this->eduService->saveProgram($organization, true);
+        $this->ucService->createUserGroups($organization, $organization['type']);
+
+        return $this->ccService->createOrganizationObject($organization);
+    }
+
+    private function getOrganizations(array $query): Collection
+    {
+        return $this->ccService->getOrganizations($query);
     }
 }
