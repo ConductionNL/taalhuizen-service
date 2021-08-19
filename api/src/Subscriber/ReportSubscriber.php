@@ -32,8 +32,8 @@ class ReportSubscriber implements EventSubscriberInterface
      * StudentSubscriber constructor.
      *
      * @param ReportService $reportService
-     * @param LayerService $layerService
-     * @param UcService $ucService
+     * @param LayerService  $layerService
+     * @param UcService     $ucService
      */
     public function __construct(ReportService $reportService, LayerService $layerService, UcService $ucService)
     {
@@ -66,27 +66,28 @@ class ReportSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
-
-
         // Lets limit the subscriber
         switch ($route) {
             case 'api_reports_participants_report_collection':
-                if($test = $this->checkAuthorization($event, $resource)){
+                if ($test = $this->checkAuthorization($event, $resource)) {
                     $event->setResponse($test);
+
                     return;
                 }
                 $response = $this->createParticipantsReport($resource);
                 break;
             case 'api_reports_volunteers_report_collection':
-                if($test = $this->checkAuthorization($event, $resource)){
+                if ($test = $this->checkAuthorization($event, $resource)) {
                     $event->setResponse($test);
+
                     return;
                 }
                 $response = $this->createVolunteersReport($resource);
                 break;
             case 'api_reports_desired_learning_outcomes_report_collection':
-                if($test = $this->checkAuthorization($event, $resource)){
+                if ($test = $this->checkAuthorization($event, $resource)) {
                     $event->setResponse($test);
+
                     return;
                 }
                 $response = $this->createDesiredLearningOutcomesReport($resource);
@@ -103,12 +104,12 @@ class ReportSubscriber implements EventSubscriberInterface
         $this->serializerService->setResponse($response, $event);
     }
 
-    public function checkAuthorization(ViewEvent $event, object $report) : ?Response
+    public function checkAuthorization(ViewEvent $event, object $report): ?Response
     {
         $token = str_replace('Bearer ', '', $event->getRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
         $currentUser = $this->ucService->getUserArray($payload['userId']);
-        if(strpos($currentUser['organization'], $report->getOrganizationId()) === false){
+        if (strpos($currentUser['organization'], $report->getOrganizationId()) === false) {
             return new Response(
                 json_encode([
                     'message' => 'The wrong organizationId is given.',
@@ -119,6 +120,7 @@ class ReportSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
+
         return null;
     }
 
@@ -152,12 +154,12 @@ class ReportSubscriber implements EventSubscriberInterface
 
     /**
      * @param object $report
-     * @param array $currentUser
+     * @param array  $currentUser
+     *
      * @return Report|Response
      */
     public function createDesiredLearningOutcomesReport(object $report): Report
     {
-
         if ($report instanceof Report) {
             return $this->reportService->createParticipantsReport($report);
         } else {

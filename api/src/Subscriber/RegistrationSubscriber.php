@@ -70,7 +70,6 @@ class RegistrationSubscriber implements EventSubscriberInterface
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
-
         // Lets limit the subscriber
         try {
             switch ($route) {

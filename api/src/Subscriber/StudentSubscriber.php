@@ -13,11 +13,11 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class StudentSubscriber implements EventSubscriberInterface
@@ -91,7 +91,7 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Student|Response|Object
+     * @return Student|Response|object
      */
     private function createStudent(array $body): Student
     {
@@ -110,12 +110,12 @@ class StudentSubscriber implements EventSubscriberInterface
             throw new BadRequestHttpException('A user with this email already exists!');
         }
 
-            return $this->studentService->createStudent($body);
+        return $this->studentService->createStudent($body);
     }
 
     /**
-     *
      * @throws \Exception
+     *
      * @return object|Response
      */
     private function getStudents($queryParams)
@@ -127,13 +127,12 @@ class StudentSubscriber implements EventSubscriberInterface
             $studentsCollection->add($student);
         }
 
-
         return (object) [
-            '@context' => '/contexts/Student',
-            '@id' => '/students',
-            '@type' => '/hydra:Collection',
-            'hydra:member' => $studentsCollection,
-            'hydra:totalItems' => count($studentsCollection)
+            '@context'         => '/contexts/Student',
+            '@id'              => '/students',
+            '@type'            => '/hydra:Collection',
+            'hydra:member'     => $studentsCollection,
+            'hydra:totalItems' => count($studentsCollection),
         ];
     }
 }
