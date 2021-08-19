@@ -3,13 +3,11 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Registration;
 use App\Exception\BadRequestPathException;
 use App\Service\EAVService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewLearningNeedService;
-use App\Service\NewRegistrationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,8 +28,8 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
     /**
      * UserItemSubscriber constructor.
      *
-     * @param LayerService           $layerService
-     * @param EAVService             $eavService
+     * @param LayerService $layerService
+     * @param EAVService   $eavService
      */
     public function __construct(LayerService $layerService, EAVService $eavService)
     {
@@ -81,14 +79,13 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
             }
             if ($response instanceof Response) {
                 $event->setResponse($response);
-                
+
                 return;
             }
             $this->serializerService->setResponse($response, $event);
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-
     }
 
     public function getLearningNeed($id, $url = null)
@@ -113,6 +110,4 @@ class LearningNeedItemSubscriber implements EventSubscriberInterface
 
         return new ArrayCollection($result);
     }
-
-
 }

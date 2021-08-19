@@ -4,19 +4,15 @@ namespace App\Service;
 
 use App\Entity\LearningNeed;
 use App\Entity\LearningNeedOutCome;
-use App\Entity\Registration;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Exception\ClientException;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewLearningNeedService
 {
-
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EntityManagerInterface $entityManager;
@@ -39,7 +35,6 @@ class NewLearningNeedService
 
     public function deleteLearningNeed($id): Response
     {
-
         if ($this->eavService->hasEavObject(null, 'learning_needs', $id)) {
             // Get the learningNeed from EAV
             $learningNeed = $this->eavService->getObject(['entityName' => 'learning_needs', 'eavId' => $id]);
@@ -51,6 +46,7 @@ class NewLearningNeedService
 
             // Delete the learningNeed in EAV
             $this->eavService->deleteObject($learningNeed['eavId']);
+
             return new Response(null, 204);
         } else {
             throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/learning_need!', 'learning need');
@@ -89,24 +85,23 @@ class NewLearningNeedService
         $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $learningNeed->getStudentId()]);
 
         $array = [
-            'description' => $learningNeed->getDescription(),
-            'motivation' => $learningNeed->getMotivation(),
-            'goal'              => $learningNeed->getDesiredLearningNeedOutCome()->getGoal(),
-            'topic'             => $learningNeed->getDesiredLearningNeedOutCome()->getTopic(),
-            'topicOther'        => $learningNeed->getDesiredLearningNeedOutCome()->getTopicOther() ?? null,
-            'application'       => $learningNeed->getDesiredLearningNeedOutCome()->getApplication(),
-            'applicationOther'  => $learningNeed->getDesiredLearningNeedOutCome()->getApplicationOther() ?? null,
-            'level'             => $learningNeed->getDesiredLearningNeedOutCome()->getLevel(),
-            'levelOther'        => $learningNeed->getDesiredLearningNeedOutCome()->getLevelOther() ?? null,
-            'desiredOffer' => $learningNeed->getDesiredOffer() ?? null,
-            'advisedOffer' => $learningNeed->getAdvisedOffer() ?? null,
-            'offerDifference' => $learningNeed->getOfferDifference(),
+            'description'          => $learningNeed->getDescription(),
+            'motivation'           => $learningNeed->getMotivation(),
+            'goal'                 => $learningNeed->getDesiredLearningNeedOutCome()->getGoal(),
+            'topic'                => $learningNeed->getDesiredLearningNeedOutCome()->getTopic(),
+            'topicOther'           => $learningNeed->getDesiredLearningNeedOutCome()->getTopicOther() ?? null,
+            'application'          => $learningNeed->getDesiredLearningNeedOutCome()->getApplication(),
+            'applicationOther'     => $learningNeed->getDesiredLearningNeedOutCome()->getApplicationOther() ?? null,
+            'level'                => $learningNeed->getDesiredLearningNeedOutCome()->getLevel(),
+            'levelOther'           => $learningNeed->getDesiredLearningNeedOutCome()->getLevelOther() ?? null,
+            'desiredOffer'         => $learningNeed->getDesiredOffer() ?? null,
+            'advisedOffer'         => $learningNeed->getAdvisedOffer() ?? null,
+            'offerDifference'      => $learningNeed->getOfferDifference(),
             'offerDifferenceOther' => $learningNeed->getOfferDifferenceOther() ?? null,
-            'offerEngagements' => $learningNeed->getOfferEngagements() ?? null,
+            'offerEngagements'     => $learningNeed->getOfferEngagements() ?? null,
         ];
 
         $arrays['learningNeed'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'learning_needs']);
-
 
         $this->addStudentToLearningNeed($studentUrl, $arrays['learningNeed']);
 
@@ -170,7 +165,6 @@ class NewLearningNeedService
         }
 
         $this->checkLearningNeedOutcome($learningNeed->getDesiredLearningNeedOutCome());
-
     }
 
     public function checkLearningNeedOutcome(LearningNeedOutCome $outcome): void
@@ -187,7 +181,5 @@ class NewLearningNeedService
         if ($outcome->getLevel() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'level');
         }
-
     }
-
 }
