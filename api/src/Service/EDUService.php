@@ -95,9 +95,9 @@ class EDUService
 
         if ($update) {
             $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $organization['@id']])['hydra:member'];
-            $program = $this->commonGroundService->updateResource($program, ['component' => 'edu', 'type'=>'programs', 'id' => $programs[0]['id']]);
+            $program = $this->commonGroundService->updateResource($program, ['component' => 'edu', 'type' => 'programs', 'id' => $programs[0]['id']]);
         } else {
-            $program = $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type'=>'programs']);
+            $program = $this->commonGroundService->saveResource($program, ['component' => 'edu', 'type' => 'programs']);
         }
 
         return $program;
@@ -112,7 +112,7 @@ class EDUService
      */
     public function getProgram(array $organization)
     {
-        return $result = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'][0];
+        return $result = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $organization['@id']])['hydra:member'][0];
     }
 
     /**
@@ -124,7 +124,7 @@ class EDUService
      */
     public function hasProgram(array $organization): bool
     {
-        $result = $this->commonGroundService->getResource(['component' => 'edu', 'type'=>'programs'], ['provider' => $organization['@id']])['hydra:member'];
+        $result = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'programs'], ['provider' => $organization['@id']])['hydra:member'];
         if (count($result) > 1) {
             return true;
         }
@@ -213,11 +213,11 @@ class EDUService
     {
         $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']]);
         $event = [
-            'name'          => $studentDossierEventArray['event'],
-            'description'   => $studentDossierEventArray['eventDescription'],
-            'startDate'     => $studentDossierEventArray['eventDate'],
-            'participants'  => ["/participants/{$studentDossierEventArray['studentId']}"],
-            'organizer'     => $employee['@id'],
+            'name'         => $studentDossierEventArray['event'],
+            'description'  => $studentDossierEventArray['eventDescription'],
+            'startDate'    => $studentDossierEventArray['eventDate'],
+            'participants' => ["/participants/{$studentDossierEventArray['studentId']}"],
+            'organizer'    => $employee['@id'],
         ];
         $contact = $this->commonGroundService->getResource($employee['person']);
         $result = $this->commonGroundService->createResource($event, ['component' => 'edu', 'type' => 'education_events']);
@@ -242,7 +242,7 @@ class EDUService
         foreach ($participants as $participant) {
             key_exists('id', $participant) ? $event['participants'][] = "/participants/{$participant['id']}" : null;
         }
-        foreach ($event['participants'] as $key=>$value) {
+        foreach ($event['participants'] as $key => $value) {
             if (!$value) {
                 unset($event['participants'][$key]);
             }
@@ -264,12 +264,12 @@ class EDUService
     public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
     {
         $resource = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
-        $employee = $this->commonGroundService->getResource(isset($studentDossierEventArray['employeeId']) ? ['component' => 'mrc', 'type' => 'employees', 'id' =>  $studentDossierEventArray['employeeId']] : $resource['organizer']);
+        $employee = $this->commonGroundService->getResource(isset($studentDossierEventArray['employeeId']) ? ['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']] : $resource['organizer']);
         $event = [
-            'name'          => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : $resource['name'],
-            'description'   => key_exists('eventDescription', $studentDossierEventArray) ? $studentDossierEventArray['eventDescription'] : $resource['description'],
-            'startDate'     => key_exists('eventDate', $studentDossierEventArray) ? $studentDossierEventArray['eventDate'] : $resource['startDate'],
-            'organizer'     => key_exists('employeeId', $studentDossierEventArray) ? $employee['@id'] : $resource['organizer'],
+            'name'        => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : $resource['name'],
+            'description' => key_exists('eventDescription', $studentDossierEventArray) ? $studentDossierEventArray['eventDescription'] : $resource['description'],
+            'startDate'   => key_exists('eventDate', $studentDossierEventArray) ? $studentDossierEventArray['eventDate'] : $resource['startDate'],
+            'organizer'   => key_exists('employeeId', $studentDossierEventArray) ? $employee['@id'] : $resource['organizer'],
         ];
         $event = $this->updateParticipants($event, $studentDossierEventArray['studentId'] ?? null, $resource['participants']);
 
@@ -594,16 +594,17 @@ class EDUService
      *
      * @throws \Exception
      *
+     * @return string  Returns the id of a program
      * @return ?string Returns the id of a program or null if no programs are found
      */
     public function deleteParticipants(string $id): ?string
     {
-        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
-        $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'];
+        $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'];
 
         if (count($programs) > 0) {
             $program = $programs[0];
-            $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
+            $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
 
             if ($participants > 0) {
                 foreach ($participants as $participant) {
@@ -611,8 +612,8 @@ class EDUService
                     $this->deleteEducationEvents($participant);
                     $this->deleteResults($participant);
                     $this->deleteParticipantGroups($participant);
-                    $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
-                    $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
+                    $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
+                    $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $participant['id']]);
                 }
             }
 
@@ -620,7 +621,6 @@ class EDUService
         } else {
             return null;
         }
-
     }
 
     /**
@@ -634,7 +634,7 @@ class EDUService
     {
         foreach ($participant['educationEvents'] as $educationEvent) {
             $educationEvent = $this->commonGroundService->getResource($educationEvent);
-            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'education_events', 'id' => $educationEvent['id']]);
         }
 
         return false;
@@ -650,7 +650,7 @@ class EDUService
     public function deleteResults(array $participant): bool
     {
         foreach ($participant['results'] as $result) {
-            $this->eavService->deleteResource(null, ['component'=>'edu', 'type' => 'results', 'id' => $result['id']]);
+            $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'results', 'id' => $result['id']]);
         }
 
         return false;
