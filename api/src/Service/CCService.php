@@ -13,6 +13,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use function GuzzleHttp\json_decode;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
@@ -202,25 +203,32 @@ class CCService
     /**
      * Fetches organizations from the contact catalogue and returns an collection of organizations.
      *
-     * @param string $type The type of organization to fetch
+     * @param string|null $type The type of organization to fetch
      *
      * @return ArrayCollection a collection of all organizations of the provided type
      */
-    public function getOrganizations(string $type): ArrayCollection
+    public function getOrganizations(array $query = []): ArrayCollection
     {
         $organizations = new ArrayCollection();
 
-        if ($type == 'Taalhuis') {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])['hydra:member'];
-        } else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Aanbieder'])['hydra:member'];
+        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], $query);
+
+        foreach ($results['hydra:member'] as $result) {
+            $organizations->add($this->createOrganizationObject($result));
         }
 
-        foreach ($results as $result) {
-            $organizations->add($this->createOrganizationObject($result, $type));
+        $result = [
+            '@context'          => '/contexts/Organization',
+            '@id'               => '/organizations',
+            '@type'             => 'hydra:Collection',
+            'hydra:member'      => $organizations,
+            'hydra:totalItems'  => $results['hydra:totalItems'] ?? count($results),
+        ];
+        if (key_exists('hydra:view', $results)) {
+            $result['hydra:view'] = $results['hydra:view'];
         }
 
-        return $organizations;
+        return new ArrayCollection($result);
     }
 
     /**
@@ -325,6 +333,29 @@ class CCService
         }
 
         return null;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return array|false|mixed|string|Response|null
+     */
+    public function checkIfOrganizationExists(string $id)
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($organizationUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This organization does not exist!',
+                    'path'    => '',
+                    'data'    => ['organization' => $organizationUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return $this->commonGroundService->getResource($organizationUrl);
     }
 
     /**
