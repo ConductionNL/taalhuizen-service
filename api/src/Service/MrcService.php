@@ -914,38 +914,42 @@ class MrcService
      */
     public function createEmployeeArray(array $employeeArray, bool $saveEducationsFromStudent = false): array
     {
-        //set contact
-        $contact = $this->setContact($employeeArray);
+        try {
+            //set contact
+            $contact = $this->setContact($employeeArray);
 
-        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
+            $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
 
-        $this->saveUser($employeeArray, $contact);
+            $this->saveUser($employeeArray, $contact);
 
-        $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
+            $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
 
-        $resource = $this->ccService->cleanResource($resource);
+            $resource = $this->ccService->cleanResource($resource);
 
-        $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
+            $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
 
-        if (key_exists('targetGroupPreferences', $employeeArray)) {
-            $this->createCompetences($employeeArray, $result['id'], $result);
-        }
-        if (key_exists('volunteeringPreference', $employeeArray)) {
-            $this->createInterests($employeeArray, $result['id'], $result['interests']);
-        }
-        if (key_exists('currentEducation', $employeeArray)) {
-            $this->createEducations($employeeArray, $result['id'], $result['educations']);
-        } elseif ($saveEducationsFromStudent == true) {
-            $this->createEducationsFromStudent($employeeArray['educations'], $result['id']);
-        }
+            if (key_exists('targetGroupPreferences', $employeeArray)) {
+                $this->createCompetences($employeeArray, $result['id'], $result);
+            }
+            if (key_exists('volunteeringPreference', $employeeArray)) {
+                $this->createInterests($employeeArray, $result['id'], $result['interests']);
+            }
+            if (key_exists('currentEducation', $employeeArray)) {
+                $this->createEducations($employeeArray, $result['id'], $result['educations']);
+            } elseif ($saveEducationsFromStudent == true) {
+                $this->createEducationsFromStudent($employeeArray['educations'], $result['id']);
+            }
 
-        // Saves lastEducation, followingEducation and course for student as employee
+            // Saves lastEducation, followingEducation and course for student as employee
 //        if (key_exists('educations', $employeeArray)) {
-        //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
+            //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
 //            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
 //        }
-        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
+            $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
+            $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
+        }
 
         return $result;
     }

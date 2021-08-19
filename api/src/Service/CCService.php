@@ -430,7 +430,7 @@ class CCService
 
     public function cleanPermissions(array $permissions): array
     {
-        foreach ($permissions as $key=>$value) {
+        foreach ($permissions as $key => $value) {
             if ($key == 'hasPermissionToShareDataWithProviders') {
                 $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
                 unset($permissions[$key]);
@@ -443,7 +443,7 @@ class CCService
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param Person                 $person      The person array to provide to the contact catalogue
+     * @param Person $person The person array to provide to the contact catalogue
      * @param StudentPermission|null $permissions
      *
      * @return array The result from the contact catalogue and EAV
@@ -525,14 +525,18 @@ class CCService
 //                }
 //            }
 //        }
-
-        if (isset($personUrl)) {
-            // Update
-            $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
-        } else {
-            // Create
-            $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc']);
+        try {
+            if (isset($personUrl)) {
+                // Update
+                $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
+            } else {
+                // Create
+                $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc']);
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
         }
+
         return $person;
     }
 
