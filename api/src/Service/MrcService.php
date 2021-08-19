@@ -762,8 +762,8 @@ class MrcService
      */
     public function handleUserOrganizationUrl(array $employeeArray, array $contact = null): ?string
     {
-        if (isset($contact['organization']['@id'])) {
-            return $contact['organization']['@id'];
+        if (isset($contact['organization']['id'])) {
+            return $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $contact['organization']['id']]);
         }
 
         $contact = $this->commonGroundService->getResource($contact['@id']);
@@ -809,17 +809,18 @@ class MrcService
     {
         $organizationUrl = $this->handleUserOrganizationUrl($employeeArray, $contact);
 
+        $contactUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]);
         if (isset($employeeArray['person']['emails']['email'])) {
             $resource = [
                 'username'     => $employeeArray['person']['emails']['email'],
-                'person'       => $contact['@id'],
+                'person'       => $contactUrl,
                 'password'     => 'ThisIsATemporaryPassword',
                 'organization' => $organizationUrl ?? null,
             ];
         } elseif (isset($contact['emails'][0]['email'])) {
             $resource = [
                 'username'     => $contact['emails'][0]['email'],
-                'person'       => $contact['@id'],
+                'person'       => $contactUrl,
                 'password'     => 'ThisIsATemporaryPassword',
                 'organization' => $organizationUrl ?? null,
             ];
@@ -873,7 +874,8 @@ class MrcService
                 $employeeArray['userId'] = $userId;
             }
 
-            return $this->updateUser($employeeArray['userId'], $contact['@id'], key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
+            $contactUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]);
+            return $this->updateUser($employeeArray['userId'], $contactUrl, key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
         } elseif (isset($contact['emails'][0]['email'])) {
             return $this->createUser($employeeArray, $contact);
         }
@@ -1216,7 +1218,7 @@ class MrcService
     {
         return [
             'organization' => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : $employeeRaw['organization'] ?? null,
-            'person'       => $contact['@id'],
+            'person'       => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]),
             //            'provider'               => key_exists('organizationId', $employeeArray) ? $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $employeeArray['organizationId']]) : (isset($employee) ? $employee->getOrganizationId() : null),
             'hasPoliceCertificate'   => key_exists('isVOGChecked', $employeeArray) ? $employeeArray['isVOGChecked'] : (isset($employee) ? $employee->getIsVOGChecked() : null),
             'referrer'               => key_exists('gotHereVia', $employeeArray) ? $employeeArray['gotHereVia'] : (isset($employee) ? $employee->getGotHereVia() : null),
