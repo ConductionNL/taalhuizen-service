@@ -59,11 +59,11 @@ class OrganizationSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-        $body = json_decode($event->getRequest()->getContent(), true);
 
         // Lets limit the subscriber
         switch ($route) {
             case 'api_organizations_post_collection':
+                $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createOrganization($body);
                 break;
             default:

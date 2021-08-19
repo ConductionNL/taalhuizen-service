@@ -3,41 +3,46 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Employee;
+use App\Entity\Student;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
+use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class EmployeeSubscriber implements EventSubscriberInterface
+class StudentSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private SerializerService $serializerService;
     private MrcService $mrcService;
+    private SerializerService $serializerService;
+    private StudentService $studentService;
 //    private ParticipationService $participationService;
 
     /**
-     * EmployeeSubscriber constructor.
+     * StudentSubscriber constructor.
      *
-     * @param MrcService   $mrcService
-     * @param LayerService $layerService
+     * @param StudentService $studentService
+     * @param LayerService   $layerService
      */
-    public function __construct(MrcService $mrcService, LayerService $layerService)
+    public function __construct(StudentService $studentService, MrcService $mrcService, LayerService $layerService)
     {
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
+        $this->studentService = $studentService;
         $this->mrcService = $mrcService;
         $this->serializerService = new SerializerService($layerService->serializer);
-//        $this->participationService = new ParticipationService($mrcService, $layerService);
+//        $this->participationService = new ParticipationService($studentService, $layerService);
     }
 
     /**
@@ -46,7 +51,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::VIEW => ['employee', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['student', EventPriorities::PRE_SERIALIZE],
         ];
     }
 
@@ -55,16 +60,19 @@ class EmployeeSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      */
-    public function employee(ViewEvent $event)
+    public function student(ViewEvent $event)
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
         switch ($route) {
-            case 'api_employees_post_collection':
+            case 'api_students_post_collection':
                 $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->createEmployee($body);
+                $response = $this->createStudent($body);
+                break;
+            case 'api_students_get_collection':
+                $response = $this->getStudents($event->getRequest()->query->all());
                 break;
             default:
                 return;
@@ -83,14 +91,14 @@ class EmployeeSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      *
-     * @return Employee|Response
+     * @return Student|Response|object
      */
-    private function createEmployee(array $body)
+    private function createStudent(array $body): Student
     {
         if (!isset($body['person']['emails']['email'])) {
             return new Response(
                 json_encode([
-                    'message' => 'The person of this employee must contain an email!',
+                    'message' => 'The person of this student must contain an email!',
                     'path'    => 'person.emails.email',
                 ]),
                 Response::HTTP_BAD_REQUEST,
@@ -99,9 +107,32 @@ class EmployeeSubscriber implements EventSubscriberInterface
         }
         $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body);
         if ($uniqueEmail instanceof Response) {
-            return $uniqueEmail;
+            throw new BadRequestHttpException('A user with this email already exists!');
         }
 
-        return $this->mrcService->createEmployee($body);
+        return $this->studentService->createStudent($body);
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return object|Response
+     */
+    private function getStudents($queryParams)
+    {
+        $students = $this->studentService->getStudents($queryParams);
+
+        $studentsCollection = new ArrayCollection();
+        foreach ($students as $student) {
+            $studentsCollection->add($student);
+        }
+
+        return (object) [
+            '@context'         => '/contexts/Student',
+            '@id'              => '/students',
+            '@type'            => '/hydra:Collection',
+            'hydra:member'     => $studentsCollection,
+            'hydra:totalItems' => count($studentsCollection),
+        ];
     }
 }

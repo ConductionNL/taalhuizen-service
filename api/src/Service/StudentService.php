@@ -2,8 +2,27 @@
 
 namespace App\Service;
 
+use App\Entity\Address;
+use App\Entity\Availability;
+use App\Entity\AvailabilityDay;
+use App\Entity\Education;
+use App\Entity\Email;
+use App\Entity\Organization;
+use App\Entity\Person;
 use App\Entity\Registration;
 use App\Entity\Student;
+use App\Entity\StudentAvailability;
+use App\Entity\StudentBackground;
+use App\Entity\StudentCivicIntegration;
+use App\Entity\StudentCourse;
+use App\Entity\StudentDutchNT;
+use App\Entity\StudentEducation;
+use App\Entity\StudentGeneral;
+use App\Entity\StudentJob;
+use App\Entity\StudentMotivation;
+use App\Entity\StudentPermission;
+use App\Entity\StudentReferrer;
+use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,11 +37,17 @@ class StudentService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService
+        CommonGroundService $commonGroundService,
+        CCService $ccService,
+        EDUService $eduService,
+        MrcService $mrcService
     ) {
         $this->entityManager = $entityManager;
         $this->commonGroundService = $commonGroundService;
         $this->eavService = new EAVService($commonGroundService);
+        $this->ccService = $ccService;
+        $this->eduService = $eduService;
+        $this->mrcService = $mrcService;
     }
 
     /**
@@ -32,11 +57,12 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     *@throws Exception
+     * @throws Exception
      *
-     * @return array Returns student
+     * @return Student|object Returns student
+     * @return array          Returns student
      */
-    public function getStudent(string $id, bool $skipChecks = false): array
+    public function getStudent(string $id, bool $skipChecks = false): Student
     {
         if (isset($id)) {
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id]);
@@ -52,7 +78,7 @@ class StudentService
             throw new Exception('Invalid request, '.$id.' is not an existing student (eav/edu/participant)!');
         }
 
-        return $result;
+        return $this->handleResult($result);
     }
 
     /**
@@ -61,7 +87,7 @@ class StudentService
      * @param string|null $studentUrl URL of the student
      * @param false       $skipChecks Bool if code should skip checks or not
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return array Returns array with students subresources
      */
@@ -88,10 +114,10 @@ class StudentService
         $employee = $this->getStudentEmployee($person, $skipChecks);
 
         return [
-            'participant'           => $participant ?? null,
-            'person'                => $person ?? null,
-            'employee'              => $employee ?? null,
-            'registrar'             => $registrar,
+            'participant' => $participant ?? null,
+            'person'      => $person ?? null,
+            'employee'    => $employee ?? null,
+            'registrar'   => $registrar,
         ];
     }
 
@@ -101,7 +127,7 @@ class StudentService
      * @param array $participant Array with participants data
      * @param false $skipChecks  Bool if code should skip checks or not
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return array Returns person as array
      */
@@ -195,7 +221,7 @@ class StudentService
      * @param array $person     Array with persons data
      * @param false $skipChecks Bool if code should skip checks or not
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return array|false|mixed|null Returns the employee as array
      */
@@ -219,7 +245,7 @@ class StudentService
      * @param array $query         Array with query params
      * @param bool  $registrations Bool for if there are registrations
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return array Returns an array of students
      */
@@ -242,7 +268,7 @@ class StudentService
      * @param string $providerId ID of the provider
      * @param string $status     A possible status for a student
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with Student objects
      */
@@ -307,7 +333,7 @@ class StudentService
      * @param array                                        $studentUrls     Array of student urls
      * @param string                                       $learningNeedUrl URL of the learning need
      *
-     *@throws Exception
+     * @throws Exception
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Returns an ArrayCollection with a student
      */
@@ -349,7 +375,7 @@ class StudentService
         }
 
         // todo: make sure every subresource json array from the input follows the rules (required, enums, etc) from the corresponding entities!
-        $personDetails = $input['personDetails'];
+        $personDetails = $input['person'];
         if (isset($personDetails['gender']) && $personDetails['gender'] != 'Male' && $personDetails['gender'] != 'Female') {
             throw new Exception('Invalid request, personDetails gender: the selected value is not a valid option [Male, Female]');
         }
@@ -390,25 +416,38 @@ class StudentService
         // Set all subresources in response DTO body
         $resource = $this->handleSubResources($resource, $student);
 
-        if (isset($student['participant']['dateCreated'])) {
-            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
-        } //todo: this is currently incorrect, timezone problem
+//        if (isset($student['participant']['dateCreated'])) {
+//            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
+//        } //todo: this is currently incorrect, timezone problem
         if (isset($student['participant']['status'])) {
             $resource->setStatus($student['participant']['status']);
         }
-        if (isset($student['registrar']['registrarMemo']['description'])) {
-            $resource->setMemo($student['registrar']['registrarMemo']['description']);
-        }
+//        if (isset($student['registrar']['registrarMemo']['description'])) {
+//            $resource->setMemo($student['registrar']['registrarMemo']['description']);
+//        }
         if (isset($student['employee']['speakingLevel'])) {
             $resource->setSpeakingLevel($student['employee']['speakingLevel']);
+        } else {
+            $resource->setSpeakingLevel(null);
         }
         if (isset($student['participant']['readingTestResult'])) {
             $resource->setReadingTestResult($student['participant']['readingTestResult']);
+        } else {
+            $resource->setReadingTestResult(null);
         }
         if (isset($student['participant']['writingTestResult'])) {
             $resource->setWritingTestResult($student['participant']['writingTestResult']);
+        } else {
+            $resource->setWritingTestResult(null);
         }
+
+        $resource->setLanguageHouseId($student['person']['organization']['id']);
+
         $this->entityManager->persist($resource);
+        if (isset($student['participant']['id'])) {
+            $resource->setId(Uuid::fromString($student['participant']['id']));
+            $this->entityManager->persist($resource);
+        }
 
         return $resource;
     }
@@ -425,19 +464,18 @@ class StudentService
      */
     private function handleSubResources($resource, array $student): object
     {
-        $resource->setRegistrar($this->handleRegistrar($student['registrar']['registrarPerson'], $student['registrar']['registrarOrganization']));
+        $resource->setRegistrar($this->handleRegistrar($student['participant']['registrar']));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($student['person']));
-        $resource->setPersonDetails($this->handlePersonDetails($student['person']));
-        $resource->setContactDetails($this->handleContactDetails($student['person']));
+        $resource->setPerson($this->handlePersonDetails($student['person']));
+//        $resource->setContactDetails($this->handleContactDetails($student['person']));
         $resource->setGeneralDetails($this->handleGeneralDetails($student['person']));
-        $resource->setReferrerDetails($this->handleReferrerDetails($student['participant'], $student['registrar']['registrarPerson'], $student['registrar']['registrarOrganization']));
+        isset($student['participant']['referredBy']) ? $resource->setReferrerDetails($this->handleReferrerDetails($student['participant'])) : $resource->setReferrerDetails(null);
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
         $resource->setDutchNTDetails($this->handleDutchNTDetails($student['person']));
-
         if (isset($student['employee'])) {
-            $mrcEducations = $this->getEducationsFromEmployee($student['employee']);
-            $resource->setEducationDetails($this->handleEducationDetails($mrcEducations['lastEducation'], $mrcEducations['followingEducationYes'], $mrcEducations['followingEducationNo']));
-            $resource->setCourseDetails($this->handleCourseDetails($mrcEducations['course']));
+            $student['employee'] = $this->getEducationsFromEmployee($student['employee']);
+            $resource->setEducationDetails($this->handleEducationDetails($student['employee']));
+            $resource->setCourseDetails($this->handleCourseDetails($student['employee']));
             $resource->setJobDetails($this->handleJobDetails($student['employee']));
         }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
@@ -448,24 +486,126 @@ class StudentService
     }
 
     /**
-     * This function merges a registrarOrganization and registrarPerson in an array.
+     * This function hadnles registrar data in an Person object.
      *
-     * @param null $registrarPerson       Array with registrarPersons data
-     * @param null $registrarOrganization Array with registrarOrganizations data
+     * @param null $registrar Array with registrar data
      *
-     * @return array|null[] Returns array with registrar data
+     * @return Person|null Returns Person with registrar data
      */
-    private function handleRegistrar($registrarPerson = null, $registrarOrganization = null): array
+    private function handleRegistrar($registrar = null): ?Person
     {
-        return [
-            'id'               => $registrarOrganization['id'] ?? null,
-            'organisationName' => $registrarOrganization['name'] ?? null,
-            'givenName'        => $registrarPerson['givenName'] ?? null,
-            'additionalName'   => $registrarPerson['additionalName'] ?? null,
-            'familyName'       => $registrarPerson['familyName'] ?? null,
-            'email'            => $registrarPerson['telephones'][0]['telephone'] ?? null,
-            'telephone'        => $registrarPerson['emails'][0]['email'] ?? null,
-        ];
+        if (is_string($registrar) == true) {
+            $registrar = $this->commonGroundService->getResource($registrar);
+        }
+
+        $person = new Person();
+        if (isset($registrar['givenName'])) {
+            $person->setGivenName($registrar['givenName']);
+        } elseif (isset($registrar['registrarOrganization']['name'])) {
+            $person->setGivenName($registrar['registrarOrganization']['name']);
+        } else {
+            return null;
+        }
+        isset($registrar['additionalName']) ? $person->setAdditionalName($registrar['additionalName']) : $person->setAdditionalName(null);
+        isset($registrar['familyName']) ? $person->setFamilyName($registrar['familyName']) : $person->setFamilyName(null);
+        isset($registrar['gender']) ? $person->setGender($registrar['gender']) : $person->setGender(null);
+        isset($registrar['birthday']) ? $person->setBirthday(new \DateTime($registrar['birthday'])) : $person->setBirthday(null);
+        if (isset($registrar['addresses'])) {
+            $address = new Address();
+            isset($registrar['addresses'][0]['name']) ? $address->setName($registrar['addresses'][0]['name']) : $address->setName(null);
+            isset($registrar['addresses'][0]['street']) ? $address->setStreet($registrar['addresses'][0]['street']) : $address->setStreet(null);
+            isset($registrar['addresses'][0]['houseNumber']) ? $address->setHouseNumber($registrar['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
+            isset($registrar['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($registrar['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
+            isset($registrar['addresses'][0]['postalCode']) ? $address->setPostalCode($registrar['addresses'][0]['postalCode']) : $address->setPostalCode(null);
+            isset($registrar['addresses'][0]['locality']) ? $address->setLocality($registrar['addresses'][0]['locality']) : $address->setLocality(null);
+            $person->setAddresses($address);
+        }
+        if (isset($registrar['telephones'])) {
+            foreach ($registrar['telephones'] as $telephone) {
+                $newTelephone = new Telephone();
+                if (isset($telephone['name'])) {
+                    $newTelephone->setName($telephone['name']);
+                }
+                if (isset($telephone['telephone'])) {
+                    $newTelephone->setTelephone($telephone['telephone']);
+                }
+                $person->addTelephone($newTelephone);
+            }
+        }
+        if (isset($registrar['emails'])) {
+            $email = new Email();
+            if (isset($registrar['emails'][0]['name'])) {
+                $email->setName($registrar['emails'][0]['name']);
+            }
+            if (isset($registrar['emails'][0]['email'])) {
+                $email->setEmail($registrar['emails'][0]['email']);
+            } else {
+                $email->setEmail(null);
+            }
+            $person->setEmails($email);
+        }
+        if (isset($registrar['organization'])) {
+            $organization = new Organization();
+            if (isset($registrar['organization']['name'])) {
+                $organization->setName($registrar['organization']['name']);
+            }
+            if (isset($registrar['organization']['type'])) {
+                $organization->setType($registrar['organization']['type']);
+            }
+            if (isset($registrar['organization']['addresses'])) {
+                $address = new Address();
+                if (isset($registrar['organization']['addresses'][0]['name'])) {
+                    $address->setName($registrar['organization']['addresses'][0]['name']);
+                }
+                if (isset($registrar['organization']['addresses'][0]['street'])) {
+                    $address->setStreet($registrar['organization']['addresses'][0]['street']);
+                }
+                if (isset($registrar['organization']['addresses'][0]['houseNumber'])) {
+                    $address->setHouseNumber($registrar['organization']['addresses'][0]['houseNumber']);
+                }
+                if (isset($registrar['organization']['addresses'][0]['houseNumberSuffix'])) {
+                    $address->setHouseNumberSuffix($registrar['organization']['addresses'][0]['houseNumberSuffix']);
+                }
+                if (isset($registrar['organization']['addresses'][0]['postalCode'])) {
+                    $address->setPostalCode($registrar['organization']['addresses'][0]['postalCode']);
+                }
+                if (isset($registrar['organization']['addresses'][0]['locality'])) {
+                    $address->setLocality($registrar['organization']['addresses'][0]['locality']);
+                }
+                $organization->setAddresses($address);
+            }
+            if (isset($registrar['organization']['telephones'])) {
+                $newTelephone = new Telephone();
+                if (isset($registrar['organization']['telephones'][0]['name'])) {
+                    $newTelephone->setName($registrar['organization']['telephones'][0]['name']);
+                }
+                if (isset($registrar['organization']['telephones'][0]['telephone'])) {
+                    $newTelephone->setTelephone($registrar['organization']['telephones'][0]['telephone']);
+                }
+                $organization->setTelephones($newTelephone);
+            }
+            if (isset($registrar['organization']['emails'])) {
+                $email = new Email();
+                if (isset($registrar['organization']['emails'][0]['name'])) {
+                    $email->setName($registrar['organization']['emails'][0]['name']);
+                }
+                if (isset($registrar['organization']['emails'][0]['email'])) {
+                    $email->setEmail($registrar['organization']['emails'][0]['email']);
+                } else {
+                    $email->setEmail(null);
+                }
+                $organization->setEmails($email);
+            }
+            $person->setOrganization($organization);
+        }
+        if (isset($registrar['contactPreference'])) {
+            $person->setContactPreference($registrar['contactPreference']);
+        }
+        if (isset($registrar['contactPreferenceOther'])) {
+            $person->setContactPreferenceOther($registrar['contactPreferenceOther']);
+        }
+
+        return $person;
     }
 
     /**
@@ -473,15 +613,22 @@ class StudentService
      *
      * @param array $person
      *
-     * @return array|null[] Returns an array with integration details
+     * @return StudentCivicIntegration|null[] Returns an array with integration details
      */
-    private function handleCivicIntegrationDetails(array $person): array
+    private function handleCivicIntegrationDetails(array $person): StudentCivicIntegration
     {
-        return [
-            'civicIntegrationRequirement'           => $person['civicIntegrationRequirement'] ?? null,
-            'civicIntegrationRequirementReason'     => $person['civicIntegrationRequirementReason'] ?? null,
-            'civicIntegrationRequirementFinishDate' => $person['civicIntegrationRequirementFinishDate'] ?? null,
-        ];
+        $civicIntegDetails = new StudentCivicIntegration();
+        if (isset($person['civicIntegrationRequirement'])) {
+            $civicIntegDetails->setCivicIntegrationRequirement($person['civicIntegrationRequirement']);
+        }
+        if (isset($person['civicIntegrationRequirementReason'])) {
+            $civicIntegDetails->setCivicIntegrationRequirementReason($person['civicIntegrationRequirementReason']);
+        }
+        if (isset($person['civicIntegrationRequirementFinishDate'])) {
+            $civicIntegDetails->setCivicIntegrationRequirementFinishDate(new \DateTime($person['civicIntegrationRequirementFinishDate']));
+        }
+
+        return $civicIntegDetails;
     }
 
     /**
@@ -489,17 +636,82 @@ class StudentService
      *
      * @param array $person Array with persons data
      *
-     * @return array Returns an array with persons details
+     * @return Person Returns an Person object with persons details
      */
-    private function handlePersonDetails(array $person): array
+    private function handlePersonDetails(array $person): Person
     {
-        return [
-            'givenName'      => $person['givenName'] ?? null,
-            'additionalName' => $person['additionalName'] ?? null,
-            'familyName'     => $person['familyName'] ?? null,
-            'gender'         => $person['gender'] ? $person['gender'] : 'X',
-            'birthday'       => $person['birthday'] ?? null,
-        ];
+        $personDetails = new Person();
+        isset($person['givenName']) ? $personDetails->setGivenName($person['givenName']) : $personDetails->setGivenName(null);
+        isset($person['additionalName']) ? $personDetails->setAdditionalName($person['additionalName']) : $personDetails->setAdditionalName(null);
+        isset($person['familyName']) ? $personDetails->setFamilyName($person['familyName']) : $personDetails->setFamilyName(null);
+        isset($person['gender']) ? $personDetails->setGender($person['gender']) : $personDetails->setGender(null);
+        isset($person['birthday']) ? $personDetails->setBirthday(new \DateTime($person['birthday'])) : $personDetails->setBirthday(null);
+        if (isset($person['addresses'])) {
+            $address = new Address();
+            isset($person['addresses'][0]['name']) ? $address->setName($person['addresses'][0]['name']) : $address->setName(null);
+            isset($person['addresses'][0]['street']) ? $address->setStreet($person['addresses'][0]['street']) : $address->setStreet(null);
+            isset($person['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
+            isset($person['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
+            isset($person['addresses'][0]['postalCode']) ? $address->setPostalCode($person['addresses'][0]['postalCode']) : $address->setPostalCode(null);
+            isset($person['addresses'][0]['locality']) ? $address->setLocality($person['addresses'][0]['locality']) : $address->setLocality(null);
+            $personDetails->setAddresses($address);
+        }
+        if (isset($person['emails'])) {
+            $email = new Email();
+            isset($person['emails'][0]['name']) ? $email->setName($person['emails'][0]['name']) : $email->setName(null);
+            isset($person['emails'][0]['email']) ? $email->setEmail($person['emails'][0]['email']) : $email->setEmail(null);
+            $personDetails->setEmails($email);
+        }
+        if (isset($person['telephones'])) {
+            foreach ($person['telephones'] as $tel) {
+                $newTel = new Telephone();
+                isset($tel['name']) ? $newTel->setName($tel['name']) : $newTel->setName(null);
+                isset($tel['telephone']) ? $newTel->setTelephone($tel['telephone']) : $newTel->setTelephone(null);
+                $personDetails->addTelephone($newTel);
+            }
+        }
+        if (isset($person['organization'])) {
+            $organization = new Organization();
+            isset($person['organization']['name']) ? $organization->setName($person['organization']['name']) : $organization->setName(null);
+            isset($person['organization']['type']) ? $organization->setType($person['organization']['type']) : $organization->setType(null);
+            if (isset($person['organization']['addresses'][0]['name'])) {
+                $address = new Address();
+                isset($person['organization']['addresses'][0]['name']) ? $address->setName($person['organization']['addresses'][0]['name']) : $address->setName(null);
+                isset($person['organization']['addresses'][0]['street']) ? $address->setStreet($person['organization']['addresses'][0]['street']) : $address->setStreet(null);
+                isset($person['organization']['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['organization']['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
+                isset($person['organization']['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['organization']['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
+                isset($person['organization']['addresses'][0]['postalCode']) ? $address->setPostalCode($person['organization']['addresses'][0]['postalCode']) : $address->setPostalCode(null);
+                isset($person['organization']['addresses'][0]['locality']) ? $address->setLocality($person['organization']['addresses'][0]['locality']) : $address->setLocality(null);
+                $organization->setAddresses($address);
+            }
+            if (isset($person['organization']['emails'])) {
+                $email = new Email();
+                isset($person['organization']['emails'][0]['name']) ? $email->setName($person['organization']['emails'][0]['name']) : $email->setName(null);
+                isset($person['organization']['emails'][0]['email']) ? $email->setEmail($person['organization']['emails'][0]['email']) : $email->setEmail(null);
+                $organization->setEmails($email);
+            }
+            if (isset($person['organization']['telephones'])) {
+                $tel = new Telephone();
+                isset($person['organization']['telephones'][0]['name']) ? $tel->setName($person['organization']['telephones'][0]['name']) : $tel->setName(null);
+                isset($person['organization']['telephones'][0]['telephone']) ? $tel->setTelephone($person['organization']['telephones'][0]['telephone']) : $tel->setTelephone(null);
+                $organization->setTelephones($tel);
+            }
+            $personDetails->setOrganization($organization);
+        }
+        isset($person['contactPreference']) ? $personDetails->setContactPreference($person['contactPreference']) : $personDetails->setContactPreference(null);
+        isset($person['contactPreferenceOther']) ? $personDetails->setContactPreferenceOther($person['contactPreferenceOther']) : $personDetails->setContactPreferenceOther(null);
+
+        return $personDetails;
+    }
+
+    private function handlePerson(array $input): Person
+    {
+        $result = new Person();
+        $result->setGivenName($input['givenName']);
+        $result->setAdditionalName(isset($input['additionalName']) ? $input['additionalName'] : null);
+        $result->setFamilyName($input['familyName']);
+        $result->setGender(isset($input['gender']) ? $input['gender'] : null);
+        $result->setBirthday(isset($input['birthday']) ? $input['birthday'] : null);
     }
 
     /**
@@ -531,33 +743,50 @@ class StudentService
      *
      * @param array $person Array with persons data
      *
-     * @return array Returns an array with persons general details
+     * @return StudentGeneral Returns general details object
      */
-    private function handleGeneralDetails(array $person): array
+    private function handleGeneralDetails(array $person): StudentGeneral
     {
         if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
             $childrenCount = count($person['ownedContactLists'][0]['people']);
-            $childrenDatesOfBirth = [];
+            $childrenDatesOfBirth = '';
+            $birthdayCount = 0;
             foreach ($person['ownedContactLists'][0]['people'] as $child) {
                 if (isset($child['birthday'])) {
+                    $birthdayCount++;
+
                     try {
                         $birthday = new \DateTime($child['birthday']);
-                        $childrenDatesOfBirth[] = $birthday->format('d-m-Y');
+                        $childrenDatesOfBirth .= $birthday->format('d-m-Y');
                     } catch (Exception $e) {
-                        $childrenDatesOfBirth[] = $child['birthday'];
+                        $childrenDatesOfBirth .= $child['birthday'];
+                    }
+                    if ($birthdayCount > 1) {
+                        $childrenDatesOfBirth .= ', ';
                     }
                 }
             }
         }
 
-        return [
-            'countryOfOrigin'      => $person['birthplace']['country'] ?? null,
-            'nativeLanguage'       => $person['primaryLanguage'] ?? null,
-            'otherLanguages'       => $person['speakingLanguages'] ? implode(',', $person['speakingLanguages']) : null,
-            'familyComposition'    => $person['maritalStatus'] ?? null,
-            'childrenCount'        => $childrenCount ?? null,
-            'childrenDatesOfBirth' => isset($childrenDatesOfBirth) ? implode(',', $childrenDatesOfBirth) : null,
-        ];
+        $generalDetails = new StudentGeneral();
+        isset($person['birthplace']['country']) ? $generalDetails->setCountryOfOrigin($person['birthplace']['country']) : $generalDetails->setCountryOfOrigin(null);
+        isset($person['primaryLanguage']) ? $generalDetails->setNativeLanguage($person['primaryLanguage']) : $generalDetails->setNativeLanguage(null);
+        $speakingLanguages = '';
+        $speakingLanguagesCount = count($person['speakingLanguages']);
+        if (isset($person['speakingLanguages'])) {
+            foreach ($person['speakingLanguages'] as $lang) {
+                $speakingLanguages .= $lang;
+                if ($speakingLanguagesCount > 1) {
+                    $speakingLanguages .= ', ';
+                }
+            }
+        }
+        isset($speakingLanguages) ? $generalDetails->setOtherLanguages($speakingLanguages) : $generalDetails->setOtherLanguages(null);
+        isset($person['maritalStatus']) ? $generalDetails->setFamilyComposition($person['maritalStatus']) : $generalDetails->setFamilyComposition(null);
+        isset($childrenCount) ? $generalDetails->setChildrenCount($childrenCount) : $generalDetails->setChildrenCount(null);
+        isset($childrenDatesOfBirth) ? $generalDetails->setChildrenDatesOfBirth($childrenDatesOfBirth) : $generalDetails->setChildrenDatesOfBirth(null);
+
+        return $generalDetails;
     }
 
     /**
@@ -567,26 +796,34 @@ class StudentService
      * @param array|null $registrarPerson       Array with registrar person data
      * @param array|null $registrarOrganization Array with registrar organization data
      *
-     * @return array Returns participants referrer details
+     * @return StudentReferrer Returns participants referrer details
      */
-    private function handleReferrerDetails(array $participant, $registrarPerson = null, $registrarOrganization = null): array
+    private function handleReferrerDetails(array $participant, $registrar = null): StudentReferrer
     {
-        if (isset($registrarOrganization)) {
-            return [
-                'referringOrganization'      => $registrarOrganization['name'] ?? null,
-                'referringOrganizationOther' => null,
-                'email'                      => $registrarPerson['emails'][0]['email'] ?? null,
-            ];
-        } elseif (isset($participant['referredBy'])) {
-            $registrarOrganization = $this->commonGroundService->getResource($participant['referredBy']);
+        if (isset($participant['referredBy'])) {
+            $organisation = $this->commonGroundService->getResource($participant['referredBy']);
         }
+        $referringOrganization = new StudentReferrer();
+        isset($organisation['name']) ? $referringOrganization->setReferringOrganization($organisation['name']) : $referringOrganization->setReferringOrganization(null);
+        $referringOrganization->setReferringOrganizationOther(null);
+        isset($organisation['emails'][0]['email']) ? $referringOrganization->setEmail($organisation['emails'][0]['email']) : $referringOrganization->setEmail(null);
 
-        return [
-            'referringOrganization'      => $registrarOrganization['name'] ?? null,
-            'referringOrganizationOther' => $registrarOrganization['name'] ?? null,
-            //todo does not check for referringOrganizationOther isn't saved separately right now
-            'email' => $registrarOrganization['emails'][0]['email'] ?? null,
-        ];
+        return $referringOrganization;
+//        $referringOrganization = new StudentReferrer();
+//        if (isset($registrarOrganization['name'])) {
+//            $referringOrganization->setReferringOrganization($registrarOrganization['name']);
+//            $referringOrganization->setReferringOrganizationOther($registrarOrganization['name']);
+//        } else {
+//            $referringOrganization->setReferringOrganization(null);
+//            $referringOrganization->setReferringOrganizationOther(null);
+//        }
+//        if (isset($registrarOrganization['emails'][0]['email'])) {
+//            $referringOrganization->setEmail($registrarOrganization['emails'][0]['email']);
+//        } else {
+//            $referringOrganization->setEmail(null);
+//        }
+
+//        return new StudentReferrer();
     }
 
     /**
@@ -594,20 +831,20 @@ class StudentService
      *
      * @param array $person Array with persons data
      *
-     * @return array Returns an array with persons background details
+     * @return StudentBackground Returns an array with persons background details
      */
-    private function handleBackgroundDetails(array $person): array
+    private function handleBackgroundDetails(array $person): StudentBackground
     {
-        return [
-            'foundVia'      => $person['foundVia'] ?? null,
-            'foundViaOther' => $person['foundVia'] ?? null,
-            //todo does not check for foundViaOther^ isn't saved separately right now
-            'wentToTaalhuisBefore'       => isset($person['wentToTaalhuisBefore']) ? (bool) $person['wentToTaalhuisBefore'] : null,
-            'wentToTaalhuisBeforeReason' => $person['wentToTaalhuisBeforeReason'] ?? null,
-            'wentToTaalhuisBeforeYear'   => $person['wentToTaalhuisBeforeYear'] ?? null,
-            'network'                    => $person['network'] ?? null,
-            'participationLadder'        => isset($person['participationLadder']) ? (int) $person['participationLadder'] : null,
-        ];
+        $studentBackground = new StudentBackground();
+        $foundViaArray = ['VOLUNTEER_CENTER', 'LIBRARY_WEBSITE', 'SOCIAL_MEDIA', 'NEWSPAPER', 'VIA_VIA', 'OTHER'];
+        isset($person['foundVia']) ? in_array($person['foundVia'], $foundViaArray) ? $studentBackground->setFoundVia($person['foundVia']) && $studentBackground->setFoundViaOther(null) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther($person['foundVia']) : $studentBackground->setFoundVia(null) && $studentBackground->setFoundViaOther(null);
+        isset($person['wentToLanguageHouseBefore']) ? $studentBackground->setWentToLanguageHouseBefore((bool) $person['wentToLanguageHouseBefore']) : $studentBackground->setWentToLanguageHouseBefore(null);
+        isset($person['wentToLanguageHouseBeforeReason']) ? $studentBackground->setWentToLanguageHouseBeforeReason($person['wentToLanguageHouseBeforeReason']) : $studentBackground->setWentToLanguageHouseBeforeReason(null);
+        isset($person['wentToLanguageHouseBeforeYear']) ? $studentBackground->setWentToLanguageHouseBeforeYear($person['wentToLanguageHouseBeforeYear']) : $studentBackground->setWentToLanguageHouseBeforeYear(null);
+        isset($person['network']) ? $studentBackground->setNetwork($person['network']) : $studentBackground->setNetwork(null);
+        isset($person['participationLadder']) ? $studentBackground->setParticipationLadder((int) $person['participationLadder']) : $studentBackground->setParticipationLadder(null);
+
+        return $studentBackground;
     }
 
     /**
@@ -615,17 +852,18 @@ class StudentService
      *
      * @param array $person An array with persons data
      *
-     * @return array Returns an array with persons dutch NT details
+     * @return StudentDutchNT Returns an array with persons dutch NT details
      */
-    private function handleDutchNTDetails(array $person): array
+    private function handleDutchNTDetails(array $person): StudentDutchNT
     {
-        return [
-            'dutchNTLevel'           => $person['dutchNTLevel'] ?? null,
-            'inNetherlandsSinceYear' => $person['inNetherlandsSinceYear'] ?? null,
-            'languageInDailyLife'    => $person['languageInDailyLife'] ?? null,
-            'knowsLatinAlphabet'     => isset($person['knowsLatinAlphabet']) ? (bool) $person['knowsLatinAlphabet'] : null,
-            'lastKnownLevel'         => $person['lastKnownLevel'] ?? null,
-        ];
+        $dutchNTDetails = new StudentDutchNT();
+        isset($person['dutchNTLevel']) ? $dutchNTDetails->setDutchNTLevel($person['dutchNTLevel']) : $dutchNTDetails->setDutchNTLevel(null);
+        isset($person['inNetherlandsSinceYear']) ? $dutchNTDetails->setInNetherlandsSinceYear($person['inNetherlandsSinceYear']) : $dutchNTDetails->setInNetherlandsSinceYear(null);
+        isset($person['languageInDailyLife']) ? $dutchNTDetails->setLanguageInDailyLife($person['languageInDailyLife']) : $dutchNTDetails->setLanguageInDailyLife(null);
+        isset($person['knowsLatinAlphabet']) ? $dutchNTDetails->setKnowsLatinAlphabet($person['knowsLatinAlphabet']) : $dutchNTDetails->setKnowsLatinAlphabet(null);
+        isset($person['lastKnownLevel']) ? $dutchNTDetails->setLastKnownLevel($person['lastKnownLevel']) : $dutchNTDetails->setLastKnownLevel(null);
+
+        return $dutchNTDetails;
     }
 
     /**
@@ -634,30 +872,35 @@ class StudentService
      * @param array $employee           Array with employees data
      * @param false $followingEducation Bool if the employee is following a education
      *
-     *@throws Exception
+     * @throws Exception
      *
-     *@return array|null[] Returns an array of educations
+     * @return array|null[] Returns array of employee
+     * @return array|null[] Returns an array of educations
      */
     public function getEducationsFromEmployee(array $employee, bool $followingEducation = false): array
     {
-        $educations = [
-            'lastEducation'         => [],
-            'followingEducationNo'  => [],
-            'followingEducationYes' => [],
-            'course'                => [],
-        ];
-
         if (isset($employee['educations'])) {
-            foreach ($employee['educations'] as $education) {
-                $educations = array_merge($educations, $this->setEducationType($educations, $education));
+            foreach ($employee['educations'] as $edu) {
+                if (isset($edu['description']) && $edu['description'] == 'course') {
+                    $employee['courseDetails']['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $edu['id']])]);
+                    if (isset($employee['courseDetails']['endDate'])) {
+                        $employee['courseDetails']['isFollowingCourseRightNow'] = false;
+                    } else {
+                        $employee['courseDetails']['isFollowingCourseRightNow'] = true;
+                    }
+                }
+                if (isset($edu['description']) && $edu['description'] == 'education') {
+                    $employee['educationDetails']['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $edu['id']])]);
+                    if (isset($employee['educationDetails']['endDate'])) {
+                        $employee['educationDetails']['followingEducationRightNow'] = 'NO';
+                    } else {
+                        $employee['educationDetails']['followingEducationRightNow'] = 'YES';
+                    }
+                }
             }
         }
 
-        if ($followingEducation) {
-            $educations['followingEducation'] = $educations['followingEducationNo'] ?: $educations['followingEducationYes'];
-        }
-
-        return $educations;
+        return $employee;
     }
 
     /**
@@ -671,18 +914,14 @@ class StudentService
     private function setEducationType(array $educations, array $education): array
     {
         switch ($education['description']) {
-            case 'lastEducation':
-                $educations['lastEducation'] = $education;
-                break;
             case 'followingEducationNo':
-                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
-                    $educations['followingEducationNo'] = $education;
-                }
+            case 'lastEducation':
+                $educations['followingEducationRightNow'] = 'NO';
+                $educations['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 break;
             case 'followingEducationYes':
-                if ($educations['followingEducationYes'] == [] && $educations['followingEducationNo'] == []) {
-                    $educations['followingEducationYes'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
-                }
+                $educations['followingEducationRightNow'] = 'YES';
+                $educations['education'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
                 break;
             case 'course':
                 $educations['course'] = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
@@ -695,27 +934,73 @@ class StudentService
     /**
      * This function passes education data to an array.
      *
-     * @param array $lastEducation         An array with last education data
-     * @param array $followingEducationYes An array with following education yes data
-     * @param array $followingEducationNo  An array with following education no data
+     * @param array $lastEducation An array with education data
      *
-     * @return array Returns an array with education details
+     * @return StudentEducation Returns an array with education details
      */
-    private function handleEducationDetails(array $lastEducation, array $followingEducationYes, array $followingEducationNo): array
+    private function handleEducationDetails(array $educationsArray): StudentEducation
     {
-        return [
-            'lastFollowedEducation'                            => $lastEducation['iscedEducationLevelCode'] ?? null,
-            'didGraduate'                                      => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
-            'followingEducationRightNow'                       => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
-            'followingEducationRightNowYesStartDate'           => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
-            'followingEducationRightNowYesEndDate'             => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
-            'followingEducationRightNowYesLevel'               => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
-            'followingEducationRightNowYesInstitute'           => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
-            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool) $followingEducationYes['providesCertificate'] : null) : null,
-            'followingEducationRightNowNoEndDate'              => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
-            'followingEducationRightNowNoLevel'                => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
-            'followingEducationRightNowNoGotCertificate'       => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
-        ];
+        $educationDetails = new StudentEducation();
+        if (!isset($educationsArray['educationDetails'])) {
+            $education = new Education();
+            $education->setName(null);
+            $education->setStartDate(null);
+            $education->setEnddate(null);
+            $education->setGroupFormation(null);
+            $education->setInstitution(null);
+            $education->setDegreeGrantedStatus(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setProvidesCertificate(null);
+            $education->setAmountOfHours(null);
+            $educationDetails->setEducation($education);
+            $educationDetails->setFollowingEducationRightNow(null);
+
+            return $educationDetails;
+        }
+        $educationsArray = $educationsArray['educationDetails'];
+        isset($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
+
+        if (isset($educationsArray['education'])) {
+            $education = new Education();
+            $education->setGroupFormation(null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setAmountOfHours(null);
+
+            isset($educationsArray['education']['name']) ? $education->setName($educationsArray['education']['name']) : $education->setName(null);
+            isset($educationsArray['education']['startDate']) ? $education->setStartDate(new \DateTime($educationsArray['education']['startDate'])) : $education->setStartDate(null);
+            isset($educationsArray['education']['endDate']) ? $education->setEnddate(new \DateTime($educationsArray['education']['endDate'])) : $education->setEnddate(null);
+            isset($educationsArray['education']['institution']) ? $education->setInstitution($educationsArray['education']['institution']) : $education->setInstitution(null);
+            isset($educationsArray['education']['iscedEducationLevelCode']) ? $education->setIscedEducationLevelCode($educationsArray['education']['iscedEducationLevelCode']) : $education->setIscedEducationLevelCode(null);
+            isset($educationsArray['education']['degreeGrantedStatus']) ? $education->setDegreeGrantedStatus($educationsArray['education']['degreeGrantedStatus']) : $education->setDegreeGrantedStatus(null);
+            isset($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
+            isset($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
+            isset($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
+            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool) $educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
+            isset($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
+
+            $educationDetails->setEducation($education);
+        } else {
+            $educationDetails->setEducation(null);
+        }
+
+        return $educationDetails;
+
+//        return [
+//            'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
+//            'didGraduate' => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
+//            'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
+//            'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
+//            'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
+//            'followingEducationRightNowYesLevel' => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
+//            'followingEducationRightNowYesInstitute' => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
+//            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool)$followingEducationYes['providesCertificate'] : null) : null,
+//            'followingEducationRightNowNoEndDate' => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
+//            'followingEducationRightNowNoLevel' => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
+//            'followingEducationRightNowNoGotCertificate' => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
+//        ];
     }
 
     /**
@@ -723,18 +1008,66 @@ class StudentService
      *
      * @param array $course Array with course data
      *
-     * @return array Returns an array with course details
+     * @return StudentCourse Returns course details
      */
-    private function handleCourseDetails(array $course): array
+    private function handleCourseDetails(array $course): StudentCourse
     {
-        return [
-            'isFollowingCourseRightNow'    => isset($course),
-            'courseName'                   => $course['name'] ?? null,
-            'courseTeacher'                => $course['teacherProfessionalism'] ?? null,
-            'courseGroup'                  => $course['groupFormation'] ?? null,
-            'amountOfHours'                => $course['amountOfHours'] ?? null,
-            'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool) $course['providesCertificate'] : null,
-        ];
+        $courseDetails = new StudentCourse();
+        if (!isset($course['courseDetails'])) {
+            $education = new Education();
+            $education->setName(null);
+            $education->setStartDate(null);
+            $education->setEnddate(null);
+            $education->setGroupFormation(null);
+            $education->setInstitution(null);
+            $education->setDegreeGrantedStatus(null);
+            $education->setIscedEducationLevelCode(null);
+            $education->setTeacherProfessionalism(null);
+            $education->setCourseProfessionalism(null);
+            $education->setProvidesCertificate(null);
+            $education->setAmountOfHours(null);
+            $education->setGroupFormation(null);
+            $courseDetails->setCourse($education);
+            $courseDetails->setIsFollowingCourseRightNow(null);
+
+            return $courseDetails;
+        }
+        $course = $course['courseDetails'];
+        isset($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
+
+        if (isset($course['education'])) {
+            $newCourse = new Education();
+            $newCourse->setGroupFormation(null);
+            $newCourse->setTeacherProfessionalism(null);
+            $newCourse->setCourseProfessionalism(null);
+            $newCourse->setAmountOfHours(null);
+
+            isset($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
+            isset($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
+            isset($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
+            isset($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
+            isset($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
+            isset($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
+            isset($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
+            isset($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
+            isset($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
+            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool) $course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
+            isset($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
+
+            $courseDetails->setCourse($newCourse);
+        } else {
+            $courseDetails->setCourse(null);
+        }
+
+        return $courseDetails;
+//        return [
+//            'isFollowingCourseRightNow' => isset($course),
+//            'courseName' => $course['name'] ?? null,
+//            'courseTeacher' => $course['teacherProfessionalism'] ?? null,
+//            'courseGroup' => $course['groupFormation'] ?? null,
+//            'amountOfHours' => $course['amountOfHours'] ?? null,
+//            'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool)$course['providesCertificate'] : null,
+//        ];
     }
 
     /**
@@ -742,16 +1075,25 @@ class StudentService
      *
      * @param array $employee Array with employee data
      *
-     * @return array|null[] Returns an array with job details
+     * @return StudentJob|null[] Returns an array with job details
      */
-    private function handleJobDetails(array $employee): array
+    private function handleJobDetails(array $employee): StudentJob
     {
-        return [
-            'trainedForJob'          => $employee['trainedForJob'] ?? null,
-            'lastJob'                => $employee['lastJob'] ?? null,
-            'dayTimeActivities'      => $employee['dayTimeActivities'] ?? null,
-            'dayTimeActivitiesOther' => $employee['dayTimeActivitiesOther'] ?? null,
-        ];
+        $studentJob = new StudentJob();
+        if (isset($employee['trainedForJob'])) {
+            $studentJob->setTrainedForJob($employee['trainedForJob']);
+        }
+        if (isset($employee['lastJob'])) {
+            $studentJob->setLastJob($employee['lastJob']);
+        }
+        if (isset($employee['dayTimeActivities'])) {
+            $studentJob->setDayTimeActivities($employee['dayTimeActivities']);
+        }
+        if (isset($employee['dayTimeActivitiesOther'])) {
+            $studentJob->setDayTimeActivitiesOther($employee['dayTimeActivitiesOther']);
+        }
+
+        return $studentJob;
     }
 
     /**
@@ -759,20 +1101,49 @@ class StudentService
      *
      * @param array $participant Array with participant data
      *
-     * @return array|null[] Returns an array with motivation details
+     * @return StudentMotivation|null[] Returns an array with motivation details
      */
-    private function handleMotivationDetails(array $participant): array
+    private function handleMotivationDetails(array $participant): StudentMotivation
     {
-        return [
-            'desiredSkills'                 => $participant['desiredSkills'] ?? null,
-            'desiredSkillsOther'            => $participant['desiredSkillsOther'] ?? null,
-            'hasTriedThisBefore'            => $participant['hasTriedThisBefore'] ?? null,
-            'hasTriedThisBeforeExplanation' => $participant['hasTriedThisBeforeExplanation'] ?? null,
-            'whyWantTheseSkills'            => $participant['whyWantTheseSkills'] ?? null,
-            'whyWantThisNow'                => $participant['whyWantThisNow'] ?? null,
-            'desiredLearningMethod'         => $participant['desiredLearningMethod'] ?? null,
-            'remarks'                       => $participant['remarks'] ?? null,
-        ];
+        $motivationDetails = new StudentMotivation();
+        if (isset($participant['desiredSkills'])) {
+            $motivationDetails->setDesiredSkills($participant['desiredSkills']);
+        } else {
+            $motivationDetails->setDesiredSkills(null);
+        }
+        $motivationDetails->setDesiredSkillsOther(null);
+        if (isset($participant['hasTriedThisBefore'])) {
+            $motivationDetails->setHasTriedThisBefore($participant['hasTriedThisBefore']);
+        } else {
+            $motivationDetails->setHasTriedThisBefore(null);
+        }
+        if (isset($participant['hasTriedThisBeforeExplanation'])) {
+            $motivationDetails->setHasTriedThisBeforeExplanation($participant['hasTriedThisBeforeExplanation']);
+        } else {
+            $motivationDetails->setHasTriedThisBeforeExplanation(null);
+        }
+        if (isset($participant['whyWantTheseSkills'])) {
+            $motivationDetails->setWhyWantTheseSkills($participant['whyWantTheseSkills']);
+        } else {
+            $motivationDetails->setWhyWantTheseSkills(null);
+        }
+        if (isset($participant['whyWantThisNow'])) {
+            $motivationDetails->setWhyWantThisNow($participant['whyWantThisNow']);
+        } else {
+            $motivationDetails->setWhyWantThisNow(null);
+        }
+        if (isset($participant['desiredLearningMethod'])) {
+            $motivationDetails->setDesiredLearningMethod($participant['desiredLearningMethod']);
+        } else {
+            $motivationDetails->setDesiredLearningMethod(null);
+        }
+        if (isset($participant['remarks'])) {
+            $motivationDetails->setRemarks($participant['remarks']);
+        } else {
+            $motivationDetails->setRemarks(null);
+        }
+
+        return $motivationDetails;
     }
 
     /**
@@ -780,14 +1151,54 @@ class StudentService
      *
      * @param array $person Array with person data
      *
-     * @return array|null[] Returns an array with availability details
+     * @return StudentAvailability|null[] Returns an array with availability details
      */
-    private function handleAvailabilityDetails(array $person): array
+    private function handleAvailabilityDetails(array $person): StudentAvailability
     {
-        return [
-            'availability'      => $person['availability'] ?? null,
-            'availabilityNotes' => $person['availabilityNotes'] ?? null,
-        ];
+        $studentAvailability = new StudentAvailability();
+        if (isset($person['availability'])) {
+            $availability = new Availability();
+            foreach ($person['availability'] as $key => $day) {
+                $availabilityDay = new AvailabilityDay();
+                $availabilityDay->setMorning((bool) $day['morning']);
+                $availabilityDay->setAfternoon((bool) $day['afternoon']);
+                $availabilityDay->setEvening((bool) $day['evening']);
+
+                switch ($key) {
+                    case 'monday':
+                        $availability->setMonday($availabilityDay);
+                        break;
+                    case 'tuesday':
+                        $availability->setTuesday($availabilityDay);
+                        break;
+                    case 'wednesday':
+                        $availability->setWednesday($availabilityDay);
+                        break;
+                    case 'thursday':
+                        $availability->setThursday($availabilityDay);
+                        break;
+                    case 'friday':
+                        $availability->setFriday($availabilityDay);
+                        break;
+                    case 'saturday':
+                        $availability->setSaturday($availabilityDay);
+                        break;
+                    case 'sunday':
+                        $availability->setSunday($availabilityDay);
+                        break;
+                }
+            }
+            $studentAvailability->setAvailability($availability);
+        } else {
+            $studentAvailability->setAvailability(null);
+        }
+        if (isset($person['availabilityNotes'])) {
+            $studentAvailability->setAvailabilityNotes($person['availabilityNotes']);
+        } else {
+            $studentAvailability->setAvailabilityNotes(null);
+        }
+
+        return $studentAvailability;
     }
 
     /**
@@ -795,15 +1206,1372 @@ class StudentService
      *
      * @param array $person Array with person data
      *
-     * @return array|null[] Returns an array with permission details
+     * @return StudentPermission|null[] Returns an array with permission details
      */
-    private function handlePermissionDetails(array $person): array
+    private function handlePermissionDetails(array $person): StudentPermission
     {
+        $studentPermission = new StudentPermission();
+        if (isset($person['didSignPermissionForm'])) {
+            $studentPermission->setDidSignPermissionForm((bool) $person['didSignPermissionForm']);
+        }
+        if (isset($person['hasPermissionToShareDataWithProviders'])) {
+            $studentPermission->setHasPermissionToShareDataWithProviders((bool) $person['hasPermissionToShareDataWithProviders']);
+        } else {
+            $studentPermission->setHasPermissionToShareDataWithProviders(false);
+        }
+        if (isset($person['hasPermissionToShareDataWithLibraries'])) {
+            $studentPermission->setHasPermissionToShareDataWithLibraries((bool) $person['hasPermissionToShareDataWithLibraries']);
+        } else {
+            $studentPermission->setHasPermissionToShareDataWithLibraries(false);
+        }
+        if (isset($person['hasPermissionToSendInformationAboutLibraries'])) {
+            $studentPermission->setHasPermissionToSendInformationAboutLibraries((bool) $person['hasPermissionToSendInformationAboutLibraries']);
+        } else {
+            $studentPermission->setHasPermissionToSendInformationAboutLibraries(false);
+        }
+
+        return $studentPermission;
+    }
+
+    /**
+     * This function creates a Student object with given input.
+     *
+     * @param array $input Array with students data
+     *
+     * @throws Exception
+     *
+     * @return object Returns a Student object
+     */
+    public function createStudent(array $input): Student
+    {
+        if (isset($input['languageHouseId'])) {
+            $languageHouseId = explode('/', $input['languageHouseId']);
+            if (is_array($languageHouseId)) {
+                $languageHouseId = end($languageHouseId);
+            }
+            $input['languageHouseUrl'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $languageHouseId]);
+        } else {
+            throw new Exception('languageHouseId not given');
+        }
+
+        // Do some checks and error handling
+        $this->checkStudentValues($input);
+
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
+
+        // Transform DTO info to cc/person body
+        $person = $this->inputToPerson($input);
+
+        if (isset($person['organization'])) {
+            // Save person->organization its subresources
+            $person = $this->savePersonsOrganizationSubresources($person);
+        }
+
+        // Save cc/person
+        $person = $this->ccService->saveEavPerson($person);
+//        var_dump($person['@id']);
+
+        // Transform DTO info to edu/participant body
+        $participant = $this->inputToParticipant($input, $person['@id']);
+
+        // Transform registrar into cc/person and save it
+        if (isset($input['registrar'])) {
+            $participant['registrar'] = $this->saveRegistrarAsPerson($input['registrar']);
+        }
+
+        // Save edu/participant
+        $participant = $this->eduService->saveEavParticipant($participant);
+
+        $employee = $this->inputToEmployee($input, $person['@id']);
+        // Save mrc/employee and create a user if email was set in the input(ToEmployee)^
+        $employee = $this->mrcService->createEmployeeArray($employee, true);
+
+        // Then save memos
+        $memos = $this->saveMemos($input, $person['@id']);
+        if (isset($memos['availabilityMemo']['description'])) {
+            $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
+        }
+        if (isset($memos['motivationMemo']['description'])) {
+            $participant['remarks'] = $memos['motivationMemo']['description'];
+        }
+
+        // Now put together the expected result in $result['result'] for Lifely:
+//        $registrar = ['registrarOrganization' => null, 'registrarPerson' => null, 'registrarMemo' => null];
+
+        $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
+        return $resourceResult;
+    }
+
+    /**
+     * This function saves registrar to cc/person.
+     *
+     * @param array $input Array with participant data
+     *
+     * @return string Returns registrar url
+     */
+    private function saveRegistrarAsPerson(array $registrar): string
+    {
+        if (isset($registrar['addresses'])) {
+            $address = $registrar['addresses'];
+            unset($registrar['addresses']);
+            $registrar['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+        }
+        if (isset($registrar['telephones'])) {
+            $telephones = $registrar['telephones'];
+            unset($registrar['telephones']);
+            foreach ($telephones as $tel) {
+                $registrar['telephones'][] = '/telephones/'.$this->commonGroundService->saveResource($tel, ['component' => 'cc', 'type' => 'telephones'])['id'];
+            }
+        }
+        if (isset($registrar['emails'])) {
+            $email = $registrar['emails'];
+            unset($registrar['emails']);
+            $registrar['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+        }
+        if (isset($registrar['organization'])) {
+            if (isset($registrar['organization']['addresses'])) {
+                $address = $registrar['organization']['addresses'];
+                unset($registrar['organization']['addresses']);
+                $registrar['organization']['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+            }
+            if (isset($registrar['organization']['telephones'])) {
+                $telephones = $registrar['organization']['telephones'];
+                unset($registrar['organization']['telephones']);
+                $registrar['organization']['telephones'][0] = '/telephones/'.$this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
+            }
+            if (isset($registrar['organization']['emails'])) {
+                $email = $registrar['organization']['emails'];
+                unset($registrar['organization']['emails']);
+                $registrar['organization']['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails'])['id'];
+            }
+        }
+
+        return $this->commonGroundService->saveResource($registrar, ['component' => 'cc', 'type' => 'people'])['@id'];
+    }
+
+    /**
+     * This function saves subresources from person->organization.
+     *
+     * @param array $input Array with persons data
+     *
+     * @return array Returns person with given data
+     */
+    private function savePersonsOrganizationSubresources(array $person): array
+    {
+        if (isset($person['organization']['addresses'])) {
+            $address = $person['organization']['addresses'];
+            unset($person['organization']['addresses']);
+            $person['organization']['addresses'][0] = '/addresses/'.$this->commonGroundService->saveResource($address, ['component' => 'cc', 'type' => 'addresses'])['id'];
+        }
+        if (isset($person['organization']['emails'])) {
+            $emails = $person['organization']['emails'];
+            unset($person['organization']['emails']);
+            $person['organization']['emails'][0] = '/emails/'.$this->commonGroundService->saveResource($emails, ['component' => 'cc', 'type' => 'emails'])['id'];
+        }
+        if (isset($person['organization']['telephones'])) {
+            $telephones = $person['organization']['telephones'];
+            unset($person['organization']['telephones']);
+            $person['organization']['telephones'][0] = '/telephones/'.$this->commonGroundService->saveResource($telephones, ['component' => 'cc', 'type' => 'telephones'])['id'];
+        }
+        $org = $person['organization'];
+        unset($person['organization']);
+        $person['organization'] = '/organizations/'.$this->commonGroundService->saveResource($org, ['component' => 'cc', 'type' => 'organizations'])['id'];
+
+        return $person;
+    }
+
+    /**
+     * This function passes data from given input to the person array.
+     *
+     * @param array $input        Array with persons data
+     * @param null  $updatePerson Bool if person should be updated
+     *
+     * @return array Returns person with given data
+     */
+    private function inputToPerson(array $input, $updatePerson = null): array
+    {
+//        if (isset($input['languageHouseId'])) {
+//            $person['organization'] = '/organizations/' . $input['languageHouseId'];
+//        } else {
+        $person = [];
+//        }
+        if (isset($input['civicIntegrationDetails'])) {
+            $person = $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input['civicIntegrationDetails']);
+        }
+        if (isset($input['person'])) {
+            $person = $this->getPersonPropertiesFromPersonDetails($person, $input['person']);
+            $person = $this->getPersonPropertiesFromContactDetails($person, $input['person'], $updatePerson);
+            if (isset($input['person']['organization'])) {
+                $person = $this->getPersonPropertiesFromOrganizationDetails($person, $input['person'], $updatePerson);
+            }
+        }
+        if (isset($input['generalDetails'])) {
+            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson);
+        }
+        if (isset($input['backgroundDetails'])) {
+            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
+        }
+        if (isset($input['dutchNTDetails'])) {
+            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']);
+        }
+        if (isset($input['availabilityDetails'])) {
+            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
+        }
+        if (isset($input['permissionDetails'])) {
+            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function sets the persons availability  with the given availability details.
+     *
+     * @param array $person            Array with persons data
+     * @param array $permissionDetails Array with permission details
+     *
+     * @return array Returns person array
+     */
+    private function getPersonPropertiesFromPermissionDetails(array $person, array $permissionDetails): array
+    {
+        if (isset($permissionDetails['didSignPermissionForm'])) {
+            $person['didSignPermissionForm'] = $permissionDetails['didSignPermissionForm'];
+        }
+        if (isset($permissionDetails['hasPermissionToShareDataWithAanbieders'])) {
+            $person['hasPermissionToShareDataWithAanbieders'] = $permissionDetails['hasPermissionToShareDataWithAanbieders'];
+        }
+        if (isset($permissionDetails['hasPermissionToShareDataWithLibraries'])) {
+            $person['hasPermissionToShareDataWithLibraries'] = $permissionDetails['hasPermissionToShareDataWithLibraries'];
+        }
+        if (isset($permissionDetails['hasPermissionToSendInformationAboutLibraries'])) {
+            $person['hasPermissionToSendInformationAboutLibraries'] = $permissionDetails['hasPermissionToSendInformationAboutLibraries'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function sets the persons availability  with the given availability details.
+     *
+     * @param array $person              Array with persons data
+     * @param array $availabilityDetails Array with availability details
+     *
+     * @return array Returns person array
+     */
+    private function getPersonPropertiesFromAvailabilityDetails(array $person, array $availabilityDetails)
+    {
+        if (isset($availabilityDetails['availability'])) {
+            $person['availability'] = $availabilityDetails['availability'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function sets the persons DutchN NT details  with the given Dutch NT details.
+     *
+     * @param array $person         Array with persons data
+     * @param array $dutchNTDetails Array with Dutch NT Details
+     *
+     * @return array Returns person array
+     */
+    private function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
+    {
+        if (isset($dutchNTDetails['dutchNTLevel'])) {
+            $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'];
+        }
+        if (isset($dutchNTDetails['inNetherlandsSinceYear'])) {
+            $person['inNetherlandsSinceYear'] = $dutchNTDetails['inNetherlandsSinceYear'];
+        }
+        if (isset($dutchNTDetails['languageInDailyLife'])) {
+            $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'];
+        }
+        if (isset($dutchNTDetails['knowsLatinAlphabet'])) {
+            $person['knowsLatinAlphabet'] = (bool) $dutchNTDetails['knowsLatinAlphabet'];
+        }
+        if (isset($dutchNTDetails['lastKnownLevel'])) {
+            $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function sets the person background details with the given background details.
+     *
+     * @param array $person            Array with persons data
+     * @param array $backgroundDetails Array with background details
+     *
+     * @return array Returns a person array with background details
+     */
+    private function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
+    {
+        //todo: check in StudentService -> checkStudentValues() for enum options and if other is chosen make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
+        // (VOLUNTEER_CENTER, LIBRARY_WEBSITE, SOCIAL_MEDIA, NEWSPAPER, VIA_VIA, OTHER)
+        if (isset($backgroundDetails['foundVia'])) {
+            $person['foundVia'] = $backgroundDetails['foundVia'];
+        } elseif (isset($backgroundDetails['foundViaOther'])) {
+            $person['foundVia'] = $backgroundDetails['foundViaOther'];
+        }
+        if (isset($backgroundDetails['wentToLanguageHouseBefore'])) {
+            $person['wentToLanguageHouseBefore'] = (bool) $backgroundDetails['wentToLanguageHouseBefore'];
+        }
+        if (isset($backgroundDetails['wentToLanguageHouseBeforeReason'])) {
+            $person['wentToLanguageHouseBeforeReason'] = $backgroundDetails['wentToLanguageHouseBeforeReason'];
+        }
+        if (isset($backgroundDetails['wentToLanguageHouseBeforeYear'])) {
+            $person['wentToLanguageHouseBeforeYear'] = $backgroundDetails['wentToLanguageHouseBeforeYear'];
+        }
+        //todo: check in StudentService -> checkStudentValues() if all values in this array are one of the enum values
+        // (HOUSEHOLD_MEMBERS, NEIGHBORS, FAMILY_MEMBERS, AID_WORKERS, FRIENDS_ACQUAINTANCES, PEOPLE_AT_MOSQUE_CHURCH, ACQUAINTANCES_SPEAKING_OWN_LANGUAGE, ACQUAINTANCES_SPEAKING_DUTCH)
+        if (isset($backgroundDetails['network'])) {
+            $person['network'] = $backgroundDetails['network'];
+        }
+        if (isset($backgroundDetails['participationLadder'])) {
+            $person['participationLadder'] = (int) $backgroundDetails['participationLadder'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function updates the person with the given general details.
+     *
+     * @param array $person         Array with persons data
+     * @param array $generalDetails Array with general details data
+     * @param null  $updatePerson   Bool if person should be updated or not
+     *
+     * @return array Returns a person with properties from general details
+     */
+    private function getPersonPropertiesFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    {
+        if (isset($generalDetails['countryOfOrigin'])) {
+            $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
+        }
+        //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
+        if (isset($generalDetails['nativeLanguage'])) {
+            $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
+        }
+        if (isset($generalDetails['otherLanguages'])) {
+            $person['speakingLanguages'] = explode(',', $generalDetails['otherLanguages']);
+        }
+        //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
+        if (isset($generalDetails['familyComposition'])) {
+            $person['maritalStatus'] = $generalDetails['familyComposition'];
+        }
+
+        // Create the children of this person
+        return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
+    }
+
+    /**
+     * This function sets the persons children properties from the given general details.
+     *
+     * @param array $person
+     * @param array $generalDetails
+     * @param null  $updatePerson   Bool if person should be updated
+     *
+     * @return array Returns person array with children properties
+     */
+    private function setPersonChildrenFromGeneralDetails(array $person, array $generalDetails, $updatePerson = null): array
+    {
+        if (isset($generalDetails['childrenCount'])) {
+            $childrenCount = (int) $generalDetails['childrenCount'];
+        }
+        if (isset($generalDetails['childrenDatesOfBirth'])) {
+            $childrenDatesOfBirth = $this->setChildrenDatesOfBirthFromGeneralDetails($generalDetails['childrenDatesOfBirth']);
+            if (!isset($childrenCount)) {
+                $childrenCount = count($childrenDatesOfBirth);
+            }
+        }
+        if (isset($childrenCount)) {
+            $person['ownedContactLists'][0] = $this->setChildrenFromChildrenCount($person, $childrenCount, $childrenDatesOfBirth ?? null);
+            if (isset($updatePerson['ownedContactLists'][0]['id'])) {
+                $person = $this->updatePersonChildrenContactList($person, $updatePerson);
+            }
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function updates the persons children contact list with given person.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with updated persons data
+     *
+     * @return array Returns an updated person array
+     */
+    private function updatePersonChildrenContactList(array $person, array $updatePerson): array
+    {
+        // todo: when doing an update, make sure to not keep creating new objects, this is now solved by just deleting all children objects and creating new ones^:
+        if (isset($updatePerson['ownedContactLists'][0]['people'])) {
+            foreach ($updatePerson['ownedContactLists'][0]['people'] as $key => $child) {
+                $this->commonGroundService->deleteResource($child, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $child['id']]));
+                unset($updatePerson['ownedContactLists'][0]['people'][$key]);
+            }
+        }
+        //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+        $contactList = array_merge($updatePerson['ownedContactLists'][0], $person['ownedContactLists'][0]);
+        $this->commonGroundService->updateResource($contactList, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'contact_lists', 'id' => $updatePerson['ownedContactLists'][0]['id']]));
+
+        //unset person ownedContactLists
+        unset($person['ownedContactLists']);
+
+        return $person;
+    }
+
+    /**
+     * This function sets children from children count.
+     *
+     * @param array $person               Array with persons data
+     * @param int   $childrenCount        Int that counts children
+     * @param array $childrenDatesOfBirth Array with childrens date of births
+     *
+     * @return array Returns an array with childrens data
+     */
+    private function setChildrenFromChildrenCount(array $person, int $childrenCount, array $childrenDatesOfBirth): array
+    {
+        $children = [];
+        for ($i = 0; $i < $childrenCount; $i++) {
+            $child = [
+                'givenName' => 'Child '.($i + 1).' of '.$person['givenName'] ?? '',
+            ];
+            if (isset($childrenDatesOfBirth[$i])) {
+                $child['birthday'] = $childrenDatesOfBirth[$i];
+            }
+            $children[] = $child;
+        }
+
         return [
-            'didSignPermissionForm'                        => $person['didSignPermissionForm'] ?? null,
-            'hasPermissionToShareDataWithAanbieders'       => $person['hasPermissionToShareDataWithAanbieders'] ?? null,
-            'hasPermissionToShareDataWithLibraries'        => $person['hasPermissionToShareDataWithLibraries'] ?? null,
-            'hasPermissionToSendInformationAboutLibraries' => $person['hasPermissionToSendInformationAboutLibraries'] ?? null,
+            'name'        => 'Children',
+            'description' => 'The children of '.$person['givenName'] ?? 'this owner',
+            'people'      => $children,
         ];
+    }
+
+    /**
+     * This function sets the children dates of birth from given general details.
+     *
+     * @param string $childrenDatesOfBirth String that holds dates of birth of children.
+     *
+     * @return array
+     */
+    private function setChildrenDatesOfBirthFromGeneralDetails(string $childrenDatesOfBirth): array
+    {
+        $childrenDatesOfBirth = explode(',', $childrenDatesOfBirth);
+        foreach ($childrenDatesOfBirth as $key => $childrenDateOfBirth) {
+            try {
+                new \DateTime($childrenDateOfBirth);
+            } catch (Exception $e) {
+                unset($childrenDatesOfBirth[$key]);
+            }
+        }
+
+        return $childrenDatesOfBirth;
+    }
+
+    /**
+     * This function sets the persons birthplace from the given country of origins.
+     *
+     * @param array  $person          Array with persons data
+     * @param string $countryOfOrigin String that holds country of origin
+     * @param null   $updatePerson    Bool if person should be updated
+     *
+     * @return array Returns person array with birthplace property
+     */
+    private function setPersonBirthplaceFromCountryOfOrigin(array $person, string $countryOfOrigin, $updatePerson = null): array
+    {
+        $person['birthplace'] = [
+            'country' => $countryOfOrigin,
+        ];
+        if (isset($updatePerson['birthplace']['id'])) {
+            //merge person birthplace into updatePerson birthplace and update the updatePerson birthplace
+            $address = array_merge($updatePerson['birthplace'], $person['birthplace']);
+            $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['birthplace']['id']]));
+
+            //unset person birthplace
+            unset($person['birthplace']);
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given contact details to the person array.
+     *
+     * @param array $person       Array with persons data
+     * @param array $input        Array with inputted person data
+     * @param null  $updatePerson Bool if person should be updated
+     *
+     * @return array Returns a person array with civic integration details
+     */
+    private function getPersonPropertiesFromContactDetails(array $person, array $input, $updatePerson = null): array
+    {
+        $personName = $person['givenName'] ? $person['familyName'] ? $person['givenName'].' '.$person['familyName'] : $person['givenName'] : '';
+        $person = $this->getPersonEmailsFromContactDetails($person, $input, $personName);
+        $person = $this->getPersonTelephonesFromContactDetails($person, $input, $personName);
+        $person = $this->getPersonAdressesFromContactDetails($person, $input, $personName);
+        if (isset($updatePerson)) {
+            $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
+        }
+
+        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
+        if (isset($input['contactPreference'])) {
+            $person['contactPreference'] = $input['contactPreference'];
+        } elseif ($input['person']['contactPreferenceOther']) {
+            $person['contactPreference'] = $input['contactPreferenceOther'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given organization details to the person array.
+     *
+     * @param array $person       Array with persons data
+     * @param array $input        Array with inputted person data
+     * @param null  $updatePerson Bool if person should be updated
+     *
+     * @return array Returns a person array with civic integration details
+     */
+    private function getPersonPropertiesFromOrganizationDetails(array $person, array $input, $updatePerson = null): array
+    {
+        if (isset($input['organization']['id'])) {
+            $person['organization']['id'] = $input['organization']['id'];
+        }
+        if (isset($input['organization']['name'])) {
+            $person['organization']['name'] = $input['organization']['name'];
+        }
+        if (isset($input['organization']['type'])) {
+            $person['organization']['type'] = $input['organization']['type'];
+        }
+        if (isset($input['organization']['addresses'])) {
+            $person['organization']['addresses'] = $input['organization']['addresses'];
+        }
+        if (isset($input['organization']['telephones'])) {
+            $person['organization']['telephones'] = $input['organization']['telephones'];
+        }
+        if (isset($input['organization']['emails'])) {
+            $person['organization']['emails'] = $input['organization']['emails'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function updates the person with the contact details's subobjects.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with data the person needs to be updated with
+     *
+     * @return array Returns a person array with updated contact details
+     */
+    private function updatePersonContactDetailsSubobjects(array $person, array $updatePerson): array
+    {
+        if (isset($person['emails'][0]) && isset($updatePerson['emails'][0]['id'])) {
+            //merge person emails into updatePerson emails and update the updatePerson email
+            $email = array_merge($updatePerson['emails'][0], $person['emails'][0]);
+            $this->commonGroundService->updateResource($email, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'emails', 'id' => $updatePerson['emails'][0]['id']]));
+
+            //unset person emails
+            unset($person['emails']);
+        }
+        if (isset($person['telephones']) && isset($updatePerson['telephones'])) {
+            $person = $this->updatePersonContactDetailsTelephones($person, $updatePerson);
+        }
+        if (isset($person['addresses'][0]) && isset($updatePerson['addresses'][0]['id'])) {
+            //merge person addresses into updatePerson addresses and update the updatePerson address
+            $address = array_merge($updatePerson['addresses'][0], $person['addresses'][0]);
+            $this->commonGroundService->updateResource($address, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'addresses', 'id' => $updatePerson['addresses'][0]['id']]));
+
+            //unset person addresses
+            unset($person['addresses']);
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function updates the person with the contact details's telephones.
+     *
+     * @param array $person       Array with persons data
+     * @param array $updatePerson Array with data the person needs to be updated with
+     *
+     * @return array Returns a person array with updated contact details telephones
+     */
+    private function updatePersonContactDetailsTelephones(array $person, array $updatePerson): array
+    {
+        if (isset($person['telephones'][0]) && isset($updatePerson['telephones'][0]['id'])) {
+            //merge person telephones into updatePerson telephones and update the updatePerson telephone
+            $telephone = array_merge($updatePerson['telephones'][0], $person['telephones'][0]);
+            $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][0]['id']]));
+        }
+        if (isset($person['telephones'][1]) && isset($updatePerson['telephones'][1]['id'])) {
+            //merge person telephones into updatePerson telephones and update the updatePerson telephone
+            $telephone = array_merge($updatePerson['telephones'][1], $person['telephones'][1]);
+            $this->commonGroundService->updateResource($telephone, $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'telephones', 'id' => $updatePerson['telephones'][1]['id']]));
+        }
+        //unset person emails
+        unset($person['telephones']);
+
+        return $person;
+    }
+
+    /**
+     * This function passes given addresses from contact details to the person array.
+     *
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted persons data
+     * @param string $personName Name of person as string
+     *
+     * @return array Returns a person array with address properties
+     */
+    private function getPersonAdressesFromContactDetails(array $person, array $input, $personName): array
+    {
+        if (isset($input['addresses']['name'])) {
+            $person['addresses'][0]['name'] = $input['addresses']['name'];
+        } else {
+            $person['addresses'][0]['name'] = 'Address of '.$personName;
+        }
+        if (isset($input['addresses']['street'])) {
+            $person['addresses'][0]['street'] = $input['addresses']['street'];
+        }
+        if (isset($input['addresses']['postalCode'])) {
+            $person['addresses'][0]['postalCode'] = $input['addresses']['postalCode'];
+        }
+        if (isset($input['addresses']['locality'])) {
+            $person['addresses'][0]['locality'] = $input['addresses']['locality'];
+        }
+        if (isset($input['addresses']['houseNumber'])) {
+            $person['addresses'][0]['houseNumber'] = $input['addresses']['houseNumber'];
+        }
+        if (isset($input['addresses']['houseNumberSuffix'])) {
+            $person['addresses'][0]['houseNumberSuffix'] = $input['addresses']['houseNumberSuffix'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given telephones from contact details to the person array.
+     *
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted person data
+     * @param string $personName Name of person as string
+     *
+     * @return array Returns a person array with telephone properties
+     */
+    private function getPersonTelephonesFromContactDetails(array $person, array $input, string $personName): array
+    {
+        if (isset($input['telephones'])) {
+            foreach ($input['telephones'] as $key => $telephone) {
+                if (isset($telephone['name'])) {
+                    $person['telephones'][$key]['name'] = $telephone['name'];
+                } else {
+                    $person['telephones'][$key]['name'] = 'Telephone of '.$personName;
+                }
+                $person['telephones'][$key]['telephone'] = $telephone['telephone'];
+            }
+        }
+//        if (isset($contactDetails['contactPersonTelephone'])) {
+//            $person['telephones'][1]['name'] = 'Telephone of the contactPerson of ' . $personName;
+//            $person['telephones'][1]['telephone'] = $contactDetails['contactPersonTelephone'];
+//        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given emails from contact details to the person array.
+     *
+     * @param array  $person     Array with persons data
+     * @param array  $input      Array with inputted person data
+     * @param string $personName Name of person as string
+     *
+     * @return array Returns a person array with email properties
+     */
+    private function getPersonEmailsFromContactDetails(array $person, array $input, string $personName): array
+    {
+        if (isset($input['emails']['email'])) {
+            if (isset($input['emails']['name'])) {
+                $person['emails'][0]['name'] = $input['emails']['name'];
+            } else {
+                $person['emails'][0]['name'] = 'Email of '.$personName;
+            }
+            $person['emails'][0]['email'] = $input['emails']['email'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given person details to the person array.
+     *
+     * @param array $person        Array with persons data
+     * @param array $personDetails Array with person details data
+     *
+     * @return array Returns a person array with civic integration details
+     */
+    private function getPersonPropertiesFromPersonDetails(array $person, array $personDetails): array
+    {
+        if (isset($personDetails['givenName'])) {
+            $person['givenName'] = $personDetails['givenName'];
+        }
+        if (isset($personDetails['additionalName'])) {
+            $person['additionalName'] = $personDetails['additionalName'];
+        }
+        if (isset($personDetails['familyName'])) {
+            $person['familyName'] = $personDetails['familyName'];
+        }
+        if (isset($personDetails['gender'])) {
+            $person['gender'] = $personDetails['gender'];
+        }
+        if (isset($personDetails['birthday'])) {
+            $person['birthday'] = $personDetails['birthday'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes given civic integration details to the person array.
+     *
+     * @param array $person                  Array with persons data
+     * @param array $civicIntegrationDetails Array with civic integration details data
+     *
+     * @return array Returns a person array with civic integration details
+     */
+    private function getPersonPropertiesFromCivicIntegrationDetails(array $person, array $civicIntegrationDetails): array
+    {
+        if (isset($civicIntegrationDetails['civicIntegrationRequirement'])) {
+            $person['civicIntegrationRequirement'] = $civicIntegrationDetails['civicIntegrationRequirement'];
+        }
+        if (isset($civicIntegrationDetails['civicIntegrationRequirementReason'])) {
+            $person['civicIntegrationRequirementReason'] = $civicIntegrationDetails['civicIntegrationRequirementReason'];
+        }
+        if (isset($civicIntegrationDetails['civicIntegrationRequirementFinishDate'])) {
+            $person['civicIntegrationRequirementFinishDate'] = $civicIntegrationDetails['civicIntegrationRequirementFinishDate'];
+        }
+
+        return $person;
+    }
+
+    /**
+     * This function passes the given input to an participant.
+     *
+     * @param array       $input       Array of given data
+     * @param string|null $ccPersonUrl String that holds the person URL
+     *
+     * @throws Exception
+     *
+     * @return array Returns an participant array
+     */
+    private function inputToParticipant(array $input, string $ccPersonUrl = null): array
+    {
+        // Add cc/person to this edu/participant
+        if (isset($ccPersonUrl)) {
+            $participant['person'] = $ccPersonUrl;
+        } else {
+            $participant = [];
+        }
+
+        $participant['status'] = 'accepted';
+
+        // EAV or Result objects?
+        if (isset($input['readingTestResult'])) {
+            $participant['readingTestResult'] = $input['readingTestResult'];
+        }
+        if (isset($input['writingTestResult'])) {
+            $participant['writingTestResult'] = $input['writingTestResult'];
+        }
+
+        if (isset($input['languageHouseUrl'])) {
+            $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $input['languageHouseUrl']])['hydra:member'];
+            if (count($programs) > 0) {
+                $participant['program'] = '/programs/'.$programs[0]['id'];
+            } else {
+                throw new Exception('Invalid request, '.$input['languageHouseUrl'].' does not have an existing program (edu/program)!');
+            }
+        }
+
+        if (isset($input['referrerDetails'])) {
+            $participant = $this->getParticipantPropertiesFromReferrerDetails($participant, $input['referrerDetails']);
+        }
+        if (isset($input['motivationDetails'])) {
+            $participant = $this->getParticipantPropertiesFromMotivationDetails($participant, $input['motivationDetails']);
+        }
+
+        return $participant;
+    }
+
+    /**
+     * This function sets the participant motivation details.
+     *
+     * @param array $participant       Array with participant details
+     * @param array $motivationDetails Array with motivation details
+     *
+     * @return array Returns participant array
+     */
+    private function getParticipantPropertiesFromMotivationDetails(array $participant, array $motivationDetails): array
+    {
+        if (isset($motivationDetails['desiredSkills'])) {
+            $participant['desiredSkills'] = $motivationDetails['desiredSkills'];
+        }
+        if (isset($motivationDetails['desiredSkillsOther'])) {
+            $participant['desiredSkillsOther'] = $motivationDetails['desiredSkillsOther'];
+        }
+        if (isset($motivationDetails['hasTriedThisBefore'])) {
+            $participant['hasTriedThisBefore'] = $motivationDetails['hasTriedThisBefore'];
+        }
+        if (isset($motivationDetails['hasTriedThisBeforeExplanation'])) {
+            $participant['hasTriedThisBeforeExplanation'] = $motivationDetails['hasTriedThisBeforeExplanation'];
+        }
+        if (isset($motivationDetails['whyWantTheseSkills'])) {
+            $participant['whyWantTheseSkills'] = $motivationDetails['whyWantTheseSkills'];
+        }
+        if (isset($motivationDetails['whyWantThisNow'])) {
+            $participant['whyWantThisNow'] = $motivationDetails['whyWantThisNow'];
+        }
+        if (isset($motivationDetails['desiredLearningMethod'])) {
+            $participant['desiredLearningMethod'] = $motivationDetails['desiredLearningMethod'];
+        }
+
+        return $participant;
+    }
+
+    /**
+     * This function sets the participation referrer details.
+     *
+     * @param array $participant     Array with participant data
+     * @param array $referrerDetails Array with referrer details data
+     *
+     * @return array Returns participant array
+     */
+    private function getParticipantPropertiesFromReferrerDetails(array $participant, array $referrerDetails): array
+    {
+        $referringOrganization = [];
+
+        if (isset($referrerDetails['referringOrganization'])) {
+            $referringOrganization['name'] = $referrerDetails['referringOrganization'];
+        } elseif (isset($referrerDetails['referringOrganizationOther'])) {
+            $referringOrganization['name'] = $referrerDetails['referringOrganizationOther'];
+        }
+        $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations']);
+
+        if (isset($referrerDetails['email'])) {
+            if (isset($referringOrganization['emails'][0])) {
+                $referringOrganization['emails'][0]['email'] = $referrerDetails['email'];
+                $email = $this->commonGroundService->saveResource($referringOrganization['emails'][0], $referringOrganization['emails'][0]['@id']);
+            } else {
+                $email['name'] = 'Email '.$referringOrganization['name'];
+                $email['email'] = $referrerDetails['email'];
+                $email['organization'] = '/organizations/'.$referringOrganization['id'];
+                $email = $this->commonGroundService->saveResource($email, ['component' => 'cc', 'type' => 'emails']);
+            }
+            $referringOrganization['emails'][0] = '/emails/'.$email['id'];
+            $referringOrganization = $this->commonGroundService->saveResource($referringOrganization, ['component' => 'cc', 'type' => 'organizations']);
+        }
+
+        $participant['referredBy'] = $referringOrganization['@id'];
+
+        return $participant;
+    }
+
+    /**
+     * This function passes input to an employee array.
+     *
+     * @param array  $input          Array with employee data
+     * @param string $personUrl      String that holds persons URL
+     * @param null   $updateEmployee Bool if employee needs to be updated if not
+     *
+     * @throws Exception
+     *
+     * @return array Returns employee array
+     */
+    private function inputToEmployee(array $input, $personUrl, $updateEmployee = []): array
+    {
+        $employee = ['person' => $personUrl];
+        //check if this person has a user and if so add its id to the employee body as userId
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $personUrl])['hydra:member'];
+//        var_dump($personUrl); var_dump($users);die;
+        if (count($users) > 0) {
+            $user = $users[0];
+            $employee['userId'] = $user['id'];
+            $employee['email'] = $user['username'];
+        }
+        if (isset($input['contactDetails']['email'])) {
+            // set email for creating a user in mrcService
+            $employee['email'] = $input['contactDetails']['email'];
+        }
+//        $educations = $this->getEducationsFromEmployee($updateEmployee, true);
+        if (isset($input['educationDetails'])) {
+            $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails']);
+        }
+        if (isset($input['courseDetails'])) {
+            $employee = $this->getEmployeePropertiesFromCourseDetails($employee, $input['courseDetails']);
+        }
+        if (isset($input['jobDetails'])) {
+            $employee = $this->getEmployeePropertiesFromJobDetails($employee, $input['jobDetails']);
+        }
+        if (isset($input['speakingLevel'])) {
+            $employee['speakingLevel'] = $input['speakingLevel'];
+        }
+
+        return $employee;
+    }
+
+    /**
+     * This function retrieves the employee properties from job details.
+     *
+     * @param array $employee   Array with employee data
+     * @param array $jobDetails Array with job details
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromJobDetails(array $employee, array $jobDetails): array
+    {
+        //todo make sure these attributes exist in eav! fixtures and online!
+        if (isset($jobDetails['trainedForJob'])) {
+            $employee['trainedForJob'] = $jobDetails['trainedForJob'];
+        }
+        if (isset($jobDetails['lastJob'])) {
+            $employee['lastJob'] = $jobDetails['lastJob'];
+        }
+        if (isset($jobDetails['dayTimeActivities'])) {
+            $employee['dayTimeActivities'] = $jobDetails['dayTimeActivities'];
+        }
+        if (isset($jobDetails['dayTimeActivitiesOther'])) {
+            $employee['dayTimeActivitiesOther'] = $jobDetails['dayTimeActivitiesOther'];
+        }
+
+        return $employee;
+    }
+
+    /**
+     * This function retrieves employee properties from course details.
+     *
+     * @param array $employee   Array with employee data
+     * @param array $courseData
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
+    {
+//        if (isset($courseData['isFollowingCourseRightNow'])) {
+        $newEducation = $courseData['course'];
+        if (isset($courseData['id'])) {
+            $newEducation['id'] = $courseData['id'];
+        }
+        $newEducation['description'] = 'course';
+        $newEducation['isFollowingCourseRightNow'] = $courseData['isFollowingCourseRightNow'];
+//            if ($courseDetails['isFollowingCourseRightNow'] == true) {
+//                if (isset($courseDetails['courseName'])) {
+//                    $newEducation['name'] = $courseDetails['courseName'];
+//                }
+//                if (isset($courseDetails['courseTeacher'])) {
+//                    $newEducation['teacherProfessionalism'] = $courseDetails['courseTeacher'];
+//                }
+//                if (isset($courseDetails['courseGroup'])) {
+//                    $newEducation['groupFormation'] = $courseDetails['courseGroup'];
+//                }
+//                if (isset($courseDetails['amountOfHours'])) {
+//                    $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
+//                }
+//                $newEducation = $this->getCourseProvideCertificateFromCourseDetails($newEducation);
+
+//            }
+        $employee['educations'][] = $newEducation;
+//        }
+
+        return $employee;
+    }
+
+    /**
+     * This function retrieves course provider certificate from course details.
+     *
+     * @param array $newEducation Array with new education data
+     *
+     * @return array Returns new education array
+     */
+    private function getCourseProvideCertificateFromCourseDetails(array $newEducation): array
+    {
+        if (isset($courseDetails['doesCourseProvideCertificate'])) {
+            if ($courseDetails['doesCourseProvideCertificate'] == true) {
+                $newEducation['providesCertificate'] = true;
+            } else {
+                $newEducation['providesCertificate'] = false;
+            }
+        }
+
+        return $newEducation;
+    }
+
+    /**
+     * This function set employee properties from given education details.
+     *
+     * @param array $employee      Array with employee data
+     * @param array $educationData
+     *
+     * @return array Returns employee array
+     */
+    private function getEmployeePropertiesFromEducationDetails(array $employee, array $educationData): array
+    {
+        $newEducation = $educationData['education'];
+        if (isset($educationData['id'])) {
+            $newEducation['id'] = $educationData['id'];
+        }
+        $newEducation['description'] = 'education';
+        $newEducation['followingEducationRightNow'] = $educationData['followingEducationRightNow'];
+
+        $employee['educations'][] = $newEducation;
+
+        return $employee;
+    }
+
+    /**
+     * This function retrieves following education from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param $newEducation array new education
+     *
+     * @return array Returns new education array
+     */
+    private function getFollowingEducationNoFromEducationDetails(array $educationDetails, array $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationNo';
+        if (isset($educationDetails['followingEducationRightNowNoEndDate'])) {
+            $newEducation['endDate'] = $educationDetails['followingEducationRightNowNoEndDate'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoLevel'])) {
+            $newEducation['name'] = $educationDetails['followingEducationRightNowNoLevel'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['followingEducationRightNowNoLevel'];
+        }
+        if (isset($educationDetails['followingEducationRightNowNoGotCertificate'])) {
+            if ($educationDetails['followingEducationRightNowNoGotCertificate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        if (isset($educationDetails['education']['endDate'])) {
+            $newEducation['endDate'] = $educationDetails['education']['endDate'];
+        }
+        if (isset($educationDetails['education']['iscedEducationLevelCode'])) {
+            $newEducation['name'] = $educationDetails['education']['name'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['education']['iscedEducationLevelCode'];
+        }
+        if (isset($educationDetails['education']['degreeGrantedStatus'])) {
+            if ($educationDetails['education']['degreeGrantedStatus'] == 'Granted') {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        return $newEducation;
+    }
+
+    /**
+     * This function retrieves the following education from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param array $newEducation     Array with new education
+     *
+     * @return array Returns a new education array
+     */
+    private function getFollowingEducationYesFromEducationDetails(array $educationDetails, array $newEducation): array
+    {
+        $newEducation['description'] = 'followingEducationYes';
+        if (isset($educationDetails['education']['startDate'])) {
+            $newEducation['startDate'] = $educationDetails['education']['startDate'];
+        }
+        if (isset($educationDetails['education']['endDate'])) {
+            $newEducation['endDate'] = $educationDetails['education']['endDate'];
+        }
+        if (isset($educationDetails['education']['iscedEducationLevelCode'])) {
+            $newEducation['name'] = $educationDetails['education']['name'];
+            $newEducation['iscedEducationLevelCode'] = $educationDetails['education']['iscedEducationLevelCode'];
+        }
+        if (isset($educationDetails['education']['institution'])) {
+            $newEducation['institution'] = $educationDetails['education']['institution'];
+        }
+        if (isset($educationDetails['education']['providesCertificate'])) {
+            if ($educationDetails['education']['providesCertificate'] == true) {
+                $newEducation['providesCertificate'] = true;
+            } else {
+                $newEducation['providesCertificate'] = false;
+            }
+        }
+
+        return $newEducation;
+    }
+
+    /**
+     * This function retrieves the last eduction from education details.
+     *
+     * @param array $educationDetails Array with education details
+     * @param null  $lastEducation    Bool if this is the last education
+     *
+     * @return array Returns new education array
+     */
+    private function getLastEducationFromEducationDetails(array $educationDetails, $lastEducation = null): array
+    {
+        $newEducation = [
+            'name'                    => $educationDetails['lastFollowedEducation'],
+            'description'             => 'lastEducation',
+            'iscedEducationLevelCode' => $educationDetails['lastFollowedEducation'],
+        ];
+        if (isset($lastEducation['id'])) {
+            $newEducation['id'] = $lastEducation['id'];
+        }
+        if (isset($educationDetails['didGraduate'])) {
+            if ($educationDetails['didGraduate'] == true) {
+                $newEducation['degreeGrantedStatus'] = 'Granted';
+            } else {
+                $newEducation['degreeGrantedStatus'] = 'notGranted';
+            }
+        }
+
+        return $newEducation;
+    }
+
+    /**
+     * This function saves memos with given input.
+     *
+     * @param array  $input       Array with students data
+     * @param string $ccPersonUrl Persons URL as string
+     *
+     * @return array[] Returns array with memo properties
+     */
+    private function saveMemos(array $input, string $ccPersonUrl): array
+    {
+        $availabilityMemo = [];
+        $motivationMemo = [];
+        $input['languageHouseUrl'] ?? $input['languageHouseUrl'] = null;
+
+        //TODO: maybe use AvailabilityService memo functions instead of this!: (see mrcService createEmployeeArray)
+        if (isset($input['availabilityDetails'])) {
+            if (isset($input['id'])) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $availabilityMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Availability notes', 'topic' => $ccPersonUrl])['hydra:member'];
+                if (count($availabilityMemos) > 0) {
+                    $availabilityMemo = $availabilityMemos[0];
+                }
+            }
+            $availabilityMemo = array_merge($availabilityMemo, $this->getMemoFromAvailabilityDetails($input['availabilityDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($availabilityMemo['author'])) {
+                $availabilityMemo['author'] = $ccPersonUrl;
+            }
+            $availabilityMemo = $this->commonGroundService->saveResource($availabilityMemo, ['component' => 'memo', 'type' => 'memos']);
+        }
+
+        if (isset($input['motivationDetails'])) {
+            if (isset($input['id'])) {
+                //todo: also use author as filter, for this: get participant->program->provider (= languageHouseUrl when this memo was created)
+                $motivationMemos = $this->commonGroundService->getResourceList(['component' => 'memo', 'type' => 'memos'], ['name' => 'Remarks', 'topic' => $ccPersonUrl])['hydra:member'];
+                if (count($motivationMemos) > 0) {
+                    $motivationMemo = $motivationMemos[0];
+                }
+            }
+            $motivationMemo = array_merge($motivationMemo, $this->getMemoFromMotivationDetails($input['motivationDetails'], $ccPersonUrl, $input['languageHouseUrl']));
+            if (!isset($motivationMemo['author'])) {
+                $motivationMemo['author'] = $ccPersonUrl;
+            }
+            $motivationMemo = $this->commonGroundService->saveResource($motivationMemo, ['component' => 'memo', 'type' => 'memos']);
+        }
+
+        return [
+            'availabilityMemo' => $availabilityMemo,
+            'motivationMemo'   => $motivationMemo,
+        ];
+    }
+
+    /**
+     * This function retrieves memos from the given motivation details.
+     *
+     * @param array       $motivationDetails Array with motivation details data
+     * @param string      $ccPersonUrl       Persons URL as string
+     * @param string|null $languageHouseUrl  Language house URL as string
+     *
+     * @return array Returns a memo as array
+     */
+    private function getMemoFromMotivationDetails(array $motivationDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
+    {
+        $memo['name'] = 'Remarks';
+        $memo['description'] = $motivationDetails['remarks'];
+        $memo['topic'] = $ccPersonUrl;
+        if (isset($languageHouseUrl)) {
+            $memo['author'] = $languageHouseUrl;
+        }
+
+        return $memo;
+    }
+
+    /**
+     * This function retrieves memos from the given availability details.
+     *
+     * @param array       $availabilityDetails Array with availability details data
+     * @param string      $ccPersonUrl         Persons URL as string
+     * @param string|null $languageHouseUrl    Language house URL as string
+     *
+     * @return array Returns a memo as array
+     */
+    private function getMemoFromAvailabilityDetails(array $availabilityDetails, string $ccPersonUrl, string $languageHouseUrl = null): array
+    {
+        $memo['name'] = 'Availability notes';
+        $memo['description'] = $availabilityDetails['availabilityNotes'];
+        $memo['topic'] = $ccPersonUrl;
+        if (isset($languageHouseUrl)) {
+            $memo['author'] = $languageHouseUrl;
+        }
+
+        return $memo;
+    }
+
+    /**
+     * This function updates a Student with given input.
+     *
+     * @param array $input Array with students data
+     *
+     * @throws Exception
+     *
+     * @return object Returns a Student object
+     */
+    public function updateStudent(array $input, string $id = null): object
+    {
+        // Fetch existing data (Student)
+        $student['participant'] = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
+        $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
+        $student['employee'] = $this->getStudentEmployee($student['person']);
+
+        // Do some checks and error handling
+        $this->checkStudentValues($input);
+
+        //todo: only get dto info here in resolver, saving objects should be moved to the studentService->saveStudent, for an example see TestResultService->saveTestResult
+
+        // Transform DTO info to cc/person body
+        $person = $this->inputToPerson($input, $student['person']);
+
+        if (isset($person['organization'])) {
+            // Save person->organization its subresources
+            $person = $this->savePersonsOrganizationSubresources($person);
+        }
+
+        // Save cc/person
+        $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);
+
+        // Transform DTO info to edu/participant body
+        $participant = $this->inputToParticipant($input, $person['@id']);
+
+        // Transform registrar into cc/person and save it
+        if (isset($input['registrar'])) {
+            $participant['registrar'] = $this->saveRegistrarAsPerson($input['registrar']);
+        }
+
+        // Save edu/participant
+        $participant = $this->eduService->saveEavParticipant($participant, $student['participant']['@id']);
+
+        $employee = $this->inputToEmployee($input, $person['@id'], $student['employee']);
+        // Save mrc/employee
+
+        $employee = $this->mrcService->updateEmployeeArray($student['employee']['id'], $employee);
+
+        //Then save memos
+        $memos = $this->saveMemos($input, $student['person']['@id']);
+        if (isset($memos['availabilityMemo']['description'])) {
+            $person['availabilityNotes'] = $memos['availabilityMemo']['description'];
+        }
+        if (isset($memos['motivationMemo']['description'])) {
+            $participant['remarks'] = $memos['motivationMemo']['description'];
+        }
+
+        // Now put together the expected result in $result['result'] for Lifely:
+        $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
+        $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
+
+        return $resourceResult;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function deleteStudent(string $id)
+    {
+        $student['participant'] = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $id])]);
+        $student['person'] = $this->eavService->getObject(['entityName' => 'people', 'componentCode' => 'cc', 'self' =>  $student['participant']['person']]);
+        $student['employee'] = $this->getStudentEmployee($student['person']);
+
+        $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $student['person']['@id']])['hydra:member'];
+        if (isset($users)) {
+            foreach ($users as $user) {
+                $this->commonGroundService->deleteResource($user, $user['@id']);
+            }
+        }
+
+        if (isset($student['participant']['registrar'])) {
+            $this->ccService->deletePerson($this->commonGroundService->getUuidFromUrl($student['participant']['registrar']));
+        }
+        $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $student['participant']['id']]);
+
+        if (isset($student['telephones'])) {
+            foreach ($student['telephones'] as $telephone) {
+                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+            }
+        }
+        if (isset($student['emails'])) {
+            foreach ($student['emails'] as $email) {
+                $this->commonGroundService->deleteResource($email, $email['@id']);
+            }
+        }
+        if (isset($student['addresses'])) {
+            foreach ($student['addresses'] as $address) {
+                $this->commonGroundService->deleteResource($address, $address['@id']);
+            }
+        }
+        if (isset($student['ownedContactLists'])) {
+            foreach ($student['ownedContactLists'] as $oCL) {
+                $this->commonGroundService->deleteResource($oCL, $address['@id']);
+                if (isset($oCL['people'])) {
+                    foreach ($oCL['people'] as $person) {
+                        $this->commonGroundService->deleteResource($person, $person['@id']);
+                    }
+                }
+            }
+        }
+        if (isset($student['birthplace'])) {
+            $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
+        }
+        if (isset($student['organization'])) {
+            if (isset($student['organization']['telephones'])) {
+                foreach ($student['organization']['telephones'] as $telephone) {
+                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+                }
+            }
+            if (isset($student['organization']['emails'])) {
+                foreach ($student['organization']['emails'] as $email) {
+                    $this->commonGroundService->deleteResource($email, $email['@id']);
+                }
+            }
+            if (isset($student['organization']['addresses'])) {
+                foreach ($student['organization']['addresses'] as $address) {
+                    $this->commonGroundService->deleteResource($address, $address['@id']);
+                }
+            }
+            $this->commonGroundService->deleteResource($student['organization'], $student['organization']['@id']);
+        }
+
+        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $student['person']['id']]);
+
+        if (isset($student['employee']['educations'])) {
+            foreach ($student['employee']['educations'] as $edu) {
+                $this->commonGroundService->deleteResource($edu, $edu['@id']);
+            }
+        }
+
+        $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $student['person']['id']]);
     }
 }

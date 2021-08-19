@@ -112,7 +112,7 @@ class Organization
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Address $addresses;
+    private ?Address $addresses = null;
 
     /**
      * @var Telephone|null Telephone of this organization
@@ -124,7 +124,7 @@ class Organization
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Telephone $telephones;
+    private ?Telephone $telephones = null;
 
     /**
      * @var Email|null Email of this organization
@@ -136,7 +136,7 @@ class Organization
      * @ORM\JoinColumn(nullable=true)
      * @MaxDepth(1)
      */
-    private ?Email $emails;
+    private ?Email $emails = null;
 
     public function getId(): UuidInterface
     {

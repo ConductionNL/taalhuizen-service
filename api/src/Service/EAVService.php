@@ -49,7 +49,7 @@ class EAVService
             $body['objectEntityId'] = $eavInfo['eavId'];
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
-        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav/object_communications', '', $result['@id']);
+        $result['@id'] = str_replace($this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_communications']), '', $result['@id']);
 
         return $result;
     }
@@ -72,7 +72,7 @@ class EAVService
         $body['query'] = $query;
 
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
-        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav/object_communications', '', $result['@id']);
+        $result['@id'] = str_replace($this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_communications']), '', $result['@id']);
 
         return $result;
     }
@@ -109,7 +109,7 @@ class EAVService
         }
         $result = $this->commonGroundService->createResource($body, ['component' => 'eav', 'type' => 'object_communications']);
         // Hotfix, createResource adds this to the front of an @id, but eav already returns @id with this in front:
-        $result['@id'] = str_replace('https://taalhuizen-bisc.commonground.nu/api/v1/eav/object_communications', '', $result['@id']);
+        $result['@id'] = str_replace($this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_communications']), '', $result['@id']);
 
         return $result;
     }
