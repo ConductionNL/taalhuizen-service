@@ -3,12 +3,9 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Registration;
 use App\Service\EAVService;
 use App\Service\LayerService;
-use App\Service\NewLearningNeedService;
 use App\Service\NewParticipationService;
-use App\Service\NewRegistrationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,8 +25,8 @@ class ParticipationItemSubscriber implements EventSubscriberInterface
     /**
      * UserItemSubscriber constructor.
      *
-     * @param LayerService           $layerService
-     * @param EAVService             $eavService
+     * @param LayerService $layerService
+     * @param EAVService   $eavService
      */
     public function __construct(LayerService $layerService, EAVService $eavService)
     {
@@ -107,6 +104,4 @@ class ParticipationItemSubscriber implements EventSubscriberInterface
 
         return new ArrayCollection($result);
     }
-
-
 }

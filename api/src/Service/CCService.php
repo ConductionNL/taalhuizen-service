@@ -455,7 +455,7 @@ class CCService
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param Person $person The person array to provide to the contact catalogue
+     * @param Person                 $person      The person array to provide to the contact catalogue
      * @param StudentPermission|null $permissions
      *
      * @return array The result from the contact catalogue and EAV
