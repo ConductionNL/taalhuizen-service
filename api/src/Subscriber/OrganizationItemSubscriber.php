@@ -158,12 +158,17 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
         if ($organizationExists instanceof Response) {
             return $organizationExists;
         }
-        $body['type'] = $organizationExists['type'];
-        $uniqueName = $this->ccService->checkUniqueOrganizationName($body, $id);
-        if ($uniqueName instanceof Response) {
-            return $uniqueName;
+        if (isset($body['name'])) {
+            $body['type'] = $organizationExists['type'];
+            $uniqueName = $this->ccService->checkUniqueOrganizationName($body, $id);
+            if ($uniqueName instanceof Response) {
+                return $uniqueName;
+            }
         }
 
+        $organizationExists['emails'] = $organizationExists['emails'][0] ?? null;
+        $organizationExists['telephones'] = $organizationExists['telephones'][0] ?? null;
+        $body = array_merge($organizationExists, $body);
         $organization = $this->ccService->updateOrganization($id, $body);
         $this->eduService->saveProgram($organization, true);
         $this->ucService->createUserGroups($organization, $organization['type']);
