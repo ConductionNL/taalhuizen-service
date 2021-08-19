@@ -13,11 +13,11 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use function GuzzleHttp\json_decode;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
-use function GuzzleHttp\json_decode;
 
 class CCService
 {
@@ -361,7 +361,7 @@ class CCService
     /**
      * Deletes an organization.
      *
-     * @param string $id        The id of the organization to delete
+     * @param string      $id        The id of the organization to delete
      * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
