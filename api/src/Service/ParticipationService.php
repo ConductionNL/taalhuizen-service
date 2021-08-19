@@ -84,8 +84,8 @@ class ParticipationService
         }
 
         // Connect provider/aanbieder cc/organization to this participation, in order to later get all participations of a provider
-        if (isset($participation['aanbiederId'])) {
-            $result = array_merge($result, $this->addAanbiederToParticipation($participation['aanbiederId'], $participation));
+        if (isset($participation['providerId'])) {
+            $result = array_merge($result, $this->addAanbiederToParticipation($participation['providerId'], $participation));
         }
 
         $result = array_merge($result, $this->updateParticipationStatus($result['participation']));

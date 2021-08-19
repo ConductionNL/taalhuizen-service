@@ -117,7 +117,7 @@ class TestResult
      *     }
      * )
      */
-    private ?string $examMemo;
+    private ?string $memo;
 
     public function getId(): UuidInterface
     {
@@ -179,14 +179,14 @@ class TestResult
         return $this;
     }
 
-    public function getExamMemo(): ?string
+    public function getMemo(): ?string
     {
-        return $this->examMemo;
+        return $this->memo;
     }
 
-    public function setExamMemo(?string $examMemo): self
+    public function setMemo(?string $memo): self
     {
-        $this->examMemo = $examMemo;
+        $this->memo = $memo;
 
         return $this;
     }

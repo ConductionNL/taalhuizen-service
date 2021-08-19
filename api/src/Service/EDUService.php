@@ -600,25 +600,33 @@ class EDUService
      * @return string Returns the id of a program
      * @throws \Exception
      *
+     * @return ?string Returns the id of a program or null if no programs are found
      */
-    public function deleteParticipants(string $id): string
+    public function deleteParticipants(string $id): ?string
     {
-        $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
-        $program = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'][0];
-        $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
+        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        $programs = $this->commonGroundService->getResourceList(['component' => 'edu', 'type'=>'programs'], ['provider' => $ccOrganization['@id']])['hydra:member'];
 
-        if ($participants > 0) {
-            foreach ($participants as $participant) {
-                $person = $this->commonGroundService->getResource($participant['person']);
-                $this->deleteEducationEvents($participant);
-                $this->deleteResults($participant);
-                $this->deleteParticipantGroups($participant);
-                $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
-                $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $participant['id']]);
+        if (count($programs) > 0) {
+            $program = $programs[0];
+            $participants = $this->commonGroundService->getResourceList(['component'=>'edu', 'type' => 'participants'], ['program.id' => $program['id']])['hydra:member'];
+
+            if ($participants > 0) {
+                foreach ($participants as $participant) {
+                    $person = $this->commonGroundService->getResource($participant['person']);
+                    $this->deleteEducationEvents($participant);
+                    $this->deleteResults($participant);
+                    $this->deleteParticipantGroups($participant);
+                    $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+                    $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'participants', 'id'=>$participant['id']]);
+                }
             }
+
+            return $program['id'];
+        } else {
+            return null;
         }
 
-        return $program['id'];
     }
 
     /**

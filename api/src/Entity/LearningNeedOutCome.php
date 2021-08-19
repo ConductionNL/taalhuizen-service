@@ -88,7 +88,7 @@ class LearningNeedOutCome
      *     }
      * )
      */
-    private ?string $topicOther;
+    private ?string $topicOther = null;
 
     /**
      * @var string The application of this LearningNeedOutcome.
@@ -123,7 +123,7 @@ class LearningNeedOutCome
      *     }
      * )
      */
-    private ?string $applicationOther;
+    private ?string $applicationOther = null;
 
     /**
      * @var string The level of this LearningNeedOutcome.
@@ -158,7 +158,7 @@ class LearningNeedOutCome
      *     }
      * )
      */
-    private ?string $levelOther;
+    private ?string $levelOther = null;
 
     public function getId(): UuidInterface
     {
