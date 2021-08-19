@@ -8,11 +8,9 @@ use App\Exception\BadRequestPathException;
 use App\Service\EAVService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
-use App\Service\NewLearningNeedService;
 use App\Service\NewParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -33,7 +31,6 @@ class ParticipationSubscriber implements EventSubscriberInterface
         $this->participationService = new NewParticipationService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
         $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
-
     }
 
     public static function getSubscribedEvents()

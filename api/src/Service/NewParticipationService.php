@@ -3,21 +3,16 @@
 namespace App\Service;
 
 use App\Entity\LearningNeed;
-use App\Entity\LearningNeedOutCome;
 use App\Entity\Participation;
-use App\Entity\Registration;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Exception\ClientException;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewParticipationService
 {
-
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EntityManagerInterface $entityManager;
@@ -53,7 +48,6 @@ class NewParticipationService
         return new Response(null, 204);
     }
 
-
     public function updateParticipation(array $participation, string $participationId): ArrayCollection
     {
         $learningNeed = $this->eavService->saveObject($participation, ['entityName' => 'participations', 'eavId' => $participationId]);
@@ -66,19 +60,19 @@ class NewParticipationService
         $this->checkParticipation($participation);
 
         $array = [
-            'aanbiederId' => $participation->getProviderId() ?? null,
-            'aanbiederName' => $participation->getProviderName() ?? null,
-            'aanbiederNote' => $participation->getProviderNote() ?? null,
-            'offerName' => $participation->getOfferName() ?? null,
-            'offerCourse' => $participation->getOfferCourse() ?? null,
-            'learningNeedOutCome' => $participation->getLearningNeedOutCome() ?? null,
-            'isFormal' => $participation->getIsFormal() ?? null,
-            'groupFormation' => $participation->getGroupFormation(),
-            'totalClassHours' => $participation->getTotalClassHours() ?? null,
+            'aanbiederId'              => $participation->getProviderId() ?? null,
+            'aanbiederName'            => $participation->getProviderName() ?? null,
+            'aanbiederNote'            => $participation->getProviderNote() ?? null,
+            'offerName'                => $participation->getOfferName() ?? null,
+            'offerCourse'              => $participation->getOfferCourse() ?? null,
+            'learningNeedOutCome'      => $participation->getLearningNeedOutCome() ?? null,
+            'isFormal'                 => $participation->getIsFormal() ?? null,
+            'groupFormation'           => $participation->getGroupFormation(),
+            'totalClassHours'          => $participation->getTotalClassHours() ?? null,
             'certificateWillBeAwarded' => $participation->getCertificateWillBeAwarded() ?? null,
-            'startDate' => $participation->getStartDate()->format('Y-m-d H:i:s') ?? null,
-            'endDate' => $participation->getEndDate()->format('Y-m-d H:i:s') ?? null,
-            'engagements' => $participation->getEngagements() ?? null,
+            'startDate'                => $participation->getStartDate()->format('Y-m-d H:i:s') ?? null,
+            'endDate'                  => $participation->getEndDate()->format('Y-m-d H:i:s') ?? null,
+            'engagements'              => $participation->getEngagements() ?? null,
         ];
 
         $arrays['participation'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'participations']);
@@ -111,7 +105,6 @@ class NewParticipationService
         if ($participation['status'] != $updateParticipation['status']) {
             // Update status
             $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
-
         }
 
         return $participation;
@@ -151,9 +144,8 @@ class NewParticipationService
     /**
      * This function adds a cc/organizations to a eav/participation with the given providerId and participation.
      *
-     * @param string $providerId   Id of the cc/organization
+     * @param string $providerId    Id of the cc/organization
      * @param array  $participation Array with data from the eav/participation
-     *
      *
      * @return array A eav/participation is returned from the EAV
      */
@@ -267,7 +259,5 @@ class NewParticipationService
                 throw new BadRequestPathException('Unable to find valid provider with provided id.', 'provider');
             }
         }
-
     }
-
 }

@@ -26,8 +26,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
     private SerializerService $serializerService;
     private ErrorSerializerService $errorSerializerService;
 
-
-
     public function __construct(CommongroundService $commonGroundService, EAVService $eavService, LayerService $layerService)
     {
         $this->commonGroundService = $commonGroundService;
@@ -35,7 +33,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         $this->learningNeedsService = new NewLearningNeedService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
         $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
-
     }
 
     public static function getSubscribedEvents()
@@ -154,5 +151,4 @@ class LearningNeedSubscriber implements EventSubscriberInterface
 
         return new ArrayCollection($result);
     }
-
 }

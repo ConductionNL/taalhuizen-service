@@ -330,7 +330,7 @@ class CCService
     /**
      * Deletes an organization.
      *
-     * @param string $id        The id of the organization to delete
+     * @param string      $id        The id of the organization to delete
      * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
@@ -454,7 +454,7 @@ class CCService
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param Person $person The person array to provide to the contact catalogue
+     * @param Person                 $person      The person array to provide to the contact catalogue
      * @param StudentPermission|null $permissions
      *
      * @throws Exception
