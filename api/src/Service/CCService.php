@@ -371,23 +371,23 @@ class CCService
         $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         //delete program
         if ($programId !== null) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
         }
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
-        $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
 
         foreach ($ccOrganization['telephones'] as $telephone) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
         }
 
         foreach ($ccOrganization['emails'] as $email) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $email['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'emails', 'id' => $email['id']]);
         }
 
         foreach ($ccOrganization['addresses'] as $address) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $address['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'addresses', 'id' => $address['id']]);
         }
 
         foreach ($ccOrganization['persons'] as $person) {
@@ -472,7 +472,7 @@ class CCService
 
     public function cleanPermissions(array $permissions): array
     {
-        foreach ($permissions as $key=>$value) {
+        foreach ($permissions as $key => $value) {
             if ($key == 'hasPermissionToShareDataWithProviders') {
                 $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
                 unset($permissions[$key]);
@@ -567,7 +567,6 @@ class CCService
 //                }
 //            }
 //        }
-
         if (isset($personUrl)) {
             // Update
             $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
