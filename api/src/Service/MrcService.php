@@ -1026,7 +1026,7 @@ class MrcService
         if (count($users) > 0 and $users[0]['id'] != $id) {
             return new Response(
                 json_encode([
-                    'message' => 'A employee user with this email already exists!',
+                    'message' => 'A user with this email already exists!',
                     'path'    => 'person.emails.email',
                     'data'    => ['email' => $body['person']['emails']['email']],
                 ]),
