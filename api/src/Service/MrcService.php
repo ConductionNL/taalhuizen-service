@@ -488,10 +488,8 @@ class MrcService
      */
     public function setCurrentCourse(Employee $employee, array $education): Employee
     {
-        var_dump($this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']]));
         $education = $this->eavService->getObject(['entityName' => 'education', 'componentCode' => 'mrc', 'self' => $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'education', 'id' => $education['id']])]);
 
-        var_dump('test');die;
         $course = new Education();
         $course->setName($education['name'] ?? null);
         $course->setInstitution($education['institution'] ?? null);
