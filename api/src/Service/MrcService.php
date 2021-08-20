@@ -875,6 +875,7 @@ class MrcService
             }
 
             $contactUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]);
+
             return $this->updateUser($employeeArray['userId'], $contactUrl, key_exists('userGroupIds', $employeeArray) ? $employeeArray['userGroupIds'] : []);
         } elseif (isset($contact['emails'][0]['email'])) {
             return $this->createUser($employeeArray, $contact);
