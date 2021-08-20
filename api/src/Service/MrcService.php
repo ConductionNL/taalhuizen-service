@@ -608,7 +608,7 @@ class MrcService
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));
         $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
-        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($contact['@id']);
+        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']])));
         $employee->setAvailabilityNotes($availabilityMemo['description'] ?? null);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
@@ -766,7 +766,7 @@ class MrcService
             return $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $contact['organization']['id']]);
         }
 
-        $contact = $this->commonGroundService->getResource($contact['@id']);
+        $contact = $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]));
         if (isset($contact['organization'])) {
             $organizationUrl = isset($contact['organization']);
         } elseif (key_exists('organizationId', $employeeArray)) {
@@ -916,7 +916,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $contact['@id']]);
+        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]))]);
 
         $this->saveUser($employeeArray, $contact);
 
