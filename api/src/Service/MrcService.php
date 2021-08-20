@@ -917,7 +917,7 @@ class MrcService
         //set contact
         $contact = $this->setContact($employeeArray);
 
-        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]))]);
+        $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']])]);
 
         $this->saveUser($employeeArray, $contact);
 
