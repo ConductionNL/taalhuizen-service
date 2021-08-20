@@ -40,22 +40,39 @@ class NewTestResultsService
 
     public function deleteTestResult($id): Response
     {
-        if ($this->eavService->hasEavObject(null, 'results', $id)) {
-            $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'eavId' => $id]);
-            $this->eavService->deleteObject($testResult['eavId']);
-        } else {
-            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/result!', 'learning need');
+        try {
+//            $resultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
+//            $result = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $resultUrl]);
+//
+//            $this->removeTestResultFromParticipation($result);
+
+            $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
+
+        } catch (\Throwable $e) {
+            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/result!', 'test result');
         }
 
         return new Response(null, 204);
     }
 
+    public function removeTestResultFromParticipation(array $testResult)
+    {
+        if ($this->eavService->hasEavObject($testResult['participation'])) {
+            $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $testResult['participation']]);
+            $participation['testResults'] = array_values(array_filter($participation['learningNeeds'], function ($participationTestResult) use ($testResult) {
+                return $participationTestResult != $testResult['@eav'];
+            }));
+            $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $participation['id']]);
+        }
+    }
+
     public function updateTestResult(array $testResult, string $testResultId): ArrayCollection
     {
+        $result = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $testResultId]);
         try {
-            $testResult = $this->eavService->saveObject($testResult, ['entityName' => 'results', 'componentCode' => 'edu', 'eavId' => $testResultId]);
+            $testResult = $this->eavService->saveObject($testResult, ['entityName' => 'results', 'componentCode' => 'edu', 'self' => $result]);
         } catch (\Throwable $e) {
-            throw new BadRequestPathException('Invalid value.', 'test result');
+            throw new BadRequestPathException('Invalid value provided', 'test result');
         }
 
         return new ArrayCollection($testResult);
@@ -88,7 +105,6 @@ class NewTestResultsService
         ];
 
         $arrays['testResult'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'results', 'componentCode' => 'edu']);
-
         $this->addResultToParticipation($arrays['testResult'], $participation);
 
         return $this->persistTestResult($testResult, $arrays);
