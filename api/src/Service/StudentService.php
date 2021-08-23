@@ -1024,8 +1024,9 @@ class StudentService
      *
      * @param array $lastEducation An array with education data
      *
-     * @return StudentEducation Returns an array with education details
      * @throws \Exception
+     *
+     * @return StudentEducation Returns an array with education details
      */
     private function handleEducationDetails(array $educationsArray): StudentEducation
     {
@@ -1045,10 +1046,12 @@ class StudentService
 
     /**
      * @param $education
-     * @return \App\Entity\Education
+     *
      * @throws \Exception
+     *
+     * @return \App\Entity\Education
      */
-    public function createDTOEducation ($education): Education
+    public function createDTOEducation($education): Education
     {
         $educationDTO = new Education();
         isset($education['name']) ? $educationDTO->setName($education['name']) : $educationDTO->setName(null);
@@ -1071,8 +1074,9 @@ class StudentService
      *
      * @param array $course Array with course data
      *
-     * @return StudentCourse Returns course details
      * @throws \Exception
+     *
+     * @return StudentCourse Returns course details
      */
     private function handleCourseDetails(array $course): StudentCourse
     {
@@ -1085,7 +1089,7 @@ class StudentService
         }
         $course = $course['courseDetails'];
         isset($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
-        isset($course['education']) ?  $courseDetails->setCourse($this->createDTOEducation($course['education'])) : $courseDetails->setCourse(null);
+        isset($course['education']) ? $courseDetails->setCourse($this->createDTOEducation($course['education'])) : $courseDetails->setCourse(null);
 
         return $courseDetails;
     }
