@@ -665,7 +665,6 @@ class StudentService
         if (is_string($registrar) == true) {
             $registrar = $this->commonGroundService->getResource($registrar);
         }
-
         $person = new Person();
         if (isset($registrar['givenName'])) {
             $person->setGivenName($registrar['givenName']);
@@ -691,77 +690,41 @@ class StudentService
         if (isset($registrar['telephones'])) {
             foreach ($registrar['telephones'] as $telephone) {
                 $newTelephone = new Telephone();
-                if (isset($telephone['name'])) {
-                    $newTelephone->setName($telephone['name']);
-                }
-                if (isset($telephone['telephone'])) {
-                    $newTelephone->setTelephone($telephone['telephone']);
-                }
+                isset($telephone['name']) ? $newTelephone->setName($telephone['name']) : $newTelephone->setName(null);
+                isset($telephone['telephone']) ? $newTelephone->setTelephone($telephone['telephone']) : $newTelephone->setTelephone(null);
                 $person->addTelephone($newTelephone);
             }
         }
         if (isset($registrar['emails'])) {
             $email = new Email();
-            if (isset($registrar['emails'][0]['name'])) {
-                $email->setName($registrar['emails'][0]['name']);
-            }
-            if (isset($registrar['emails'][0]['email'])) {
-                $email->setEmail($registrar['emails'][0]['email']);
-            } else {
-                $email->setEmail(null);
-            }
+            isset($registrar['emails'][0]['name']) ? $email->setName($registrar['emails'][0]['name']) : $email->setName(null);
+            isset($registrar['emails'][0]['email']) ? $email->setEmail($registrar['emails'][0]['email']) : $email->setEmail(null);
             $person->setEmails($email);
         }
         if (isset($registrar['organization'])) {
             $organization = new Organization();
-            if (isset($registrar['organization']['name'])) {
-                $organization->setName($registrar['organization']['name']);
-            }
-            if (isset($registrar['organization']['type'])) {
-                $organization->setType($registrar['organization']['type']);
-            }
+            isset($registrar['organization']['name']) ? $organization->setName($registrar['organization']['name']) : $organization->setName(null);
+            isset($registrar['organization']['type']) ? $organization->setType($registrar['organization']['type']) : $organization->setType(null);
             if (isset($registrar['organization']['addresses'])) {
                 $address = new Address();
-                if (isset($registrar['organization']['addresses'][0]['name'])) {
-                    $address->setName($registrar['organization']['addresses'][0]['name']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['street'])) {
-                    $address->setStreet($registrar['organization']['addresses'][0]['street']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['houseNumber'])) {
-                    $address->setHouseNumber($registrar['organization']['addresses'][0]['houseNumber']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['houseNumberSuffix'])) {
-                    $address->setHouseNumberSuffix($registrar['organization']['addresses'][0]['houseNumberSuffix']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['postalCode'])) {
-                    $address->setPostalCode($registrar['organization']['addresses'][0]['postalCode']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['locality'])) {
-                    $address->setLocality($registrar['organization']['addresses'][0]['locality']);
-                }
+                isset($registrar['organization']['addresses'][0]['name']) ? $address->setName($registrar['organization']['addresses'][0]['name']) : $address->setName(null);
+                isset($registrar['organization']['addresses'][0]['street']) ? $address->setStreet($registrar['organization']['addresses'][0]['street']) : $address->setStreet(null);
+                isset($registrar['organization']['addresses'][0]['houseNumber']) ? $address->setHouseNumber($registrar['organization']['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
+                isset($registrar['organization']['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($registrar['organization']['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
+                isset($registrar['organization']['addresses'][0]['postalCode']) ? $address->setPostalCode($registrar['organization']['addresses'][0]['postalCode']) : $address->setPostalCode(null);
+                isset($registrar['organization']['addresses'][0]['locality']) ? $address->setLocality($registrar['organization']['addresses'][0]['locality']) : $address->setLocality(null);
                 $organization->setAddresses($address);
             }
             if (isset($registrar['organization']['telephones'])) {
                 $newTelephone = new Telephone();
-                if (isset($registrar['organization']['telephones'][0]['name'])) {
-                    $newTelephone->setName($registrar['organization']['telephones'][0]['name']);
-                }
-                if (isset($registrar['organization']['telephones'][0]['telephone'])) {
-                    $newTelephone->setTelephone($registrar['organization']['telephones'][0]['telephone']);
-                }
+                isset($registrar['organization']['telephones'][0]['name']) ? $newTelephone->setName($registrar['organization']['telephones'][0]['name']) : $newTelephone->setName(null);
+                isset($registrar['organization']['telephones'][0]['telephone']) ? $newTelephone->setTelephone($registrar['organization']['telephones'][0]['telephone']) : $newTelephone->setTelephone(null);
                 $organization->setTelephones($newTelephone);
             }
             if (isset($registrar['organization']['emails'])) {
                 $email = new Email();
-                if (isset($registrar['organization']['emails'][0]['name'])) {
-                    $email->setName($registrar['organization']['emails'][0]['name']);
-                }
-                if (isset($registrar['organization']['emails'][0]['email'])) {
-                    $email->setEmail($registrar['organization']['emails'][0]['email']);
-                } else {
-                    $email->setEmail(null);
-                }
+                isset($registrar['organization']['emails'][0]['name']) ? $email->setName($registrar['organization']['emails'][0]['name']) : $email->setName(null);
+                isset($registrar['organization']['emails'][0]['email']) ? $email->setEmail($registrar['organization']['emails'][0]['email']) : $email->setEmail(null);
                 $organization->setEmails($email);
             }
             $person->setOrganization($organization);
