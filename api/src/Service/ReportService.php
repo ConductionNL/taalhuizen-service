@@ -53,7 +53,7 @@ class ReportService
         $this->setDate($report);
 
         if ($report->getOrganizationId()) {
-            $query['program.provider'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()]);
+            $query['program.organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()]);
         }
 
         $participants = $this->eduService->getParticipants($query);
