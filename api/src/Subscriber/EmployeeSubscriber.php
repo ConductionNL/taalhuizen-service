@@ -159,7 +159,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
                     json_encode([
                         'message' => 'Organization does not exist!',
                         'path'    => 'organizationId',
-                        'data'    => ['organizationId' => $query['organizationId']],
+                        'data'    => ['organization' => $query['organization']],
                     ]),
                     Response::HTTP_BAD_REQUEST,
                     ['content-type' => 'application/json']
