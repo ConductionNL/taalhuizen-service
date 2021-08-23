@@ -13,6 +13,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use function GuzzleHttp\json_decode;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
@@ -202,25 +203,32 @@ class CCService
     /**
      * Fetches organizations from the contact catalogue and returns an collection of organizations.
      *
-     * @param string $type The type of organization to fetch
+     * @param string|null $type The type of organization to fetch
      *
      * @return ArrayCollection a collection of all organizations of the provided type
      */
-    public function getOrganizations(string $type): ArrayCollection
+    public function getOrganizations(array $query = []): ArrayCollection
     {
         $organizations = new ArrayCollection();
 
-        if ($type == 'Taalhuis') {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])['hydra:member'];
-        } else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Aanbieder'])['hydra:member'];
+        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], $query);
+
+        foreach ($results['hydra:member'] as $result) {
+            $organizations->add($this->createOrganizationObject($result));
         }
 
-        foreach ($results as $result) {
-            $organizations->add($this->createOrganizationObject($result, $type));
+        $result = [
+            '@context'          => '/contexts/Organization',
+            '@id'               => '/organizations',
+            '@type'             => 'hydra:Collection',
+            'hydra:member'      => $organizations,
+            'hydra:totalItems'  => $results['hydra:totalItems'] ?? count($results),
+        ];
+        if (key_exists('hydra:view', $results)) {
+            $result['hydra:view'] = $results['hydra:view'];
         }
 
-        return $organizations;
+        return new ArrayCollection($result);
     }
 
     /**
@@ -328,9 +336,32 @@ class CCService
     }
 
     /**
+     * @param string $id
+     *
+     * @return array|false|mixed|string|Response|null
+     */
+    public function checkIfOrganizationExists(string $id)
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($organizationUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This organization does not exist!',
+                    'path'    => '',
+                    'data'    => ['organization' => $organizationUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return $this->commonGroundService->getResource($organizationUrl);
+    }
+
+    /**
      * Deletes an organization.
      *
-     * @param string $id        The id of the organization to delete
+     * @param string      $id        The id of the organization to delete
      * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
@@ -340,23 +371,23 @@ class CCService
         $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         //delete program
         if ($programId !== null) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
         }
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
-        $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
 
         foreach ($ccOrganization['telephones'] as $telephone) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
         }
 
         foreach ($ccOrganization['emails'] as $email) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $email['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'emails', 'id' => $email['id']]);
         }
 
         foreach ($ccOrganization['addresses'] as $address) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $address['id']]);
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'addresses', 'id' => $address['id']]);
         }
 
         foreach ($ccOrganization['persons'] as $person) {
@@ -441,7 +472,7 @@ class CCService
 
     public function cleanPermissions(array $permissions): array
     {
-        foreach ($permissions as $key=>$value) {
+        foreach ($permissions as $key => $value) {
             if ($key == 'hasPermissionToShareDataWithProviders') {
                 $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
                 unset($permissions[$key]);
@@ -536,7 +567,6 @@ class CCService
 //                }
 //            }
 //        }
-
         if (isset($personUrl)) {
             // Update
             $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
