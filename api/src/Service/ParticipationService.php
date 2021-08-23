@@ -376,64 +376,6 @@ class ParticipationService
     }
 
     /**
-     * This function handles the eav/participations status.
-     *
-     * @param array $participation Array with data from the eav/participation
-     *
-     * @throws Exception
-     *
-     * @return array A eav/participation - status is returned.
-     */
-    public function handleParticipationStatus(array $participation): array
-    {
-        if ((isset($participation['mentor']) || isset($participation['group']))) {
-            $updateParticipation['status'] = 'ACTIVE';
-            if (isset($participation['presenceEndDate'])) {
-                $now = new \DateTime('now');
-                $now->format('Y-m-d H:i:s');
-                $endDate = new \DateTime($participation['presenceEndDate']);
-                $endDate->format('Y-m-d H:i:s');
-                if ($now > $endDate) {
-                    $updateParticipation['status'] = 'COMPLETED';
-                }
-            }
-        } elseif (isset($participation['aanbiederName'])) {
-            $updateParticipation['status'] = 'ACTIVE';
-        } else {
-            $updateParticipation['status'] = 'REFERRED';
-        }
-
-        return $updateParticipation;
-    }
-
-    /**
-     * This function updates the eav/participations status.
-     *
-     * @param array $participation Array with data from the eav/participation
-     *
-     * @throws Exception
-     *
-     * @return array A eav/participation is returned from EAV
-     */
-    public function updateParticipationStatus(array $participation): array
-    {
-        $result = [];
-
-        // Check what the current status should be
-        $updateParticipation = $this->handleParticipationStatus($participation);
-        // Check if the status needs to be changed
-        if ($participation['status'] != $updateParticipation['status']) {
-            // Update status
-            $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
-
-            // Add $participation to the $result['participation'] because this is convenient when testing or debugging (mostly for us)
-            $result['participation'] = $participation;
-        }
-
-        return $result;
-    }
-
-    /**
      * This function adds a mrc/employee to the eav/participations with the given participationId and aanbiederEmployeeId.
      *
      * @param string $participationId     Id of the eav/participation
