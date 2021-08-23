@@ -49,8 +49,9 @@ class MrcService
      *
      * @param array $query The query to search specific employees with, for example organization => cleanUrl with an organizationId.
      *
-     * @return ArrayCollection A collection of employees for the organization provided (or BISC if none is provided)
      * @throws Exception
+     *
+     * @return ArrayCollection A collection of employees for the organization provided (or BISC if none is provided)
      */
     public function getEmployees(array $query = []): ArrayCollection
     {

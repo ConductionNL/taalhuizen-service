@@ -147,8 +147,10 @@ class EmployeeSubscriber implements EventSubscriberInterface
 
     /**
      * @param array $query
-     * @return Collection|Response
+     *
      * @throws Exception
+     *
+     * @return Collection|Response
      */
     private function getEmployees(array $query)
     {
@@ -167,6 +169,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
             }
             unset($query['organizationId']);
         }
+
         return $this->mrcService->getEmployees($query);
     }
 }
