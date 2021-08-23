@@ -1025,70 +1025,45 @@ class StudentService
      * @param array $lastEducation An array with education data
      *
      * @return StudentEducation Returns an array with education details
+     * @throws \Exception
      */
     private function handleEducationDetails(array $educationsArray): StudentEducation
     {
         $educationDetails = new StudentEducation();
         if (!isset($educationsArray['educationDetails'])) {
-            $education = new Education();
-            $education->setName(null);
-            $education->setStartDate(null);
-            $education->setEnddate(null);
-            $education->setGroupFormation(null);
-            $education->setInstitution(null);
-            $education->setDegreeGrantedStatus(null);
-            $education->setIscedEducationLevelCode(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setProvidesCertificate(null);
-            $education->setAmountOfHours(null);
-            $educationDetails->setEducation($education);
+            $educationDetails->setEducation($this->createDTOEducation([]));
             $educationDetails->setFollowingEducationRightNow(null);
 
             return $educationDetails;
         }
         $educationsArray = $educationsArray['educationDetails'];
         isset($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
-
-        if (isset($educationsArray['education'])) {
-            $education = new Education();
-            $education->setGroupFormation(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setAmountOfHours(null);
-
-            isset($educationsArray['education']['name']) ? $education->setName($educationsArray['education']['name']) : $education->setName(null);
-            isset($educationsArray['education']['startDate']) ? $education->setStartDate(new \DateTime($educationsArray['education']['startDate'])) : $education->setStartDate(null);
-            isset($educationsArray['education']['endDate']) ? $education->setEnddate(new \DateTime($educationsArray['education']['endDate'])) : $education->setEnddate(null);
-            isset($educationsArray['education']['institution']) ? $education->setInstitution($educationsArray['education']['institution']) : $education->setInstitution(null);
-            isset($educationsArray['education']['iscedEducationLevelCode']) ? $education->setIscedEducationLevelCode($educationsArray['education']['iscedEducationLevelCode']) : $education->setIscedEducationLevelCode(null);
-            isset($educationsArray['education']['degreeGrantedStatus']) ? $education->setDegreeGrantedStatus($educationsArray['education']['degreeGrantedStatus']) : $education->setDegreeGrantedStatus(null);
-            isset($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
-            isset($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
-            isset($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
-            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool) $educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
-            isset($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
-
-            $educationDetails->setEducation($education);
-        } else {
-            $educationDetails->setEducation(null);
-        }
+        isset($educationsArray['education']) ? $educationDetails->setEducation($this->createDTOEducation($educationsArray['education'])) : $educationDetails->setEducation(null);
 
         return $educationDetails;
+    }
 
-//        return [
-//            'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
-//            'didGraduate' => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
-//            'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
-//            'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
-//            'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
-//            'followingEducationRightNowYesLevel' => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
-//            'followingEducationRightNowYesInstitute' => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
-//            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool)$followingEducationYes['providesCertificate'] : null) : null,
-//            'followingEducationRightNowNoEndDate' => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
-//            'followingEducationRightNowNoLevel' => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
-//            'followingEducationRightNowNoGotCertificate' => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
-//        ];
+    /**
+     * @param $education
+     * @return \App\Entity\Education
+     * @throws \Exception
+     */
+    public function createDTOEducation ($education): Education
+    {
+        $educationDTO = new Education();
+        isset($education['name']) ? $educationDTO->setName($education['name']) : $educationDTO->setName(null);
+        isset($education['startDate']) ? $educationDTO->setStartDate(new \DateTime($education['startDate'])) : $educationDTO->setStartDate(null);
+        isset($education['endDate']) ? $educationDTO->setEnddate(new \DateTime($education['endDate'])) : $educationDTO->setEnddate(null);
+        isset($education['institution']) ? $educationDTO->setInstitution($education['institution']) : $educationDTO->setInstitution(null);
+        isset($education['iscedEducationLevelCode']) ? $educationDTO->setIscedEducationLevelCode($education['iscedEducationLevelCode']) : $educationDTO->setIscedEducationLevelCode(null);
+        isset($education['degreeGrantedStatus']) ? $educationDTO->setDegreeGrantedStatus($education['degreeGrantedStatus']) : $educationDTO->setDegreeGrantedStatus(null);
+        isset($education['groupFormation']) ? $educationDTO->setGroupFormation($education['groupFormation']) : $educationDTO->setGroupFormation(null);
+        isset($education['teacherProfessionalism']) ? $educationDTO->setTeacherProfessionalism($education['teacherProfessionalism']) : $educationDTO->setTeacherProfessionalism(null);
+        isset($education['courseProfessionalism']) ? $educationDTO->setCourseProfessionalism($education['courseProfessionalism']) : $educationDTO->setCourseProfessionalism(null);
+        isset($education['providesCertificate']) ? $educationDTO->setProvidesCertificate((bool) $education['providesCertificate']) : $educationDTO->setProvidesCertificate(null);
+        isset($education['amountOfHours']) ? $educationDTO->setAmountOfHours($education['amountOfHours']) : $educationDTO->setAmountOfHours(null);
+
+        return $educationDTO;
     }
 
     /**
@@ -1097,65 +1072,22 @@ class StudentService
      * @param array $course Array with course data
      *
      * @return StudentCourse Returns course details
+     * @throws \Exception
      */
     private function handleCourseDetails(array $course): StudentCourse
     {
         $courseDetails = new StudentCourse();
         if (!isset($course['courseDetails'])) {
-            $education = new Education();
-            $education->setName(null);
-            $education->setStartDate(null);
-            $education->setEnddate(null);
-            $education->setGroupFormation(null);
-            $education->setInstitution(null);
-            $education->setDegreeGrantedStatus(null);
-            $education->setIscedEducationLevelCode(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setProvidesCertificate(null);
-            $education->setAmountOfHours(null);
-            $education->setGroupFormation(null);
-            $courseDetails->setCourse($education);
+            $courseDetails->setCourse($this->createDTOEducation([]));
             $courseDetails->setIsFollowingCourseRightNow(null);
 
             return $courseDetails;
         }
         $course = $course['courseDetails'];
         isset($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
-
-        if (isset($course['education'])) {
-            $newCourse = new Education();
-            $newCourse->setGroupFormation(null);
-            $newCourse->setTeacherProfessionalism(null);
-            $newCourse->setCourseProfessionalism(null);
-            $newCourse->setAmountOfHours(null);
-
-            isset($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
-            isset($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
-            isset($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
-            isset($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
-            isset($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
-            isset($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
-            isset($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
-            isset($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
-            isset($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
-            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool) $course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
-            isset($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
-
-            $courseDetails->setCourse($newCourse);
-        } else {
-            $courseDetails->setCourse(null);
-        }
+        isset($course['education']) ?  $courseDetails->setCourse($this->createDTOEducation($course['education'])) : $courseDetails->setCourse(null);
 
         return $courseDetails;
-//        return [
-//            'isFollowingCourseRightNow' => isset($course),
-//            'courseName' => $course['name'] ?? null,
-//            'courseTeacher' => $course['teacherProfessionalism'] ?? null,
-//            'courseGroup' => $course['groupFormation'] ?? null,
-//            'amountOfHours' => $course['amountOfHours'] ?? null,
-//            'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool)$course['providesCertificate'] : null,
-//        ];
     }
 
     /**
