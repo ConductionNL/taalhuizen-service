@@ -608,7 +608,7 @@ class MrcService
         $employee = new Employee();
         $employee->setPerson($this->ccService->createPersonObject($contact));
         $employee->setAvailability($contact['availability'] ? $this->availabilityService->createAvailabilityObject($contact['availability']) : null);
-        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']])));
+        $availabilityMemo = $this->availabilityService->getAvailabilityMemo($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']]));
         $employee->setAvailabilityNotes($availabilityMemo['description'] ?? null);
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
