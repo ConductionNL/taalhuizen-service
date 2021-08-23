@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\LearningNeedOutCome;
 use App\Entity\TestResult;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -142,5 +141,4 @@ class NewTestResultsService
 
         $this->learningNeedService->checkLearningNeedOutcome($testResult->getLearningNeedOutCome());
     }
-
 }
