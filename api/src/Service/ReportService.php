@@ -55,7 +55,6 @@ class ReportService
             $query['program.organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()]);
         }
 
-
         $participants = $this->eduService->getParticipants($query);
         $participants = $this->cleanParticipants($participants);
         $report->setBase64(base64_encode($this->serializer->serialize($participants, 'csv')));
