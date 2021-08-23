@@ -383,26 +383,16 @@ class StudentService
         if (!isset($input['permissionDetails'])) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
         }
-        if (isset($input['speakingLevel']) && !in_array($input['speakingLevel'], ['BEGINNER', 'REASONABLE', 'ADVANCED'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'speakingLevel');
-        }
-        if (isset($input['readingTestResult']) && !in_array($input['readingTestResult'], ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'readingTestResult');
-        }
-        if (isset($input['writingTestResult']) && !in_array($input['writingTestResult'], ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'writingTestResult');
-        }
-        if (isset($input['status']) && !in_array($input['status'], ['REFERRED', 'ACTIVE', 'COMPLETED'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'status');
-        }
-        if (isset($input['registrar'])) {
-            $this->checkPersonValues($input['registrar'], 'registrar');
-        }
-        if (isset($input['civicIntegrationDetails'])) {
-            $this->checkStudentCivicIntegrationValues($input['civicIntegrationDetails']);
-        }
-        if (isset($input['person'])) {
-            $this->checkPersonValues($input['person'], 'person');
+        $array = [
+            'speakingLevel'     => ['BEGINNER', 'REASONABLE', 'ADVANCED'],
+            'readingTestResult' => ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+            'writingTestResult' => ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'],
+            'status'            => ['REFERRED', 'ACTIVE', 'COMPLETED'],
+        ];
+        foreach ($array as $fieldName => $fieldValues) {
+            if (isset($input[$fieldName]) && !in_array($input[$fieldName], $fieldValues)) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', $fieldName, [$fieldName => $input[$fieldName]]);
+            }
         }
         if (isset($input['generalDetails'])) {
             if (isset($input['generalDetails']['civicIntegrationRequirement']) && !in_array($input['generalDetails']['familyComposition'], ['MARRIED_PARTNER', 'SINGLE', 'DIVORCED'])) {
@@ -413,6 +403,15 @@ class StudentService
             if (isset($input['referrerDetails']['referringOrganization']) && !in_array($input['referrerDetails']['referringOrganization'], ['UWV', 'SOCIAL_SERVICE', 'LIBRARY', 'WELFARE_WORK', 'NEIGHBORHOOD_TEAM', 'VOLUNTEER_ORGANIZATION', 'LANGUAGE_PROVIDER', 'OTHER'])) {
                 throw new BadRequestPathException('Invalid option(s) given for some fields .', 'referrerDetails.referringOrganization');
             }
+        }
+        if (isset($input['registrar'])) {
+            $this->checkPersonValues($input['registrar'], 'registrar');
+        }
+        if (isset($input['civicIntegrationDetails'])) {
+            $this->checkStudentCivicIntegrationValues($input['civicIntegrationDetails']);
+        }
+        if (isset($input['person'])) {
+            $this->checkPersonValues($input['person'], 'person');
         }
         if (isset($input['backgroundDetails'])) {
             $this->checkStudentBackgroundValues($input['backgroundDetails']);
@@ -634,8 +633,7 @@ class StudentService
     {
         $resource->setRegistrar($this->handleRegistrar($student['participant']['registrar']));
         $resource->setCivicIntegrationDetails($this->handleCivicIntegrationDetails($student['person']));
-        $resource->setPerson($this->handlePersonDetails($student['person']));
-//        $resource->setContactDetails($this->handleContactDetails($student['person']));
+        $resource->setPerson($this->createDTOPerson($student['person']));
         $resource->setGeneralDetails($this->handleGeneralDetails($student['person']));
         isset($student['participant']['referredBy']) ? $resource->setReferrerDetails($this->handleReferrerDetails($student['participant'])) : $resource->setReferrerDetails(null);
         $resource->setBackgroundDetails($this->handleBackgroundDetails($student['person']));
@@ -658,6 +656,8 @@ class StudentService
      *
      * @param null $registrar Array with registrar data
      *
+     * @throws \Exception
+     *
      * @return Person|null Returns Person with registrar data
      */
     private function handleRegistrar($registrar = null): ?Person
@@ -666,120 +666,113 @@ class StudentService
             $registrar = $this->commonGroundService->getResource($registrar);
         }
 
-        $person = new Person();
-        if (isset($registrar['givenName'])) {
-            $person->setGivenName($registrar['givenName']);
-        } elseif (isset($registrar['registrarOrganization']['name'])) {
-            $person->setGivenName($registrar['registrarOrganization']['name']);
+        return $this->createDTOPerson($registrar);
+    }
+
+    /**
+     * @param array $person
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\Person|null
+     */
+    public function createDTOPerson(array $person): ?Person
+    {
+        $personDTO = new Person();
+        if (isset($person['givenName'])) {
+            $personDTO->setGivenName($person['givenName']);
+        } elseif (isset($person['registrarOrganization']['name'])) {
+            $personDTO->setGivenName($person['registrarOrganization']['name']);
         } else {
             return null;
         }
-        isset($registrar['additionalName']) ? $person->setAdditionalName($registrar['additionalName']) : $person->setAdditionalName(null);
-        isset($registrar['familyName']) ? $person->setFamilyName($registrar['familyName']) : $person->setFamilyName(null);
-        isset($registrar['gender']) ? $person->setGender($registrar['gender']) : $person->setGender(null);
-        isset($registrar['birthday']) ? $person->setBirthday(new \DateTime($registrar['birthday'])) : $person->setBirthday(null);
-        if (isset($registrar['addresses'])) {
-            $address = new Address();
-            isset($registrar['addresses'][0]['name']) ? $address->setName($registrar['addresses'][0]['name']) : $address->setName(null);
-            isset($registrar['addresses'][0]['street']) ? $address->setStreet($registrar['addresses'][0]['street']) : $address->setStreet(null);
-            isset($registrar['addresses'][0]['houseNumber']) ? $address->setHouseNumber($registrar['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
-            isset($registrar['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($registrar['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
-            isset($registrar['addresses'][0]['postalCode']) ? $address->setPostalCode($registrar['addresses'][0]['postalCode']) : $address->setPostalCode(null);
-            isset($registrar['addresses'][0]['locality']) ? $address->setLocality($registrar['addresses'][0]['locality']) : $address->setLocality(null);
-            $person->setAddresses($address);
-        }
-        if (isset($registrar['telephones'])) {
-            foreach ($registrar['telephones'] as $telephone) {
-                $newTelephone = new Telephone();
-                if (isset($telephone['name'])) {
-                    $newTelephone->setName($telephone['name']);
-                }
-                if (isset($telephone['telephone'])) {
-                    $newTelephone->setTelephone($telephone['telephone']);
-                }
-                $person->addTelephone($newTelephone);
+        isset($person['additionalName']) ? $personDTO->setAdditionalName($person['additionalName']) : $personDTO->setAdditionalName(null);
+        isset($person['familyName']) ? $personDTO->setFamilyName($person['familyName']) : $personDTO->setFamilyName(null);
+        isset($person['gender']) ? $personDTO->setGender($person['gender']) : $personDTO->setGender(null);
+        isset($person['birthday']) ? $personDTO->setBirthday(new \DateTime($person['birthday'])) : $personDTO->setBirthday(null);
+        isset($person['addresses']) ? $personDTO->setAddresses($this->createDTOAddress($person['addresses'][0])) : $personDTO->setAddresses(null);
+        if (isset($person['telephones'])) {
+            foreach ($person['telephones'] as $telephone) {
+                $personDTO->addTelephone($this->createDTOTelephone($telephone));
             }
         }
-        if (isset($registrar['emails'])) {
-            $email = new Email();
-            if (isset($registrar['emails'][0]['name'])) {
-                $email->setName($registrar['emails'][0]['name']);
-            }
-            if (isset($registrar['emails'][0]['email'])) {
-                $email->setEmail($registrar['emails'][0]['email']);
-            } else {
-                $email->setEmail(null);
-            }
-            $person->setEmails($email);
-        }
-        if (isset($registrar['organization'])) {
-            $organization = new Organization();
-            if (isset($registrar['organization']['name'])) {
-                $organization->setName($registrar['organization']['name']);
-            }
-            if (isset($registrar['organization']['type'])) {
-                $organization->setType($registrar['organization']['type']);
-            }
-            if (isset($registrar['organization']['addresses'])) {
-                $address = new Address();
-                if (isset($registrar['organization']['addresses'][0]['name'])) {
-                    $address->setName($registrar['organization']['addresses'][0]['name']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['street'])) {
-                    $address->setStreet($registrar['organization']['addresses'][0]['street']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['houseNumber'])) {
-                    $address->setHouseNumber($registrar['organization']['addresses'][0]['houseNumber']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['houseNumberSuffix'])) {
-                    $address->setHouseNumberSuffix($registrar['organization']['addresses'][0]['houseNumberSuffix']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['postalCode'])) {
-                    $address->setPostalCode($registrar['organization']['addresses'][0]['postalCode']);
-                }
-                if (isset($registrar['organization']['addresses'][0]['locality'])) {
-                    $address->setLocality($registrar['organization']['addresses'][0]['locality']);
-                }
-                $organization->setAddresses($address);
-            }
-            if (isset($registrar['organization']['telephones'])) {
-                $newTelephone = new Telephone();
-                if (isset($registrar['organization']['telephones'][0]['name'])) {
-                    $newTelephone->setName($registrar['organization']['telephones'][0]['name']);
-                }
-                if (isset($registrar['organization']['telephones'][0]['telephone'])) {
-                    $newTelephone->setTelephone($registrar['organization']['telephones'][0]['telephone']);
-                }
-                $organization->setTelephones($newTelephone);
-            }
-            if (isset($registrar['organization']['emails'])) {
-                $email = new Email();
-                if (isset($registrar['organization']['emails'][0]['name'])) {
-                    $email->setName($registrar['organization']['emails'][0]['name']);
-                }
-                if (isset($registrar['organization']['emails'][0]['email'])) {
-                    $email->setEmail($registrar['organization']['emails'][0]['email']);
-                } else {
-                    $email->setEmail(null);
-                }
-                $organization->setEmails($email);
-            }
-            $person->setOrganization($organization);
-        }
-        if (isset($registrar['contactPreference'])) {
-            $person->setContactPreference($registrar['contactPreference']);
-        }
-        if (isset($registrar['contactPreferenceOther'])) {
-            $person->setContactPreferenceOther($registrar['contactPreferenceOther']);
-        }
+        isset($person['emails']) ? $personDTO->setEmails($this->createDTOEmail($person['emails'][0])) : $personDTO->setEmails(null);
+        isset($person['organization']) ? $personDTO->setOrganization($this->createDTOOrganization($person['organization'])) : $personDTO->createDTOOrganization(null);
+        isset($person['contactPreference']) ? $personDTO->setContactPreference($person['contactPreference']) : $personDTO->setContactPreference(null);
+        isset($person['contactPreferenceOther']) ? $personDTO->setContactPreferenceOther($person['contactPreferenceOther']) : $personDTO->setContactPreferenceOther(null);
 
-        return $person;
+        return $personDTO;
+    }
+
+    /**
+     * @param array $org
+     *
+     * @return \App\Entity\Organization
+     */
+    public function createDTOOrganization(array $org): Organization
+    {
+        $organization = new Organization();
+        isset($org['name']) ? $organization->setName($org['name']) : $organization->setName(null);
+        isset($org['type']) ? $organization->setType($org['type']) : $organization->setType(null);
+        isset($org['addresses'][0]) ? $organization->setAddresses($this->createDTOAddress($org['addresses'][0])) : $organization->setAddresses(null);
+        isset($org['telephones'][0]) ? $organization->setTelephones($this->createDTOTelephone($org['telephones'][0])) : $organization->setTelephones(null);
+        isset($org['emails'][0]) ? $organization->setEmails($this->createDTOEmail($org['emails'][0])) : $organization->setEmails(null);
+
+        return $organization;
+    }
+
+    /**
+     * @param array $address
+     *
+     * @return \App\Entity\Address
+     */
+    public function createDTOAddress(array $address): Address
+    {
+        $addressDTO = new Address();
+        isset($address['name']) ? $addressDTO->setName($address['name']) : $addressDTO->setName(null);
+        isset($address['street']) ? $addressDTO->setStreet($address['street']) : $addressDTO->setStreet(null);
+        isset($address['houseNumber']) ? $addressDTO->setHouseNumber($address['houseNumber']) : $addressDTO->setHouseNumber(null);
+        isset($address['houseNumberSuffix']) ? $addressDTO->setHouseNumberSuffix($address['houseNumberSuffix']) : $addressDTO->setHouseNumberSuffix(null);
+        isset($address['postalCode']) ? $addressDTO->setPostalCode($address['postalCode']) : $addressDTO->setPostalCode(null);
+        isset($address['locality']) ? $addressDTO->setLocality($address['locality']) : $addressDTO->setLocality(null);
+
+        return $addressDTO;
+    }
+
+    /**
+     * @param array $tel
+     *
+     * @return \App\Entity\Telephone
+     */
+    public function createDTOTelephone(array $tel): Telephone
+    {
+        $newTelephone = new Telephone();
+        isset($tel['name']) ? $newTelephone->setName($tel['name']) : $newTelephone->setName(null);
+        isset($tel['telephone']) ? $newTelephone->setTelephone($tel['telephone']) : $newTelephone->setTelephone(null);
+
+        return $newTelephone;
+    }
+
+    /**
+     * @param array $email
+     *
+     * @return \App\Entity\Email
+     */
+    public function createDTOEmail(array $email): Email
+    {
+        $emailDTO = new Email();
+        isset($email['name']) ? $emailDTO->setName($email['name']) : $emailDTO->setName(null);
+        isset($email['email']) ? $emailDTO->setEmail($email['email']) : $emailDTO->setEmail(null);
+
+        return $emailDTO;
     }
 
     /**
      * This function passes a persons integration details through an array.
      *
      * @param array $person
+     *
+     * @throws \Exception
      *
      * @return StudentCivicIntegration|null[] Returns an array with integration details
      */
@@ -797,79 +790,6 @@ class StudentService
         }
 
         return $civicIntegDetails;
-    }
-
-    /**
-     * This function passes a persons details.
-     *
-     * @param array $person Array with persons data
-     *
-     * @return Person Returns an Person object with persons details
-     */
-    private function handlePersonDetails(array $person): Person
-    {
-        $personDetails = new Person();
-        isset($person['givenName']) ? $personDetails->setGivenName($person['givenName']) : $personDetails->setGivenName(null);
-        isset($person['additionalName']) ? $personDetails->setAdditionalName($person['additionalName']) : $personDetails->setAdditionalName(null);
-        isset($person['familyName']) ? $personDetails->setFamilyName($person['familyName']) : $personDetails->setFamilyName(null);
-        isset($person['gender']) ? $personDetails->setGender($person['gender']) : $personDetails->setGender(null);
-        isset($person['birthday']) ? $personDetails->setBirthday(new \DateTime($person['birthday'])) : $personDetails->setBirthday(null);
-        if (isset($person['addresses'])) {
-            $address = new Address();
-            isset($person['addresses'][0]['name']) ? $address->setName($person['addresses'][0]['name']) : $address->setName(null);
-            isset($person['addresses'][0]['street']) ? $address->setStreet($person['addresses'][0]['street']) : $address->setStreet(null);
-            isset($person['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
-            isset($person['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
-            isset($person['addresses'][0]['postalCode']) ? $address->setPostalCode($person['addresses'][0]['postalCode']) : $address->setPostalCode(null);
-            isset($person['addresses'][0]['locality']) ? $address->setLocality($person['addresses'][0]['locality']) : $address->setLocality(null);
-            $personDetails->setAddresses($address);
-        }
-        if (isset($person['emails'])) {
-            $email = new Email();
-            isset($person['emails'][0]['name']) ? $email->setName($person['emails'][0]['name']) : $email->setName(null);
-            isset($person['emails'][0]['email']) ? $email->setEmail($person['emails'][0]['email']) : $email->setEmail(null);
-            $personDetails->setEmails($email);
-        }
-        if (isset($person['telephones'])) {
-            foreach ($person['telephones'] as $tel) {
-                $newTel = new Telephone();
-                isset($tel['name']) ? $newTel->setName($tel['name']) : $newTel->setName(null);
-                isset($tel['telephone']) ? $newTel->setTelephone($tel['telephone']) : $newTel->setTelephone(null);
-                $personDetails->addTelephone($newTel);
-            }
-        }
-        if (isset($person['organization'])) {
-            $organization = new Organization();
-            isset($person['organization']['name']) ? $organization->setName($person['organization']['name']) : $organization->setName(null);
-            isset($person['organization']['type']) ? $organization->setType($person['organization']['type']) : $organization->setType(null);
-            if (isset($person['organization']['addresses'][0]['name'])) {
-                $address = new Address();
-                isset($person['organization']['addresses'][0]['name']) ? $address->setName($person['organization']['addresses'][0]['name']) : $address->setName(null);
-                isset($person['organization']['addresses'][0]['street']) ? $address->setStreet($person['organization']['addresses'][0]['street']) : $address->setStreet(null);
-                isset($person['organization']['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['organization']['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
-                isset($person['organization']['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['organization']['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
-                isset($person['organization']['addresses'][0]['postalCode']) ? $address->setPostalCode($person['organization']['addresses'][0]['postalCode']) : $address->setPostalCode(null);
-                isset($person['organization']['addresses'][0]['locality']) ? $address->setLocality($person['organization']['addresses'][0]['locality']) : $address->setLocality(null);
-                $organization->setAddresses($address);
-            }
-            if (isset($person['organization']['emails'])) {
-                $email = new Email();
-                isset($person['organization']['emails'][0]['name']) ? $email->setName($person['organization']['emails'][0]['name']) : $email->setName(null);
-                isset($person['organization']['emails'][0]['email']) ? $email->setEmail($person['organization']['emails'][0]['email']) : $email->setEmail(null);
-                $organization->setEmails($email);
-            }
-            if (isset($person['organization']['telephones'])) {
-                $tel = new Telephone();
-                isset($person['organization']['telephones'][0]['name']) ? $tel->setName($person['organization']['telephones'][0]['name']) : $tel->setName(null);
-                isset($person['organization']['telephones'][0]['telephone']) ? $tel->setTelephone($person['organization']['telephones'][0]['telephone']) : $tel->setTelephone(null);
-                $organization->setTelephones($tel);
-            }
-            $personDetails->setOrganization($organization);
-        }
-        isset($person['contactPreference']) ? $personDetails->setContactPreference($person['contactPreference']) : $personDetails->setContactPreference(null);
-        isset($person['contactPreferenceOther']) ? $personDetails->setContactPreferenceOther($person['contactPreferenceOther']) : $personDetails->setContactPreferenceOther(null);
-
-        return $personDetails;
     }
 
     private function handlePerson(array $input): Person
@@ -1104,71 +1024,49 @@ class StudentService
      *
      * @param array $lastEducation An array with education data
      *
+     * @throws \Exception
+     *
      * @return StudentEducation Returns an array with education details
      */
     private function handleEducationDetails(array $educationsArray): StudentEducation
     {
         $educationDetails = new StudentEducation();
         if (!isset($educationsArray['educationDetails'])) {
-            $education = new Education();
-            $education->setName(null);
-            $education->setStartDate(null);
-            $education->setEnddate(null);
-            $education->setGroupFormation(null);
-            $education->setInstitution(null);
-            $education->setDegreeGrantedStatus(null);
-            $education->setIscedEducationLevelCode(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setProvidesCertificate(null);
-            $education->setAmountOfHours(null);
-            $educationDetails->setEducation($education);
+            $educationDetails->setEducation($this->createDTOEducation([]));
             $educationDetails->setFollowingEducationRightNow(null);
 
             return $educationDetails;
         }
         $educationsArray = $educationsArray['educationDetails'];
         isset($educationsArray['followingEducationRightNow']) ? $educationDetails->setFollowingEducationRightNow($educationsArray['followingEducationRightNow']) : $educationDetails->setFollowingEducationRightNow(null);
-
-        if (isset($educationsArray['education'])) {
-            $education = new Education();
-            $education->setGroupFormation(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setAmountOfHours(null);
-
-            isset($educationsArray['education']['name']) ? $education->setName($educationsArray['education']['name']) : $education->setName(null);
-            isset($educationsArray['education']['startDate']) ? $education->setStartDate(new \DateTime($educationsArray['education']['startDate'])) : $education->setStartDate(null);
-            isset($educationsArray['education']['endDate']) ? $education->setEnddate(new \DateTime($educationsArray['education']['endDate'])) : $education->setEnddate(null);
-            isset($educationsArray['education']['institution']) ? $education->setInstitution($educationsArray['education']['institution']) : $education->setInstitution(null);
-            isset($educationsArray['education']['iscedEducationLevelCode']) ? $education->setIscedEducationLevelCode($educationsArray['education']['iscedEducationLevelCode']) : $education->setIscedEducationLevelCode(null);
-            isset($educationsArray['education']['degreeGrantedStatus']) ? $education->setDegreeGrantedStatus($educationsArray['education']['degreeGrantedStatus']) : $education->setDegreeGrantedStatus(null);
-            isset($educationsArray['education']['groupFormation']) ? $education->setGroupFormation($educationsArray['education']['groupFormation']) : $education->setGroupFormation(null);
-            isset($educationsArray['education']['teacherProfessionalism']) ? $education->setTeacherProfessionalism($educationsArray['education']['teacherProfessionalism']) : $education->setTeacherProfessionalism(null);
-            isset($educationsArray['education']['courseProfessionalism']) ? $education->setCourseProfessionalism($educationsArray['education']['courseProfessionalism']) : $education->setCourseProfessionalism(null);
-            isset($educationsArray['education']['providesCertificate']) ? $education->setProvidesCertificate((bool) $educationsArray['education']['providesCertificate']) : $education->setProvidesCertificate(null);
-            isset($educationsArray['education']['amountOfHours']) ? $education->setAmountOfHours($educationsArray['education']['amountOfHours']) : $education->setAmountOfHours(null);
-
-            $educationDetails->setEducation($education);
-        } else {
-            $educationDetails->setEducation(null);
-        }
+        isset($educationsArray['education']) ? $educationDetails->setEducation($this->createDTOEducation($educationsArray['education'])) : $educationDetails->setEducation(null);
 
         return $educationDetails;
+    }
 
-//        return [
-//            'lastFollowedEducation' => $lastEducation['iscedEducationLevelCode'] ?? null,
-//            'didGraduate' => isset($lastEducation['degreeGrantedStatus']) ? $lastEducation['degreeGrantedStatus'] == 'Granted' : null,
-//            'followingEducationRightNow' => $followingEducationYes ? 'YES' : ($followingEducationNo ? 'NO' : null),
-//            'followingEducationRightNowYesStartDate' => $followingEducationYes ? ($followingEducationYes['startDate'] ?? null) : null,
-//            'followingEducationRightNowYesEndDate' => $followingEducationYes ? ($followingEducationYes['endDate'] ?? null) : null,
-//            'followingEducationRightNowYesLevel' => $followingEducationYes ? ($followingEducationYes['iscedEducationLevelCode'] ?? null) : null,
-//            'followingEducationRightNowYesInstitute' => $followingEducationYes ? ($followingEducationYes['institution'] ?? null) : null,
-//            'followingEducationRightNowYesProvidesCertificate' => $followingEducationYes ? (isset($followingEducationYes['providesCertificate']) ? (bool)$followingEducationYes['providesCertificate'] : null) : null,
-//            'followingEducationRightNowNoEndDate' => $followingEducationNo ? ($followingEducationNo['endDate'] ?? null) : null,
-//            'followingEducationRightNowNoLevel' => $followingEducationNo ? ($followingEducationNo['iscedEducationLevelCode'] ?? null) : null,
-//            'followingEducationRightNowNoGotCertificate' => $followingEducationNo ? $followingEducationNo['degreeGrantedStatus'] == 'Granted' : null,
-//        ];
+    /**
+     * @param $education
+     *
+     * @throws \Exception
+     *
+     * @return \App\Entity\Education
+     */
+    public function createDTOEducation($education): Education
+    {
+        $educationDTO = new Education();
+        isset($education['name']) ? $educationDTO->setName($education['name']) : $educationDTO->setName(null);
+        isset($education['startDate']) ? $educationDTO->setStartDate(new \DateTime($education['startDate'])) : $educationDTO->setStartDate(null);
+        isset($education['endDate']) ? $educationDTO->setEnddate(new \DateTime($education['endDate'])) : $educationDTO->setEnddate(null);
+        isset($education['institution']) ? $educationDTO->setInstitution($education['institution']) : $educationDTO->setInstitution(null);
+        isset($education['iscedEducationLevelCode']) ? $educationDTO->setIscedEducationLevelCode($education['iscedEducationLevelCode']) : $educationDTO->setIscedEducationLevelCode(null);
+        isset($education['degreeGrantedStatus']) ? $educationDTO->setDegreeGrantedStatus($education['degreeGrantedStatus']) : $educationDTO->setDegreeGrantedStatus(null);
+        isset($education['groupFormation']) ? $educationDTO->setGroupFormation($education['groupFormation']) : $educationDTO->setGroupFormation(null);
+        isset($education['teacherProfessionalism']) ? $educationDTO->setTeacherProfessionalism($education['teacherProfessionalism']) : $educationDTO->setTeacherProfessionalism(null);
+        isset($education['courseProfessionalism']) ? $educationDTO->setCourseProfessionalism($education['courseProfessionalism']) : $educationDTO->setCourseProfessionalism(null);
+        isset($education['providesCertificate']) ? $educationDTO->setProvidesCertificate((bool) $education['providesCertificate']) : $educationDTO->setProvidesCertificate(null);
+        isset($education['amountOfHours']) ? $educationDTO->setAmountOfHours($education['amountOfHours']) : $educationDTO->setAmountOfHours(null);
+
+        return $educationDTO;
     }
 
     /**
@@ -1176,66 +1074,24 @@ class StudentService
      *
      * @param array $course Array with course data
      *
+     * @throws \Exception
+     *
      * @return StudentCourse Returns course details
      */
     private function handleCourseDetails(array $course): StudentCourse
     {
         $courseDetails = new StudentCourse();
         if (!isset($course['courseDetails'])) {
-            $education = new Education();
-            $education->setName(null);
-            $education->setStartDate(null);
-            $education->setEnddate(null);
-            $education->setGroupFormation(null);
-            $education->setInstitution(null);
-            $education->setDegreeGrantedStatus(null);
-            $education->setIscedEducationLevelCode(null);
-            $education->setTeacherProfessionalism(null);
-            $education->setCourseProfessionalism(null);
-            $education->setProvidesCertificate(null);
-            $education->setAmountOfHours(null);
-            $education->setGroupFormation(null);
-            $courseDetails->setCourse($education);
+            $courseDetails->setCourse($this->createDTOEducation([]));
             $courseDetails->setIsFollowingCourseRightNow(null);
 
             return $courseDetails;
         }
         $course = $course['courseDetails'];
         isset($course['isFollowingCourseRightNow']) ? $courseDetails->setIsFollowingCourseRightNow($course['isFollowingCourseRightNow']) : $courseDetails->setIsFollowingCourseRightNow(null);
-
-        if (isset($course['education'])) {
-            $newCourse = new Education();
-            $newCourse->setGroupFormation(null);
-            $newCourse->setTeacherProfessionalism(null);
-            $newCourse->setCourseProfessionalism(null);
-            $newCourse->setAmountOfHours(null);
-
-            isset($course['education']['name']) ? $newCourse->setName($course['education']['name']) : $newCourse->setName(null);
-            isset($course['education']['startDate']) ? $newCourse->setStartDate(new \DateTime($course['education']['startDate'])) : $newCourse->setStartDate(null);
-            isset($course['education']['endDate']) ? $newCourse->setEnddate(new \DateTime($course['education']['endDate'])) : $newCourse->setEnddate(null);
-            isset($course['education']['institution']) ? $newCourse->setInstitution($course['education']['institution']) : $newCourse->setInstitution(null);
-            isset($course['education']['iscedEducationLevelCode']) ? $newCourse->setIscedEducationLevelCode($course['education']['iscedEducationLevelCode']) : $newCourse->setIscedEducationLevelCode(null);
-            isset($course['education']['degreeGrantedStatus']) ? $newCourse->setDegreeGrantedStatus($course['education']['degreeGrantedStatus']) : $newCourse->setDegreeGrantedStatus(null);
-            isset($course['education']['groupFormation']) ? $newCourse->setGroupFormation($course['education']['groupFormation']) : $newCourse->setGroupFormation(null);
-            isset($course['education']['teacherProfessionalism']) ? $newCourse->setTeacherProfessionalism($course['education']['teacherProfessionalism']) : $newCourse->setTeacherProfessionalism(null);
-            isset($course['education']['courseProfessionalism']) ? $newCourse->setCourseProfessionalism($course['education']['courseProfessionalism']) : $newCourse->setCourseProfessionalism(null);
-            isset($course['education']['providesCertificate']) ? $newCourse->setProvidesCertificate((bool) $course['education']['providesCertificate']) : $newCourse->setProvidesCertificate(null);
-            isset($course['education']['amountOfHours']) ? $newCourse->setAmountOfHours($course['education']['amountOfHours']) : $newCourse->setAmountOfHours(null);
-
-            $courseDetails->setCourse($newCourse);
-        } else {
-            $courseDetails->setCourse(null);
-        }
+        isset($course['education']) ? $courseDetails->setCourse($this->createDTOEducation($course['education'])) : $courseDetails->setCourse(null);
 
         return $courseDetails;
-//        return [
-//            'isFollowingCourseRightNow' => isset($course),
-//            'courseName' => $course['name'] ?? null,
-//            'courseTeacher' => $course['teacherProfessionalism'] ?? null,
-//            'courseGroup' => $course['groupFormation'] ?? null,
-//            'amountOfHours' => $course['amountOfHours'] ?? null,
-//            'doesCourseProvideCertificate' => isset($course['providesCertificate']) ? (bool)$course['providesCertificate'] : null,
-//        ];
     }
 
     /**
@@ -2682,54 +2538,16 @@ class StudentService
         }
         $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $student['participant']['id']]);
 
-        if (isset($student['telephones'])) {
-            foreach ($student['telephones'] as $telephone) {
-                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
-            }
-        }
-        if (isset($student['emails'])) {
-            foreach ($student['emails'] as $email) {
-                $this->commonGroundService->deleteResource($email, $email['@id']);
-            }
-        }
-        if (isset($student['addresses'])) {
-            foreach ($student['addresses'] as $address) {
-                $this->commonGroundService->deleteResource($address, $address['@id']);
-            }
-        }
         if (isset($student['ownedContactLists'])) {
-            foreach ($student['ownedContactLists'] as $oCL) {
-                $this->commonGroundService->deleteResource($oCL, $address['@id']);
-                if (isset($oCL['people'])) {
-                    foreach ($oCL['people'] as $person) {
-                        $this->commonGroundService->deleteResource($person, $person['@id']);
-                    }
-                }
-            }
+            $this->deleteCCOwnedContactLists($student['ownedContactLists']);
         }
         if (isset($student['birthplace'])) {
             $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
         }
         if (isset($student['organization'])) {
-            if (isset($student['organization']['telephones'])) {
-                foreach ($student['organization']['telephones'] as $telephone) {
-                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
-                }
-            }
-            if (isset($student['organization']['emails'])) {
-                foreach ($student['organization']['emails'] as $email) {
-                    $this->commonGroundService->deleteResource($email, $email['@id']);
-                }
-            }
-            if (isset($student['organization']['addresses'])) {
-                foreach ($student['organization']['addresses'] as $address) {
-                    $this->commonGroundService->deleteResource($address, $address['@id']);
-                }
-            }
-            $this->commonGroundService->deleteResource($student['organization'], $student['organization']['@id']);
+            $this->deleteCCResource($student['organization']);
         }
-
-        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $student['person']['id']]);
+        $this->deleteCCResource($student);
 
         if (isset($student['employee']['educations'])) {
             foreach ($student['employee']['educations'] as $edu) {
@@ -2738,5 +2556,43 @@ class StudentService
         }
 
         $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $student['person']['id']]);
+    }
+
+    /**
+     * @param array $oCLArray
+     */
+    public function deleteCCOwnedContactLists(array $oCLArray)
+    {
+        foreach ($oCLArray as $oCL) {
+            $this->commonGroundService->deleteResource($oCL, $oCL['@id']);
+            if (isset($oCL['people'])) {
+                foreach ($oCL['people'] as $person) {
+                    $this->commonGroundService->deleteResource($person, $person['@id']);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $personOrOrg
+     */
+    public function deleteCCResource(array $personOrOrg)
+    {
+        if (isset($personOrOrg['telephones'])) {
+            foreach ($personOrOrg['telephones'] as $telephone) {
+                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+            }
+        }
+        if (isset($personOrOrg['emails'])) {
+            foreach ($personOrOrg['emails'] as $email) {
+                $this->commonGroundService->deleteResource($email, $email['@id']);
+            }
+        }
+        if (isset($personOrOrg['addresses'])) {
+            foreach ($personOrOrg['addresses'] as $address) {
+                $this->commonGroundService->deleteResource($address, $address['@id']);
+            }
+            $this->commonGroundService->deleteResource($personOrOrg, $personOrOrg['@id']);
+        }
     }
 }

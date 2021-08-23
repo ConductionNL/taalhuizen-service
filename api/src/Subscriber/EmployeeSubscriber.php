@@ -146,12 +146,25 @@ class EmployeeSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @param array $query
+     * @return Collection|Response
      * @throws Exception
      */
     private function getEmployees(array $query): Collection
     {
         if (isset($query['organizationId'])) {
             $query['organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $query['organizationId']]);
+            if (!$this->commonGroundService->isResource($query['organization'])) {
+                return new Response(
+                    json_encode([
+                        'message' => 'Organization does not exist!',
+                        'path'    => 'organizationId',
+                        'data'    => ['organizationId' => $query['organizationId']],
+                    ]),
+                    Response::HTTP_BAD_REQUEST,
+                    ['content-type' => 'application/json']
+                );
+            }
             unset($query['organizationId']);
         }
         return $this->mrcService->getEmployees($query);
