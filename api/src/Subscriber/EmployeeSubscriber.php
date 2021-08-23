@@ -4,11 +4,14 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Employee;
+use App\Exception\BadRequestPathException;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -23,6 +26,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
     private CommonGroundService $commonGroundService;
     private SerializerService $serializerService;
     private MrcService $mrcService;
+    private ErrorSerializerService $errorSerializerService;
 //    private ParticipationService $participationService;
 
     /**
@@ -37,6 +41,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
         $this->commonGroundService = $layerService->commonGroundService;
         $this->mrcService = $mrcService;
         $this->serializerService = new SerializerService($layerService->serializer);
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
 //        $this->participationService = new ParticipationService($mrcService, $layerService);
     }
 
@@ -61,21 +66,27 @@ class EmployeeSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_employees_post_collection':
-                $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->createEmployee($body);
-                break;
-            default:
+        try {
+            switch ($route) {
+                case 'api_employees_post_collection':
+                    $body = json_decode($event->getRequest()->getContent(), true);
+                    $response = $this->createEmployee($body);
+                    break;
+                default:
+                    return;
+                case 'api_employees_get_collection':
+                    $response = $this->getEmployees($event->getRequest()->query->all());
+                    break;
+            }
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+
                 return;
+            }
+            $this->serializerService->setResponse($response, $event);
+        } catch (BadRequestPathException $exception) {
+            $this->errorSerializerService->serialize($exception, $event);
         }
-
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
-        }
-        $this->serializerService->setResponse($response, $event);
     }
 
     /**
@@ -103,5 +114,19 @@ class EmployeeSubscriber implements EventSubscriberInterface
         }
 
         return $this->mrcService->createEmployee($body);
+    }
+
+    /**
+     * @param array $query
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getEmployees(array $query): Collection
+    {
+        if (!isset($query['languageHouseId']) || $this->commonGroundService->isResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $query['languageHouseId']]) == false)) {
+            throw new BadRequestPathException('Missing languageHouseId or languageHouse does not exist.', 'languageHouseId');
+        }
+
+        return $this->mrcService->getEmployees($query['languageHouseId']);
     }
 }
