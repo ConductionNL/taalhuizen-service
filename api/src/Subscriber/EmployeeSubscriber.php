@@ -32,7 +32,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
     /**
      * EmployeeSubscriber constructor.
      *
-     * @param MrcService $mrcService
+     * @param MrcService   $mrcService
      * @param LayerService $layerService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
@@ -92,9 +92,9 @@ class EmployeeSubscriber implements EventSubscriberInterface
     /**
      * @param array $body
      *
-     * @return Employee|Response
      * @throws Exception
      *
+     * @return Employee|Response
      */
     private function createEmployee(array $body)
     {
@@ -102,7 +102,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'The person of this employee must contain an email!',
-                    'path' => 'person.emails.email',
+                    'path'    => 'person.emails.email',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -118,6 +118,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
 
     /**
      * @param array $query
+     *
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getEmployees(array $query): Collection
