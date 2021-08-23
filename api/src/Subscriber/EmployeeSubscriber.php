@@ -150,7 +150,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
      * @return Collection|Response
      * @throws Exception
      */
-    private function getEmployees(array $query): Collection
+    private function getEmployees(array $query)
     {
         if (isset($query['organizationId'])) {
             $query['organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $query['organizationId']]);
