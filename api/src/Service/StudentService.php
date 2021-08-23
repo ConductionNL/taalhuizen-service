@@ -384,10 +384,10 @@ class StudentService
             throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
         }
         $array = [
-            'speakingLevel' => ['BEGINNER', 'REASONABLE', 'ADVANCED'],
+            'speakingLevel'     => ['BEGINNER', 'REASONABLE', 'ADVANCED'],
             'readingTestResult' => ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
             'writingTestResult' => ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'],
-            'status' => ['REFERRED', 'ACTIVE', 'COMPLETED'],
+            'status'            => ['REFERRED', 'ACTIVE', 'COMPLETED'],
         ];
         foreach ($array as $fieldName => $fieldValues) {
             if (isset($input[$fieldName]) && !in_array($input[$fieldName], $fieldValues)) {
@@ -2625,7 +2625,8 @@ class StudentService
     /**
      * @param array $oCLArray
      */
-    public function deleteCCOwnedContactLists (array $oCLArray) {
+    public function deleteCCOwnedContactLists(array $oCLArray)
+    {
         foreach ($oCLArray as $oCL) {
             $this->commonGroundService->deleteResource($oCL, $oCL['@id']);
             if (isset($oCL['people'])) {
@@ -2634,29 +2635,28 @@ class StudentService
                 }
             }
         }
-
     }
 
     /**
      * @param array $personOrOrg
      */
-    public function deleteCCResource (array $personOrOrg) {
-            if (isset($personOrOrg['telephones'])) {
-                foreach ($personOrOrg['telephones'] as $telephone) {
-                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
-                }
+    public function deleteCCResource(array $personOrOrg)
+    {
+        if (isset($personOrOrg['telephones'])) {
+            foreach ($personOrOrg['telephones'] as $telephone) {
+                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
             }
-            if (isset($personOrOrg['emails'])) {
-                foreach ($personOrOrg['emails'] as $email) {
-                    $this->commonGroundService->deleteResource($email, $email['@id']);
-                }
+        }
+        if (isset($personOrOrg['emails'])) {
+            foreach ($personOrOrg['emails'] as $email) {
+                $this->commonGroundService->deleteResource($email, $email['@id']);
             }
-            if (isset($personOrOrg['addresses'])) {
-                foreach ($personOrOrg['addresses'] as $address) {
-                    $this->commonGroundService->deleteResource($address, $address['@id']);
-                }
+        }
+        if (isset($personOrOrg['addresses'])) {
+            foreach ($personOrOrg['addresses'] as $address) {
+                $this->commonGroundService->deleteResource($address, $address['@id']);
+            }
             $this->commonGroundService->deleteResource($personOrOrg, $personOrOrg['@id']);
         }
-
     }
 }
