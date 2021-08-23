@@ -71,8 +71,9 @@ class ReportService
      *
      * @param Report $report The data to convert into a report
      *
-     * @return Report The resulting report
      * @throws Exception
+     *
+     * @return Report The resulting report
      */
     public function createVolunteersReport(Report $report): Report
     {
