@@ -2,22 +2,17 @@
 
 namespace App\Service;
 
-use App\Entity\LearningNeed;
 use App\Entity\LearningNeedOutCome;
-use App\Entity\Registration;
 use App\Entity\TestResult;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Exception\ClientException;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class NewTestResultsService
 {
-
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EntityManagerInterface $entityManager;
@@ -47,7 +42,6 @@ class NewTestResultsService
             $this->removeTestResultFromParticipation($result);
 
             $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
-
         } catch (\Throwable $e) {
             throw new BadRequestPathException('Invalid request, '.$id.' is not an existing eav/result!', 'test result');
         }
@@ -69,6 +63,7 @@ class NewTestResultsService
     public function updateTestResult(array $testResult, string $testResultId): ArrayCollection
     {
         $result = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $testResultId]);
+
         try {
             $testResult = $this->eavService->saveObject($testResult, ['entityName' => 'results', 'componentCode' => 'edu', 'self' => $result]);
         } catch (\Throwable $e) {
@@ -91,17 +86,17 @@ class NewTestResultsService
         $this->checkParticipationType($participation);
 
         $array = [
-            'participation' => $participation['@eav'],
-            'memo' => $testResult->getMemo() ?? null,
-            'examDate' => $testResult->getExamDate()->format('Y-m-d H:i:s'),
-            'usedExam' => $testResult->getUsedExam(),
-            'level' => $testResult->getLearningNeedOutCome()->getLevel(),
-            'levelOther' => $testResult->getLearningNeedOutCome()->getLevelOther() ?? null,
-            'application' => $testResult->getLearningNeedOutCome()->getApplication(),
+            'participation'    => $participation['@eav'],
+            'memo'             => $testResult->getMemo() ?? null,
+            'examDate'         => $testResult->getExamDate()->format('Y-m-d H:i:s'),
+            'usedExam'         => $testResult->getUsedExam(),
+            'level'            => $testResult->getLearningNeedOutCome()->getLevel(),
+            'levelOther'       => $testResult->getLearningNeedOutCome()->getLevelOther() ?? null,
+            'application'      => $testResult->getLearningNeedOutCome()->getApplication(),
             'applicationOther' => $testResult->getLearningNeedOutCome()->getApplicationOther() ?? null,
-            'topic' => $testResult->getLearningNeedOutCome()->getTopic(),
-            'topicOther' => $testResult->getLearningNeedOutCome()->getTopicOther() ?? null,
-            'goal' => $testResult->getLearningNeedOutCome()->getGoal(),
+            'topic'            => $testResult->getLearningNeedOutCome()->getTopic(),
+            'topicOther'       => $testResult->getLearningNeedOutCome()->getTopicOther() ?? null,
+            'goal'             => $testResult->getLearningNeedOutCome()->getGoal(),
         ];
 
         $arrays['testResult'] = $this->eavService->saveObject(array_filter($array), ['entityName' => 'results', 'componentCode' => 'edu']);
@@ -129,7 +124,7 @@ class NewTestResultsService
             array_push($updateParticipation['results'], $result['@eav']);
             $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'eavId' => $participation['id']]);
         }
-     }
+    }
 
     public function checkTestResult(TestResult $testResult): void
     {
@@ -144,7 +139,6 @@ class NewTestResultsService
         }
 
         $this->checkLearningNeedOutcome($testResult->getLearningNeedOutCome());
-
     }
 
     public function checkLearningNeedOutcome(LearningNeedOutCome $outcome): void
@@ -161,7 +155,5 @@ class NewTestResultsService
         if ($outcome->getLevel() == null) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'level');
         }
-
     }
-
 }
