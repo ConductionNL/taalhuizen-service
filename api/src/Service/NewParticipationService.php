@@ -56,9 +56,9 @@ class NewParticipationService
 
     public function updateParticipation(array $participation, string $participationId): ArrayCollection
     {
-        $learningNeed = $this->eavService->saveObject($participation, ['entityName' => 'participations', 'eavId' => $participationId]);
+        $participation = $this->eavService->saveObject($participation, ['entityName' => 'participations', 'eavId' => $participationId]);
 
-        return new ArrayCollection($learningNeed);
+        return new ArrayCollection($participation);
     }
 
     public function createParticipation(Participation $participation): Participation

@@ -41,10 +41,10 @@ class NewTestResultsService
     public function deleteTestResult($id): Response
     {
         try {
-//            $resultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
-//            $result = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $resultUrl]);
-//
-//            $this->removeTestResultFromParticipation($result);
+            $resultUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'results', 'id' => $id]);
+            $result = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $resultUrl]);
+
+            $this->removeTestResultFromParticipation($result);
 
             $this->eavService->deleteResource(null, ['component'=>'edu', 'type'=>'results', 'id'=>$id]);
 
@@ -59,10 +59,10 @@ class NewTestResultsService
     {
         if ($this->eavService->hasEavObject($testResult['participation'])) {
             $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $testResult['participation']]);
-            $participation['testResults'] = array_values(array_filter($participation['learningNeeds'], function ($participationTestResult) use ($testResult) {
+            $updateParticipation['results'] = array_values(array_filter($participation['results'], function ($participationTestResult) use ($testResult) {
                 return $participationTestResult != $testResult['@eav'];
             }));
-            $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $participation['id']]);
+            $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'eavId' => $participation['id']]);
         }
     }
 
