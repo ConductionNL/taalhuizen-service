@@ -7,6 +7,7 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -71,6 +72,7 @@ class ReportService
      * @param Report $report The data to convert into a report
      *
      * @return Report The resulting report
+     * @throws Exception
      */
     public function createVolunteersReport(Report $report): Report
     {
@@ -79,12 +81,12 @@ class ReportService
         $this->setDate($report);
 
         if ($report->getOrganizationId()) {
-            $organizationId = $report->getOrganizationId();
+            $query = ['organization' => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()])];
         } else {
-            $organizationId = null;
+            $query = [];
         }
 
-        $employees = $this->mrcService->getEmployees(null, $organizationId);
+        $employees = $this->mrcService->getEmployees($query);
 
         $report->setBase64(base64_encode($this->serializer->serialize($employees, 'csv', ['attributes' => ['givenName', 'additionalName', 'familyName', 'dateCreated', 'telephone', 'email']])));
         $report->setFilename("VolunteersReport-{$time->format('YmdHis')}.csv");
