@@ -384,26 +384,16 @@ class StudentService
         if (!isset($input['permissionDetails'])) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'permissionDetails');
         }
-        if (isset($input['speakingLevel']) && !in_array($input['speakingLevel'], ['BEGINNER', 'REASONABLE', 'ADVANCED'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'speakingLevel');
-        }
-        if (isset($input['readingTestResult']) && !in_array($input['readingTestResult'], ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'readingTestResult');
-        }
-        if (isset($input['writingTestResult']) && !in_array($input['writingTestResult'], ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'writingTestResult');
-        }
-        if (isset($input['status']) && !in_array($input['status'], ['REFERRED', 'ACTIVE', 'COMPLETED'])) {
-            throw new BadRequestPathException('Invalid option(s) given for some fields .', 'status');
-        }
-        if (isset($input['registrar'])) {
-            $this->checkPersonValues($input['registrar'], 'registrar');
-        }
-        if (isset($input['civicIntegrationDetails'])) {
-            $this->checkStudentCivicIntegrationValues($input['civicIntegrationDetails']);
-        }
-        if (isset($input['person'])) {
-            $this->checkPersonValues($input['person'], 'person');
+        $array = [
+            'speakingLevel' => ['BEGINNER', 'REASONABLE', 'ADVANCED'],
+            'readingTestResult' => ['CAN_NOT_READ', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+            'writingTestResult' => ['CAN_NOT_WRITE', 'WRITE_NAW_DETAILS', 'WRITE_SIMPLE_TEXTS', 'WRITE_SIMPLE_LETTERS'],
+            'status' => ['REFERRED', 'ACTIVE', 'COMPLETED'],
+        ];
+        foreach ($array as $fieldName => $fieldValues) {
+            if (isset($input[$fieldName]) && !in_array($input[$fieldName], $fieldValues)) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', $fieldName, [$fieldName => $input[$fieldName]]);
+            }
         }
         if (isset($input['generalDetails'])) {
             if (isset($input['generalDetails']['civicIntegrationRequirement']) && !in_array($input['generalDetails']['familyComposition'], ['MARRIED_PARTNER', 'SINGLE', 'DIVORCED'])) {
@@ -414,6 +404,15 @@ class StudentService
             if (isset($input['referrerDetails']['referringOrganization']) && !in_array($input['referrerDetails']['referringOrganization'], ['UWV', 'SOCIAL_SERVICE', 'LIBRARY', 'WELFARE_WORK', 'NEIGHBORHOOD_TEAM', 'VOLUNTEER_ORGANIZATION', 'LANGUAGE_PROVIDER', 'OTHER'])) {
                 throw new BadRequestPathException('Invalid option(s) given for some fields .', 'referrerDetails.referringOrganization');
             }
+        }
+        if (isset($input['registrar'])) {
+            $this->checkPersonValues($input['registrar'], 'registrar');
+        }
+        if (isset($input['civicIntegrationDetails'])) {
+            $this->checkStudentCivicIntegrationValues($input['civicIntegrationDetails']);
+        }
+        if (isset($input['person'])) {
+            $this->checkPersonValues($input['person'], 'person');
         }
         if (isset($input['backgroundDetails'])) {
             $this->checkStudentBackgroundValues($input['backgroundDetails']);
@@ -783,79 +782,6 @@ class StudentService
         }
 
         return $civicIntegDetails;
-    }
-
-    /**
-     * This function passes a persons details.
-     *
-     * @param array $person Array with persons data
-     *
-     * @return Person Returns an Person object with persons details
-     */
-    private function handlePersonDetails(array $person): Person
-    {
-        $personDetails = new Person();
-        isset($person['givenName']) ? $personDetails->setGivenName($person['givenName']) : $personDetails->setGivenName(null);
-        isset($person['additionalName']) ? $personDetails->setAdditionalName($person['additionalName']) : $personDetails->setAdditionalName(null);
-        isset($person['familyName']) ? $personDetails->setFamilyName($person['familyName']) : $personDetails->setFamilyName(null);
-        isset($person['gender']) ? $personDetails->setGender($person['gender']) : $personDetails->setGender(null);
-        isset($person['birthday']) ? $personDetails->setBirthday(new \DateTime($person['birthday'])) : $personDetails->setBirthday(null);
-        if (isset($person['addresses'])) {
-            $address = new Address();
-            isset($person['addresses'][0]['name']) ? $address->setName($person['addresses'][0]['name']) : $address->setName(null);
-            isset($person['addresses'][0]['street']) ? $address->setStreet($person['addresses'][0]['street']) : $address->setStreet(null);
-            isset($person['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
-            isset($person['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
-            isset($person['addresses'][0]['postalCode']) ? $address->setPostalCode($person['addresses'][0]['postalCode']) : $address->setPostalCode(null);
-            isset($person['addresses'][0]['locality']) ? $address->setLocality($person['addresses'][0]['locality']) : $address->setLocality(null);
-            $personDetails->setAddresses($address);
-        }
-        if (isset($person['emails'])) {
-            $email = new Email();
-            isset($person['emails'][0]['name']) ? $email->setName($person['emails'][0]['name']) : $email->setName(null);
-            isset($person['emails'][0]['email']) ? $email->setEmail($person['emails'][0]['email']) : $email->setEmail(null);
-            $personDetails->setEmails($email);
-        }
-        if (isset($person['telephones'])) {
-            foreach ($person['telephones'] as $tel) {
-                $newTel = new Telephone();
-                isset($tel['name']) ? $newTel->setName($tel['name']) : $newTel->setName(null);
-                isset($tel['telephone']) ? $newTel->setTelephone($tel['telephone']) : $newTel->setTelephone(null);
-                $personDetails->addTelephone($newTel);
-            }
-        }
-        if (isset($person['organization'])) {
-            $organization = new Organization();
-            isset($person['organization']['name']) ? $organization->setName($person['organization']['name']) : $organization->setName(null);
-            isset($person['organization']['type']) ? $organization->setType($person['organization']['type']) : $organization->setType(null);
-            if (isset($person['organization']['addresses'][0]['name'])) {
-                $address = new Address();
-                isset($person['organization']['addresses'][0]['name']) ? $address->setName($person['organization']['addresses'][0]['name']) : $address->setName(null);
-                isset($person['organization']['addresses'][0]['street']) ? $address->setStreet($person['organization']['addresses'][0]['street']) : $address->setStreet(null);
-                isset($person['organization']['addresses'][0]['houseNumber']) ? $address->setHouseNumber($person['organization']['addresses'][0]['houseNumber']) : $address->setHouseNumber(null);
-                isset($person['organization']['addresses'][0]['houseNumberSuffix']) ? $address->setHouseNumberSuffix($person['organization']['addresses'][0]['houseNumberSuffix']) : $address->setHouseNumberSuffix(null);
-                isset($person['organization']['addresses'][0]['postalCode']) ? $address->setPostalCode($person['organization']['addresses'][0]['postalCode']) : $address->setPostalCode(null);
-                isset($person['organization']['addresses'][0]['locality']) ? $address->setLocality($person['organization']['addresses'][0]['locality']) : $address->setLocality(null);
-                $organization->setAddresses($address);
-            }
-            if (isset($person['organization']['emails'])) {
-                $email = new Email();
-                isset($person['organization']['emails'][0]['name']) ? $email->setName($person['organization']['emails'][0]['name']) : $email->setName(null);
-                isset($person['organization']['emails'][0]['email']) ? $email->setEmail($person['organization']['emails'][0]['email']) : $email->setEmail(null);
-                $organization->setEmails($email);
-            }
-            if (isset($person['organization']['telephones'])) {
-                $tel = new Telephone();
-                isset($person['organization']['telephones'][0]['name']) ? $tel->setName($person['organization']['telephones'][0]['name']) : $tel->setName(null);
-                isset($person['organization']['telephones'][0]['telephone']) ? $tel->setTelephone($person['organization']['telephones'][0]['telephone']) : $tel->setTelephone(null);
-                $organization->setTelephones($tel);
-            }
-            $personDetails->setOrganization($organization);
-        }
-        isset($person['contactPreference']) ? $personDetails->setContactPreference($person['contactPreference']) : $personDetails->setContactPreference(null);
-        isset($person['contactPreferenceOther']) ? $personDetails->setContactPreferenceOther($person['contactPreferenceOther']) : $personDetails->setContactPreferenceOther(null);
-
-        return $personDetails;
     }
 
     private function handlePerson(array $input): Person
@@ -2668,54 +2594,16 @@ class StudentService
         }
         $this->eavService->deleteResource(null, ['component' => 'edu', 'type' => 'participants', 'id' => $student['participant']['id']]);
 
-        if (isset($student['telephones'])) {
-            foreach ($student['telephones'] as $telephone) {
-                $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
-            }
-        }
-        if (isset($student['emails'])) {
-            foreach ($student['emails'] as $email) {
-                $this->commonGroundService->deleteResource($email, $email['@id']);
-            }
-        }
-        if (isset($student['addresses'])) {
-            foreach ($student['addresses'] as $address) {
-                $this->commonGroundService->deleteResource($address, $address['@id']);
-            }
-        }
         if (isset($student['ownedContactLists'])) {
-            foreach ($student['ownedContactLists'] as $oCL) {
-                $this->commonGroundService->deleteResource($oCL, $address['@id']);
-                if (isset($oCL['people'])) {
-                    foreach ($oCL['people'] as $person) {
-                        $this->commonGroundService->deleteResource($person, $person['@id']);
-                    }
-                }
-            }
+            $this->deleteCCOwnedContactLists($student['ownedContactLists']);
         }
         if (isset($student['birthplace'])) {
             $this->commonGroundService->deleteResource($student['birthplace'], $student['birthplace']['@id']);
         }
         if (isset($student['organization'])) {
-            if (isset($student['organization']['telephones'])) {
-                foreach ($student['organization']['telephones'] as $telephone) {
-                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
-                }
-            }
-            if (isset($student['organization']['emails'])) {
-                foreach ($student['organization']['emails'] as $email) {
-                    $this->commonGroundService->deleteResource($email, $email['@id']);
-                }
-            }
-            if (isset($student['organization']['addresses'])) {
-                foreach ($student['organization']['addresses'] as $address) {
-                    $this->commonGroundService->deleteResource($address, $address['@id']);
-                }
-            }
-            $this->commonGroundService->deleteResource($student['organization'], $student['organization']['@id']);
+            $this->deleteCCResource($student['organization']);
         }
-
-        $this->eavService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $student['person']['id']]);
+        $this->deleteCCResource($student);
 
         if (isset($student['employee']['educations'])) {
             foreach ($student['employee']['educations'] as $edu) {
@@ -2724,5 +2612,43 @@ class StudentService
         }
 
         $this->eavService->deleteResource(null, ['component' => 'mrc', 'type' => 'employees', 'id' => $student['person']['id']]);
+    }
+
+    /**
+     * @param array $oCLArray
+     */
+    public function deleteCCOwnedContactLists (array $oCLArray) {
+        foreach ($oCLArray as $oCL) {
+            $this->commonGroundService->deleteResource($oCL, $oCL['@id']);
+            if (isset($oCL['people'])) {
+                foreach ($oCL['people'] as $person) {
+                    $this->commonGroundService->deleteResource($person, $person['@id']);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * @param array $personOrOrg
+     */
+    public function deleteCCResource (array $personOrOrg) {
+            if (isset($personOrOrg['telephones'])) {
+                foreach ($personOrOrg['telephones'] as $telephone) {
+                    $this->commonGroundService->deleteResource($telephone, $telephone['@id']);
+                }
+            }
+            if (isset($personOrOrg['emails'])) {
+                foreach ($personOrOrg['emails'] as $email) {
+                    $this->commonGroundService->deleteResource($email, $email['@id']);
+                }
+            }
+            if (isset($personOrOrg['addresses'])) {
+                foreach ($personOrOrg['addresses'] as $address) {
+                    $this->commonGroundService->deleteResource($address, $address['@id']);
+                }
+            $this->commonGroundService->deleteResource($personOrOrg, $personOrOrg['@id']);
+        }
+
     }
 }
