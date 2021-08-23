@@ -850,9 +850,9 @@ class MrcService
      *
      * @return array The resulting contact
      */
-    public function getContact(string $userId, array $employeeArray, ?Employee $employee = null): array
+    public function getContact(string $userId, array $employeeArray): array
     {
-        return $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray, $employee) : $this->ccService->createPersonForEmployee($employeeArray);
+        return $userId ? $this->ucService->updateUserContactForEmployee($userId, $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
     }
 
     /**
@@ -894,11 +894,7 @@ class MrcService
      */
     public function setContact(array $employeeArray)
     {
-        if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
-            return $this->commonGroundService->getResource($employeeArray['person']);
-        } else {
-            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
-        }
+        return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
     }
 
     /**
@@ -1005,7 +1001,7 @@ class MrcService
         }
 
         if (isset($userId)) {
-            $contact = $this->getContact($userId, $employeeArray, $employee);
+            $contact = $this->getContact($userId, $employeeArray);
             $this->saveUser($employeeArray, $contact, $userId);
         }
 
