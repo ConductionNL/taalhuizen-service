@@ -10680,6 +10680,75 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  '/registrations/{id}/permission_details':
+    get:
+      operationId: api_registrations_permission_details_get_subresourceRegistrationSubresource
+      tags:
+        - StudentPermission
+        - Registration
+      responses:
+        200:
+          description: 'Registration resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/json+ld:
+              schema:
+                $ref: '#/components/schemas/StudentPermission.jsonld-read'
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+hal:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+vnd.api:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/health+json:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/json+health:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/x-yaml:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+            application/graphql:
+              schema:
+                $ref: '#/components/schemas/StudentPermission-read'
+      summary: 'Retrieves a Registration resource.'
+      description: 'Retrieves a Registration resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Registration identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   '/registrations/{id}/registrar':
     get:
       operationId: api_registrations_registrar_get_subresourceRegistrationSubresource
@@ -27001,14 +27070,22 @@ components:
           enum:
             - Pending
             - Accepted
+            - Rejected
           example: Pending
           description: 'The Status of this registration.'
           default: Pending
           nullable: true
+        permissionDetails:
+          description: 'The StudentPermission of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission-read'
       required:
         - languageHouseId
         - student
         - registrar
+        - permissionDetails
     Registration-write:
       type: object
       description: 'All properties that the DTO entity Registration holds.'
@@ -27016,6 +27093,7 @@ components:
         - languageHouseId
         - student
         - registrar
+        - permissionDetails
       properties:
         languageHouseId:
           type: string
@@ -27043,10 +27121,17 @@ components:
           enum:
             - Pending
             - Accepted
+            - Rejected
           example: Pending
           description: 'The Status of this registration.'
           default: Pending
           nullable: true
+        permissionDetails:
+          description: 'The StudentPermission of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission-write'
     Registration.jsonld-read:
       type: object
       description: 'All properties that the DTO entity Registration holds.'
@@ -27105,14 +27190,22 @@ components:
           enum:
             - Pending
             - Accepted
+            - Rejected
           example: Pending
           description: 'The Status of this registration.'
           default: Pending
           nullable: true
+        permissionDetails:
+          description: 'The StudentPermission of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission.jsonld-read'
       required:
         - languageHouseId
         - student
         - registrar
+        - permissionDetails
     Registration.jsonld-write:
       type: object
       description: 'All properties that the DTO entity Registration holds.'
@@ -27120,6 +27213,7 @@ components:
         - languageHouseId
         - student
         - registrar
+        - permissionDetails
       properties:
         '@context':
           readOnly: true
@@ -27170,10 +27264,17 @@ components:
           enum:
             - Pending
             - Accepted
+            - Rejected
           example: Pending
           description: 'The Status of this registration.'
           default: Pending
           nullable: true
+        permissionDetails:
+          description: 'The StudentPermission of this Student.'
+          nullable: true
+          anyOf:
+            -
+              $ref: '#/components/schemas/StudentPermission.jsonld-write'
     Report-read:
       type: object
       description: 'All properties that the DTO entity Report holds.'
@@ -30369,7 +30470,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30408,7 +30509,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30465,7 +30566,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string
@@ -30527,7 +30628,7 @@ components:
           description: 'The date of the exam that this TestResult is a result of.'
           type: string
           format: date-time
-        examMemo:
+        memo:
           example: 'This test was very hard!'
           description: 'A memo/note for this TestResult.'
           type: string

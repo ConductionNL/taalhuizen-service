@@ -7,11 +7,13 @@ use App\Entity\Email;
 use App\Entity\Employee;
 use App\Entity\Organization;
 use App\Entity\Person;
+use App\Entity\StudentPermission;
 use App\Entity\Telephone;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use function GuzzleHttp\json_decode;
 use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +51,7 @@ class CCService
      */
     public function cleanResource(array $array): array
     {
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $array[$key] = $this->cleanResource($value);
             } elseif (!is_bool($value) and !$value) {
@@ -79,6 +81,26 @@ class CCService
         $this->entityManager->persist($organization);
 
         return $organization;
+    }
+
+    public function createStudentPermissionsObject(array $result): ?StudentPermission
+    {
+        if (
+            isset($result['didSignPermissionForm']) &&
+            isset($result['hasPermissionToShareDataWithAanbieders']) &&
+            isset($result['hasPermissionToShareDataWithLibraries']) &&
+            isset($result['hasPermissionToSendInformationAboutLibraries'])
+        ) {
+            $permissions = new StudentPermission();
+            $permissions->setHasPermissionToShareDataWithProviders($result['hasPermissionToShareDataWithAanbieders']);
+            $permissions->setHasPermissionToShareDataWithLibraries($result['hasPermissionToShareDataWithLibraries']);
+            $permissions->setHasPermissionToSendInformationAboutLibraries($result['hasPermissionToSendInformationAboutLibraries']);
+            $permissions->setDidSignPermissionForm($result['didSignPermissionForm']);
+
+            return $permissions;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -181,25 +203,32 @@ class CCService
     /**
      * Fetches organizations from the contact catalogue and returns an collection of organizations.
      *
-     * @param string $type The type of organization to fetch
+     * @param string|null $type The type of organization to fetch
      *
      * @return ArrayCollection a collection of all organizations of the provided type
      */
-    public function getOrganizations(string $type): ArrayCollection
+    public function getOrganizations(array $query = []): ArrayCollection
     {
         $organizations = new ArrayCollection();
 
-        if ($type == 'Taalhuis') {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Taalhuis'])['hydra:member'];
-        } else {
-            $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], ['type' => 'Aanbieder'])['hydra:member'];
+        $results = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations'], $query);
+
+        foreach ($results['hydra:member'] as $result) {
+            $organizations->add($this->createOrganizationObject($result));
         }
 
-        foreach ($results as $result) {
-            $organizations->add($this->createOrganizationObject($result, $type));
+        $result = [
+            '@context'          => '/contexts/Organization',
+            '@id'               => '/organizations',
+            '@type'             => 'hydra:Collection',
+            'hydra:member'      => $organizations,
+            'hydra:totalItems'  => $results['hydra:totalItems'] ?? count($results),
+        ];
+        if (key_exists('hydra:view', $results)) {
+            $result['hydra:view'] = $results['hydra:view'];
         }
 
-        return $organizations;
+        return new ArrayCollection($result);
     }
 
     /**
@@ -307,29 +336,64 @@ class CCService
     }
 
     /**
+     * @param string $id
+     *
+     * @return array|false|mixed|string|Response|null
+     */
+    public function checkIfOrganizationExists(string $id)
+    {
+        $organizationUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
+        if (!$this->commonGroundService->isResource($organizationUrl)) {
+            return new Response(
+                json_encode([
+                    'message' => 'This organization does not exist!',
+                    'path'    => '',
+                    'data'    => ['organization' => $organizationUrl],
+                ]),
+                Response::HTTP_NOT_FOUND,
+                ['content-type' => 'application/json']
+            );
+        }
+
+        return $this->commonGroundService->getResource($organizationUrl);
+    }
+
+    /**
      * Deletes an organization.
      *
-     * @param string $id        The id of the organization to delete
-     * @param string $programId The program related to the organization
+     * @param string      $id        The id of the organization to delete
+     * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
      */
-    public function deleteOrganization(string $id, string $programId): bool
+    public function deleteOrganization(string $id, ?string $programId): bool
     {
-        $ccOrganization = $this->commonGroundService->getResource(['component'=>'cc', 'type' => 'organizations', 'id' => $id]);
+        $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         //delete program
-        $this->commonGroundService->deleteResource(null, ['component'=>'edu', 'type' => 'programs', 'id' => $programId]);
+        if ($programId !== null) {
+            $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
+        }
         //delete organizations
         $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
         $wrcOrganizationId = end($wrcOrganizationId);
-        $this->commonGroundService->deleteResource(null, ['component'=>'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'telephones', 'id' => $ccOrganization['telephones'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'emails', 'id' => $ccOrganization['emails'][0]['id']]);
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'addresses', 'id' => $ccOrganization['addresses'][0]['id']]);
-        foreach ($ccOrganization['persons'] as $person) {
-            $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'people', 'id' => $person['id']]);
+        $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
+
+        foreach ($ccOrganization['telephones'] as $telephone) {
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
         }
-        $this->commonGroundService->deleteResource(null, ['component'=>'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
+
+        foreach ($ccOrganization['emails'] as $email) {
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'emails', 'id' => $email['id']]);
+        }
+
+        foreach ($ccOrganization['addresses'] as $address) {
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'addresses', 'id' => $address['id']]);
+        }
+
+        foreach ($ccOrganization['persons'] as $person) {
+            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
+        }
+        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
 
         return true;
     }
@@ -358,7 +422,7 @@ class CCService
      *
      * @param array $employee The employee object that was given as input
      *
-     *@throws Exception Thrown if givenName is not provided
+     * @throws Exception Thrown if givenName is not provided
      *
      * @return array The resulting person array
      */
@@ -406,19 +470,43 @@ class CCService
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc']);
     }
 
+    public function cleanPermissions(array $permissions): array
+    {
+        foreach ($permissions as $key => $value) {
+            if ($key == 'hasPermissionToShareDataWithProviders') {
+                $permissions['hasPermissionToShareDataWithAanbieders'] = $value;
+                unset($permissions[$key]);
+            }
+        }
+
+        return $permissions;
+    }
+
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param array $person The person array to provide to the contact catalogue
+     * @param Person                 $person      The person array to provide to the contact catalogue
+     * @param StudentPermission|null $permissions
      *
      * @throws Exception
      *
      * @return array The result from the contact catalogue and EAV
      */
-    public function createPerson(Person $person): array
+    public function createPerson(Person $person, ?StudentPermission $permissions = null): array
     {
         $this->entityManager->persist($person);
         $personArray = json_decode($this->serializer->serialize($person, 'json', ['ignored_attributes' => ['id']]), true);
+        $permissionsArray = $permissions ? $this->cleanPermissions(json_decode($this->serializer->serialize($permissions, 'json', ['ignored_attributes' => ['id']]), true)) : [];
+        $personArray = array_merge($personArray, $permissionsArray);
+        $personArray = $this->cleanPerson($personArray);
+
+        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
+        // This will not trigger notifications in nrc:
+//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+    }
+
+    public function cleanPerson(array $personArray): array
+    {
         foreach ($personArray as $key => $value) {
             if ($key == 'organization' && $value) {
                 $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
@@ -426,14 +514,12 @@ class CCService
             if ($key == 'emails') {
                 $personArray[$key] = [$personArray[$key]];
             }
-            if (!$value) {
+            if ($value !== false && !$value) {
                 unset($personArray[$key]);
             }
         }
 
-        return $this->eavService->saveObject($personArray, ['entityName' => 'people', 'componentCode' => 'cc']);
-        // This will not trigger notifications in nrc:
-//        return $this->commonGroundService->createResource($person, ['component' => 'cc', 'type' => 'people']);
+        return $personArray;
     }
 
     /**
@@ -449,6 +535,7 @@ class CCService
     public function updatePerson(string $id, array $person): array
     {
         $personUrl = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $id]);
+        $person = $this->cleanPerson($person);
 
         return $this->eavService->saveObject($person, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);
         // This will not trigger notifications in nrc:
@@ -468,6 +555,18 @@ class CCService
     public function saveEavPerson(array $body, $personUrl = null): array
     {
         // Save the cc/people in EAV
+
+        // unset org, emails, telephones etc (cant save subobjects)
+        unset($body['availability']);
+//        if (isset($body['organization'])) {
+//            foreach ($body['organization'] as $key => $prop) {
+//                var_dump($key);
+//                var_dump(!is_int($key));
+//                if (!is_int($key)) {
+//                    unset($body['organization'][$key]);
+//                }
+//            }
+//        }
         if (isset($personUrl)) {
             // Update
             $person = $this->eavService->saveObject($body, ['entityName' => 'people', 'componentCode' => 'cc', 'self' => $personUrl]);

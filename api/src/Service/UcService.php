@@ -721,9 +721,9 @@ class UcService
      */
     public function createUserRoleObject(array $userRoleArray, string $type)
     {
-        if ($type == 'Taalhuis') {
+        if ($type == 'LanguageHouse') {
             $organization = new LanguageHouse();
-        } else {
+        } elseif ($type == 'Provider') {
             $organization = new Provider();
         }
 
