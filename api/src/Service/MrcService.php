@@ -926,17 +926,19 @@ class MrcService
         $this->saveEmployeeProperties($employeeArray, $result);
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
+
         return $result;
     }
 
-
     /**
-     * @param array $employeeArray
-     * @param array $result
+     * @param array     $employeeArray
+     * @param array     $result
      * @param bool|null $saveEducationsFromStudent
+     *
      * @throws \Exception
      */
-    public function saveEmployeeProperties (array $employeeArray, array $result, bool $saveEducationsFromStudent = null) {
+    public function saveEmployeeProperties(array $employeeArray, array $result, bool $saveEducationsFromStudent = null)
+    {
         if (key_exists('targetGroupPreferences', $employeeArray)) {
             $this->createCompetences($employeeArray, $result['id'], $result);
         }
