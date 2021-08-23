@@ -114,7 +114,7 @@ class StudentSubscriber implements EventSubscriberInterface
         }
         $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body);
         if ($uniqueEmail instanceof Response) {
-            throw new BadRequestPathException('This email is already used.', 'person.emails.email');
+            return $uniqueEmail;
         }
 
         return $this->studentService->createStudent($body);
