@@ -915,21 +915,29 @@ class MrcService
      */
     public function createEmployeeArray(array $employeeArray, bool $saveEducationsFromStudent = false): array
     {
-        //set contact
         $contact = $this->setContact($employeeArray);
         if (str_contains($contact['organization']['@id'], $this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_communications']))) {
             $contact['organization']['@id'] = str_replace($this->commonGroundService->cleanUrl(['component' => 'eav', 'type' => 'object_communications']), '', $contact['organization']['@id']);
         }
         $this->availabilityService->saveAvailabilityMemo(['description' => $employeeArray['availabilityNotes'] ?? null, 'topic' => $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'people', 'id' => $contact['id']])]);
-
         $this->saveUser($employeeArray, $contact);
-
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
-
         $resource = $this->ccService->cleanResource($resource);
-
         $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
+        $this->saveEmployeeProperties($employeeArray, $result);
+        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
+        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
+        return $result;
+    }
 
+
+    /**
+     * @param array $employeeArray
+     * @param array $result
+     * @param bool|null $saveEducationsFromStudent
+     * @throws \Exception
+     */
+    public function saveEmployeeProperties (array $employeeArray, array $result, bool $saveEducationsFromStudent = null) {
         if (key_exists('targetGroupPreferences', $employeeArray)) {
             $this->createCompetences($employeeArray, $result['id'], $result);
         }
@@ -941,16 +949,6 @@ class MrcService
         } elseif ($saveEducationsFromStudent == true) {
             $this->createEducationsFromStudent($employeeArray['educations'], $result['id']);
         }
-
-        // Saves lastEducation, followingEducation and course for student as employee
-//        if (key_exists('educations', $employeeArray)) {
-        //TODO: needs a redo with the new student Education DTO subresources, maybe merge with the code for employee educations above^?
-//            $this->saveEmployeeEducations($employeeArray['educations'], $result['id']);
-//        }
-        $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
-        $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
-
-        return $result;
     }
 
     /**
