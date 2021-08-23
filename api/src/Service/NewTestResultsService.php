@@ -16,12 +16,14 @@ class NewTestResultsService
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
     private EntityManagerInterface $entityManager;
+    private NewLearningNeedService $learningNeedService;
 
     public function __construct(LayerService $layerService)
     {
         $this->commonGroundService = $layerService->commonGroundService;
         $this->eavService = new EAVService($this->commonGroundService);
         $this->entityManager = $layerService->entityManager;
+        $this->learningNeedService = new NewLearningNeedService($layerService);
     }
 
     public function persistTestResult(TestResult $testResult, array $arrays): TestResult
@@ -138,22 +140,7 @@ class NewTestResultsService
             throw new BadRequestPathException('Some required fields have not been submitted.', 'participation id');
         }
 
-        $this->checkLearningNeedOutcome($testResult->getLearningNeedOutCome());
+        $this->learningNeedService->checkLearningNeedOutcome($testResult->getLearningNeedOutCome());
     }
 
-    public function checkLearningNeedOutcome(LearningNeedOutCome $outcome): void
-    {
-        if ($outcome->getGoal() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'goal');
-        }
-        if ($outcome->getTopic() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'topic');
-        }
-        if ($outcome->getApplication() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'application');
-        }
-        if ($outcome->getLevel() == null) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'level');
-        }
-    }
 }
