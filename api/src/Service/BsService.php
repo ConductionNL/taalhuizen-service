@@ -37,7 +37,7 @@ class BsService
             'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $email,
             'status'   => 'queued',
-            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'service'  => '/services/088f7b63-1693-4f27-9911-dadcb83ae5db',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -58,7 +58,7 @@ class BsService
             'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $username,
             'status'   => 'queued',
-            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'service'  => '/services/088f7b63-1693-4f27-9911-dadcb83ae5db',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
@@ -91,7 +91,7 @@ class BsService
             'sender'   => 'info@taalhuizen-bisc.commonground.nu',
             'reciever' => $email,
             'status'   => 'queued',
-            'service'  => '/services/30a1ccce-6ed5-4647-af04-d319b292e232',
+            'service'  => '/services/088f7b63-1693-4f27-9911-dadcb83ae5db',
         ];
 
         $this->commonGroundService->createResource($message, ['component' => 'bs', 'type' => 'messages']);
