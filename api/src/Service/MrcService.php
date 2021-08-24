@@ -923,7 +923,7 @@ class MrcService
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
         $resource = $this->ccService->cleanResource($resource);
         $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
-        $this->saveEmployeeProperties($employeeArray, $result);
+        $this->saveEmployeeProperties($employeeArray, $result, $saveEducationsFromStudent);
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
 
