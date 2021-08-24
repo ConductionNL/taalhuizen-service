@@ -508,10 +508,10 @@ class CCService
     public function cleanPerson(array $personArray): array
     {
         foreach ($personArray as $key => $value) {
-            if ($key == 'organization' && $value) {
+            if ($key == 'organization' && $value && is_array($value)) {
                 $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
             }
-            if ($key == 'emails') {
+            if ($key == 'emails' && !isset($personArray['emails'][0]['email'])) { //do not remove this isset!
                 $personArray[$key] = [$personArray[$key]];
             }
             if ($value !== false && !$value) {
