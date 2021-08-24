@@ -9,6 +9,7 @@ use App\Service\MrcService;
 use App\Service\ParticipationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use function GuzzleHttp\json_decode;
@@ -66,6 +67,13 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 $body = json_decode($event->getRequest()->getContent(), true);
                 $response = $this->createEmployee($body);
                 break;
+            case 'api_employees_get_collection':
+                $response = $this->getEmployees($event->getRequest()->query->all());
+                break;
+            case 'api_employees_put_item':
+                $body = json_decode($event->getRequest()->getContent(), true);
+                $response = $this->updateEmployee($body, $event->getRequest()->attributes->get('id'));
+                break;
             default:
                 return;
         }
@@ -103,5 +111,65 @@ class EmployeeSubscriber implements EventSubscriberInterface
         }
 
         return $this->mrcService->createEmployee($body);
+    }
+
+    /**
+     * @param array  $body
+     * @param string $id
+     *
+     * @throws Exception
+     *
+     * @return Employee|Response
+     */
+    private function updateEmployee(array $body, string $id)
+    {
+        $employeeExists = $this->mrcService->checkIfEmployeeExists($id);
+        if ($employeeExists instanceof Response) {
+            return $employeeExists;
+        }
+        if (!isset($body['userId'])) {
+            return new Response(
+                json_encode([
+                    'message' => 'Please give the userId of the employee you want to update!',
+                    'path'    => 'userId',
+                ]),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'application/json']
+            );
+        }
+        $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body, $body['userId']);
+        if ($uniqueEmail instanceof Response) {
+            return $uniqueEmail;
+        }
+
+        return $this->mrcService->updateEmployee($id, $body);
+    }
+
+    /**
+     * @param array $query
+     *
+     * @throws Exception
+     *
+     * @return Collection|Response
+     */
+    private function getEmployees(array $query)
+    {
+        if (isset($query['organizationId'])) {
+            $query['organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $query['organizationId']]);
+            if (!$this->commonGroundService->isResource($query['organization'])) {
+                return new Response(
+                    json_encode([
+                        'message' => 'Organization does not exist!',
+                        'path'    => 'organizationId',
+                        'data'    => ['organization' => $query['organization']],
+                    ]),
+                    Response::HTTP_BAD_REQUEST,
+                    ['content-type' => 'application/json']
+                );
+            }
+            unset($query['organizationId']);
+        }
+
+        return $this->mrcService->getEmployees($query);
     }
 }

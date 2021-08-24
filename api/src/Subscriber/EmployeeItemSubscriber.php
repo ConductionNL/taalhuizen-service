@@ -10,7 +10,6 @@ use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -68,10 +67,6 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
             case 'api_employees_delete_item':
                 $response = $this->deleteEmployee($id);
                 break;
-            case 'api_employees_put_item':
-                $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->updateEmployee($body, $id);
-                break;
             default:
                 return;
         }
@@ -93,7 +88,7 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
      */
     private function getEmployee(string $id)
     {
-        $employeeExists = $this->checkIfEmployeeExists($id);
+        $employeeExists = $this->mrcService->checkIfEmployeeExists($id);
         if ($employeeExists instanceof Response) {
             return $employeeExists;
         }
@@ -110,7 +105,7 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
      */
     private function deleteEmployee(string $id): Response
     {
-        $employeeExists = $this->checkIfEmployeeExists($id);
+        $employeeExists = $this->mrcService->checkIfEmployeeExists($id);
         if ($employeeExists instanceof Response) {
             return $employeeExists;
         }
@@ -130,60 +125,5 @@ class EmployeeItemSubscriber implements EventSubscriberInterface
                 ['content-type' => 'application/json']
             );
         }
-    }
-
-    /**
-     * @param array  $body
-     * @param string $id
-     *
-     * @throws Exception
-     *
-     * @return Employee|Response
-     */
-    private function updateEmployee(array $body, string $id)
-    {
-        $employeeExists = $this->checkIfEmployeeExists($id);
-        if ($employeeExists instanceof Response) {
-            return $employeeExists;
-        }
-        if (!isset($body['userId'])) {
-            return new Response(
-                json_encode([
-                    'message' => 'Please give the userId of the employee you want to update!',
-                    'path'    => 'userId',
-                ]),
-                Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'application/json']
-            );
-        }
-        $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body, $body['userId']);
-        if ($uniqueEmail instanceof Response) {
-            return $uniqueEmail;
-        }
-
-        return $this->mrcService->updateEmployee($id, $body);
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return Response|null
-     */
-    private function checkIfEmployeeExists(string $id): ?Response
-    {
-        $employeeUrl = $this->commonGroundService->cleanUrl(['component' => 'mrc', 'type' => 'employees', 'id' => $id]);
-        if (!$this->commonGroundService->isResource($employeeUrl)) {
-            return new Response(
-                json_encode([
-                    'message' => 'This employee does not exist!',
-                    'path'    => '',
-                    'data'    => ['employee' => $employeeUrl],
-                ]),
-                Response::HTTP_NOT_FOUND,
-                ['content-type' => 'application/json']
-            );
-        }
-
-        return null;
     }
 }
