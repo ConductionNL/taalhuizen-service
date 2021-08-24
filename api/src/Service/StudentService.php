@@ -586,29 +586,14 @@ class StudentService
 //        if (isset($student['participant']['dateCreated'])) {
 //            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
 //        } //todo: this is currently incorrect, timezone problem
-        if (isset($student['participant']['status'])) {
-            $resource->setStatus($student['participant']['status']);
-        }
+        $resource->setStatus($student['participant']['status'] ?? null);
 //        if (isset($student['registrar']['registrarMemo']['description'])) {
 //            $resource->setMemo($student['registrar']['registrarMemo']['description']);
 //        }
-        if (isset($student['employee']['speakingLevel'])) {
-            $resource->setSpeakingLevel($student['employee']['speakingLevel']);
-        } else {
-            $resource->setSpeakingLevel(null);
-        }
-        if (isset($student['participant']['readingTestResult'])) {
-            $resource->setReadingTestResult($student['participant']['readingTestResult']);
-        } else {
-            $resource->setReadingTestResult(null);
-        }
-        if (isset($student['participant']['writingTestResult'])) {
-            $resource->setWritingTestResult($student['participant']['writingTestResult']);
-        } else {
-            $resource->setWritingTestResult(null);
-        }
-
-        $resource->setLanguageHouseId($student['person']['organization']['id']);
+        $resource->setSpeakingLevel($student['employee']['speakingLevel'] ?? null);
+        $resource->setReadingTestResult($student['participant']['readingTestResult'] ?? null);
+        $resource->setWritingTestResult($student['participant']['writingTestResult'] ?? null);
+        $resource->setLanguageHouseId($student['person']['organization']['id'] ?? null);
 
         $this->entityManager->persist($resource);
         if (isset($student['participant']['id'])) {
