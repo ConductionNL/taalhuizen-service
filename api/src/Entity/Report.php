@@ -84,7 +84,7 @@ class Report
      *     }
      * )
      */
-    private ?string $organizationId;
+    private ?string $organizationId = null;
 
     /**
      * @var string|null A date from which you want data in the report.

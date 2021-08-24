@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use function GuzzleHttp\json_decode;
 
 class ReportSubscriber implements EventSubscriberInterface
 {
@@ -65,7 +66,6 @@ class ReportSubscriber implements EventSubscriberInterface
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
-
         // Lets limit the subscriber
         switch ($route) {
             case 'api_reports_participants_report_collection':
@@ -104,12 +104,15 @@ class ReportSubscriber implements EventSubscriberInterface
         $this->serializerService->setResponse($response, $event);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function checkAuthorization(ViewEvent $event, object $report): ?Response
     {
         $token = str_replace('Bearer ', '', $event->getRequest()->headers->get('Authorization'));
         $payload = $this->ucService->validateJWTAndGetPayload($token, $this->commonGroundService->getResourceList(['component'=>'uc', 'type'=>'public_key']));
         $currentUser = $this->ucService->getUserArray($payload['userId']);
-        if (strpos($currentUser['organization'], $report->getOrganizationId()) === false) {
+        if ($report->getOrganizationId() != null && strpos($currentUser['organization'], $report->getOrganizationId()) === false) {
             return new Response(
                 json_encode([
                     'message' => 'The wrong organizationId is given.',
@@ -142,11 +145,12 @@ class ReportSubscriber implements EventSubscriberInterface
      * @param object $report
      *
      * @return Report|Response
+     * @throws \Exception
      */
     public function createVolunteersReport(object $report): Report
     {
         if ($report instanceof Report) {
-            return $this->reportService->createParticipantsReport($report);
+            return $this->reportService->createVolunteersReport($report);
         } else {
             throw new Error('wrong organizationId');
         }
@@ -161,7 +165,7 @@ class ReportSubscriber implements EventSubscriberInterface
     public function createDesiredLearningOutcomesReport(object $report): Report
     {
         if ($report instanceof Report) {
-            return $this->reportService->createParticipantsReport($report);
+            return $this->reportService->createDesiredLearningOutcomesReport($report);
         } else {
             throw new Error('wrong organizationId');
         }
