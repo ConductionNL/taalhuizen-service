@@ -122,8 +122,10 @@ class StudentSubscriber implements EventSubscriberInterface
 
     /**
      * @param $queryParams
-     * @return object
+     *
      * @throws Exception
+     *
+     * @return object
      */
     private function getStudents($queryParams)
     {
