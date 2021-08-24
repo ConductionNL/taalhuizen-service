@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use function GuzzleHttp\json_decode;
 
 class ReportSubscriber implements EventSubscriberInterface
 {
@@ -144,8 +143,9 @@ class ReportSubscriber implements EventSubscriberInterface
     /**
      * @param object $report
      *
-     * @return Report|Response
      * @throws \Exception
+     *
+     * @return Report|Response
      */
     public function createVolunteersReport(object $report): Report
     {
