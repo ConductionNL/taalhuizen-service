@@ -54,6 +54,22 @@ class DocumentService
         }
     }
 
+    public function getDocument($id = null): arrayCollection
+    {
+        if ($id == null) {
+            throw new BadRequestPathException('Please provide a document ID', 'document');
+        }
+        try {
+            $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id]);
+
+            $response['filename'] = $document['name'];
+            $response['base64'] = $document['base64'];
+            return new ArrayCollection($response);
+        } catch (\Throwable $e) {
+            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing document!', 'document');
+        }
+    }
+
     public function deleteDocument($id): Response
     {
         try {
@@ -68,6 +84,8 @@ class DocumentService
     public function createDocument(Document $document): Document
     {
         $this->checkDocument($document);
+        $this->checkExtensionAndMime($document);
+        $this->determineFileSizeFromBase64String($document->getBase64());
 
         $participantUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $document->getParticipantId()]);
 
@@ -80,6 +98,86 @@ class DocumentService
         $arrays['document'] = $this->commonGroundService->createResource($array, ['component' => 'wrc', 'type' => 'documents']);
 
         return $this->persistDocument($document, $arrays);
+    }
+
+    public function checkExtensionAndMime(Document $document): void
+    {
+        $combinations = [
+            'txt' => 'text/plain',
+            'pdf' => 'application/pdf',
+            'svg' => 'image/svg+xml',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'doc' => 'application/msword',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif'
+        ];
+
+        $mime = $this->retrieveMimeTypeFromBase64String($document->getBase64());
+        $extension = $this->retrieveFileExtensionFromFilename($document->getFilename());
+
+        if ($combinations[$extension] !== $mime) {
+            throw new BadRequestPathException("Mime type and file extension don't match", 'base64');
+        }
+    }
+
+    public function determineFileSizeFromBase64String(string $base64): void
+    {
+        $size = $this->getBase64Size($base64);
+
+        if ($size > .5) {
+            throw new BadRequestPathException("File size exceeds the 500kb limit", 'base64');
+        }
+    }
+
+    public function getBase64Size($base64){ //return memory size in B, KB, MB
+        try{
+            $size_in_bytes = (int) (strlen(rtrim($base64, '=')) * 3 / 4);
+            $size_in_kb    = $size_in_bytes / 1024;
+            $size_in_mb    = $size_in_kb / 1024;
+
+            return $size_in_mb;
+        }
+        catch(Exception $e){
+            return $e;
+        }
+    }
+
+    public function retrieveMimeTypeFromBase64String(string $base64)
+    {
+        $allowedMimeTypes = [
+            'text/plain',
+            'application/pdf',
+            'image/svg+xml',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+            'image/jpeg',
+            'image/png',
+            'image/gif'
+        ];
+        if (preg_match('/data:(.*?);/', $base64, $match) == 1) {
+            if (!in_array($match[1], $allowedMimeTypes)) {
+                throw new BadRequestPathException('Mime type must be one of the following: '. implode(", ", $allowedMimeTypes), 'base64');
+            }
+            return $match[1];
+        } else {
+            throw new BadRequestPathException('Base64 has invalid MIME type definition', 'base64');
+        }
+    }
+
+    public function retrieveFileExtensionFromFilename(string $filename)
+    {
+        $exploded = explode('.', $filename);
+        $allowedExtensions = ['txt', 'pdf', 'svg', 'docx', 'doc', 'jpeg', 'jpg', 'png', 'gif'];
+        if (count($exploded) == 1) {
+            throw new BadRequestPathException('No extension found in filename', 'base64');
+        } else {
+            if (!in_array(end($exploded), $allowedExtensions)) {
+                throw new BadRequestPathException('Extension must be one of the following: '. implode(", ", $allowedExtensions), 'base64');
+            }
+            return end($exploded);
+        }
     }
 
     public function checkDocument(Document $document): void
