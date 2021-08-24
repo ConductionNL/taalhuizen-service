@@ -100,7 +100,7 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @return Student|Response|object
      */
-    private function createStudent(array $body): Student
+    private function createStudent(array $body)
     {
         if (!isset($body['person']['emails']['email'])) {
             return new Response(
@@ -121,9 +121,9 @@ class StudentSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \Exception
-     *
-     * @return object|Response
+     * @param $queryParams
+     * @return object
+     * @throws Exception
      */
     private function getStudents($queryParams)
     {
