@@ -66,7 +66,7 @@ class DocumentService
 
             return new ArrayCollection($response);
         } catch (\Throwable $e) {
-            throw new BadRequestPathException('Invalid request, '.$id.' is not an existing document!', 'document');
+            throw new BadRequestPathException('Cant retrieve object, '.$id.' is not an existing document!', 'document');
         }
     }
 
@@ -132,17 +132,12 @@ class DocumentService
         }
     }
 
-    public function getBase64Size($base64)
-    { //return memory size in B, KB, MB
-        try {
-            $size_in_bytes = (int) (strlen(rtrim($base64, '=')) * 3 / 4);
-            $size_in_kb = $size_in_bytes / 1024;
-            $size_in_mb = $size_in_kb / 1024;
+    public function getBase64Size($base64){ //return memory size in B, KB, MB
+        $size_in_bytes = (int) (strlen(rtrim($base64, '=')) * 3 / 4);
+        $size_in_kb    = $size_in_bytes / 1024;
+        $size_in_mb    = $size_in_kb / 1024;
 
-            return $size_in_mb;
-        } catch (Exception $e) {
-            return $e;
-        }
+        return $size_in_mb;
     }
 
     public function retrieveMimeTypeFromBase64String(string $base64)
