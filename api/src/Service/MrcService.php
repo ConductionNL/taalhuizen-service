@@ -894,11 +894,7 @@ class MrcService
      */
     public function setContact(array $employeeArray)
     {
-        if (isset($employeeArray['person']) && $this->commonGroundService->isResource($employeeArray['person'])) {
-            return $this->commonGroundService->getResource($employeeArray['person']);
-        } else {
-            return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
-        }
+        return key_exists('userId', $employeeArray) ? $this->ucService->updateUserContactForEmployee($employeeArray['userId'], $employeeArray) : $this->ccService->createPersonForEmployee($employeeArray);
     }
 
     /**

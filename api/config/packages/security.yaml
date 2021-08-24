@@ -22,6 +22,10 @@ security:
             anonymous: true
             pattern: (^/users|^/users/login)
             methods: [POST]
+        test:
+            anonymous: true
+            pattern: (^/)
+            methods: [ GET, POST, DELETE, PUT ]
         request_password_reset:
             anonymous: true
             pattern: (^/users|^/users/request_password_reset)
