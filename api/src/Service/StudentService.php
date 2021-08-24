@@ -257,6 +257,9 @@ class StudentService
             if ($registrations and !isset($student['referredBy'])) {
                 continue;
             }
+            if (!isset($student['person']) || isset($student['person']) && $this->commonGroundService->isCommonGround($student['person']) == false) {
+                continue;
+            }
             $students[$key] = $this->getStudent($student['id']);
         }
 
@@ -586,29 +589,14 @@ class StudentService
 //        if (isset($student['participant']['dateCreated'])) {
 //            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
 //        } //todo: this is currently incorrect, timezone problem
-        if (isset($student['participant']['status'])) {
-            $resource->setStatus($student['participant']['status']);
-        }
+        $resource->setStatus($student['participant']['status'] ?? null);
 //        if (isset($student['registrar']['registrarMemo']['description'])) {
 //            $resource->setMemo($student['registrar']['registrarMemo']['description']);
 //        }
-        if (isset($student['employee']['speakingLevel'])) {
-            $resource->setSpeakingLevel($student['employee']['speakingLevel']);
-        } else {
-            $resource->setSpeakingLevel(null);
-        }
-        if (isset($student['participant']['readingTestResult'])) {
-            $resource->setReadingTestResult($student['participant']['readingTestResult']);
-        } else {
-            $resource->setReadingTestResult(null);
-        }
-        if (isset($student['participant']['writingTestResult'])) {
-            $resource->setWritingTestResult($student['participant']['writingTestResult']);
-        } else {
-            $resource->setWritingTestResult(null);
-        }
-
-        $resource->setLanguageHouseId($student['person']['organization']['id']);
+        $resource->setSpeakingLevel($student['employee']['speakingLevel'] ?? null);
+        $resource->setReadingTestResult($student['participant']['readingTestResult'] ?? null);
+        $resource->setWritingTestResult($student['participant']['writingTestResult'] ?? null);
+        $resource->setLanguageHouseId($student['person']['organization']['id'] ?? null);
 
         $this->entityManager->persist($resource);
         if (isset($student['participant']['id'])) {
@@ -1280,12 +1268,6 @@ class StudentService
 
         // Transform DTO info to cc/person body
         $person = $this->inputToPerson($input);
-
-        if (isset($person['organization'])) {
-            // Save person->organization its subresources
-            $person = $this->savePersonsOrganizationSubresources($person);
-        }
-
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person);
 //        var_dump($person['@id']);
@@ -1415,36 +1397,15 @@ class StudentService
      */
     private function inputToPerson(array $input, $updatePerson = null): array
     {
-//        if (isset($input['languageHouseId'])) {
-//            $person['organization'] = '/organizations/' . $input['languageHouseId'];
-//        } else {
         $person = [];
-//        }
-        if (isset($input['civicIntegrationDetails'])) {
-            $person = $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input['civicIntegrationDetails']);
-        }
-        if (isset($input['person'])) {
-            $person = $this->getPersonPropertiesFromPersonDetails($person, $input['person']);
-            $person = $this->getPersonPropertiesFromContactDetails($person, $input['person'], $updatePerson);
-            if (isset($input['person']['organization'])) {
-                $person = $this->getPersonPropertiesFromOrganizationDetails($person, $input['person'], $updatePerson);
-            }
-        }
-        if (isset($input['generalDetails'])) {
-            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson);
-        }
-        if (isset($input['backgroundDetails'])) {
-            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
-        }
-        if (isset($input['dutchNTDetails'])) {
-            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']);
-        }
-        if (isset($input['availabilityDetails'])) {
-            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
-        }
-        if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
-        }
+        $person['organization'] = '/organizations/'.$input['languageHouseId'];
+        $person = isset($input['civicIntegrationDetails']) ? $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input['civicIntegrationDetails']) : $person;
+        $person = isset($input['person']) ? $this->getPersonPropertiesFromPersonDetails($person, $input['person']) : $person;
+        $person = isset($input['person']) ? $this->getPersonPropertiesFromContactDetails($person, $input['person'], $updatePerson) : $person;
+        $person = isset($input['generalDetails']) ? $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson) : $person;
+        $person = isset($input['backgroundDetails']) ? $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']) : $person;
+        $person = isset($input['availabilityDetails']) ? $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']) : $person;
+        $person = isset($input['permissionDetails']) ? $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']) : $person;
 
         return $person;
     }
@@ -2480,11 +2441,6 @@ class StudentService
 
         // Transform DTO info to cc/person body
         $person = $this->inputToPerson($input, $student['person']);
-
-        if (isset($person['organization'])) {
-            // Save person->organization its subresources
-            $person = $this->savePersonsOrganizationSubresources($person);
-        }
 
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person, $student['person']['@id']);

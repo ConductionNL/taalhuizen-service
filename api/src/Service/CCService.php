@@ -429,6 +429,10 @@ class CCService
     public function employeeToPerson(array $employee): array
     {
         $employeePerson = $employee['person'];
+        if ($this->commonGroundService->isResource($employeePerson)) {
+            $employeePerson = $this->commonGroundService->getResource($employeePerson);
+            $employeePerson['emails']['email'] = $employeePerson['emails'][0]['email'] ?? null;
+        }
         $person = [
             'givenName'              => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
             'additionalName'         => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
