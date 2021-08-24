@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Education;
 use App\Entity\Employee;
 use App\Entity\Person;
+use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,11 +65,11 @@ class MrcService
         }
 
         $result = [
-            '@context'          => '/contexts/Employee',
-            '@id'               => '/employees',
-            '@type'             => 'hydra:Collection',
-            'hydra:member'      => $employees,
-            'hydra:totalItems'  => $results['hydra:totalItems'] ?? count($results),
+            '@context'         => '/contexts/Employee',
+            '@id'              => '/employees',
+            '@type'            => 'hydra:Collection',
+            'hydra:member'     => $employees,
+            'hydra:totalItems' => $results['hydra:totalItems'] ?? count($results),
         ];
         if (key_exists('hydra:view', $results)) {
             $result['hydra:view'] = $results['hydra:view'];
@@ -922,7 +923,7 @@ class MrcService
         $resource = $this->createEmployeeResource($employeeArray, $contact, null, null);
         $resource = $this->ccService->cleanResource($resource);
         $result = $this->eavService->saveObject($resource, ['entityName' => 'employees', 'componentCode' => 'mrc']);
-        $this->saveEmployeeProperties($employeeArray, $result);
+        $this->saveEmployeeProperties($employeeArray, $result, $saveEducationsFromStudent);
         $result = $this->eavService->getObject(['entityName' => 'employees', 'componentCode' => 'mrc', 'self' => $result['@self']]);
         $result['userRoleArray'] = $this->handleUserRoleArray($employeeArray);
 
@@ -962,9 +963,70 @@ class MrcService
      */
     public function createEmployee(array $employeeArray): Employee
     {
+        $this->checkEmployeeValues($employeeArray);
         $employee = $this->createEmployeeArray($employeeArray);
 
         return $this->createEmployeeObject($employee);
+    }
+
+    /**
+     * This function checks if the given employee array its data is valid.
+     *
+     * @param array $input Array with employees data
+     *
+     * @throws Exception
+     */
+    public function checkEmployeeValues(array $input)
+    {
+        if (!isset($input['person'])) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'person');
+        }
+        $array = [
+            'targetGroupPreferences' => ['NT1', 'NT2'],
+            'currentEducation'       => ['YES', 'NO', 'NO_BUT_DID_EARLIER'],
+        ];
+        foreach ($array as $fieldName => $fieldValues) {
+            if (isset($input[$fieldName]) && is_array($input[$fieldName])) {
+                foreach ($input[$fieldName] as $value) {
+                    if (!in_array($value, $fieldValues)) {
+                        throw new BadRequestPathException('Invalid option(s) given for some fields .', $fieldName, [$fieldName => $value]);
+                    }
+                }
+            } else {
+                if (isset($input[$fieldName]) && !in_array($input[$fieldName], $fieldValues)) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', $fieldName, [$fieldName => $input[$fieldName]]);
+                }
+            }
+        }
+        $this->checkEmployeeValuesSubresources($input);
+    }
+
+    /**
+     * This function checks if the given employee array its subresources data is valid.
+     *
+     * @param array $input Array with employees data
+     *
+     * @throws Exception
+     */
+    public function checkEmployeeValuesSubresources(array $input)
+    {
+        if (isset($input['person'])) {
+            if (isset($input['person']['gender']) && !in_array($input['person']['gender'], ['Male', 'Female', 'X'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'person.gender');
+            }
+
+            if (isset($input['person']['contactPreference']) && !in_array($input['person']['contactPreference'], ['PHONECALL', 'WHATSAPP', 'EMAIL', 'OTHER'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'person.contactPreference');
+            }
+        }
+        if (isset($input['followingCourse'])) {
+            if (isset($input['followingCourse']['teacherProfessionalism']) && !in_array($input['followingCourse']['teacherProfessionalism'], ['PROFESSIONAL', 'VOLUNTEER', 'BOTH'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'followingCourse.teacherProfessionalism');
+            }
+            if (isset($input['followingCourse']['courseProfessionalism']) && !in_array($input['followingCourse']['courseProfessionalism'], ['PROFESSIONAL', 'VOLUNTEER', 'BOTH'])) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'followingCourse.courseProfessionalism');
+            }
+        }
     }
 
     /**
@@ -1071,6 +1133,7 @@ class MrcService
      */
     public function updateEmployee(string $id, array $employeeArray): Employee
     {
+        $this->checkEmployeeValues($employeeArray);
         $employee = $this->updateEmployeeArray($id, $employeeArray);
 
         return $this->createEmployeeObject($employee);
