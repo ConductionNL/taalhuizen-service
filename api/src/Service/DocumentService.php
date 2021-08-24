@@ -3,8 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Document;
-use App\Entity\LearningNeed;
-use App\Entity\LearningNeedOutCome;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -59,11 +57,13 @@ class DocumentService
         if ($id == null) {
             throw new BadRequestPathException('Please provide a document ID', 'document');
         }
+
         try {
             $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id]);
 
             $response['filename'] = $document['name'];
             $response['base64'] = $document['base64'];
+
             return new ArrayCollection($response);
         } catch (\Throwable $e) {
             throw new BadRequestPathException('Invalid request, '.$id.' is not an existing document!', 'document');
@@ -75,6 +75,7 @@ class DocumentService
         try {
             $document = $this->commonGroundService->getResource(['component' => 'wrc', 'type' => 'documents', 'id' => $id]);
             $this->commonGroundService->deleteResource($document);
+
             return new Response(null, 204);
         } catch (\Throwable $e) {
             throw new BadRequestPathException('Invalid request, '.$id.' is not an existing document!', 'document');
@@ -90,9 +91,9 @@ class DocumentService
         $participantUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $document->getParticipantId()]);
 
         $array = [
-            'name' => $document->getFilename(),
-            'base64' => $document->getBase64(),
-            'contact' => $participantUrl
+            'name'    => $document->getFilename(),
+            'base64'  => $document->getBase64(),
+            'contact' => $participantUrl,
         ];
 
         $arrays['document'] = $this->commonGroundService->createResource($array, ['component' => 'wrc', 'type' => 'documents']);
@@ -103,15 +104,15 @@ class DocumentService
     public function checkExtensionAndMime(Document $document): void
     {
         $combinations = [
-            'txt' => 'text/plain',
-            'pdf' => 'application/pdf',
-            'svg' => 'image/svg+xml',
+            'txt'  => 'text/plain',
+            'pdf'  => 'application/pdf',
+            'svg'  => 'image/svg+xml',
             'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'doc' => 'application/msword',
+            'doc'  => 'application/msword',
             'jpeg' => 'image/jpeg',
-            'jpg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif'
+            'jpg'  => 'image/jpeg',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
         ];
 
         $mime = $this->retrieveMimeTypeFromBase64String($document->getBase64());
@@ -127,19 +128,19 @@ class DocumentService
         $size = $this->getBase64Size($base64);
 
         if ($size > .5) {
-            throw new BadRequestPathException("File size exceeds the 500kb limit", 'base64');
+            throw new BadRequestPathException('File size exceeds the 500kb limit', 'base64');
         }
     }
 
-    public function getBase64Size($base64){ //return memory size in B, KB, MB
-        try{
+    public function getBase64Size($base64)
+    { //return memory size in B, KB, MB
+        try {
             $size_in_bytes = (int) (strlen(rtrim($base64, '=')) * 3 / 4);
-            $size_in_kb    = $size_in_bytes / 1024;
-            $size_in_mb    = $size_in_kb / 1024;
+            $size_in_kb = $size_in_bytes / 1024;
+            $size_in_mb = $size_in_kb / 1024;
 
             return $size_in_mb;
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return $e;
         }
     }
@@ -154,12 +155,13 @@ class DocumentService
             'application/msword',
             'image/jpeg',
             'image/png',
-            'image/gif'
+            'image/gif',
         ];
         if (preg_match('/data:(.*?);/', $base64, $match) == 1) {
             if (!in_array($match[1], $allowedMimeTypes)) {
-                throw new BadRequestPathException('Mime type must be one of the following: '. implode(", ", $allowedMimeTypes), 'base64');
+                throw new BadRequestPathException('Mime type must be one of the following: '.implode(', ', $allowedMimeTypes), 'base64');
             }
+
             return $match[1];
         } else {
             throw new BadRequestPathException('Base64 has invalid MIME type definition', 'base64');
@@ -174,8 +176,9 @@ class DocumentService
             throw new BadRequestPathException('No extension found in filename', 'base64');
         } else {
             if (!in_array(end($exploded), $allowedExtensions)) {
-                throw new BadRequestPathException('Extension must be one of the following: '. implode(", ", $allowedExtensions), 'base64');
+                throw new BadRequestPathException('Extension must be one of the following: '.implode(', ', $allowedExtensions), 'base64');
             }
+
             return end($exploded);
         }
     }
@@ -192,5 +195,4 @@ class DocumentService
             throw new BadRequestPathException('Some required fields have not been submitted.', 'filename');
         }
     }
-
 }

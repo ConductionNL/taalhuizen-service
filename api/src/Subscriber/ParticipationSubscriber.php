@@ -9,7 +9,6 @@ use App\Service\EAVService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewParticipationService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,7 +58,5 @@ class ParticipationSubscriber implements EventSubscriberInterface
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-
     }
-
 }

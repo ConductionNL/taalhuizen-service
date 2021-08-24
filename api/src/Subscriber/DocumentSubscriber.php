@@ -3,16 +3,12 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\LearningNeed;
 use App\Exception\BadRequestPathException;
 use App\Service\DocumentService;
 use App\Service\EAVService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
-use App\Service\NewLearningNeedService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -66,5 +62,4 @@ class DocumentSubscriber implements EventSubscriberInterface
             $this->errorSerializerService->serialize($exception, $event);
         }
     }
-
 }

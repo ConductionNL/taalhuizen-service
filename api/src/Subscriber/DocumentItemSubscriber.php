@@ -5,13 +5,9 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Exception\BadRequestPathException;
 use App\Service\DocumentService;
-use App\Service\EAVService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
-use App\Service\NewLearningNeedService;
-use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +60,7 @@ class DocumentItemSubscriber implements EventSubscriberInterface
                     $response = $this->documentService->deleteDocument($event->getRequest()->attributes->get('id'));
                     break;
                 case 'api_documents_get_item':
-                    $response= $this->documentService->getDocument($event->getRequest()->attributes->get('id'));
+                    $response = $this->documentService->getDocument($event->getRequest()->attributes->get('id'));
                     break;
                 default:
                     return;
@@ -79,5 +75,4 @@ class DocumentItemSubscriber implements EventSubscriberInterface
             $this->errorSerializerService->serialize($exception, $event);
         }
     }
-
 }

@@ -110,7 +110,7 @@ class TestResult
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", length=255)
      */
-    private ?DateTime $examDate  = null;
+    private ?DateTime $examDate = null;
 
     /**
      * @var string|null A memo/note for this TestResult.
