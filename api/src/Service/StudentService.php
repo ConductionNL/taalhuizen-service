@@ -1396,32 +1396,13 @@ class StudentService
     {
         $person = [];
         $person['organization'] = '/organizations/'.$input['languageHouseId'];
-
-        if (isset($input['civicIntegrationDetails'])) {
-            $person = $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input['civicIntegrationDetails']);
-        }
-        if (isset($input['person'])) {
-            $person = $this->getPersonPropertiesFromPersonDetails($person, $input['person']);
-            $person = $this->getPersonPropertiesFromContactDetails($person, $input['person'], $updatePerson);
-//            if (isset($input['person']['organization']) && is-) {
-//                $person = $this->getPersonPropertiesFromOrganizationDetails($person, $input['person'], $updatePerson);
-//            }
-        }
-        if (isset($input['generalDetails'])) {
-            $person = $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson);
-        }
-        if (isset($input['backgroundDetails'])) {
-            $person = $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']);
-        }
-        if (isset($input['dutchNTDetails'])) {
-            $person = $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']);
-        }
-        if (isset($input['availabilityDetails'])) {
-            $person = $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']);
-        }
-        if (isset($input['permissionDetails'])) {
-            $person = $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']);
-        }
+        $person = isset($input['civicIntegrationDetails']) ? $this->getPersonPropertiesFromCivicIntegrationDetails($person, $input['civicIntegrationDetails']) : $person;
+        $person = isset($input['person']) ? $this->getPersonPropertiesFromPersonDetails($person, $input['person']) : $person;
+        $person = isset($input['person']) ? $this->getPersonPropertiesFromContactDetails($person, $input['person'], $updatePerson) : $person;
+        $person = isset($input['generalDetails']) ? $this->getPersonPropertiesFromGeneralDetails($person, $input['generalDetails'], $updatePerson) : $person;
+        $person = isset($input['backgroundDetails']) ? $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']) : $person;
+        $person = isset($input['availabilityDetails']) ? $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']) : $person;
+        $person = isset($input['permissionDetails']) ? $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']) : $person;
 
         return $person;
     }
