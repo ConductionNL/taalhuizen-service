@@ -39,7 +39,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     collectionOperations={
  *          "get",
- *          "post",
+ *          "post"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
  *     })
  * @ORM\Entity(repositoryClass=LearningNeedRepository::class)
  */
@@ -57,7 +60,7 @@ class LearningNeed
     private UuidInterface $id;
 
     /**
-     * @var string A short description of this learning need.
+     * @var ?string A short description of this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -74,10 +77,10 @@ class LearningNeed
      *     }
      * )
      */
-    private string $description;
+    private ?string $description = null;
 
     /**
-     * @var string The motivation of a student, for this learning need.
+     * @var ?string The motivation of a student, for this learning need.
      *
      * @Assert\NotNull
      * @Assert\Length(
@@ -94,10 +97,10 @@ class LearningNeed
      *     }
      * )
      */
-    private string $motivation;
+    private ?string $motivation = null;
 
     /**
-     * @var LearningNeedOutCome The desired learning need out come of this learning need.
+     * @var ?LearningNeedOutCome The desired learning need out come of this learning need.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -106,7 +109,7 @@ class LearningNeed
      * @Assert\Valid
      * @MaxDepth(1)
      */
-    private LearningNeedOutCome $desiredLearningNeedOutCome;
+    private ?LearningNeedOutCome $desiredLearningNeedOutCome = null;
 
     /**
      * @var ?string The desired offer for a student learning need.
@@ -149,7 +152,7 @@ class LearningNeed
     private ?string $advisedOffer = null;
 
     /**
-     * @var string The difference between the desired and advised offer of this learning need.
+     * @var ?string The difference between the desired and advised offer of this learning need.
      *
      * @Assert\Choice({"NO", "YES_DISTANCE", "YES_WAITINGLIST", "YES_OTHER"})
      *
@@ -166,7 +169,7 @@ class LearningNeed
      *     }
      * )
      */
-    private string $offerDifference;
+    private ?string $offerDifference = null;
 
     /**
      * @var ?string Offer difference of this learning need, for when the OTHER option is selected.
@@ -207,7 +210,7 @@ class LearningNeed
     private ?string $offerEngagements = null;
 
     /**
-     * @var string The id of a student that this learning need is for.
+     * @var ?string The id of a student that this learning need is for.
      *
      * @Assert\NotNull
      * @Assert\Length(min=36, max=36)
@@ -222,7 +225,7 @@ class LearningNeed
      *     }
      * )
      */
-    private string $studentId;
+    private ?string $studentId = null;
 
     public function getId(): UuidInterface
     {
@@ -236,36 +239,36 @@ class LearningNeed
         return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getMotivation(): string
+    public function getMotivation(): ?string
     {
         return $this->motivation;
     }
 
-    public function setMotivation(string $motivation): self
+    public function setMotivation(?string $motivation): self
     {
         $this->motivation = $motivation;
 
         return $this;
     }
 
-    public function getDesiredLearningNeedOutCome(): LearningNeedOutCome
+    public function getDesiredLearningNeedOutCome(): ?LearningNeedOutCome
     {
         return $this->desiredLearningNeedOutCome;
     }
 
-    public function setDesiredLearningNeedOutCome(LearningNeedOutCome $desiredLearningNeedOutCome): self
+    public function setDesiredLearningNeedOutCome(?LearningNeedOutCome $desiredLearningNeedOutCome): self
     {
         $this->desiredLearningNeedOutCome = $desiredLearningNeedOutCome;
 
@@ -296,12 +299,12 @@ class LearningNeed
         return $this;
     }
 
-    public function getOfferDifference(): string
+    public function getOfferDifference(): ?string
     {
         return $this->offerDifference;
     }
 
-    public function setOfferDifference(string $offerDifference): self
+    public function setOfferDifference(?string $offerDifference): self
     {
         $this->offerDifference = $offerDifference;
 
@@ -332,12 +335,12 @@ class LearningNeed
         return $this;
     }
 
-    public function getStudentId(): string
+    public function getStudentId(): ?string
     {
         return $this->studentId;
     }
 
-    public function setStudentId(string $studentId): self
+    public function setStudentId(?string $studentId): self
     {
         $this->studentId = $studentId;
 
