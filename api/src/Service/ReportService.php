@@ -52,7 +52,7 @@ class ReportService
 
         $this->setDate($report);
 
-        if ($report->getOrganizationId()) {
+        if ($report->getOrganizationId() != null && $this->commonGroundService->isCommonGround($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()])) != false) {
             $query['program.organization'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $report->getOrganizationId()]);
         }
 
@@ -184,7 +184,7 @@ class ReportService
     public function setProgramProviderQuery(Report $report): array
     {
         $query = [];
-        if ($report->getOrganizationId()) {
+        if ($report->getOrganizationId() != null) {
             $organizationId = explode('/', $report->getOrganizationId());
             if (is_array($organizationId)) {
                 $organizationId = end($organizationId);
