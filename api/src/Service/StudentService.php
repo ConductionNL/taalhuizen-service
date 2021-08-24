@@ -257,6 +257,9 @@ class StudentService
             if ($registrations and !isset($student['referredBy'])) {
                 continue;
             }
+            if (!isset($student['person']) || isset($student['person']) && $this->commonGroundService->isCommonGround($student['person']) == false) {
+                continue;
+            }
             $students[$key] = $this->getStudent($student['id']);
         }
 
