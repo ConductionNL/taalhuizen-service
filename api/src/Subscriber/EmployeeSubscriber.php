@@ -32,7 +32,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
     /**
      * EmployeeSubscriber constructor.
      *
-     * @param MrcService $mrcService
+     * @param MrcService   $mrcService
      * @param LayerService $layerService
      */
     public function __construct(MrcService $mrcService, LayerService $layerService)
@@ -97,9 +97,9 @@ class EmployeeSubscriber implements EventSubscriberInterface
     /**
      * @param array $body
      *
-     * @return Employee|Response
      * @throws Exception
      *
+     * @return Employee|Response
      */
     private function createEmployee(array $body)
     {
@@ -107,7 +107,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'The person of this employee must contain an email!',
-                    'path' => 'person.emails.email',
+                    'path'    => 'person.emails.email',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -122,12 +122,12 @@ class EmployeeSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $body
+     * @param array  $body
      * @param string $id
      *
-     * @return Employee|Response
      * @throws Exception
      *
+     * @return Employee|Response
      */
     private function updateEmployee(array $body, string $id)
     {
@@ -139,7 +139,7 @@ class EmployeeSubscriber implements EventSubscriberInterface
             return new Response(
                 json_encode([
                     'message' => 'Please give the userId of the employee you want to update!',
-                    'path' => 'userId',
+                    'path'    => 'userId',
                 ]),
                 Response::HTTP_BAD_REQUEST,
                 ['content-type' => 'application/json']
@@ -156,9 +156,9 @@ class EmployeeSubscriber implements EventSubscriberInterface
     /**
      * @param array $query
      *
-     * @return Collection|Response
      * @throws Exception
      *
+     * @return Collection|Response
      */
     private function getEmployees(array $query)
     {
@@ -168,8 +168,8 @@ class EmployeeSubscriber implements EventSubscriberInterface
                 return new Response(
                     json_encode([
                         'message' => 'Organization does not exist!',
-                        'path' => 'organizationId',
-                        'data' => ['organization' => $query['organization']],
+                        'path'    => 'organizationId',
+                        'data'    => ['organization' => $query['organization']],
                     ]),
                     Response::HTTP_BAD_REQUEST,
                     ['content-type' => 'application/json']
