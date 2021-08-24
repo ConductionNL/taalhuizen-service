@@ -165,5 +165,4 @@ class Document
 
         return $this;
     }
-
 }
