@@ -176,7 +176,7 @@ class NewParticipationService
             $result['organization'] = $organization;
 
             // Update the participation to add the cc/organization to it
-            $updateParticipation['aanbieder'] = $this->commonGroundService->getResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $organization['id']]));
+            $updateParticipation['aanbieder'] = $this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $organization['id']]);
             $participation = $this->eavService->saveObject($updateParticipation, ['entityName' => 'participations', 'self' => $participation['@eav']]);
 
             // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
