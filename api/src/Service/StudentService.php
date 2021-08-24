@@ -643,6 +643,10 @@ class StudentService
             $resource->setEducationDetails($this->handleEducationDetails($student['employee']));
             $resource->setCourseDetails($this->handleCourseDetails($student['employee']));
             $resource->setJobDetails($this->handleJobDetails($student['employee']));
+        } else {
+            $resource->setEducationDetails(null);
+            $resource->setCourseDetails(null);
+            $resource->setJobDetails(null);
         }
         $resource->setMotivationDetails($this->handleMotivationDetails($student['participant']));
         $resource->setAvailabilityDetails($this->handleAvailabilityDetails($student['person']));
@@ -690,14 +694,14 @@ class StudentService
         isset($person['familyName']) ? $personDTO->setFamilyName($person['familyName']) : $personDTO->setFamilyName(null);
         isset($person['gender']) ? $personDTO->setGender($person['gender']) : $personDTO->setGender(null);
         isset($person['birthday']) ? $personDTO->setBirthday(new \DateTime($person['birthday'])) : $personDTO->setBirthday(null);
-        isset($person['addresses']) ? $personDTO->setAddresses($this->createDTOAddress($person['addresses'][0])) : $personDTO->setAddresses(null);
+        isset($person['addresses'][0]) ? $personDTO->setAddresses($this->createDTOAddress($person['addresses'][0])) : $personDTO->setAddresses(null);
         if (isset($person['telephones'])) {
             foreach ($person['telephones'] as $telephone) {
                 $personDTO->addTelephone($this->createDTOTelephone($telephone));
             }
         }
         isset($person['emails']) ? $personDTO->setEmails($this->createDTOEmail($person['emails'][0])) : $personDTO->setEmails(null);
-        isset($person['organization']) ? $personDTO->setOrganization($this->createDTOOrganization($person['organization'])) : $personDTO->createDTOOrganization(null);
+        isset($person['organization']) ? $personDTO->setOrganization($this->createDTOOrganization($person['organization'])) : $personDTO->setOrganization(null);
         isset($person['contactPreference']) ? $personDTO->setContactPreference($person['contactPreference']) : $personDTO->setContactPreference(null);
         isset($person['contactPreferenceOther']) ? $personDTO->setContactPreferenceOther($person['contactPreferenceOther']) : $personDTO->setContactPreferenceOther(null);
 
