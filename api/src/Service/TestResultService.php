@@ -146,28 +146,6 @@ class TestResultService
     }
 
     /**
-     * This function removes a test result from a participation.
-     *
-     * @param string $testResultUrl Url of the test result as string
-     *
-     * @throws \Exception
-     */
-    private function removeTestResultFromParticipation(string $testResultUrl)
-    {
-        $testResult = $this->eavService->getObject(['entityName' => 'results', 'componentCode' => 'edu', 'self' => $testResultUrl]);
-        if ($this->eavService->hasEavObject($testResult['participation'])) {
-            $getParticipation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $testResult['participation']]);
-            if (isset($getParticipation['results'])) {
-                $participation['results'] = array_values(array_filter($getParticipation['results'], function ($participationResult) use ($testResultUrl) {
-                    return $participationResult != $testResultUrl;
-                }));
-                $this->eavService->saveObject($participation, ['entityName' => 'participations', 'self' => $testResult['participation']]);
-            }
-        }
-        // only works when testResult is deleted after, because relation is not removed from the EAV testResult object in here
-    }
-
-    /**
      * This function fetches a test result from the given ID.
      *
      * @param string|null $id  ID of the test result that will be fetched
