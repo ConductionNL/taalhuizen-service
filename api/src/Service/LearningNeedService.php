@@ -278,6 +278,7 @@ class LearningNeedService
     {
         if (!$this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['message'] = 'Warning, '.$studentId.' is not an existing eav/edu/participant!';
+
             return $result;
         }
 

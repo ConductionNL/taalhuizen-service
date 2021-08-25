@@ -8,7 +8,6 @@ use App\Entity\Participation;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Ramsey\Uuid\Uuid;
 
 class ParticipationService
 {
