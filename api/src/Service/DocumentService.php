@@ -13,13 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 class DocumentService
 {
     private CommonGroundService $commonGroundService;
-    private EAVService $eavService;
     private EntityManagerInterface $entityManager;
 
     public function __construct(LayerService $layerService)
     {
         $this->commonGroundService = $layerService->commonGroundService;
-        $this->eavService = new EAVService($this->commonGroundService);
         $this->entityManager = $layerService->entityManager;
     }
 
