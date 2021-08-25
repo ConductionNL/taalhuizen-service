@@ -395,7 +395,6 @@ class UcService
             $token = null;
         }
 
-
         if ($sendEmail) {
             $this->bsService->sendPasswordResetMail($email, $token);
         }
