@@ -127,6 +127,22 @@ class StudentDossierEvent
      */
     private ?string $employeeId;
 
+    /**
+     * @var string|null CreatorGivenName of this student Dossier.
+     *
+     * @Groups({"read", "write"})
+     * @Assert\Length(min=36, max=36)
+     * @ORM\Column(type="string", length=36, nullable=true)
+     * @ApiProperty(
+     *     attributes={
+     *         "openapi_context"={
+     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
+     *         }
+     *     }
+     * )
+     */
+    private ?string $organizer;
+
     public function getId(): UuidInterface
     {
         return $this->id;
@@ -195,6 +211,18 @@ class StudentDossierEvent
     public function setEmployeeId(?string $employeeId): self
     {
         $this->employeeId = $employeeId;
+
+        return $this;
+    }
+
+    public function getOrganizer(): ?string
+    {
+        return $this->organizer;
+    }
+
+    public function setOrganizer(?string $organizer): self
+    {
+        $this->organizer = $organizer;
 
         return $this;
     }
