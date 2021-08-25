@@ -272,8 +272,8 @@ class LearningNeedService
      * This function gets and returns all learningNeeds from a student, from the eav-component using the EAVService.
      * Can be used with dateFrom and dateUntil to get all learningNeeds created, after, before or between two dates.
      *
-     * @param string      $studentId the id of a student (edu/participant) to get all learningNeeds from.
-     * @param array       $query query filters
+     * @param string $studentId the id of a student (edu/participant) to get all learningNeeds from.
+     * @param array  $query     query filters
      *
      * @throws Exception
      *
