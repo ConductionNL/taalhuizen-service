@@ -273,27 +273,28 @@ class LearningNeedService
      * Can be used with dateFrom and dateUntil to get all learningNeeds created, after, before or between two dates.
      *
      * @param string      $studentId the id of a student (edu/participant) to get all learningNeeds from.
-     * @param string|null $dateFrom  a DateTime string.
-     * @param string|null $dateUntil a DateTime string.
+     * @param array       $query query filters
      *
      * @throws Exception
      *
      * @return array the result array containing the learningNeeds or an message/errorMessage.
      */
-    public function getLearningNeeds(string $studentId, string $dateFrom = null, string $dateUntil = null): array
+    public function getLearningNeeds(string $studentId, array $query): array
     {
         // Get the eav/edu/participant learningNeeds from EAV and add the $learningNeeds @id's to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
         if ($this->eavService->hasEavObject(null, 'participants', $studentId, 'edu')) {
             $result['learningNeeds'] = [];
+            $dateUntil = null;
+            $dateFrom = null;
             $studentUrl = $this->commonGroundService->cleanUrl(['component' => 'edu', 'type' => 'participants', 'id' => $studentId]);
             $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
             if (isset($participant['learningNeeds'])) {
-                if (isset($dateFrom)) {
-                    $dateFrom = new DateTime($dateFrom);
+                if (isset($query['dateFrom'])) {
+                    $dateFrom = new DateTime($query['dateFrom']);
                     $dateFrom->format('Y-m-d H:i:s');
                 }
-                if (isset($dateUntil)) {
-                    $dateUntil = new DateTime($dateUntil);
+                if (isset($query['dateUntil'])) {
+                    $dateUntil = new DateTime(isset($query['dateUntil']));
                     $dateUntil->format('Y-m-d H:i:s');
                 }
                 foreach ($participant['learningNeeds'] as $learningNeedUrl) {
