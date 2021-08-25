@@ -293,7 +293,7 @@ class Student
     private StudentPermission $permissionDetails;
 
     /**
-     * @var string The id of the cc/organization of a languageHouse
+     * @var ?string The id of the cc/organization of a languageHouse
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -307,7 +307,7 @@ class Student
      *     }
      * )
      */
-    private string $languageHouseId;
+    private ?string $languageHouseId = null;
 
     /**
      * @var string|null The Status of this group.
@@ -531,12 +531,12 @@ class Student
         return $this;
     }
 
-    public function getLanguageHouseId(): string
+    public function getLanguageHouseId(): ?string
     {
         return $this->languageHouseId;
     }
 
-    public function setLanguageHouseId(string $languageHouseId): self
+    public function setLanguageHouseId(?string $languageHouseId): self
     {
         $this->languageHouseId = $languageHouseId;
 
