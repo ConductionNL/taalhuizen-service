@@ -5,7 +5,9 @@ namespace App\Subscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Organization;
 use App\Entity\User;
+use App\Exception\BadRequestPathException;
 use App\Service\CCService;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -29,6 +31,7 @@ class UserSubscriber implements EventSubscriberInterface
     private RequestStack $requestStack;
     private CCService $ccService;
     private SerializerInterface $serializer;
+    private ErrorSerializerService $errorSerializerService;
 
     /**
      * UserSubscriber constructor.
@@ -45,6 +48,7 @@ class UserSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
         $this->ccService = new CCService($layerService);
         $this->serializer = $layerService->serializer;
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
     }
 
     /**
@@ -69,43 +73,47 @@ class UserSubscriber implements EventSubscriberInterface
         $attributes = null;
         $ignoredAttributes = ['token'];
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_users_login_collection':
-                $response = $this->login($resource);
-                $attributes = ['token'];
-                $ignoredAttributes = null;
-                break;
-            case 'api_users_logout_collection':
-                $response = $this->logout();
-                break;
-            case 'api_users_request_password_reset_collection':
-                $response = $this->requestPasswordReset($resource);
-                $attributes = ['token'];
-                $ignoredAttributes = null;
-                break;
-            case 'api_users_reset_password_collection':
-                $response = $this->resetPassword($resource);
-                $attributes = ['id'];
-                break;
-            case 'api_users_post_collection':
-                $response = $this->createUser($resource);
-                break;
-            case 'api_users_get_current_user_collection':
-                $response = $this->getCurrentUser();
-                break;
-            case 'api_users_get_current_user_organization_collection':
-                $response = $this->getCurrentUserOrganization();
-                break;
-            default:
+        try {
+            switch ($route) {
+                case 'api_users_login_collection':
+                    $response = $this->login($resource);
+                    $attributes = ['token'];
+                    $ignoredAttributes = null;
+                    break;
+                case 'api_users_logout_collection':
+                    $response = $this->logout();
+                    break;
+                case 'api_users_request_password_reset_collection':
+                    $response = $this->requestPasswordReset($resource);
+                    $attributes = ['token'];
+                    $ignoredAttributes = null;
+                    break;
+                case 'api_users_reset_password_collection':
+                    $response = $this->resetPassword($resource);
+                    $attributes = ['id'];
+                    break;
+                case 'api_users_post_collection':
+                    $response = $this->createUser($resource);
+                    break;
+                case 'api_users_get_current_user_collection':
+                    $response = $this->getCurrentUser();
+                    break;
+                case 'api_users_get_current_user_organization_collection':
+                    $response = $this->getCurrentUserOrganization();
+                    break;
+                default:
+                    return;
+            }
+
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+
                 return;
+            }
+            $this->serializerService->setResponse($response, $event, ['attributes'=>$attributes, 'ignored_attributes'=>$ignoredAttributes]);
+        } catch (BadRequestPathException $exception) {
+            $this->errorSerializerService->serialize($exception, $event);
         }
-
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
-        }
-        $this->serializerService->setResponse($response, $event, ['attributes'=>$attributes, 'ignored_attributes'=>$ignoredAttributes]);
     }
 
     /**
@@ -143,10 +151,7 @@ class UserSubscriber implements EventSubscriberInterface
             return new Response(null, Response::HTTP_NO_CONTENT);
         }
 
-        return new Response(json_encode([
-            'message' => 'The user could not be logged out',
-            'path'    => 'Headers.Authorization',
-        ]), Response::HTTP_UNPROCESSABLE_ENTITY, ['Content-Type' => 'application/json']);
+        throw new BadRequestPathException('The user could not be logged out', 'Headers.Authorization');
     }
 
     /**

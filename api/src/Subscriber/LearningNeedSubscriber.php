@@ -17,18 +17,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-// TODO: REWRITE THIS FILE, this is (very) old code
 class LearningNeedSubscriber implements EventSubscriberInterface
 {
-    private $commonGroundService;
-    private $eavService;
-    private $learningNeedsService;
+    private CommonGroundService $commonGroundService;
+    private EAVService $eavService;
+    private NewLearningNeedService $learningNeedsService;
     private SerializerService $serializerService;
     private ErrorSerializerService $errorSerializerService;
 
-    public function __construct(CommongroundService $commonGroundService, EAVService $eavService, LayerService $layerService)
+    public function __construct(EAVService $eavService, LayerService $layerService)
     {
-        $this->commonGroundService = $commonGroundService;
+        $this->commonGroundService = $layerService->commonGroundService;
         $this->eavService = $eavService;
         $this->learningNeedsService = new NewLearningNeedService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
@@ -38,7 +37,7 @@ class LearningNeedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['learningNeed', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['learningNeed', EventPriorities::PRE_VALIDATE],
         ];
     }
 
@@ -67,43 +66,6 @@ class LearningNeedSubscriber implements EventSubscriberInterface
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-    }
-
-    public function addStudentToLearningNeed($studentUrl, $learningNeed)
-    {
-        $result = [];
-        // Check if student already has an EAV object
-        if ($this->eavService->hasEavObject($studentUrl)) {
-            $getParticipant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
-            $participant['learningNeeds'] = $getParticipant['learningNeeds'];
-        } else {
-            $participant['learningNeeds'] = [];
-        }
-
-        // Save the participant in EAV with the EAV/learningNeed connected to it
-        if (!in_array($learningNeed['@eav'], $participant['learningNeeds'])) {
-            array_push($participant['learningNeeds'], $learningNeed['@eav']);
-            $participant = $this->eavService->saveObject($participant, ['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
-
-            // Add $participant to the $result['participant'] because this is convenient when testing or debugging (mostly for us)
-            $result['participant'] = $participant;
-
-            // Update the learningNeed to add the EAV/edu/participant to it
-            if (isset($learningNeed['participants'])) {
-                $updateLearningNeed['participants'] = $learningNeed['participants'];
-            } else {
-                $updateLearningNeed['participants'] = [];
-            }
-            if (!in_array($participant['@id'], $updateLearningNeed['participants'])) {
-                array_push($updateLearningNeed['participants'], $participant['@id']);
-                $learningNeed = $this->eavService->saveObject($updateLearningNeed, ['entityName' => 'learning_needs', 'self' => $learningNeed['@eav']]);
-
-                // Add $learningNeed to the $result['learningNeed'] because this is convenient when testing or debugging (mostly for us)
-                $result['learningNeed'] = $learningNeed;
-            }
-        }
-
-        return $result;
     }
 
     public function getLearningNeed($id, $url = null)

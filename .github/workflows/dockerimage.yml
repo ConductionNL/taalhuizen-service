@@ -75,12 +75,12 @@ jobs:
           chmod +x ./local-php-security-checker
           ./local-php-security-checker --path ./api/composer.lock
 
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          name: codecov-umbrella
-          fail_ci_if_error: true
-          verbose: true
+#      - uses: codecov/codecov-action@v1
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+#          name: codecov-umbrella
+#          fail_ci_if_error: true
+#          verbose: true
       #- name: Run Postman Tests
       #  if: contains( github.ref, 'master' ) == false && contains( github.base_ref, 'master' ) == false
       #  run: newman run api/public/schema/*.postman_collection.json

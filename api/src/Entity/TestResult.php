@@ -57,7 +57,7 @@ class TestResult
     private UuidInterface $id;
 
     /**
-     * @var string The id of a participation this TestResult is connected to.
+     * @var ?string The id of a participation this TestResult is connected to.
      *
      * @example e2984465-190a-4562-829e-a8cca81aa35d
      *
@@ -73,10 +73,10 @@ class TestResult
      *     }
      * )
      */
-    private string $participationId;
+    private ?string $participationId = null;
 
     /**
-     * @var LearningNeedOutCome The learningNeedOutCome of this TestResult.
+     * @var ?LearningNeedOutCome The learningNeedOutCome of this TestResult.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -85,10 +85,10 @@ class TestResult
      * @Assert\Valid
      * @MaxDepth(1)
      */
-    private LearningNeedOutCome $learningNeedOutCome;
+    private ?LearningNeedOutCome $learningNeedOutCome = null;
 
     /**
-     * @var string The used exam for this TestResult.
+     * @var ?string The used exam for this TestResult.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
@@ -101,16 +101,16 @@ class TestResult
      *     }
      * )
      */
-    private string $usedExam;
+    private ?string $usedExam = null;
 
     /**
-     * @var DateTime The date of the exam that this TestResult is a result of.
+     * @var ?DateTime The date of the exam that this TestResult is a result of.
      *
      * @Assert\NotNull
      * @Groups({"read","write"})
      * @ORM\Column(type="datetime", length=255)
      */
-    private DateTime $examDate;
+    private ?DateTime $examDate = null;
 
     /**
      * @var string|null A memo/note for this TestResult.
@@ -125,7 +125,7 @@ class TestResult
      *     }
      * )
      */
-    private ?string $memo;
+    private ?string $memo = null;
 
     public function getId(): UuidInterface
     {
@@ -139,48 +139,48 @@ class TestResult
         return $this;
     }
 
-    public function getParticipationId(): string
+    public function getParticipationId(): ?string
     {
         return $this->participationId;
     }
 
-    public function setParticipationId(string $participationId): self
+    public function setParticipationId(?string $participationId): self
     {
         $this->participationId = $participationId;
 
         return $this;
     }
 
-    public function getLearningNeedOutCome(): LearningNeedOutCome
+    public function getLearningNeedOutCome(): ?LearningNeedOutCome
     {
         return $this->learningNeedOutCome;
     }
 
-    public function setLearningNeedOutCome(LearningNeedOutCome $learningNeedOutCome): self
+    public function setLearningNeedOutCome(?LearningNeedOutCome $learningNeedOutCome): self
     {
         $this->learningNeedOutCome = $learningNeedOutCome;
 
         return $this;
     }
 
-    public function getUsedExam(): string
+    public function getUsedExam(): ?string
     {
         return $this->usedExam;
     }
 
-    public function setUsedExam(string $usedExam): self
+    public function setUsedExam(?string $usedExam): self
     {
         $this->usedExam = $usedExam;
 
         return $this;
     }
 
-    public function getExamDate(): DateTime
+    public function getExamDate(): ?DateTime
     {
         return $this->examDate;
     }
 
-    public function setExamDate(DateTime $examDate): self
+    public function setExamDate(?DateTime $examDate): self
     {
         $this->examDate = $examDate;
 
