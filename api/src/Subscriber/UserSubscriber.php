@@ -163,6 +163,9 @@ class UserSubscriber implements EventSubscriberInterface
      */
     private function requestPasswordReset(User $resource): User
     {
+        if ($resource->getUsername() == null) {
+            throw new BadRequestPathException('No username provided', 'username');
+        }
         $user = new User();
         $token = $this->ucService->createPasswordResetToken($resource->getUsername(), true);
         $user->setToken($token);
