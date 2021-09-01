@@ -1006,7 +1006,7 @@ class MrcService
      *
      * @throws Exception
      */
-    public function checkEmployeePersonAndOrganization (array $input)
+    public function checkEmployeePersonAndOrganization(array $input)
     {
         if (!isset($input['person'])) {
             throw new BadRequestPathException('Some required fields have not been submitted.', 'person');
