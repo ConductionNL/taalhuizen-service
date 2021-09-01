@@ -462,7 +462,7 @@ class CCService
             'gender'                 => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
             'contactPreference'      => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
             'contactPreferenceOther' => key_exists('contactPreferenceOther', $employeePerson) ? $employeePerson['contactPreferenceOther'] : null,
-            'telephones'             => key_exists('telephones', $employeePerson) && $employeePerson['telephones'][0]['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
+            'telephones'             => key_exists('telephones', $employeePerson) && isset($employeePerson['telephones'][0]['telephone']) ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
             'emails'                 => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => 'email 1', 'email' => $employeePerson['emails']['email']]] : [],
             'addresses'              => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
             'availability'           => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
