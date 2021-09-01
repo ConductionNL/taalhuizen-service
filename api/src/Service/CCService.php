@@ -370,7 +370,7 @@ class CCService
     public function deleteOrganization(string $id, ?string $programId): bool
     {
         try {
-            $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id], [],false);
+            $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id], [], false);
 
             //delete program
             if ($programId !== null) {
@@ -412,10 +412,10 @@ class CCService
             if ($deleted == false) {
                 throw new BadRequestPathException('Cant delete organization.', 'organization');
             }
+
             return true;
         } catch (\Throwable $e) {
             throw new BadRequestPathException('Cant delete organization.', 'organization');
-
         }
     }
 
