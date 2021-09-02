@@ -8,6 +8,7 @@ use App\Exception\BadRequestPathException;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\MrcService;
+use App\Service\NewStudentService;
 use App\Service\ParticipationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -15,6 +16,7 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use phpDocumentor\Reflection\Types\Collection;
 use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,14 +68,13 @@ class StudentSubscriber implements EventSubscriberInterface
     public function student(ViewEvent $event)
     {
         $route = $event->getRequest()->attributes->get('_route');
-//        $resource = $event->getControllerResult();
+        $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
         try {
             switch ($route) {
                 case 'api_students_post_collection':
-                    $body = json_decode($event->getRequest()->getContent(), true);
-                    $response = $this->createStudent($body);
+                    $response = $this->createStudent($resource);
                     break;
                 case 'api_students_get_collection':
                     $response = $this->getStudents($event->getRequest()->query->all());
@@ -94,13 +95,13 @@ class StudentSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $body
+     * @param Student $student
      *
      * @throws Exception
      *
      * @return Student|Response|object
      */
-    private function createStudent(array $body)
+    private function createStudent(Student $student): Student
     {
         if (!isset($body['person']['emails']['email'])) {
             return new Response(
@@ -120,28 +121,9 @@ class StudentSubscriber implements EventSubscriberInterface
         return $this->studentService->createStudent($body);
     }
 
-    /**
-     * @param $queryParams
-     *
-     * @throws Exception
-     *
-     * @return object
-     */
-    private function getStudents($queryParams)
+    private function getStudents(array $query): ArrayCollection
     {
-        $students = $this->studentService->getStudents($queryParams);
+        return $this->studentService->newGetStudents($query);
 
-        $studentsCollection = new ArrayCollection();
-        foreach ($students as $student) {
-            $studentsCollection->add($student);
-        }
-
-        return (object) [
-            '@context'         => '/contexts/Student',
-            '@id'              => '/students',
-            '@type'            => '/hydra:Collection',
-            'hydra:member'     => $studentsCollection,
-            'hydra:totalItems' => count($studentsCollection),
-        ];
     }
 }

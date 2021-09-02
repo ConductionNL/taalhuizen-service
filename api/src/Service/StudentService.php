@@ -2555,4 +2555,235 @@ class StudentService
             $this->commonGroundService->deleteResource($personOrOrg, $personOrOrg['@id']);
         }
     }
+
+    /**
+     * THis function fetches students based on query.
+     *
+     * @param array $query Array with query params*
+     *
+     * @return ArrayCollection Returns a collection of all students
+     */
+    public function newGetStudents(array $query = []): ArrayCollection
+    {
+        $students = new ArrayCollection();
+
+        $results = $this->eavService->getObjectList('participants', 'edu', array_merge($query));
+
+        foreach ($results['hydra:member'] as $result) {
+            $students->add($this->createStudentObject($result));
+        }
+
+        $result = [
+            '@context' => '/contexts/Student',
+            '@id' => '/students',
+            '@type' => 'hydra:Collection',
+            'hydra:member' => $students,
+            'hydra:totalItems' => $results['hydra:totalItems'] ?? count($results),
+        ];
+        if (key_exists('hydra:view', $results)) {
+            $result['hydra:view'] = $results['hydra:view'];
+        }
+
+        return new ArrayCollection($result);
+    }
+
+    /**
+     * @param array $result
+     *
+     * @return Student
+     */
+    public function createStudentObject(array $result): Student
+    {
+        $student = new Student();
+        $student->setRegistrar($this->ccService->createPersonObject($this->ccService->getEavPerson($result['registrar'])));
+        $student->setPerson($this->ccService->createPersonObject($studentArray = $this->ccService->getEavPerson($result['person'])));
+        $student->setCivicIntegrationDetails($this->createCivicIntegrationObject($studentArray));
+        $student->setGeneralDetails($this->createGeneralDetailsObject($studentArray));
+        $student->setReferrerDetails($this->createReferrerDetailsObject($studentArray));
+        $student->setBackgroundDetails($this->createBackgroundDetailsObject($studentArray));
+        $student->setDutchNTDetails($this->createDutchNTDetailsObject($studentArray));
+        $student->setEducationDetails($this->createEducationDetailsObject($studentArray));
+        $student->setCourseDetails($this->createCourseDetailsObject($studentArray));
+        $student->setJobDetails($this->createJobDetailsObject($studentArray));
+        $student->setMotivationDetails($this->createMotivationDetailsObject($studentArray));
+        $student->setAvailabilityDetails($this->createAvailabilityDetailsObject($studentArray));
+        $student->setReadingTestResult($result['readingTestResult'] ?? null);
+        $student->setWritingTestResult($result['writingTestResult'] ?? null);
+        $student->setSpeakingLevel($result['speakingLevel'] ?? null);
+        $student->setPermissionDetails($this->createPermissionDetailsObject($studentArray) ?? null);
+        $languageHouse = explode('/', $result['referredBy']);
+        $student->setLanguageHouseId(end($languageHouse));
+        $student->setStatus(ucfirst($result['status']));
+
+        $this->entityManager->persist($student);
+        $student->setId(Uuid::fromString($result['id']));
+        $this->entityManager->persist($student);
+
+        return $student;
+    }
+
+    public function createCivicIntegrationObject(array $result): ?StudentCivicIntegration
+    {
+        $civicIntegration = new StudentCivicIntegration();
+        $civicIntegration->setCivicIntegrationRequirement($result['civicIntegrationRequirement'] ?? null);
+        $civicIntegration->setCivicIntegrationRequirementFinishDate($result['civicIntegrationRequirementFinishDate'] ? new \DateTime($result['civicIntegrationRequirementFinishDate']) : null);
+        $civicIntegration->setCivicIntegrationRequirementReason($result['civicIntegrationRequirementReason'] ?? null);
+
+        return $civicIntegration;
+    }
+
+    public function createGeneralDetailsObject(array $result): ?StudentGeneral
+    {
+        $general = new StudentGeneral();
+        $general->setCountryOfOrigin($result['countryOfOrigin'] ?? null);
+        $general->setNativeLanguage($result['nativeLanguage'] ?? null);
+        $general->setOtherLanguages($result['otherLanguages'] ?? null);
+        $general->setFamilyComposition($result['familyComposition'] ?? null);
+        $general->setChildrenCount($result['childrenCount'] ?? null);
+        $general->setChildrenDatesOfBirth($result['childrenDatesOfBirth'] ?? null);
+
+        return $general;
+    }
+
+    public function createReferrerDetailsObject(array $result): ?StudentReferrer
+    {
+        $referrer = new StudentReferrer();
+        $referrer->setReferringOrganization($result['referringOrganization'] ?? null);
+        $referrer->setReferringOrganizationOther($result['referringOrganizationOther'] ?? null);
+        $referrer->setEmail($result['email'] ?? null);
+
+        return $referrer;
+    }
+
+    public function createBackgroundDetailsObject(array $result): ?StudentBackground
+    {
+        $background = new StudentBackground();
+        $background->setFoundVia($result['foundVia'] ?? null);
+        $background->setFoundViaOther($result['foundViaOther'] ?? null);
+        $background->setWentToLanguageHouseBefore($result['wentToLanguageHouseBefore'] ?? null);
+        $background->setWentToLanguageHouseBeforeReason($result['wentToLanguageHouseBeforeReason'] ?? null);
+        $background->setWentToLanguageHouseBeforeYear($result['wentToLanguageHouseBeforeYear'] ?? null);
+        $background->setNetwork($result['network'] ?? null);
+        $background->setParticipationLadder($result['participationLadder'] ?? null);
+
+
+        return $background;
+    }
+
+    public function createDutchNTDetailsObject(array $result): ?StudentDutchNT
+    {
+        $dutchNT = new StudentDutchNT();
+        $dutchNT->setDutchNTLevel($result['dutchNTLevel'] ?? null);
+        $dutchNT->setInNetherlandsSinceYear($result['inNetherlandsSinceYear'] ?? null);
+        $dutchNT->setLanguageInDailyLife($result['languageInDailyLife'] ?? null);
+        $dutchNT->setKnowsLatinAlphabet($result['knowsLatinAlphabet'] ?? null);
+        $dutchNT->setLastKnownLevel($result['lastKnownLevel'] ?? null);
+
+        return $dutchNT;
+    }
+
+    public function createEducationObject(array $result): ?Education
+    {
+        $education = new Education();
+        $education->setName($result['name'] ?? null);
+        $education->setStartDate(isset($result['startDate']) ? new \DateTime($result['startDate']) : null);
+        $education->setEnddate(isset($result['endDate']) ? new \DateTime($result['endDate']) : null);
+        $education->setInstitution($result['institution'] ?? null);
+        $education->setIscedEducationLevelCode($result['iscedEducationLevelCode'] ?? null);
+        $education->setDegreeGrantedStatus($result['degreeGrantedStatus'] ?? null);
+        $education->setGroupFormation($result['groupFormation'] ?? null);
+        $education->setTeacherProfessionalism($result['teacherProfessionalism'] ?? null);
+        $education->setCourseProfessionalism($result['courseProfessionalism'] ?? null);
+        $education->setProvidesCertificate($result['providesCertificate'] ?? null);
+        $education->setAmountOfHours($result['amountOfHours'] ?? null);
+
+        return $education;
+    }
+
+    public function createEducationDetailsObject(array $result): ?StudentEducation
+    {
+        $education = new StudentEducation();
+        $education->setFollowingEducationRightNow($result['followingEducationRightNow'] ?? null);
+        $education->setEducation($this->createEducationObject($result) ?? null);
+
+        return $education;
+    }
+
+    public function createCourseDetailsObject(array $result): ?StudentCourse
+    {
+        $course = new StudentCourse();
+        $course->setIsFollowingCourseRightNow($result['isFollowingCourseRightNow'] ?? null);
+        $course->setCourse($this->createEducationObject($result) ?? null);
+
+        return $course;
+    }
+
+    public function createJobDetailsObject(array $result): ?StudentJob
+    {
+        $job = new StudentJob();
+        $job->setTrainedForJob($result['trainedForJob'] ?? null);
+        $job->setLastJob($result['lastJob'] ?? null);
+        $job->setDayTimeActivities($result['dayTimeActivities'] ?? null);
+        $job->setDayTimeActivitiesOther($result['dayTimeActivitiesOther'] ?? null);
+
+        return $job;
+    }
+
+    public function createMotivationDetailsObject(array $result): ?StudentMotivation
+    {
+        $motivation = new StudentMotivation();
+        $motivation->setDesiredSkills($result['desiredSkills'] ?? null);
+        $motivation->setDesiredSkillsOther($result['desiredSkillsOther'] ?? null);
+        $motivation->setHasTriedThisBefore($result['hasTriedThisBefore'] ?? null);
+        $motivation->setHasTriedThisBeforeExplanation($result['hasTriedThisBeforeExplanation'] ?? null);
+        $motivation->setWhyWantTheseSkills($result['whyWantTheseSkills'] ?? null);
+        $motivation->setWhyWantThisNow($result['whyWantThisNow'] ?? null);
+        $motivation->setRemarks($result['remarks'] ?? null);
+
+        return $motivation;
+    }
+
+    public function createAvailabilityDayObject(array $result): ?AvailabilityDay
+    {
+        $availabilityday = new AvailabilityDay();
+        $availabilityday->setMorning($result['morning'] ?? false);
+        $availabilityday->setAfternoon($result['afternoon'] ?? false);
+        $availabilityday->setEvening($result['evening'] ?? false);
+
+        return $availabilityday;
+    }
+
+    public function createAvailabilityObject(array $result): ?Availability
+    {
+        $availability = new Availability();
+        $availability->setMonday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setTuesday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setWednesday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setThursday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setFriday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setSaturday($this->createAvailabilityDayObject($result) ?? null);
+        $availability->setSunday($this->createAvailabilityDayObject($result) ?? null);
+
+        return $availability;
+    }
+
+    public function createAvailabilityDetailsObject(array $result): ?StudentAvailability
+    {
+        $availability = new StudentAvailability();
+        $availability->setAvailability($this->createAvailabilityObject($result) ?? null);
+        $availability->setAvailabilityNotes($result['availabilityNotes'] ?? null);
+
+        return $availability;
+    }
+
+    public function createPermissionDetailsObject(array $result): ?StudentPermission
+    {
+        $permissions = new StudentPermission();
+        $permissions->setHasPermissionToShareDataWithProviders($result['hasPermissionToShareDataWithAanbieders'] ?? false);
+        $permissions->setHasPermissionToShareDataWithLibraries($result['hasPermissionToShareDataWithLibraries'] ?? false);
+        $permissions->setHasPermissionToSendInformationAboutLibraries($result['hasPermissionToSendInformationAboutLibraries'] ?? false);
+        $permissions->setDidSignPermissionForm($result['didSignPermissionForm'] ?? false);
+
+        return $permissions;
+    }
 }
