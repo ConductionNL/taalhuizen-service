@@ -25,12 +25,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}, "enable_max_depth"=true},
  *     denormalizationContext={"groups"={"write"}, "enable_max_depth"=true},
  *     itemOperations={
- *          "get",
- *          "delete"
+ *          "get"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
+ *          "delete"={
+ *             "read"=false,
+ *             "validate"=false
+ *          },
  *     },
  *     collectionOperations={
  *          "get",
- *          "post",
+ *          "post"={
+ *              "read"=false,
+ *              "validate"=false
+ *          },
  *          "post_download"={
  *              "method"="POST",
  *              "path"="/documents/{uuid}/download",
@@ -57,7 +66,7 @@ class Document
     private UuidInterface $id;
 
     /**
-     * @var string Filename of this document.
+     * @var ?string Filename of this document.
      *
      * @Assert\Length(
      *     max = 255
@@ -74,10 +83,10 @@ class Document
      *     }
      * )
      */
-    private string $filename;
+    private ?string $filename = null;
 
     /**
-     * @var string Base64 of this document.
+     * @var ?string Base64 of this document.
      *
      * @Assert\NotNull
      * @Groups({"read", "write"})
@@ -91,10 +100,10 @@ class Document
      *     }
      * )
      */
-    private string $base64;
+    private ?string $base64 = null;
 
     /**
-     * @var ?string Student id of this document.
+     * @var ?string participant id of this document.
      *
      * @Groups({"read", "write"})
      * @Assert\Length(min=36, max=36)
@@ -107,23 +116,7 @@ class Document
      *     }
      * )
      */
-    private ?string $studentId;
-
-    /**
-     * @var ?string Provider employee id of this document.
-     *
-     * @Groups({"read", "write"})
-     * @Assert\Length(min=36, max=36)
-     * @ORM\Column(type="string", length=36)
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "example"="e2984465-190a-4562-829e-a8cca81aa35d"
-     *         }
-     *     }
-     * )
-     */
-    private ?string $providerEmployeeId;
+    private ?string $participantId = null;
 
     public function getId(): UuidInterface
     {
@@ -137,50 +130,38 @@ class Document
         return $this;
     }
 
-    public function getFilename(): string
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    public function setFilename(string $filename): self
+    public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    public function getBase64(): string
+    public function getBase64(): ?string
     {
         return $this->base64;
     }
 
-    public function setBase64(string $base64): self
+    public function setBase64(?string $base64): self
     {
         $this->base64 = $base64;
 
         return $this;
     }
 
-    public function getStudentId(): ?string
+    public function getParticipantId(): ?string
     {
-        return $this->studentId;
+        return $this->participantId;
     }
 
-    public function setStudentId(?string $studentId): self
+    public function setParticipantId(?string $participantId): self
     {
-        $this->studentId = $studentId;
-
-        return $this;
-    }
-
-    public function getProviderEmployeeId(): ?string
-    {
-        return $this->providerEmployeeId;
-    }
-
-    public function setProviderEmployeeId(?string $providerEmployeeId): self
-    {
-        $this->providerEmployeeId = $providerEmployeeId;
+        $this->participantId = $participantId;
 
         return $this;
     }

@@ -382,13 +382,18 @@ class UcService
      * @param string $email     The email of the user that needs a password reset
      * @param bool   $sendEmail Whether or not an email has to be send for this reset (for example, a new user gets the link otherwise, so then an email is not send to prevent double emails)
      *
-     * @return string The reset token
+     * @return ?string The reset token
      */
-    public function createPasswordResetToken(string $email, bool $sendEmail = true): string
+    public function createPasswordResetToken(string $email, bool $sendEmail = true): ?string
     {
         $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => urlencode($email)])['hydra:member'];
 
-        $token = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => "users/{$users[0]['id']}/token"], ['type' => 'SET_PASSWORD'])['token'];
+        if (count($users) > 0) {
+            $token = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => "users/{$users[0]['id']}/token"], ['type' => 'SET_PASSWORD'])['token'];
+        } else {
+            $sendEmail = false;
+            $token = null;
+        }
 
         if ($sendEmail) {
             $this->bsService->sendPasswordResetMail($email, $token);

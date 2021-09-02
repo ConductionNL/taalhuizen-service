@@ -8,7 +8,6 @@ use App\Entity\Participation;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Ramsey\Uuid\Uuid;
 
 class ParticipationService
 {
@@ -830,56 +829,6 @@ class ParticipationService
     }
 
     /**
-     * This function handles the eav/participations result.
-     *
-     * @param array       $participation  Array with data from the eav/participations
-     * @param string|null $learningNeedId Id of the eav/learningNeeds
-     *
-     * @throws Exception
-     *
-     * @return Participation A eav/participations is returned from EAV
-     */
-    public function handleResult(array $participation, string $learningNeedId = null): Participation
-    {
-        // Put together the expected result for Lifely:
-        $resource = new Participation();
-        if (isset($participation['status'])) {
-            $resource->setStatus($participation['status']);
-        }
-        $resource->setAanbiederId('/providers/'.$participation['aanbiederId']);
-        $resource->setAanbiederName($participation['aanbiederName']);
-        $resource->setAanbiederNote($participation['aanbiederNote']);
-        $resource->setOfferName($participation['offerName']);
-        $resource->setOfferCourse($participation['offerCourse']);
-        $resource->setOutComesGoal($participation['goal']);
-        $resource->setOutComesTopic($participation['topic']);
-        $resource->setOutComesTopicOther($participation['topicOther']);
-        $resource->setOutComesApplication($participation['application']);
-        $resource->setOutComesApplicationOther($participation['applicationOther']);
-        $resource->setOutComesLevel($participation['level']);
-        $resource->setOutComesLevelOther($participation['levelOther']);
-        $resource->setDetailsIsFormal($participation['isFormal']);
-        $resource->setDetailsGroupFormation($participation['groupFormation']);
-        $resource->setDetailsTotalClassHours($participation['totalClassHours']);
-        $resource->setDetailsCertificateWillBeAwarded($participation['certificateWillBeAwarded']);
-        $resource->setPresenceEndParticipationReason($participation['presenceEndParticipationReason']);
-        $resource->setDetailsEngagements($participation['engagements']);
-        $resource->setPresenceEngagements($participation['presenceEngagements']);
-
-        //handle dates
-        $this->handleParticipationDates($resource, $participation);
-
-        if (isset($learningNeedId)) {
-            $resource->setLearningNeedId($learningNeedId);
-        }
-        $this->entityManager->persist($resource);
-        $resource->setId(Uuid::getFactory()->fromString($participation['id']));
-        $this->entityManager->persist($resource);
-
-        return $resource;
-    }
-
-    /**
      * This function handles the eav/participations dates.
      *
      * @param Participation $resource      Object with data from the eav/participations
@@ -906,55 +855,6 @@ class ParticipationService
         }
 
         return $participation;
-    }
-
-    /**
-     * This function handles the eav/participations result in Json.
-     *
-     * @param array       $participation  Array with data from the eav/participations
-     * @param string|null $learningNeedId Id of the eav/learningNeeds
-     *
-     * @throws Exception
-     *
-     * @return array A eav/participations resource result is returned in Json
-     */
-    public function handleResultJson(array $participation, string $learningNeedId = null): array
-    {
-        $resource['id'] = '/participations/'.$participation['id'];
-        if (isset($participation['status'])) {
-            $resource['status'] = $participation['status'];
-        }
-        $resource = [
-            'aanbiederId'                     => $participation['aanbiederId'],
-            'aanbiederName'                   => $participation['aanbiederName'],
-            'aanbiederNote'                   => $participation['aanbiederNote'],
-            'offerName'                       => $participation['offerName'],
-            'offerCourse'                     => $participation['offerCourse'],
-            'outComesGoal'                    => $participation['goal'],
-            'outComesTopic'                   => $participation['topic'],
-            'outComesTopicOther'              => $participation['topicOther'],
-            'outComesApplication'             => $participation['application'],
-            'outComesApplicationOther'        => $participation['applicationOther'],
-            'outComesLevel'                   => $participation['level'],
-            'outComesLevelOther'              => $participation['levelOther'],
-            'detailsIsFormal'                 => $participation['isFormal'],
-            'detailsGroupFormation'           => $participation['groupFormation'],
-            'detailsTotalClassHours'          => $participation['totalClassHours'],
-            'detailsCertificateWillBeAwarded' => $participation['certificateWillBeAwarded'],
-            'detailsStartDate'                => $participation['startDate'],
-            'detailsEndDate'                  => $participation['endDate'],
-            'detailsEngagements'              => $participation['engagements'],
-            'presenceEngagements'             => $participation['presenceEngagements'],
-            'presenceStartDate'               => $participation['presenceStartDate'],
-            'presenceEndDate'                 => $participation['presenceEndDate'],
-            'presenceEndParticipationReason'  => $participation['presenceEndParticipationReason'],
-        ];
-
-        if (isset($learningNeedId)) {
-            $resource['learningNeedId'] = '/learning_needs/'.$learningNeedId;
-        }
-
-        return $resource;
     }
 
     /**
