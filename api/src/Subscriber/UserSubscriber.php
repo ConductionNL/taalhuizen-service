@@ -85,7 +85,7 @@ class UserSubscriber implements EventSubscriberInterface
                     break;
                 case 'api_users_request_password_reset_collection':
                     $response = $this->requestPasswordReset($resource);
-                    $attributes = ['token'];
+                    $attributes = ['username'];
                     $ignoredAttributes = null;
                     break;
                 case 'api_users_reset_password_collection':
@@ -164,8 +164,9 @@ class UserSubscriber implements EventSubscriberInterface
     private function requestPasswordReset(User $resource): User
     {
         $user = new User();
-        $token = $this->ucService->createPasswordResetToken($resource->getUsername(), true);
-        $user->setToken($token);
+        $this->ucService->createPasswordResetToken($resource->getUsername(), true);
+
+        $user->setUsername($resource->getUsername());
         $this->entityManager->persist($user);
 
         return $user;
