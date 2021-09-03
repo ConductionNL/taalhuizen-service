@@ -35,19 +35,27 @@ class StudentService
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private CCService $ccService;
+    private AvailabilityService $availabilityService;
+    private EDUService $eduService;
+    private MrcService $mrcService;
 
+    /**
+     * StudentService constructor.
+     *
+     * @param LayerService $layerService
+     * @param UcService    $ucService
+     */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        CCService $ccService,
-        EDUService $eduService,
+        LayerService $layerService,
         MrcService $mrcService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
-        $this->ccService = $ccService;
-        $this->eduService = $eduService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
+        $this->availabilityService = new AvailabilityService($layerService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
     }
 
