@@ -978,9 +978,7 @@ class MrcService
      */
     public function checkEmployeeValues(array $input)
     {
-        if (!isset($input['person'])) {
-            throw new BadRequestPathException('Some required fields have not been submitted.', 'person');
-        }
+        $this->checkEmployeePersonAndOrganization($input);
         $array = [
             'targetGroupPreferences' => ['NT1', 'NT2'],
             'currentEducation'       => ['YES', 'NO', 'NO_BUT_DID_EARLIER'],
@@ -999,6 +997,23 @@ class MrcService
             }
         }
         $this->checkEmployeeValuesSubresources($input);
+    }
+
+    /**
+     * This function checks if the given employee person and organization array its data is valid.
+     *
+     * @param array $input Array with employees data
+     *
+     * @throws Exception
+     */
+    public function checkEmployeePersonAndOrganization(array $input)
+    {
+        if (!isset($input['person'])) {
+            throw new BadRequestPathException('Some required fields have not been submitted.', 'person');
+        }
+        if (!isset($input['organizationId']) || (isset($input['organizationId']) && $this->commonGroundService->isResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['organizationId']])) == false)) {
+            throw new BadRequestPathException('The organizationId is not given or the organization does not exist.', 'organizationId');
+        }
     }
 
     /**

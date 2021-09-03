@@ -9,6 +9,7 @@ use App\Entity\Organization;
 use App\Entity\Person;
 use App\Entity\StudentPermission;
 use App\Entity\Telephone;
+use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -368,34 +369,54 @@ class CCService
      */
     public function deleteOrganization(string $id, ?string $programId): bool
     {
-        $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
-        //delete program
-        if ($programId !== null) {
-            $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
-        }
-        //delete organizations
-        $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
-        $wrcOrganizationId = end($wrcOrganizationId);
-        $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
+        try {
+            $ccOrganization = $this->commonGroundService->getResource(['component' => 'cc', 'type' => 'organizations', 'id' => $id], [], false);
 
-        foreach ($ccOrganization['telephones'] as $telephone) {
-            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'telephones', 'id' => $telephone['id']]);
-        }
+            //delete program
+            if ($programId !== null) {
+                $this->commonGroundService->deleteResource(null, ['component' => 'edu', 'type' => 'programs', 'id' => $programId]);
+            }
+            //delete organizations
+            $wrcOrganizationId = explode('/', $ccOrganization['sourceOrganization']);
+            $wrcOrganizationId = end($wrcOrganizationId);
+            $this->commonGroundService->deleteResource(null, ['component' => 'wrc', 'type' => 'organizations', 'id' => $wrcOrganizationId]);
 
-        foreach ($ccOrganization['emails'] as $email) {
-            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'emails', 'id' => $email['id']]);
-        }
+            foreach ($ccOrganization['telephones'] as $telephone) {
+                $deleted = $this->commonGroundService->deleteResource($telephone);
+                if ($deleted == false) {
+                    throw new BadRequestPathException('Cant delete telephone.', 'organization');
+                }
+            }
 
-        foreach ($ccOrganization['addresses'] as $address) {
-            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'addresses', 'id' => $address['id']]);
-        }
+            foreach ($ccOrganization['emails'] as $email) {
+                $deleted = $this->commonGroundService->deleteResource($email);
+                if ($deleted == false) {
+                    throw new BadRequestPathException('Cant delete email.', 'organization');
+                }
+            }
 
-        foreach ($ccOrganization['persons'] as $person) {
-            $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'people', 'id' => $person['id']]);
-        }
-        $this->commonGroundService->deleteResource(null, ['component' => 'cc', 'type' => 'organizations', 'id' => $ccOrganization['id']]);
+            foreach ($ccOrganization['addresses'] as $address) {
+                $deleted = $this->commonGroundService->deleteResource($address);
+                if ($deleted == false) {
+                    throw new BadRequestPathException('Cant delete address.', 'organization');
+                }
+            }
 
-        return true;
+            foreach ($ccOrganization['persons'] as $person) {
+                $deleted = $this->commonGroundService->deleteResource($person);
+                if ($deleted == false) {
+                    throw new BadRequestPathException('Cant delete person.', 'organization');
+                }
+            }
+            $deleted = $this->commonGroundService->deleteResource($ccOrganization);
+            if ($deleted == false) {
+                throw new BadRequestPathException('Cant delete organization.', 'organization');
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            throw new BadRequestPathException('Cant delete organization.', 'organization');
+        }
     }
 
     /**
