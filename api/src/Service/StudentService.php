@@ -1389,6 +1389,7 @@ class StudentService
         $person = isset($input['backgroundDetails']) ? $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']) : $person;
         $person = isset($input['availabilityDetails']) ? $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']) : $person;
         $person = isset($input['permissionDetails']) ? $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']) : $person;
+        $person = isset($input['dutchNTDetails']) ? $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']) : $person;
 
         return $person;
     }
@@ -1446,21 +1447,11 @@ class StudentService
      */
     private function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
     {
-        if (isset($dutchNTDetails['dutchNTLevel'])) {
-            $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'];
-        }
-        if (isset($dutchNTDetails['inNetherlandsSinceYear'])) {
-            $person['inNetherlandsSinceYear'] = $dutchNTDetails['inNetherlandsSinceYear'];
-        }
-        if (isset($dutchNTDetails['languageInDailyLife'])) {
-            $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'];
-        }
-        if (isset($dutchNTDetails['knowsLatinAlphabet'])) {
-            $person['knowsLatinAlphabet'] = (bool)$dutchNTDetails['knowsLatinAlphabet'];
-        }
-        if (isset($dutchNTDetails['lastKnownLevel'])) {
-            $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'];
-        }
+        $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'] ?? null;
+        $person['inNetherlandsSinceYear'] = $dutchNTDetails['inNetherlandsSinceYear'] ?? null;
+        $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'] ?? null;
+        $person['knowsLatinAlphabet'] = $dutchNTDetails['knowsLatinAlphabet'] ?? null;
+        $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'] ?? null;
 
         return $person;
     }
