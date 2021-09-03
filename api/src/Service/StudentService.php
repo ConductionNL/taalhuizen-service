@@ -402,6 +402,25 @@ class StudentService
                 throw new BadRequestPathException('Invalid option(s) given for some fields .', 'referrerDetails.referringOrganization');
             }
         }
+        if (isset($input['jobDetails']['dayTimeActivities'])) {
+            foreach ($input['jobDetails']['dayTimeActivities'] as $activity) {
+                if (!in_array($activity, ['SEARCHING_FOR_JOB', 'RE_INTEGRATION', 'SCHOOL', 'VOLUNTEER_JOB', 'JOB', 'OTHER'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'jobDetails.dayTimeActivities');
+                }
+            }
+        }
+        $this->checkStudentSubresources($input);
+    }
+
+    /**
+     * This function checks if the given student subresource array its data is valid.
+     *
+     * @param array $input Array with students data
+     *
+     * @throws Exception
+     */
+    public function checkStudentSubresources(array $input)
+    {
         if (isset($input['registrar'])) {
             $this->checkPersonValues($input['registrar'], 'registrar');
         }
@@ -428,13 +447,6 @@ class StudentService
         if (isset($input['courseDetails'])) {
             if (isset($input['courseDetails']['course'])) {
                 $this->checkStudentEducationValues($input['courseDetails']['course'], 'courseDetails.course');
-            }
-        }
-        if (isset($input['jobDetails']['dayTimeActivities'])) {
-            foreach ($input['jobDetails']['dayTimeActivities'] as $activity) {
-                if (!in_array($activity, ['SEARCHING_FOR_JOB', 'RE_INTEGRATION', 'SCHOOL', 'VOLUNTEER_JOB', 'JOB', 'OTHER'])) {
-                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'jobDetails.dayTimeActivities');
-                }
             }
         }
         if (isset($input['motivationDetails'])) {
