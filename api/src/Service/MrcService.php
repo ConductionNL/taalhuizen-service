@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Education;
 use App\Entity\Employee;
-use App\Entity\Person;
 use App\Exception\BadRequestPathException;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
@@ -12,7 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
-use phpDocumentor\Reflection\Types\This;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
