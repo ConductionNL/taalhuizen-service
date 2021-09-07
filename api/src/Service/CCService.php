@@ -539,6 +539,9 @@ class CCService
             if ($key == 'emails' && !isset($personArray['emails'][0]['email'])) { //do not remove this isset!
                 $personArray[$key] = [$personArray[$key]];
             }
+            if ($key == 'addresses' && !isset($personArray['addresses'][0]['street'])) { //do not remove this isset!
+                $personArray[$key] = [$personArray[$key]];
+            }
             if ($value !== false && !$value) {
                 unset($personArray[$key]);
             }
