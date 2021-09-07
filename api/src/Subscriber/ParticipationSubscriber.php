@@ -3,7 +3,6 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Participation;
 use App\Exception\BadRequestPathException;
 use App\Service\EAVService;
 use App\Service\ErrorSerializerService;

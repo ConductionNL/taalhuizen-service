@@ -23769,17 +23769,11 @@ components:
           type: string
           example: base64
           description: 'Base64 of this document.'
-        studentId:
+        participantId:
           minLength: 36
           maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Student id of this document.'
-          type: string
-        providerEmployeeId:
-          minLength: 36
-          maxLength: 36
-          example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Provider employee id of this document.'
+          description: 'participant id of this document.'
           type: string
       required:
         - filename
@@ -23800,17 +23794,11 @@ components:
           type: string
           example: base64
           description: 'Base64 of this document.'
-        studentId:
+        participantId:
           minLength: 36
           maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Student id of this document.'
-          type: string
-        providerEmployeeId:
-          minLength: 36
-          maxLength: 36
-          example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Provider employee id of this document.'
+          description: 'participant id of this document.'
           type: string
     Document.jsonld-read:
       type: object
@@ -23853,17 +23841,11 @@ components:
           type: string
           example: base64
           description: 'Base64 of this document.'
-        studentId:
+        participantId:
           minLength: 36
           maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Student id of this document.'
-          type: string
-        providerEmployeeId:
-          minLength: 36
-          maxLength: 36
-          example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Provider employee id of this document.'
+          description: 'participant id of this document.'
           type: string
       required:
         - filename
@@ -23907,17 +23889,11 @@ components:
           type: string
           example: base64
           description: 'Base64 of this document.'
-        studentId:
+        participantId:
           minLength: 36
           maxLength: 36
           example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Student id of this document.'
-          type: string
-        providerEmployeeId:
-          minLength: 36
-          maxLength: 36
-          example: e2984465-190a-4562-829e-a8cca81aa35d
-          description: 'Provider employee id of this document.'
+          description: 'participant id of this document.'
           type: string
     Education-read:
       type: object
