@@ -1,0 +1,15 @@
+[
+	{
+		"taalhuizen": [
+			{"responce_status_code": 200,"test_description":"Stap 2b: Create taalhuis with unique name","name": "test"},
+			{"responce_status_code": 409,"test_description":"double name", "error_path":"name","name": "test" },
+			{"responce_status_code": 200,"test_description":"unique name", "name": "test2"}
+		],
+		"users": [
+			{"responce_status_code": 200,"test_description":"default name","name": "test"}
+		],
+		"employees": [
+			{"responce_status_code": 200,"test_description":"default name","name": "test"}
+		]
+	}
+]
