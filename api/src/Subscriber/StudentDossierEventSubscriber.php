@@ -3,47 +3,49 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Student;
+use App\Entity\StudentDossierEvent;
 use App\Exception\BadRequestPathException;
+use App\Service\EDUService;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
-use App\Service\MrcService;
+use App\Service\NewRegistrationService;
 use App\Service\ParticipationService;
-use App\Service\StudentService;
+use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Error;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class StudentSubscriber implements EventSubscriberInterface
+class StudentDossierEventSubscriber implements EventSubscriberInterface
 {
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
-    private MrcService $mrcService;
     private SerializerService $serializerService;
-    private StudentService $studentService;
+    private EDUService $eduService;
+    private UcService $ucService;
     private ErrorSerializerService $errorSerializerService;
 //    private ParticipationService $participationService;
 
     /**
-     * StudentSubscriber constructor.
+     * StudentDossierEventSubscriber constructor.
      *
-     * @param StudentService $studentService
-     * @param LayerService   $layerService
+     * @param EDUService   $eduService
+     * @param LayerService $layerService
      */
-    public function __construct(StudentService $studentService, MrcService $mrcService, LayerService $layerService)
+    public function __construct(EDUService $eduService, LayerService $layerService)
     {
         $this->entityManager = $layerService->entityManager;
         $this->commonGroundService = $layerService->commonGroundService;
-        $this->studentService = $studentService;
-        $this->mrcService = $mrcService;
+        $this->registrationService = new NewRegistrationService($layerService);
         $this->serializerService = new SerializerService($layerService->serializer);
+        $this->eduService = $eduService;
         $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
+
 //        $this->participationService = new ParticipationService($studentService, $layerService);
     }
 
@@ -53,7 +55,7 @@ class StudentSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::VIEW => ['student', EventPriorities::PRE_VALIDATE],
+            KernelEvents::VIEW => ['studentDossierEvent', EventPriorities::PRE_VALIDATE],
         ];
     }
 
@@ -62,7 +64,7 @@ class StudentSubscriber implements EventSubscriberInterface
      *
      * @throws Exception
      */
-    public function student(ViewEvent $event)
+    public function studentDossierEvent(ViewEvent $event)
     {
         $route = $event->getRequest()->attributes->get('_route');
         $resource = $event->getControllerResult();
@@ -70,11 +72,14 @@ class StudentSubscriber implements EventSubscriberInterface
         // Lets limit the subscriber
         try {
             switch ($route) {
-                case 'api_students_post_collection':
-                    $response = $this->createStudent($resource);
+                case 'api_student_dossier_events_post_collection':
+                    $response = $this->createStudentDossierEvent($resource);
                     break;
-                case 'api_students_get_collection':
-                    $response = $this->getStudents($event->getRequest()->query->all());
+                case 'api_student_dossier_events_get_collection':
+                    $response = $this->eduService->getEducationEvents($event->getRequest()->query->all());
+                    break;
+                case 'api_student_dossier_events_put_item':
+                    $response = $this->eduService->updateEducationEvent($event->getRequest()->attributes->get('id'), $resource);
                     break;
                 default:
                     return;
@@ -82,8 +87,6 @@ class StudentSubscriber implements EventSubscriberInterface
 
             if ($response instanceof Response) {
                 $event->setResponse($response);
-
-                return;
             }
             $this->serializerService->setResponse($response, $event);
         } catch (BadRequestPathException $exception) {
@@ -92,34 +95,31 @@ class StudentSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Student $student
+     * Creates a student dossier event.
      *
-     * @throws Exception
+     * @param object $studentDossierEvent The data for the student dossier event
      *
-     * @return Student|Response|object
+     * @return StudentDossierEvent The resulting student dossier event
      */
-    private function createStudent(Student $student): Student
+    public function createStudentDossierEvent(object $studentDossierEvent): StudentDossierEvent
     {
-        if (!isset($body['person']['emails']['email'])) {
-            return new Response(
-                json_encode([
-                    'message' => 'The person of this student must contain an email!',
-                    'path'    => 'person.emails.email',
-                ]),
-                Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'application/json']
-            );
-        }
-        $uniqueEmail = $this->mrcService->checkUniqueEmployeeEmail($body);
-        if ($uniqueEmail instanceof Response) {
-            return $uniqueEmail;
-        }
-
-        return $this->studentService->createStudent($body);
+        return $this->eduService->createEducationEvent($studentDossierEvent);
     }
 
-    private function getStudents(array $query): ArrayCollection
+    /**
+     * Updates a student dossier event.
+     *
+     * @param string $id
+     * @param object $studentDossierEvent The data for the student dossier event
+     *
+     * @return StudentDossierEvent The resulting student dossier event
+     */
+    public function updateStudentDossierEvent(string $id, object $studentDossierEvent): StudentDossierEvent
     {
-        return $this->studentService->newGetStudents($query);
+        if ($studentDossierEvent instanceof StudentDossierEvent) {
+            return $this->eduService->updateEducationEvent($id, $studentDossierEvent);
+        } else {
+            throw new Error('wrong students dossier event id');
+        }
     }
 }

@@ -135,25 +135,23 @@ class EDUService
     /**
      * This function converts a EducationEvent to a StudentDossierEvent.
      *
-     * @param array       $input        Array of data that is being converted into the StudentDossierEvent
-     * @param string|null $employeeName Name of the creator that created the EducationEvent
-     * @param string|null $studentId    ID of the student this StudentDossierEvent is being created for
+     * @param array  $result    Array of data that is being converted into the StudentDossierEvent
+     * @param string $studentId
      *
      * @throws \Exception
      *
-     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent object
+     * @return StudentDossierEvent Returns a StudentDossierEvent object
      */
-    public function convertEducationEvent(array $input, ?string $employeeName = null, ?string $studentId = null): StudentDossierEvent
+    public function convertEducationEvent(array $result, string $studentId): StudentDossierEvent
     {
         $studentDossierEvent = new StudentDossierEvent();
-        $studentDossierEvent->setStudentDossierEventId($input['id']);
-        $studentDossierEvent->setEvent($input['name']);
-        $studentDossierEvent->setEventDescription($input['description']);
-        $studentDossierEvent->setEventDate(new DateTime($input['startDate']));
+        $studentDossierEvent->setEvent($result['name']);
+        $studentDossierEvent->setEventDescription($result['description']);
+        $studentDossierEvent->setEventDate(new DateTime($result['startDate']));
         $studentDossierEvent->setStudentId($studentId);
-        $studentDossierEvent->setCreatorGivenName($employeeName);
+        $studentDossierEvent->setOrganizer($result['organizer']);
         $this->entityManager->persist($studentDossierEvent);
-        $studentDossierEvent->setId(Uuid::fromString($input['id']));
+        $studentDossierEvent->setId(Uuid::fromString($result['id']));
         $this->entityManager->persist($studentDossierEvent);
 
         return $studentDossierEvent;
@@ -162,13 +160,13 @@ class EDUService
     /**
      * This function fetches EducationEvents for the given person.
      *
-     * @param string|null $person The person the education events are being fetched for
+     * @param ?array|?string $person The person the education events are being fetched for
      *
      * @throws \Exception
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection Returns a ArrayCollection holding EducationEvents
+     * @return ArrayCollection Returns a ArrayCollection holding EducationEvents
      */
-    public function getEducationEvents(?string $person = null): ArrayCollection
+    public function getEducationEvents($person = null): ArrayCollection
     {
         //@TODO: This has to be knotted to the event more properly
         if ($person) {
@@ -203,26 +201,26 @@ class EDUService
     /**
      * This function creates a StudentDossierEvent with the given array and converts it to a EducationEvent.
      *
-     * @param array $studentDossierEventArray Array with data for the StudentDossierEvent
+     * @param object $studentDossierEvent StudentDossierEvent with data for the StudentDossierEvent
      *
      * @throws \Exception
      *
-     * @return \App\Entity\StudentDossierEvent Returns a EducationEvent
+     * @return StudentDossierEvent Returns a EducationEvent
      */
-    public function createEducationEvent(array $studentDossierEventArray): StudentDossierEvent
+    public function createEducationEvent(object $studentDossierEvent): StudentDossierEvent
     {
-        $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']]);
+        $employee = $this->commonGroundService->getResource(['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEvent->getEmployeeId()]);
         $event = [
-            'name'         => $studentDossierEventArray['event'],
-            'description'  => $studentDossierEventArray['eventDescription'],
-            'startDate'    => $studentDossierEventArray['eventDate'],
-            'participants' => ["/participants/{$studentDossierEventArray['studentId']}"],
+            'name'         => $studentDossierEvent->getEvent(),
+            'description'  => $studentDossierEvent->getEventDescription(),
+            'startDate'    => $studentDossierEvent->getEventDate(),
+            'participants' => ["/participants/{$studentDossierEvent->getStudentId()}"],
             'organizer'    => $employee['@id'],
         ];
-        $contact = $this->commonGroundService->getResource($employee['person']);
+//        $contact = $this->commonGroundService->getResource($employee['person']);
         $result = $this->commonGroundService->createResource($event, ['component' => 'edu', 'type' => 'education_events']);
 
-        return $this->convertEducationEvent($result, $contact['givenName'], $studentDossierEventArray['studentId']);
+        return $this->convertEducationEvent($result, $studentDossierEvent->getStudentId());
     }
 
     /**
@@ -254,24 +252,24 @@ class EDUService
     /**
      * This function updates a StudentDossierEvent and converts it to a EducationEvent.
      *
-     * @param string $id                       ID of the EducationEvent that will be updated
-     * @param array  $studentDossierEventArray Array that holds data for the StudentDossierEvent
+     * @param string              $id                  ID of the EducationEvent that will be updated
+     * @param StudentDossierEvent $studentDossierEvent StudentDossierEvent that holds data for the StudentDossierEvent
      *
      * @throws \Exception
      *
-     * @return \App\Entity\StudentDossierEvent Returns a StudentDossierEvent
+     * @return StudentDossierEvent Returns a StudentDossierEvent
      */
-    public function updateEducationEvent(string $id, array $studentDossierEventArray): StudentDossierEvent
+    public function updateEducationEvent(string $id, StudentDossierEvent $studentDossierEvent): StudentDossierEvent
     {
         $resource = $this->commonGroundService->getResource(['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
         $employee = $this->commonGroundService->getResource(isset($studentDossierEventArray['employeeId']) ? ['component' => 'mrc', 'type' => 'employees', 'id' => $studentDossierEventArray['employeeId']] : $resource['organizer']);
         $event = [
-            'name'        => key_exists('event', $studentDossierEventArray) ? $studentDossierEventArray['event'] : $resource['name'],
-            'description' => key_exists('eventDescription', $studentDossierEventArray) ? $studentDossierEventArray['eventDescription'] : $resource['description'],
-            'startDate'   => key_exists('eventDate', $studentDossierEventArray) ? $studentDossierEventArray['eventDate'] : $resource['startDate'],
-            'organizer'   => key_exists('employeeId', $studentDossierEventArray) ? $employee['@id'] : $resource['organizer'],
+            'name'        => key_exists('event', $studentDossierEvent) ? $studentDossierEvent['event'] : $resource['name'],
+            'description' => key_exists('eventDescription', $studentDossierEvent) ? $studentDossierEvent['eventDescription'] : $resource['description'],
+            'startDate'   => key_exists('eventDate', $studentDossierEvent) ? $studentDossierEvent['eventDate'] : $resource['startDate'],
+            'organizer'   => key_exists('employeeId', $studentDossierEvent) ? $employee['@id'] : $resource['organizer'],
         ];
-        $event = $this->updateParticipants($event, $studentDossierEventArray['studentId'] ?? null, $resource['participants']);
+        $event = $this->updateParticipants($event, $studentDossierEvent['studentId'] ?? null, $resource['participants']);
 
         $contact = $this->commonGroundService->getResource($employee['person']);
         $resource = $this->commonGroundService->updateResource($event, ['component' => 'edu', 'type' => 'education_events', 'id' => $id]);
