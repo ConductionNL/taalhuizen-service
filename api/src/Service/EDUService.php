@@ -135,8 +135,8 @@ class EDUService
     /**
      * This function converts a EducationEvent to a StudentDossierEvent.
      *
-     * @param array       $result        Array of data that is being converted into the StudentDossierEvent
-     * @param string      $studentId
+     * @param array  $result    Array of data that is being converted into the StudentDossierEvent
+     * @param string $studentId
      *
      * @throws \Exception
      *
@@ -252,8 +252,8 @@ class EDUService
     /**
      * This function updates a StudentDossierEvent and converts it to a EducationEvent.
      *
-     * @param string $id                       ID of the EducationEvent that will be updated
-     * @param StudentDossierEvent  $studentDossierEvent StudentDossierEvent that holds data for the StudentDossierEvent
+     * @param string              $id                  ID of the EducationEvent that will be updated
+     * @param StudentDossierEvent $studentDossierEvent StudentDossierEvent that holds data for the StudentDossierEvent
      *
      * @throws \Exception
      *
