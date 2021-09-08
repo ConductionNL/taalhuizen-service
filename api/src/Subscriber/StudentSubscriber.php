@@ -8,7 +8,6 @@ use App\Exception\BadRequestPathException;
 use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\MrcService;
-use App\Service\NewStudentService;
 use App\Service\ParticipationService;
 use App\Service\StudentService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
@@ -16,8 +15,6 @@ use Conduction\CommonGroundBundle\Service\SerializerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use phpDocumentor\Reflection\Types\Collection;
-use function GuzzleHttp\json_decode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -124,6 +121,5 @@ class StudentSubscriber implements EventSubscriberInterface
     private function getStudents(array $query): ArrayCollection
     {
         return $this->studentService->newGetStudents($query);
-
     }
 }

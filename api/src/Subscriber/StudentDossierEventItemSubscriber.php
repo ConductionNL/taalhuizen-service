@@ -3,11 +3,8 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Registration;
-use App\Entity\StudentDossierEvent;
 use App\Service\EDUService;
 use App\Service\LayerService;
-use App\Service\NewRegistrationService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
 use Exception;
@@ -25,8 +22,8 @@ class StudentDossierEventItemSubscriber implements EventSubscriberInterface
     /**
      * UserItemSubscriber constructor.
      *
-     * @param LayerService           $layerService
-     * @param EDUService $eduService
+     * @param LayerService $layerService
+     * @param EDUService   $eduService
      */
     public function __construct(LayerService $layerService, EDUService $eduService)
     {
@@ -76,5 +73,4 @@ class StudentDossierEventItemSubscriber implements EventSubscriberInterface
         }
         $this->serializerService->setResponse($response, $event);
     }
-
 }

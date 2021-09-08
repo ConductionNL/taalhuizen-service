@@ -2517,10 +2517,10 @@ class StudentService
         }
 
         $result = [
-            '@context' => '/contexts/Student',
-            '@id' => '/students',
-            '@type' => 'hydra:Collection',
-            'hydra:member' => $students,
+            '@context'         => '/contexts/Student',
+            '@id'              => '/students',
+            '@type'            => 'hydra:Collection',
+            'hydra:member'     => $students,
             'hydra:totalItems' => $results['hydra:totalItems'] ?? count($results),
         ];
         if (key_exists('hydra:view', $results)) {
@@ -2608,7 +2608,6 @@ class StudentService
         $background->setWentToLanguageHouseBeforeYear($result['wentToLanguageHouseBeforeYear'] ?? null);
         $background->setNetwork($result['network'] ?? null);
         $background->setParticipationLadder($result['participationLadder'] ?? null);
-
 
         return $background;
     }

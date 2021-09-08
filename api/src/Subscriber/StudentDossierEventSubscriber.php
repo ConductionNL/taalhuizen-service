@@ -3,7 +3,6 @@
 namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Registration;
 use App\Entity\StudentDossierEvent;
 use App\Exception\BadRequestPathException;
 use App\Service\EDUService;
@@ -11,12 +10,9 @@ use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\NewRegistrationService;
 use App\Service\ParticipationService;
-use App\Service\StudentService;
 use App\Service\UcService;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use Conduction\CommonGroundBundle\Service\SerializerService;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
@@ -38,8 +34,8 @@ class StudentDossierEventSubscriber implements EventSubscriberInterface
     /**
      * StudentDossierEventSubscriber constructor.
      *
-     * @param EDUService $eduService
-     * @param LayerService   $layerService
+     * @param EDUService   $eduService
+     * @param LayerService $layerService
      */
     public function __construct(EDUService $eduService, LayerService $layerService)
     {
