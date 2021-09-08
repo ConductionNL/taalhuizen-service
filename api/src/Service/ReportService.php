@@ -124,8 +124,8 @@ class ReportService
         $participants = $this->commonGroundService->getResourceList(['component' => 'edu', 'type' => 'participants'], array_merge(['limit' => 1000], $query))['hydra:member'];
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = $this->fillLearningNeeds($participants, $dateFrom, $dateUntil);
-        $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
-        $report->setBase64(base64_encode($this->serializer->serialize($learningNeedsCollection, 'csv', ['attributes' => ['studentId', 'dateCreated', 'desiredOutComesGoal', 'desiredOutComesTopic', 'desiredOutComesTopicOther', 'desiredOutComesApplication', 'desiredOutComesApplicationOther', 'desiredOutComesLevel', 'desiredOutComesLevelOther']])));
+//        $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
+        $report->setBase64(base64_encode($this->serializer->serialize($learningNeeds, 'csv')));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
         $this->entityManager->persist($report);

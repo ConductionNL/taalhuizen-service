@@ -35,19 +35,27 @@ class StudentService
     private EntityManagerInterface $entityManager;
     private CommonGroundService $commonGroundService;
     private EAVService $eavService;
+    private CCService $ccService;
+    private AvailabilityService $availabilityService;
+    private EDUService $eduService;
+    private MrcService $mrcService;
 
+    /**
+     * StudentService constructor.
+     *
+     * @param LayerService $layerService
+     * @param UcService    $ucService
+     */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        CommonGroundService $commonGroundService,
-        CCService $ccService,
-        EDUService $eduService,
+        LayerService $layerService,
         MrcService $mrcService
     ) {
-        $this->entityManager = $entityManager;
-        $this->commonGroundService = $commonGroundService;
-        $this->eavService = new EAVService($commonGroundService);
-        $this->ccService = $ccService;
-        $this->eduService = $eduService;
+        $this->entityManager = $layerService->entityManager;
+        $this->commonGroundService = $layerService->commonGroundService;
+        $this->eavService = new EAVService($layerService->commonGroundService);
+        $this->ccService = new CCService($layerService);
+        $this->availabilityService = new AvailabilityService($layerService);
+        $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->mrcService = $mrcService;
     }
 
@@ -95,23 +103,10 @@ class StudentService
     private function getStudentObjects($studentUrl = null, $skipChecks = false): array
     {
         $participant = $this->eavService->getObject(['entityName' => 'participants', 'componentCode' => 'edu', 'self' => $studentUrl]);
-
         $person = $this->getStudentPerson($participant, $skipChecks);
-
-        // get the memo for availabilityNotes and add it to the $person
-        if (isset($person)) {
-            $person = $this->getStudentAvailabilityNotes($person);
-        }
-
-        // get the memo for remarks (motivationDetails) and add it to the $participant
-        if (isset($participant)) {
-            $participant = $this->getStudentMotivationDetailsRemarks($person, $participant);
-        }
-
-        // get the registrarOrganization, registrarPerson and its memo
+        $person = $this->getStudentAvailabilityNotes($person);
+        $participant = $this->getStudentMotivationDetailsRemarks($person, $participant);
         $registrar = $this->getStudentRegistrar($person, $participant);
-
-        // Get students data from mrc
         $employee = $this->getStudentEmployee($person, $skipChecks);
 
         return [
@@ -260,7 +255,12 @@ class StudentService
             if (!isset($student['person']) || isset($student['person']) && $this->commonGroundService->isCommonGround($student['person']) == false) {
                 continue;
             }
-            $students[$key] = $this->getStudent($student['id']);
+            $fetchedStudent = $this->getStudent($student['id'], false, true);
+            if ($fetchedStudent == false) {
+                continue;
+            } else {
+                $students[$key] = $fetchedStudent;
+            }
         }
 
         return $students;
@@ -310,18 +310,10 @@ class StudentService
             try {
                 //todo: do hasEavObject checks here? For now removed because it will slow down the api call if we do to many calls in a foreach
 //                if ($this->eavService->hasEavObject($participationUrl)) {
-                // Get eav/Participation
                 $participation = $this->eavService->getObject(['entityName' => 'participations', 'self' => $participationUrl]);
-                //after isset add && hasEavObject? $this->eavService->hasEavObject($participation['learningNeed']) todo: same here?
                 if ($participation['status'] == $status && isset($participation['learningNeed'])) {
                     $collection = $this->getStudentFromLearningNeed($collection, $studentUrls, $participation['learningNeed']);
                 }
-//                    else {
-//                        $result['message'] = 'Warning, '. $participation['learningNeed'] .' is not an existing eav/learning_need!';
-//                    }
-//                } else {
-//                    $result['message'] = 'Warning, '. $participationUrl .' is not an existing eav/participation!';
-//                }
             } catch (Exception $e) {
                 continue;
             }
@@ -374,7 +366,6 @@ class StudentService
      */
     public function checkStudentValues(array $input)
     {
-
         // todo: make sure every subresource json array from the input follows the rules (required, datatype, etc) from the corresponding entities! (enums done)
 
         if (!isset($input['languageHouseId']) || $this->commonGroundService->isResource($this->commonGroundService->cleanUrl(['component' => 'cc', 'type' => 'organizations', 'id' => $input['languageHouseId']]) == false)) {
@@ -401,12 +392,35 @@ class StudentService
             if (isset($input['generalDetails']['civicIntegrationRequirement']) && !in_array($input['generalDetails']['familyComposition'], ['MARRIED_PARTNER', 'SINGLE', 'DIVORCED'])) {
                 throw new BadRequestPathException('Invalid option(s) given for some fields .', 'generalDetails.familyComposition');
             }
+            // todo check if input is correct ISO 3166-1 alpha-2 value
+            if (isset($input['generalDetails']['nativeLanguage']) && strlen($input['generalDetails']['nativeLanguage']) != 2) {
+                throw new BadRequestPathException('Invalid option(s) given for some fields .', 'generalDetails.nativeLanguage');
+            }
         }
         if (isset($input['referrerDetails'])) {
             if (isset($input['referrerDetails']['referringOrganization']) && !in_array($input['referrerDetails']['referringOrganization'], ['UWV', 'SOCIAL_SERVICE', 'LIBRARY', 'WELFARE_WORK', 'NEIGHBORHOOD_TEAM', 'VOLUNTEER_ORGANIZATION', 'LANGUAGE_PROVIDER', 'OTHER'])) {
                 throw new BadRequestPathException('Invalid option(s) given for some fields .', 'referrerDetails.referringOrganization');
             }
         }
+        if (isset($input['jobDetails']['dayTimeActivities'])) {
+            foreach ($input['jobDetails']['dayTimeActivities'] as $activity) {
+                if (!in_array($activity, ['SEARCHING_FOR_JOB', 'RE_INTEGRATION', 'SCHOOL', 'VOLUNTEER_JOB', 'JOB', 'OTHER'])) {
+                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'jobDetails.dayTimeActivities');
+                }
+            }
+        }
+        $this->checkStudentSubresources($input);
+    }
+
+    /**
+     * This function checks if the given student subresource array its data is valid.
+     *
+     * @param array $input Array with students data
+     *
+     * @throws Exception
+     */
+    public function checkStudentSubresources(array $input)
+    {
         if (isset($input['registrar'])) {
             $this->checkPersonValues($input['registrar'], 'registrar');
         }
@@ -433,13 +447,6 @@ class StudentService
         if (isset($input['courseDetails'])) {
             if (isset($input['courseDetails']['course'])) {
                 $this->checkStudentEducationValues($input['courseDetails']['course'], 'courseDetails.course');
-            }
-        }
-        if (isset($input['jobDetails']['dayTimeActivities'])) {
-            foreach ($input['jobDetails']['dayTimeActivities'] as $activity) {
-                if (!in_array($activity, ['SEARCHING_FOR_JOB', 'RE_INTEGRATION', 'SCHOOL', 'VOLUNTEER_JOB', 'JOB', 'OTHER'])) {
-                    throw new BadRequestPathException('Invalid option(s) given for some fields .', 'jobDetails.dayTimeActivities');
-                }
             }
         }
         if (isset($input['motivationDetails'])) {
@@ -590,9 +597,6 @@ class StudentService
 //            $resource->setDateCreated(new \DateTime($student['participant']['dateCreated']));
 //        } //todo: this is currently incorrect, timezone problem
         $resource->setStatus($student['participant']['status'] ?? null);
-//        if (isset($student['registrar']['registrarMemo']['description'])) {
-//            $resource->setMemo($student['registrar']['registrarMemo']['description']);
-//        }
         $resource->setSpeakingLevel($student['employee']['speakingLevel'] ?? null);
         $resource->setReadingTestResult($student['participant']['readingTestResult'] ?? null);
         $resource->setWritingTestResult($student['participant']['writingTestResult'] ?? null);
@@ -827,11 +831,57 @@ class StudentService
      */
     private function handleGeneralDetails(array $person): StudentGeneral
     {
-        if (isset($person['ownedContactLists'][0]['people']) && $person['ownedContactLists'][0]['name'] == 'Children') {
-            $childrenCount = count($person['ownedContactLists'][0]['people']);
-            $childrenDatesOfBirth = '';
+        $childrenData = $this->getChildDataFromOwnedContactLists($person['ownedContactLists']);
+        $generalDetails = new StudentGeneral();
+        isset($person['birthplace']['country']) ? $generalDetails->setCountryOfOrigin($person['birthplace']['country']) : $generalDetails->setCountryOfOrigin(null);
+        isset($person['primaryLanguage']) ? $generalDetails->setNativeLanguage($person['primaryLanguage']) : $generalDetails->setNativeLanguage(null);
+        $speakingLanguages = $this->getSpeakingLanguagesString($person['speakingLanguages']);
+        isset($speakingLanguages) ? $generalDetails->setOtherLanguages($speakingLanguages) : $generalDetails->setOtherLanguages(null);
+        isset($person['maritalStatus']) ? $generalDetails->setFamilyComposition($person['maritalStatus']) : $generalDetails->setFamilyComposition(null);
+        isset($childrenData['childrenCount']) ? $generalDetails->setChildrenCount($childrenData['childrenCount']) : $generalDetails->setChildrenCount(null);
+        isset($childrenData['childrenDatesOfBirth']) ? $generalDetails->setChildrenDatesOfBirth($childrenData['childrenDatesOfBirth']) : $generalDetails->setChildrenDatesOfBirth(null);
+
+        return $generalDetails;
+    }
+
+    /**
+     * This function creates a single string from speakingLanguages array.
+     *
+     * @param array $speakingLanguagesArray
+     *
+     * @return string speakingLanguages
+     */
+    public function getSpeakingLanguagesString(array $speakingLanguagesArray): string
+    {
+        $speakingLanguages = '';
+        $speakingLanguagesCount = count($speakingLanguagesArray);
+        if (isset($speakingLanguagesArray)) {
+            foreach ($speakingLanguagesArray as $lang) {
+                $speakingLanguages .= $lang;
+                if ($speakingLanguagesCount > 1) {
+                    $speakingLanguages .= ', ';
+                }
+            }
+        }
+
+        return $speakingLanguages;
+    }
+
+    /**
+     * This function fetches children data from contact lists.
+     *
+     * @param array $contactLists
+     *
+     * @return array with children data
+     */
+    public function getChildDataFromOwnedContactLists(array $contactLists): array
+    {
+        $childrenDatesOfBirth = '';
+        $childrenCount = 0;
+        if (isset($contactLists[0]['people']) && $contactLists[0]['name'] == 'Children') {
+            $childrenCount = count($contactLists[0]['people']);
             $birthdayCount = 0;
-            foreach ($person['ownedContactLists'][0]['people'] as $child) {
+            foreach ($contactLists[0]['people'] as $child) {
                 if (isset($child['birthday'])) {
                     $birthdayCount++;
 
@@ -848,25 +898,7 @@ class StudentService
             }
         }
 
-        $generalDetails = new StudentGeneral();
-        isset($person['birthplace']['country']) ? $generalDetails->setCountryOfOrigin($person['birthplace']['country']) : $generalDetails->setCountryOfOrigin(null);
-        isset($person['primaryLanguage']) ? $generalDetails->setNativeLanguage($person['primaryLanguage']) : $generalDetails->setNativeLanguage(null);
-        $speakingLanguages = '';
-        $speakingLanguagesCount = count($person['speakingLanguages']);
-        if (isset($person['speakingLanguages'])) {
-            foreach ($person['speakingLanguages'] as $lang) {
-                $speakingLanguages .= $lang;
-                if ($speakingLanguagesCount > 1) {
-                    $speakingLanguages .= ', ';
-                }
-            }
-        }
-        isset($speakingLanguages) ? $generalDetails->setOtherLanguages($speakingLanguages) : $generalDetails->setOtherLanguages(null);
-        isset($person['maritalStatus']) ? $generalDetails->setFamilyComposition($person['maritalStatus']) : $generalDetails->setFamilyComposition(null);
-        isset($childrenCount) ? $generalDetails->setChildrenCount($childrenCount) : $generalDetails->setChildrenCount(null);
-        isset($childrenDatesOfBirth) ? $generalDetails->setChildrenDatesOfBirth($childrenDatesOfBirth) : $generalDetails->setChildrenDatesOfBirth(null);
-
-        return $generalDetails;
+        return ['childrenCount' => $childrenCount, 'childrenDatesOfBirth' => $childrenDatesOfBirth];
     }
 
     /**
@@ -889,21 +921,6 @@ class StudentService
         isset($organisation['emails'][0]['email']) ? $referringOrganization->setEmail($organisation['emails'][0]['email']) : $referringOrganization->setEmail(null);
 
         return $referringOrganization;
-//        $referringOrganization = new StudentReferrer();
-//        if (isset($registrarOrganization['name'])) {
-//            $referringOrganization->setReferringOrganization($registrarOrganization['name']);
-//            $referringOrganization->setReferringOrganizationOther($registrarOrganization['name']);
-//        } else {
-//            $referringOrganization->setReferringOrganization(null);
-//            $referringOrganization->setReferringOrganizationOther(null);
-//        }
-//        if (isset($registrarOrganization['emails'][0]['email'])) {
-//            $referringOrganization->setEmail($registrarOrganization['emails'][0]['email']);
-//        } else {
-//            $referringOrganization->setEmail(null);
-//        }
-
-//        return new StudentReferrer();
     }
 
     /**
@@ -1122,42 +1139,14 @@ class StudentService
     private function handleMotivationDetails(array $participant): StudentMotivation
     {
         $motivationDetails = new StudentMotivation();
-        if (isset($participant['desiredSkills'])) {
-            $motivationDetails->setDesiredSkills($participant['desiredSkills']);
-        } else {
-            $motivationDetails->setDesiredSkills(null);
-        }
-        $motivationDetails->setDesiredSkillsOther(null);
-        if (isset($participant['hasTriedThisBefore'])) {
-            $motivationDetails->setHasTriedThisBefore($participant['hasTriedThisBefore']);
-        } else {
-            $motivationDetails->setHasTriedThisBefore(null);
-        }
-        if (isset($participant['hasTriedThisBeforeExplanation'])) {
-            $motivationDetails->setHasTriedThisBeforeExplanation($participant['hasTriedThisBeforeExplanation']);
-        } else {
-            $motivationDetails->setHasTriedThisBeforeExplanation(null);
-        }
-        if (isset($participant['whyWantTheseSkills'])) {
-            $motivationDetails->setWhyWantTheseSkills($participant['whyWantTheseSkills']);
-        } else {
-            $motivationDetails->setWhyWantTheseSkills(null);
-        }
-        if (isset($participant['whyWantThisNow'])) {
-            $motivationDetails->setWhyWantThisNow($participant['whyWantThisNow']);
-        } else {
-            $motivationDetails->setWhyWantThisNow(null);
-        }
-        if (isset($participant['desiredLearningMethod'])) {
-            $motivationDetails->setDesiredLearningMethod($participant['desiredLearningMethod']);
-        } else {
-            $motivationDetails->setDesiredLearningMethod(null);
-        }
-        if (isset($participant['remarks'])) {
-            $motivationDetails->setRemarks($participant['remarks']);
-        } else {
-            $motivationDetails->setRemarks(null);
-        }
+        isset($participant['desiredSkillsOther']) ? $motivationDetails->setDesiredSkillsOther($participant['desiredSkillsOther']) : $motivationDetails->setDesiredSkillsOther(null);
+        isset($participant['desiredSkills']) ? $motivationDetails->setDesiredSkills($participant['desiredSkills']) : $motivationDetails->setDesiredSkills(null);
+        isset($participant['hasTriedThisBefore']) ? $motivationDetails->setHasTriedThisBefore($participant['hasTriedThisBefore']) : $motivationDetails->setHasTriedThisBefore(null);
+        isset($participant['hasTriedThisBeforeExplanation']) ? $motivationDetails->setHasTriedThisBeforeExplanation($participant['hasTriedThisBeforeExplanation']) : $motivationDetails->setHasTriedThisBeforeExplanation(null);
+        isset($participant['whyWantTheseSkills']) ? $motivationDetails->setWhyWantTheseSkills($participant['whyWantTheseSkills']) : $motivationDetails->setWhyWantTheseSkills(null);
+        isset($participant['whyWantThisNow']) ? $motivationDetails->setWhyWantThisNow($participant['whyWantThisNow']) : $motivationDetails->setWhyWantThisNow(null);
+        isset($participant['desiredLearningMethod']) ? $motivationDetails->setDesiredLearningMethod($participant['desiredLearningMethod']) : $motivationDetails->setDesiredLearningMethod(null);
+        isset($participant['remarks']) ? $motivationDetails->setRemarks($participant['remarks']) : $motivationDetails->setRemarks(null);
 
         return $motivationDetails;
     }
@@ -1270,7 +1259,6 @@ class StudentService
         $person = $this->inputToPerson($input);
         // Save cc/person
         $person = $this->ccService->saveEavPerson($person);
-//        var_dump($person['@id']);
 
         // Transform DTO info to edu/participant body
         $participant = $this->inputToParticipant($input, $person['@id']);
@@ -1295,9 +1283,6 @@ class StudentService
         if (isset($memos['motivationMemo']['description'])) {
             $participant['remarks'] = $memos['motivationMemo']['description'];
         }
-
-        // Now put together the expected result in $result['result'] for Lifely:
-//        $registrar = ['registrarOrganization' => null, 'registrarPerson' => null, 'registrarMemo' => null];
 
         $resourceResult = $this->handleResult(['person' => $person, 'participant' => $participant, 'employee' => $employee, 'referrerDetails' => $input['referrerDetails']]);
         $resourceResult->setId(Uuid::getFactory()->fromString($participant['id']));
@@ -1406,6 +1391,7 @@ class StudentService
         $person = isset($input['backgroundDetails']) ? $this->getPersonPropertiesFromBackgroundDetails($person, $input['backgroundDetails']) : $person;
         $person = isset($input['availabilityDetails']) ? $this->getPersonPropertiesFromAvailabilityDetails($person, $input['availabilityDetails']) : $person;
         $person = isset($input['permissionDetails']) ? $this->getPersonPropertiesFromPermissionDetails($person, $input['permissionDetails']) : $person;
+        $person = isset($input['dutchNTDetails']) ? $this->getPersonPropertiesFromDutchNTDetails($person, $input['dutchNTDetails']) : $person;
 
         return $person;
     }
@@ -1463,21 +1449,11 @@ class StudentService
      */
     private function getPersonPropertiesFromDutchNTDetails(array $person, array $dutchNTDetails): array
     {
-        if (isset($dutchNTDetails['dutchNTLevel'])) {
-            $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'];
-        }
-        if (isset($dutchNTDetails['inNetherlandsSinceYear'])) {
-            $person['inNetherlandsSinceYear'] = $dutchNTDetails['inNetherlandsSinceYear'];
-        }
-        if (isset($dutchNTDetails['languageInDailyLife'])) {
-            $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'];
-        }
-        if (isset($dutchNTDetails['knowsLatinAlphabet'])) {
-            $person['knowsLatinAlphabet'] = (bool) $dutchNTDetails['knowsLatinAlphabet'];
-        }
-        if (isset($dutchNTDetails['lastKnownLevel'])) {
-            $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'];
-        }
+        $person['dutchNTLevel'] = $dutchNTDetails['dutchNTLevel'] ?? null;
+        $person['inNetherlandsSinceYear'] = $dutchNTDetails['inNetherlandsSinceYear'] ?? null;
+        $person['languageInDailyLife'] = $dutchNTDetails['languageInDailyLife'] ?? null;
+        $person['knowsLatinAlphabet'] = $dutchNTDetails['knowsLatinAlphabet'] ?? null;
+        $person['lastKnownLevel'] = $dutchNTDetails['lastKnownLevel'] ?? null;
 
         return $person;
     }
@@ -1492,8 +1468,6 @@ class StudentService
      */
     private function getPersonPropertiesFromBackgroundDetails(array $person, array $backgroundDetails): array
     {
-        //todo: check in StudentService -> checkStudentValues() for enum options and if other is chosen make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
-        // (VOLUNTEER_CENTER, LIBRARY_WEBSITE, SOCIAL_MEDIA, NEWSPAPER, VIA_VIA, OTHER)
         if (isset($backgroundDetails['foundVia'])) {
             $person['foundVia'] = $backgroundDetails['foundVia'];
         } elseif (isset($backgroundDetails['foundViaOther'])) {
@@ -1508,8 +1482,6 @@ class StudentService
         if (isset($backgroundDetails['wentToLanguageHouseBeforeYear'])) {
             $person['wentToLanguageHouseBeforeYear'] = $backgroundDetails['wentToLanguageHouseBeforeYear'];
         }
-        //todo: check in StudentService -> checkStudentValues() if all values in this array are one of the enum values
-        // (HOUSEHOLD_MEMBERS, NEIGHBORS, FAMILY_MEMBERS, AID_WORKERS, FRIENDS_ACQUAINTANCES, PEOPLE_AT_MOSQUE_CHURCH, ACQUAINTANCES_SPEAKING_OWN_LANGUAGE, ACQUAINTANCES_SPEAKING_DUTCH)
         if (isset($backgroundDetails['network'])) {
             $person['network'] = $backgroundDetails['network'];
         }
@@ -1534,19 +1506,16 @@ class StudentService
         if (isset($generalDetails['countryOfOrigin'])) {
             $person = $this->setPersonBirthplaceFromCountryOfOrigin($person, $generalDetails['countryOfOrigin'], $updatePerson);
         }
-        //todo check in StudentService -> checkStudentValues() if this is a iso country code (NL)
         if (isset($generalDetails['nativeLanguage'])) {
             $person['primaryLanguage'] = $generalDetails['nativeLanguage'];
         }
         if (isset($generalDetails['otherLanguages'])) {
             $person['speakingLanguages'] = explode(',', $generalDetails['otherLanguages']);
         }
-        //todo: check in StudentService -> checkStudentValues() if this is one of the enum values ("MARRIED_PARTNER","SINGLE","DIVORCED","WIDOW")
         if (isset($generalDetails['familyComposition'])) {
             $person['maritalStatus'] = $generalDetails['familyComposition'];
         }
 
-        // Create the children of this person
         return $this->setPersonChildrenFromGeneralDetails($person, $generalDetails, $updatePerson);
     }
 
@@ -1701,8 +1670,6 @@ class StudentService
         if (isset($updatePerson)) {
             $person = $this->updatePersonContactDetailsSubobjects($person, $updatePerson);
         }
-
-        //todo: check in StudentService -> checkStudentValues() if other is chosen for contactPreference, if so make sure an other option is given (see learningNeedservice->checkLearningNeedValues)
         if (isset($input['contactPreference'])) {
             $person['contactPreference'] = $input['contactPreference'];
         } elseif ($input['person']['contactPreferenceOther']) {
@@ -1860,10 +1827,6 @@ class StudentService
                 $person['telephones'][$key]['telephone'] = $telephone['telephone'];
             }
         }
-//        if (isset($contactDetails['contactPersonTelephone'])) {
-//            $person['telephones'][1]['name'] = 'Telephone of the contactPerson of ' . $personName;
-//            $person['telephones'][1]['telephone'] = $contactDetails['contactPersonTelephone'];
-//        }
 
         return $person;
     }
@@ -2080,7 +2043,6 @@ class StudentService
         $employee = ['person' => $personUrl];
         //check if this person has a user and if so add its id to the employee body as userId
         $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['person' => $personUrl])['hydra:member'];
-//        var_dump($personUrl); var_dump($users);die;
         if (count($users) > 0) {
             $user = $users[0];
             $employee['userId'] = $user['id'];
@@ -2090,7 +2052,6 @@ class StudentService
             // set email for creating a user in mrcService
             $employee['email'] = $input['contactDetails']['email'];
         }
-//        $educations = $this->getEducationsFromEmployee($updateEmployee, true);
         if (isset($input['educationDetails'])) {
             $employee = $this->getEmployeePropertiesFromEducationDetails($employee, $input['educationDetails']);
         }
@@ -2117,7 +2078,7 @@ class StudentService
      */
     private function getEmployeePropertiesFromJobDetails(array $employee, array $jobDetails): array
     {
-        //todo make sure these attributes exist in eav! fixtures and online!
+        // todo make sure these attributes exist in eav! fixtures and online!
         if (isset($jobDetails['trainedForJob'])) {
             $employee['trainedForJob'] = $jobDetails['trainedForJob'];
         }
@@ -2144,31 +2105,13 @@ class StudentService
      */
     private function getEmployeePropertiesFromCourseDetails(array $employee, array $courseData): array
     {
-//        if (isset($courseData['isFollowingCourseRightNow'])) {
         $newEducation = $courseData['course'];
         if (isset($courseData['id'])) {
             $newEducation['id'] = $courseData['id'];
         }
         $newEducation['description'] = 'course';
         $newEducation['isFollowingCourseRightNow'] = $courseData['isFollowingCourseRightNow'];
-//            if ($courseDetails['isFollowingCourseRightNow'] == true) {
-//                if (isset($courseDetails['courseName'])) {
-//                    $newEducation['name'] = $courseDetails['courseName'];
-//                }
-//                if (isset($courseDetails['courseTeacher'])) {
-//                    $newEducation['teacherProfessionalism'] = $courseDetails['courseTeacher'];
-//                }
-//                if (isset($courseDetails['courseGroup'])) {
-//                    $newEducation['groupFormation'] = $courseDetails['courseGroup'];
-//                }
-//                if (isset($courseDetails['amountOfHours'])) {
-//                    $newEducation['amountOfHours'] = $courseDetails['amountOfHours'];
-//                }
-//                $newEducation = $this->getCourseProvideCertificateFromCourseDetails($newEducation);
-
-//            }
         $employee['educations'][] = $newEducation;
-//        }
 
         return $employee;
     }

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\LearningNeed;
+use App\Entity\LearningNeedOutCome;
 use Conduction\CommonGroundBundle\Service\CommonGroundService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -425,26 +426,30 @@ class LearningNeedService
     {
         $resource = new LearningNeed();
         // For some reason setting the id does not work correctly when done inside this function, so do it after calling this handleResult function instead!
-        $resource->setLearningNeedDescription($learningNeed['description']);
-        $resource->setLearningNeedMotivation($learningNeed['motivation']);
-        $resource->setDesiredOutComesGoal($learningNeed['goal']);
-        $resource->setDesiredOutComesTopic($learningNeed['topic']);
-        $resource->setDesiredOutComesTopicOther($learningNeed['topicOther']);
-        $resource->setDesiredOutComesApplication($learningNeed['application']);
-        $resource->setDesiredOutComesApplicationOther($learningNeed['applicationOther']);
-        $resource->setDesiredOutComesLevel($learningNeed['level']);
-        $resource->setDesiredOutComesLevelOther($learningNeed['levelOther']);
-        $resource->setOfferDesiredOffer($learningNeed['desiredOffer']);
-        $resource->setOfferAdvisedOffer($learningNeed['advisedOffer']);
+        $resource->setDescription($learningNeed['description']);
+        $resource->setMotivation($learningNeed['motivation']);
+
+        $lNO = new LearningNeedOutCome();
+        $lNO->setGoal($learningNeed['goal']);
+        $lNO->setTopic($learningNeed['topic']);
+        $lNO->setTopicOther($learningNeed['topicOther']);
+        $lNO->setApplication($learningNeed['application']);
+        $lNO->setApplicationOther($learningNeed['applicationOther']);
+        $lNO->setLevel($learningNeed['level']);
+        $lNO->setLevelOther($learningNeed['levelOther']);
+        $resource->setDesiredLearningNeedOutCome($lNO);
+
+        $resource->setDesiredOffer($learningNeed['desiredOffer']);
+        $resource->setAdvisedOffer($learningNeed['advisedOffer']);
         $resource->setOfferDifference($learningNeed['offerDifference']);
         $resource->setOfferDifferenceOther($learningNeed['offerDifferenceOther']);
         $resource->setOfferEngagements($learningNeed['offerEngagements']);
-        $resource = $this->setResourceParticipations($resource, $learningNeed, $skipParticipations);
+//        $resource = $this->setResourceParticipations($resource, $learningNeed, $skipParticipations);
 
         if (isset($studentId)) {
             $resource->setStudentId($studentId);
         }
-        $resource->setDateCreated($learningNeed['dateCreated']);
+//        $resource->setDa($learningNeed['dateCreated']);
         $this->entityManager->persist($resource);
 
         return $resource;

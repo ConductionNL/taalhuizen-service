@@ -91,7 +91,6 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
         } catch (BadRequestPathException $exception) {
             $this->errorSerializerService->serialize($exception, $event);
         }
-
     }
 
     /**
@@ -122,19 +121,18 @@ class OrganizationItemSubscriber implements EventSubscriberInterface
         if ($organizationExists instanceof Response) {
             return $organizationExists;
         }
-            //delete userGroups
-            $this->ucService->deleteUserGroups($id);
+        //delete userGroups
+        $this->ucService->deleteUserGroups($id);
 
-            //delete employees
-            $this->mrcService->deleteEmployees($id);
+        //delete employees
+        $this->mrcService->deleteEmployees($id);
 
-            //delete participants, TODO: this should be done with the studentService (new) deleteStudent(s) function!
-            //(because of learningNeeds and other EAV objects that will not be delete this way:)
-            $programId = $this->eduService->deleteParticipants($id);
+        //delete participants, TODO: this should be done with the studentService (new) deleteStudent(s) function!
+        //(because of learningNeeds and other EAV objects that will not be delete this way:)
+        $programId = $this->eduService->deleteParticipants($id);
 
-            $this->ccService->deleteOrganization($id, $programId);
+        $this->ccService->deleteOrganization($id, $programId);
 
-            return new Response(null, Response::HTTP_NO_CONTENT);
-
+        return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }
