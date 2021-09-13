@@ -615,6 +615,7 @@ class MrcService
         $employee = $this->resultToEmployeeObject($employee, $employeeArray);
         $employee = $this->subObjectsToEmployeeObject($employee, $employeeArray);
         $employee = $this->relatedObjectsToEmployeeObject($this->getUser($employee, $contact['id']), $employeeArray);
+        $employee->setDateCreated(new DateTime($employeeArray['dateCreated']));
         $this->entityManager->persist($employee);
         $employee->setId(Uuid::fromString($employeeArray['id']));
         $this->entityManager->persist($employee);

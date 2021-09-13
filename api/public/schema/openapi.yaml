@@ -24495,6 +24495,11 @@ components:
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
           description: 'User id of this Employee. <br /> **Required when updating an employee**'
           nullable: true
+        dateCreated:
+          description: 'The moment this resource was created'
+          type: string
+          format: date-time
+          nullable: true
       required:
         - person
         - userGroupIds
@@ -24750,6 +24755,11 @@ components:
           type: string
           example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
           description: 'User id of this Employee. <br /> **Required when updating an employee**'
+          nullable: true
+        dateCreated:
+          description: 'The moment this resource was created'
+          type: string
+          format: date-time
           nullable: true
       required:
         - person
