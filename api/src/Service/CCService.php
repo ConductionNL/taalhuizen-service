@@ -458,8 +458,8 @@ class CCService
         if (key_exists('telephones', $employeePerson)) {
             foreach ($employeePerson['telephones'] as $key => $telephone) {
                 $telephones[$key] = [
-                    'name' => $employeePerson['telephones'][$key]['name'] ?? 'Telephone '.($key+1),
-                    'telephone' => $employeePerson['telephones'][$key]['telephone']
+                    'name'      => $employeePerson['telephones'][$key]['name'] ?? 'Telephone '.($key + 1),
+                    'telephone' => $employeePerson['telephones'][$key]['telephone'],
                 ];
             }
         }
