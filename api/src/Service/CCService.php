@@ -454,6 +454,15 @@ class CCService
             $employeePerson = $this->commonGroundService->getResource($employeePerson);
             $employeePerson['emails']['email'] = $employeePerson['emails'][0]['email'] ?? null;
         }
+        $telephones = [];
+        if (key_exists('telephones', $employeePerson)) {
+            foreach ($employeePerson['telephones'] as $key => $telephone) {
+                $telephones[$key] = [
+                    'name' => $employeePerson['telephones'][$key]['name'] ?? 'Telephone '.($key+1),
+                    'telephone' => $employeePerson['telephones'][$key]['telephone']
+                ];
+            }
+        }
         $person = [
             'givenName'              => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
             'additionalName'         => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
@@ -462,13 +471,12 @@ class CCService
             'gender'                 => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
             'contactPreference'      => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
             'contactPreferenceOther' => key_exists('contactPreferenceOther', $employeePerson) ? $employeePerson['contactPreferenceOther'] : null,
-            'telephones'             => key_exists('telephones', $employeePerson) && $employeePerson['telephones'][0]['telephone'] ? [['name' => $employeePerson['telephones'][0]['name'], 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
+            'telephones'             => $telephones,
             'emails'                 => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => $employeePerson['emails']['name'], 'email' => $employeePerson['emails']['email']]] : [],
             'addresses'              => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
             'availability'           => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
             'organization'           => key_exists('organizationId', $employee) && $employee['organizationId'] ? '/organizations/'.$employee['organizationId'] : null,
         ]; //TODO: not sure if we want to set the organization for the person of an employee^
-        $person['telephones'][] = key_exists('contactTelephone', $employeePerson) ? ['name' => 'contact telephone', 'telephone' => $employeePerson['contactTelephone']] : null;
 
         if ($person['givenName'] instanceof Exception) {
             throw $person['givenName'];
