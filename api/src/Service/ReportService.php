@@ -45,10 +45,10 @@ class ReportService
     public function createParticipantsReport(Report $report): Report
     {
         $time = new DateTime();
-        $query = [
-            'extend' => 'person',
-            'fields' => 'id,dateCreated,person.givenName,person.additionalName,person.familyName,person.emails,person.telephones',
-        ];
+//        $query = [
+//            'extend' => 'person',
+//            'fields' => 'id,dateCreated,person.givenName,person.additionalName,person.familyName,person.emails,person.telephones',
+//        ];
 
         $this->setDate($report);
 
@@ -58,6 +58,19 @@ class ReportService
 
         $participants = $this->eduService->getParticipants($query);
         $participants = $this->cleanParticipants($participants);
+
+        foreach ($participants as $participant) {
+            if (isset($participant['person'])) {
+                $this->commonGroundService->getUuidFromUrl($participant['person']);
+//                $student =
+                $person = $this->commonGroundService->getResource($participant['person']);
+                $participant['givenName'] = $person['givenName'];
+                $participant['additionalName'] = $person['additionalName'];
+                $participant['familyName'] = $person['familyName'];
+            }
+        }
+
+//        var_dump($participants);die;
         $report->setBase64(base64_encode($this->serializer->serialize($participants, 'csv')));
         $report->setFilename("ParticipantsReport-{$time->format('YmdHis')}.csv");
 
@@ -125,6 +138,7 @@ class ReportService
         // Get all eav/learningNeeds with dateCreated in between given dates for each edu/participant
         $learningNeeds = $this->fillLearningNeeds($participants, $dateFrom, $dateUntil);
 //        $learningNeedsCollection = $this->fillLearningNeedsCollection($learningNeeds);
+
         $report->setBase64(base64_encode($this->serializer->serialize($learningNeeds, 'csv')));
         $report->setFilename("DesiredLearningOutComesReport-{$time->format('YmdHis')}.csv");
 
