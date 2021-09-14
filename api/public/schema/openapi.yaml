@@ -24268,7 +24268,7 @@ components:
           nullable: true
         email:
           minLength: 3
-          maxLength: 320
+          maxLength: 255
           type: string
           example: john@doe.com
           description: 'The actual mail address'
@@ -24286,7 +24286,7 @@ components:
           nullable: true
         email:
           minLength: 3
-          maxLength: 320
+          maxLength: 255
           type: string
           example: john@doe.com
           description: 'The actual mail address'
@@ -24332,7 +24332,7 @@ components:
           nullable: true
         email:
           minLength: 3
-          maxLength: 320
+          maxLength: 255
           type: string
           example: john@doe.com
           description: 'The actual mail address'
@@ -24373,7 +24373,7 @@ components:
           nullable: true
         email:
           minLength: 3
-          maxLength: 320
+          maxLength: 255
           type: string
           example: john@doe.com
           description: 'The actual mail address'
@@ -26051,6 +26051,7 @@ components:
           type: string
           format: uuid
         name:
+          minLength: 1
           maxLength: 255
           type: string
           example: 'My company'
@@ -26090,6 +26091,7 @@ components:
         - name
       properties:
         name:
+          minLength: 1
           maxLength: 255
           type: string
           example: 'My company'
@@ -26153,6 +26155,7 @@ components:
           type: string
           format: uuid
         name:
+          minLength: 1
           maxLength: 255
           type: string
           example: 'My company'
@@ -26215,6 +26218,7 @@ components:
           readOnly: true
           type: string
         name:
+          minLength: 1
           maxLength: 255
           type: string
           example: 'My company'

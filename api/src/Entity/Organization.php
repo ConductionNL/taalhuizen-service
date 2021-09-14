@@ -66,9 +66,7 @@ class Organization
     /**
      * @var string Name of this organization
      *
-     * @Assert\Length(
-     *     max = 255
-     * )
+     * @Assert\Length(min=1, max=255)
      * @Assert\NotNull
      * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)

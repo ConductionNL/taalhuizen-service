@@ -4,8 +4,10 @@ namespace App\Subscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Organization;
+use App\Exception\BadRequestPathException;
 use App\Service\CCService;
 use App\Service\EDUService;
+use App\Service\ErrorSerializerService;
 use App\Service\LayerService;
 use App\Service\MrcService;
 use App\Service\UcService;
@@ -25,6 +27,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
     private UcService $ucService;
     private EDUService $eduService;
 //    private MrcService $mrcService;
+    private ErrorSerializerService $errorSerializerService;
 
     /**
      * OrganizationSubscriber constructor.
@@ -39,6 +42,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $this->eduService = new EDUService($layerService->commonGroundService, $layerService->entityManager);
         $this->serializerService = new SerializerService($layerService->serializer);
 //        $this->mrcService = new MrcService($layerService, $ucService);
+        $this->errorSerializerService = new ErrorSerializerService($this->serializerService);
     }
 
     /**
@@ -47,7 +51,7 @@ class OrganizationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::VIEW => ['organization', EventPriorities::PRE_SERIALIZE],
+            KernelEvents::VIEW => ['organization', EventPriorities::PRE_VALIDATE],
         ];
     }
 
@@ -62,28 +66,33 @@ class OrganizationSubscriber implements EventSubscriberInterface
         $resource = $event->getControllerResult();
 
         // Lets limit the subscriber
-        switch ($route) {
-            case 'api_organizations_post_collection':
-                $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->createOrganization($body);
-                break;
-            case 'api_organizations_get_collection':
-                $response = $this->getOrganizations($event->getRequest()->query->all());
-                break;
-            case 'api_organizations_put_item':
-                $body = json_decode($event->getRequest()->getContent(), true);
-                $response = $this->updateOrganization($body, $event->getRequest()->attributes->get('id'));
-                break;
-            default:
+        try {
+            // Lets limit the subscriber
+            switch ($route) {
+                case 'api_organizations_post_collection':
+                    $body = json_decode($event->getRequest()->getContent(), true);
+                    $response = $this->createOrganization($body);
+                    break;
+                case 'api_organizations_get_collection':
+                    $response = $this->getOrganizations($event->getRequest()->query->all());
+                    break;
+                case 'api_organizations_put_item':
+                    $body = json_decode($event->getRequest()->getContent(), true);
+                    $response = $this->updateOrganization($body, $event->getRequest()->attributes->get('id'));
+                    break;
+                default:
+                    return;
+            }
+
+            if ($response instanceof Response) {
+                $event->setResponse($response);
+
                 return;
+            }
+            $this->serializerService->setResponse($response, $event);
+        } catch (BadRequestPathException $exception) {
+            $this->errorSerializerService->serialize($exception, $event);
         }
-
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-
-            return;
-        }
-        $this->serializerService->setResponse($response, $event);
     }
 
     /**
