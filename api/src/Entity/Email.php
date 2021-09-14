@@ -61,9 +61,9 @@ class Email
      * @var string The actual mail address
      *
      * @Assert\NotNull
-     * @Assert\Length(min=3,max = 320)
+     * @Assert\Length(min=3,max = 255)
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=320)
+     * @ORM\Column(type="string", length=255)
      * @ApiProperty(
      *     attributes={
      *         "openapi_context"={
