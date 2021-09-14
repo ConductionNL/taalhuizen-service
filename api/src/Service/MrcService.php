@@ -209,7 +209,7 @@ class MrcService
             'name'                    => $employeeArray['education']['name'],
             'description'             => 'UnfinishedEducation',
             'endDate'                 => $employeeArray['education']['endDate'],
-            'degreeGrantedStatus'     => 'notGranted',
+            'degreeGrantedStatus'     => $employeeArray['education']['degreeGrantedStatus'] ?? 'notGranted',
             'iscedEducationLevelCode' => $employeeArray['education']['iscedEducationLevelCode'],
             'providesCertificate'     => $employeeArray['education']['providesCertificate'],
             'employee'                => "/employees/$employeeId",
