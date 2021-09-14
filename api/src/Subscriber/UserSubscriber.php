@@ -218,6 +218,13 @@ class UserSubscriber implements EventSubscriberInterface
      */
     private function createUser(User $user)
     {
+        if ($user->getPerson() != null && $user->getPerson()->getEmails() != null && $user->getPerson()->getEmails()->getEmail() != null) {
+            $email = filter_var($user->getPerson()->getEmails()->getEmail(), FILTER_SANITIZE_EMAIL);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new BadRequestPathException('Invalid email', 'person.emails.email', ['person.emails.email' => $email]);
+            }
+        }
+        var_dump('Valid email: ' . $email);die;
         $users = $this->commonGroundService->getResourceList(['component' => 'uc', 'type' => 'users'], ['username' => str_replace('+', '%2B', $user->getUsername())])['hydra:member'];
         if (count($users) > 0) {
             return new Response(

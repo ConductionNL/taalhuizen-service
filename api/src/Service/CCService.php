@@ -35,7 +35,8 @@ class CCService
      */
     public function __construct(
         LayerService $layerService
-    ) {
+    )
+    {
         $this->entityManager = $layerService->entityManager;
         $this->serializer = $layerService->serializer;
         $this->commonGroundService = $layerService->commonGroundService;
@@ -107,9 +108,9 @@ class CCService
     /**
      * @param array $result
      *
+     * @return Person
      * @throws Exception
      *
-     * @return Person
      */
     public function createPersonObject(array $result): Person
     {
@@ -219,11 +220,11 @@ class CCService
         }
 
         $result = [
-            '@context'          => '/contexts/Organization',
-            '@id'               => '/organizations',
-            '@type'             => 'hydra:Collection',
-            'hydra:member'      => $organizations,
-            'hydra:totalItems'  => $results['hydra:totalItems'] ?? count($results),
+            '@context' => '/contexts/Organization',
+            '@id' => '/organizations',
+            '@type' => 'hydra:Collection',
+            'hydra:member' => $organizations,
+            'hydra:totalItems' => $results['hydra:totalItems'] ?? count($results),
         ];
         if (key_exists('hydra:view', $results)) {
             $result['hydra:view'] = $results['hydra:view'];
@@ -249,8 +250,8 @@ class CCService
     /**
      * Creates an organization in the contact catalogue.
      *
-     * @param array  $organizationArray The array of the organization to save
-     * @param string $type              The type of organization to save
+     * @param array $organizationArray The array of the organization to save
+     * @param string $type The type of organization to save
      *
      * @return array|false The resulting organization in the contact catalogue
      */
@@ -258,19 +259,19 @@ class CCService
     {
         $wrcOrganization = $this->wrcService->createOrganization($organizationArray);
         $address = [
-            'name'              => $organizationArray['addresses']['name'] ?? null,
-            'street'            => $organizationArray['addresses']['street'] ?? null,
-            'houseNumber'       => $organizationArray['addresses']['houseNumber'] ?? null,
+            'name' => $organizationArray['addresses']['name'] ?? null,
+            'street' => $organizationArray['addresses']['street'] ?? null,
+            'houseNumber' => $organizationArray['addresses']['houseNumber'] ?? null,
             'houseNumberSuffix' => $organizationArray['addresses']['houseNumberSuffix'] ?? null,
-            'postalCode'        => $organizationArray['addresses']['postalCode'] ?? null,
-            'locality'          => $organizationArray['addresses']['locality'] ?? null,
+            'postalCode' => $organizationArray['addresses']['postalCode'] ?? null,
+            'locality' => $organizationArray['addresses']['locality'] ?? null,
         ];
         $resource = [
-            'name'               => $organizationArray['name'],
-            'type'               => $type,
-            'telephones'         => key_exists('telephones', $organizationArray) && $organizationArray['telephones'] ? [['name' => $organizationArray['telephones']['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
-            'emails'             => key_exists('emails', $organizationArray) && $organizationArray['emails'] ? [['name' => $organizationArray['emails']['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
-            'addresses'          => key_exists('addresses', $organizationArray) && $organizationArray['addresses'] ? [$address] : [],
+            'name' => $organizationArray['name'],
+            'type' => $type,
+            'telephones' => key_exists('telephones', $organizationArray) && $organizationArray['telephones'] ? [['name' => $organizationArray['telephones']['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails' => key_exists('emails', $organizationArray) && $organizationArray['emails'] ? [['name' => $organizationArray['emails']['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses' => key_exists('addresses', $organizationArray) && $organizationArray['addresses'] ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->createResource($resource, ['component' => 'cc', 'type' => 'organizations']);
@@ -283,8 +284,8 @@ class CCService
     /**
      * Updates an organization in the contact catalogue.
      *
-     * @param string $id                The id of the organization to update
-     * @param array  $organizationArray The updated properties of the organization to update
+     * @param string $id The id of the organization to update
+     * @param array $organizationArray The updated properties of the organization to update
      *
      * @return array|false The updated organization object in the contact catalogue
      */
@@ -293,18 +294,18 @@ class CCService
         $ccOrganization = $this->commonGroundService->getResourceList(['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
         $wrcOrganization = $this->wrcService->saveOrganization($ccOrganization, $organizationArray);
         $address = [
-            'name'              => $organizationArray['addresses']['name'] ?? $ccOrganization['addresses'][0]['name'] ?? null,
-            'street'            => $organizationArray['addresses']['street'] ?? $ccOrganization['addresses'][0]['street'] ?? null,
-            'houseNumber'       => $organizationArray['addresses']['houseNumber'] ?? $ccOrganization['addresses'][0]['houseNumber'] ?? null,
+            'name' => $organizationArray['addresses']['name'] ?? $ccOrganization['addresses'][0]['name'] ?? null,
+            'street' => $organizationArray['addresses']['street'] ?? $ccOrganization['addresses'][0]['street'] ?? null,
+            'houseNumber' => $organizationArray['addresses']['houseNumber'] ?? $ccOrganization['addresses'][0]['houseNumber'] ?? null,
             'houseNumberSuffix' => $organizationArray['addresses']['houseNumberSuffix'] ?? $ccOrganization['addresses'][0]['houseNumberSuffix'] ?? null,
-            'postalCode'        => $organizationArray['addresses']['postalCode'] ?? $ccOrganization['addresses'][0]['postalCode'] ?? null,
-            'locality'          => $organizationArray['addresses']['locality'] ?? $ccOrganization['addresses'][0]['locality'] ?? null,
+            'postalCode' => $organizationArray['addresses']['postalCode'] ?? $ccOrganization['addresses'][0]['postalCode'] ?? null,
+            'locality' => $organizationArray['addresses']['locality'] ?? $ccOrganization['addresses'][0]['locality'] ?? null,
         ];
         $resource = [
-            'name'               => $organizationArray['name'],
-            'telephones'         => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'] ?? $ccOrganization['telephones'][0]['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
-            'emails'             => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'] ?? $ccOrganization['emails'][0]['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
-            'addresses'          => key_exists('addresses', $organizationArray) ? [$address] : [],
+            'name' => $organizationArray['name'],
+            'telephones' => key_exists('telephones', $organizationArray) ? [['name' => $organizationArray['telephones']['name'] ?? $ccOrganization['telephones'][0]['name'] ?? null, 'telephone' => $organizationArray['telephones']['telephone']]] : [],
+            'emails' => key_exists('emails', $organizationArray) ? [['name' => $organizationArray['emails']['name'] ?? $ccOrganization['emails'][0]['name'] ?? null, 'email' => $organizationArray['emails']['email']]] : [],
+            'addresses' => key_exists('addresses', $organizationArray) ? [$address] : [],
             'sourceOrganization' => $wrcOrganization['@id'],
         ];
         $result = $this->commonGroundService->updateResource($resource, ['component' => 'cc', 'type' => 'organizations', 'id' => $id]);
@@ -313,7 +314,7 @@ class CCService
     }
 
     /**
-     * @param array       $body
+     * @param array $body
      * @param string|null $id
      *
      * @return Response|null
@@ -324,9 +325,9 @@ class CCService
         if (count($organizations) > 0 and $organizations[0]['id'] != $id) {
             return new Response(
                 json_encode([
-                    'message' => 'A '.$body['type'].' with this name already exists!',
-                    'path'    => 'name',
-                    'data'    => ['name' => $body['name']],
+                    'message' => 'A ' . $body['type'] . ' with this name already exists!',
+                    'path' => 'name',
+                    'data' => ['name' => $body['name']],
                 ]),
                 Response::HTTP_CONFLICT,
                 ['content-type' => 'application/json']
@@ -348,8 +349,8 @@ class CCService
             return new Response(
                 json_encode([
                     'message' => 'This organization does not exist!',
-                    'path'    => '',
-                    'data'    => ['organization' => $organizationUrl],
+                    'path' => '',
+                    'data' => ['organization' => $organizationUrl],
                 ]),
                 Response::HTTP_NOT_FOUND,
                 ['content-type' => 'application/json']
@@ -362,7 +363,7 @@ class CCService
     /**
      * Deletes an organization.
      *
-     * @param string      $id        The id of the organization to delete
+     * @param string $id The id of the organization to delete
      * @param string|null $programId The program related to the organization
      *
      * @return bool Whether or not the operation has been successful
@@ -429,12 +430,12 @@ class CCService
     public function convertAddress(array $addressArray): array
     {
         return [
-            'name'              => key_exists('name', $addressArray) ? $addressArray['name'] : null,
-            'street'            => key_exists('street', $addressArray) ? $addressArray['street'] : null,
-            'houseNumber'       => key_exists('houseNumber', $addressArray) ? $addressArray['houseNumber'] : null,
+            'name' => key_exists('name', $addressArray) ? $addressArray['name'] : null,
+            'street' => key_exists('street', $addressArray) ? $addressArray['street'] : null,
+            'houseNumber' => key_exists('houseNumber', $addressArray) ? $addressArray['houseNumber'] : null,
             'houseNumberSuffix' => key_exists('houseNumberSuffix', $addressArray) ? $addressArray['houseNumberSuffix'] : null,
-            'postalCode'        => key_exists('postalCode', $addressArray) ? $addressArray['postalCode'] : null,
-            'locality'          => key_exists('locality', $addressArray) ? $addressArray['locality'] : null,
+            'postalCode' => key_exists('postalCode', $addressArray) ? $addressArray['postalCode'] : null,
+            'locality' => key_exists('locality', $addressArray) ? $addressArray['locality'] : null,
         ];
     }
 
@@ -443,9 +444,9 @@ class CCService
      *
      * @param array $employee The employee object that was given as input
      *
+     * @return array The resulting person array
      * @throws Exception Thrown if givenName is not provided
      *
-     * @return array The resulting person array
      */
     public function employeeToPerson(array $employee): array
     {
@@ -464,18 +465,18 @@ class CCService
             }
         }
         $person = [
-            'givenName'              => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
-            'additionalName'         => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
-            'familyName'             => key_exists('familyName', $employeePerson) ? $employeePerson['familyName'] : null,
-            'birthday'               => key_exists('birthday', $employeePerson) ? $employeePerson['birthday'] : null,
-            'gender'                 => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
-            'contactPreference'      => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
+            'givenName' => key_exists('givenName', $employeePerson) ? $employeePerson['givenName'] : new Exception('givenName must be provided'),
+            'additionalName' => key_exists('additionalName', $employeePerson) ? $employeePerson['additionalName'] : null,
+            'familyName' => key_exists('familyName', $employeePerson) ? $employeePerson['familyName'] : null,
+            'birthday' => key_exists('birthday', $employeePerson) ? $employeePerson['birthday'] : null,
+            'gender' => key_exists('gender', $employeePerson) ? ($employeePerson['gender'] == 'X' ? null : $employeePerson['gender']) : null,
+            'contactPreference' => key_exists('contactPreference', $employeePerson) ? $employeePerson['contactPreference'] : null,
             'contactPreferenceOther' => key_exists('contactPreferenceOther', $employeePerson) ? $employeePerson['contactPreferenceOther'] : null,
-            'telephones'             => $telephones,
-            'emails'                 => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => $employeePerson['emails']['name'], 'email' => $employeePerson['emails']['email']]] : [],
-            'addresses'              => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
-            'availability'           => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
-            'organization'           => key_exists('organizationId', $employee) && $employee['organizationId'] ? '/organizations/'.$employee['organizationId'] : null,
+            'telephones' => key_exists('telephones', $employeePerson) && $employeePerson['telephones'][0]['telephone'] ? [['name' => 'telephone 1', 'telephone' => $employeePerson['telephones'][0]['telephone']]] : [],
+            'emails' => key_exists('emails', $employeePerson) && $employeePerson['emails']['email'] ? [['name' => 'email 1', 'email' => $employeePerson['emails']['email']]] : [],
+            'addresses' => key_exists('addresses', $employeePerson) && $employeePerson['addresses'] ? [$this->convertAddress($employeePerson['addresses'])] : [],
+            'availability' => key_exists('availability', $employee) && $employee['availability'] ? $employee['availability'] : [],
+            'organization' => key_exists('organizationId', $employee) && $employee['organizationId'] ? '/organizations/' . $employee['organizationId'] : null,
         ]; //TODO: not sure if we want to set the organization for the person of an employee^
 
         if ($person['givenName'] instanceof Exception) {
@@ -492,9 +493,9 @@ class CCService
      *
      * @param array $person
      *
+     * @return array The resulting person
      * @throws Exception
      *
-     * @return array The resulting person
      */
     public function createPersonForEmployee(array $employee): array
     {
@@ -518,12 +519,12 @@ class CCService
     /**
      * Saves a person in the contact catalogue.
      *
-     * @param Person                 $person      The person array to provide to the contact catalogue
+     * @param Person $person The person array to provide to the contact catalogue
      * @param StudentPermission|null $permissions
      *
+     * @return array The result from the contact catalogue and EAV
      * @throws Exception
      *
-     * @return array The result from the contact catalogue and EAV
      */
     public function createPerson(Person $person, ?StudentPermission $permissions = null): array
     {
@@ -542,7 +543,7 @@ class CCService
     {
         foreach ($personArray as $key => $value) {
             if ($key == 'organization' && $value && is_array($value)) {
-                $personArray[$key] = '/organizations/'.$this->createOrganization($value, 'Provider')['id'];
+                $personArray[$key] = '/organizations/' . $this->createOrganization($value, 'Provider')['id'];
             }
             if ($key == 'emails' && !isset($personArray['emails'][0]['email'])) { //do not remove this isset!
                 $personArray[$key] = [$personArray[$key]];
@@ -561,12 +562,12 @@ class CCService
     /**
      * Updates a person in the contac catalogue.
      *
-     * @param string $id     The id of the person to update
-     * @param array  $person The updated data of the person
-     *
-     * @throws Exception
+     * @param string $id The id of the person to update
+     * @param array $person The updated data of the person
      *
      * @return array The updated person object in the contact catalogue and EAV
+     * @throws Exception
+     *
      */
     public function updatePerson(string $id, array $person): array
     {
@@ -581,12 +582,12 @@ class CCService
     /**
      * Saves a person in the EAV.
      *
-     * @param array $body      The data to store in the EAV
-     * @param null  $personUrl The url of the person to save
-     *
-     * @throws Exception
+     * @param array $body The data to store in the EAV
+     * @param null $personUrl The url of the person to save
      *
      * @return array The resulting object in the EAV
+     * @throws Exception
+     *
      */
     public function saveEavPerson(array $body, $personUrl = null): array
     {
@@ -619,9 +620,9 @@ class CCService
      *
      * @param string $self The url of the person
      *
+     * @return array The person array
      * @throws Exception
      *
-     * @return array The person array
      */
     public function getEavPerson(string $self): array
     {
@@ -637,9 +638,9 @@ class CCService
      *
      * @param string $id The id of the person
      *
+     * @return bool
      * @throws Exception
      *
-     * @return bool
      */
     public function deletePerson(string $id): bool
     {
